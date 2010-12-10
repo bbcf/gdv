@@ -1,0 +1,57 @@
+body{font-size:12px;background-color:#ffffff;margin:0px;overflow:auto;}
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,div{
+font-family:helvetica,verdana,arial,sans-serif;}
+h1{width:98.5%;font-size:250%;font-weight:normal;background-color:#696969;padding:0.4em 0.4em 0.4em 0.6em;}
+h2 {font-size:160%;margin-top:10px;margin-bottom:10px;font-weight:normal;background-color:#A9A9A9;}
+h3 {font-size:120%;font-weight:normal}
+h4 {font-size:100%;}
+h5 {font-size:90%;}
+h6 {font-size:80%;}
+
+/* LINK */
+a{color:black}
+.hl{text-decoration:none;color:black;}
+a:hover {color:#A9A9A9;}
+/* IMAGES */
+img{border-style:none;padding:0.1em;max-width:100%;max-height:100%;}
+
+/*LAYOUT*/
+div.clearer {clear: left; line-height: 0; height: 0;}
+#gdv_title
+{font-size:300%;text-align:right;line-height:190%;}
+#gdv_banner
+{padding:0.5em;height:5em;width:95%;min-width:100em;border-width:2em;border-color:#CCCCCC;border-style:outset;}
+#gdv_banner img
+{float:left;height:100%;}
+#gdv_banner a:link a:visited a:hover a:active {text-decoration:none;}
+#gdv_column{position:relative;width:100%;min-width:100em;}
+#gdv_menu{left:1em;position:absolute;top:1em;width:10em;padding:1em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
+.menu_entry{font-size:1.3em;letter-spacing:150%}
+#gdv_body{margin-left:14em;padding:1em;margin-right:1em;}
+#gdv_footer{margin-left:14em;margin-right:5em;padding:1em;line-height:200%;}
+
+/* TEXT */
+.gdv_text{padding:0 0 0 2em}
+
+
+/*PROJECTS*/
+#project_form{width:100%;}
+.cp{padding:0.5em;width:20em;float:left}
+.c_b{margin-top:0.3em;width:6em;height:1.5em;font-size:120%;}
+
+#pc{margin:2em;}
+.bh{width:98.5%;font-size:250%;font-weight:normal;background-color:#696969;padding:0.4em 0.4em 0.4em 0.6em;}
+
+.ph{width:100%;font-size:120%;padding:0.4em 0.4em 0.4em 0.6em;background-color:#D4D4D4;height:1.5em;}
+.ph img{height:1em;}
+.ph input{width:5em;height:1.5em;}
+.ph_d{position:absolute;margin:0em 7em 0em 0em;}
+.ph_s{position:absolute;left:32em;margin:0em 7em 0em 0em;}
+.ph_v{position:absolute;left:55em;margin:0em 7em 0em 0em;}
+.ph_t{position:absolute;left:63em;margin:0em 7em 0em 0em;}
+.ph_bi{position:absolute;right:7em;margin:0em 7em 0em 0em;}
+.ph_bv{position:absolute;right:1em;margin:0em 7em 0em 0em;}
+.pt {font-size:100%;width:101%;border:none;border-collapse:collapse;padding:0em 0em 0em 5em;}
+.pt td{padding:1em 1em 1em 4em;}
+.pt_alt{background-color:#FFFFFF;}
+.pt_n{background-color:#F5F5F5;}

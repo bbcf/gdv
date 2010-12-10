@@ -1,0 +1,31 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+<wicket:extend>
+<h2>Tracks informations</h2>
+<!-- <table> -->
+<!-- <tr> -->
+  <h3>Files</h3>
+<!-- </tr> -->
+<ul wicket:id="annotations">
+ <!--  <tr> -->
+ <!--    <td> --><a wicket:id="a_link" ><img wicket:id="arrow" class="gdv_arrow"/></a>
+ <a wicket:id="a_file" href="#"><span wicket:id="a_name"/></a><!-- </td> -->
+ <a wicket:id="a_delete" href="#">delete</a>
+ <!--  </tr> -->
+  <div wicket:id="tracks_c">
+    <div wicket:id="tracks">
+      <span class="adjacent" wicket:id="t_name"/>
+      <span class="adjacent" wicket:id="t_status"/>
+       <!-- <td> --><img wicket:id="t_loader"/><!-- </td> -->
+    </div>
+  </div>
+</ul>
+  
+<!-- </table> -->
+  <div class="gdv_feedback" wicket:id="feedback"/>
+</wicket:extend>
+</body>
+</html>

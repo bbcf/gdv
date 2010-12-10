@@ -1,0 +1,14 @@
+<projectDescription>
+  <name>gdv</name>
+  <comment>Genome Data Viewer :
+	a javascript genome browser</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

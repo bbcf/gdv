@@ -1,0 +1,44 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+<wicket:extend>
+
+<h1>Description</h1>
+<p>
+GDV is a fast and easy to use genome browser. The main goal is to provide a tool for biologist and bioanalysts who want to VISUALIZE and ANALYSE their data in an interactive and responding way.
+<br/>In order do such job, GDV will preprocess each inputs and build a view with. Then the view provided is accessible at any time.
+<h1>Technologies</h1>
+<li>written in <a href="http://www.oracle.com/technetwork/java/index.html">JAVA</a> .<br/></li>
+<li> built with <a href="http://wicket.apache.org/">Apache wicket</a>.<br/></li>
+<li> served by <a href="http://tomcat.apache.org/">Apache Tomcat</a>.<br/></li>
+<li> viewer in Javascript from <a href="http://jbrowse.org/">JBrowse</a> engine.<br/></li>
+<li> database in <a href="http://www.postgresql.org/">postgresql</a>.</li>
+<p>
+
+<h1>Features provided</h1>
+<li>based on the last web-features <a href="http://www.w3.org/TR/html5/">HTML5</a>.<br/></li>
+<li>user management (group in a near future).<br/></li>
+<li>secure login (see <a href="http://tequila.epfl.ch/">TEQUILA</a>.<br/></li>
+<li>tracks management (saving files after user navigation).<br/></li>
+<li>different input formats accepted (GFF, WIG, Bedgraph,BED) in different ways (form URL or file upload).<br/></li>
+<li>Planning to add BAM & SAM support.<br/></li>
+<li>creation of projects and tracks from programmatic access (pipelines) - restricted feature, ask for collaboration-</li>
+
+
+<h1>Architecture</h1>
+<p>
+GDV is composed by 3 modules:<br/>
+<li>JBrowsoR, built on top of JBrowse, is a job manager that interacts with JBrowse.<br/></li>
+<li>GeneRep  stores information about the genomes and assemblies for GDV.<br/></li>
+<li>GFeatMiner is a statistical and data mining module that will be integrated to GDV.<br/></li>
+GDV has to communicate with those modules and provide a user friendly interface.<br/>
+More documentation on <a href="http://bbcf.epfl.ch/view/BBCF/GDV">BBCFRessources</a>.
+</p>
+
+</wicket:extend>
+</body>
+</html>
+
+

@@ -1,0 +1,28 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+<wicket:extend>
+<h2>Tracks informations</h2>
+<!-- <span wicket:id="navigator">[dataview navigator]</span> -->
+<table>
+  <tr>
+    <th wicket:id="orderBySpecies">name</th>
+    <th wicket:id="orderByAssembly">assembly</th>
+    <th wicket:id="orderByTrackName">track name</th>
+    <th wicket:id="orderByDate">created the</th>
+  </tr>
+  <tr wicket:id="tracks">
+    <td><span wicket:id="species">[speciesName]</span> </td>
+    <Td><span wicket:id="assembly">[assemblyName]</span> </td>
+    <td><span wicket:id="name">[name]</span></td>
+    <td><span wicket:id="date">[date]</span> </td>
+    <td><span wicket:id="status">[status]</span> <img wicket:id="status_loader"/></td>
+    <td><a href="#" wicket:id="delete">delete</a></td>
+  </tr>
+</table>
+ <div class="gdv_feedback" wicket:id="feedback"/> 
+</wicket:extend>
+</body>
+</html>

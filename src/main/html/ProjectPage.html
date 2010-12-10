@@ -1,0 +1,52 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+  <wicket:extend>
+    <!-- CREATE PROJECT -->
+    <div class="bh"  wicket:id="create_header"></div>
+    <form  wicket:id="form">
+      <div id="pc">
+	<div class="cp">project name :  <input wicket:id="project_name"/></div>
+	<div class="cp">species : <select wicket:id="species"/></div>
+	<div class="cp">version : <select wicket:id="version"/></div>
+	<input class="c_b" type="submit" wicket:id="create_but" value="Create it"/>
+	<div id="fd_p"><span wicket:id="feedback"/></div>  
+      </div>
+    </form>
+	
+    <!-- EXISTING PROJECTS -->
+    <div class="bh" wicket:id="project_header"></div>
+    <form id="project_form" wicket:id="exist_form">
+      <!-- projects -->
+      <div wicket:id="project_data">
+	<div class="ph">
+	  <a wicket:id="arrow_link" ><img wicket:id="arrow" class="gdv_arrow"/></a>
+	  <span class="ph_d" wicket:id="description"></span>
+	  <span class="ph_s" wicket:id="project_species"/>
+	  <span class="ph_v" wicket:id="project_version"/>
+	  <span class="ph_t" wicket:id="tracks_number"/>
+	  <input class="ph_bi" type="submit" wicket:id="import_but" value="Import"/>
+	  <input class="ph_bv" type="submit" wicket:id="view_but" value="View it"/>
+	</div>
+	<!-- tracks -->
+	<div wicket:id="tracks_container">
+	  <table class="pt">
+	    <tr wicket:id="track_data">
+	      <td wicket:id="track_label"></td>
+	      <td wicket:id="track_date"></td>
+	      <td><span wicket:id="status"></span><img wicket:id="status_loader"/></td>
+	      <td><a href="#" wicket:id="delete">delete</a></td>
+	    </tr>
+	  </table>
+	</div>
+      </div>
+    </form>
+     
+    <!-- MODAL WINDOW -->
+    <div wicket:id="modal_import"></div>
+    
+  </wicket:extend>
+</body>
+</html>

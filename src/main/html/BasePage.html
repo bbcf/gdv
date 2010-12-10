@@ -1,0 +1,38 @@
+<html xmlns:wicket="http://wicket.apache.org/">
+  <head>
+    <meta http-equiv="Author" content="Jarosz Yohan"/>
+    <meta http-equiv="Expires" content="Wed, 12 Feb 2011 12:39:00 GMT"/>
+    <meta http-equiv="Cache-control" content="public"/>
+    <meta http-equiv="Content-Style-Type" content="text/css" /> 
+    <meta http-equiv="Content-Script-Type" content="text/javascript" /> 
+   
+    <link rel="stylesheet" type="text/css" href="../public/css/gdv_style.css" />
+    <title>Genome Data Viewer</title>
+    <!--  <wicket:link> -->
+<!--     <link rel="stylesheet" type="text/css" href="gdv_compressed.css"/> -->
+<!--      </wicket:link> -->
+    
+  </head>
+  <body>
+    <div id="gdv_banner">
+      <a href="http://svitsrv25.epfl.ch/gdv"><img id="gdv_logo" src="/public/images/logo_gdv.jpg" alt="GDV"/></a>
+      <a href="http://www.epfl.ch"><img id="epfl_logo" src="../public/images/epfl-logo.jpeg" alt="EPFL"/></a>
+      <a href="http://bbcf.epfl.ch/"><img id="bbcf_logo" src="../public/images/logo-bbcf.png" alt="EPFL"/></a>
+      <a href="http://www.systemsx.ch/projects/systemsxch-projects/sybit/"><img id="sybit_logo" src="../public/images/logo_sybit.jpg" alt="EPFL"/></a>
+      <div id="gdv_title"> GENOME DATA VIEWER</div>
+      <div class="clearer"></div>
+    </div>
+
+    <div id="gdv_column">
+      <div id="gdv_menu" wicket:id="menu"/>
+      <div id="gdv_body">
+	<wicket:child/>
+      </div>
+    </div>
+
+    <div id="gdv_footer">
+    
+    </div>
+    
+  </body>
+</html>

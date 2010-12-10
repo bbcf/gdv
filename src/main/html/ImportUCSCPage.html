@@ -1,0 +1,35 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+<wicket:extend>
+  <form wicket:id="form">
+    <fieldset>
+      <table>
+	<tr>
+	  <span> Select the genome </span>
+	</tr>
+	<tr>
+	  <td>species : <select wicket:id="species"/></td>
+	  <td>version : <select wicket:id="version"/></td>
+	   <td><img wicket:id="das_loader"/></td>
+      </tr></table>
+    </fieldset>
+    <p>
+      If you click on a link, you will lauch the process.<br/>
+      It can take a while to finish
+    </p>
+    
+    <div wicket:id="das_container">
+      <div wicket:id="das_sources">
+	<div wicket:id="types">
+	  <a href="#" wicket:id="type_link"><span wicket:id="type_label"/></a>
+	</div>
+      </div>
+    </div>
+    <div wicket:id="feedback"/>
+  </form>
+</wicket:extend>
+</body>
+</html>

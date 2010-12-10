@@ -1,0 +1,31 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+  <head>  
+    <title>new user</title>
+  </head>
+  <body>
+    <div id="container">
+      <form wicket:id="user">
+	<table>
+	  <tr>
+	    <td>username :</td>
+	    <td><input type="text" wicket:id="username"/></td>
+	  </tr>
+	  <tr>
+	    <td>password :</td>
+	    <Td><input type="password" wicket:id="password"/></td>
+	    <td>repeat password :</td>
+	    <td><input type="password" wicket:id="repeatpassword"/></td>
+	  </tr>
+	  <tr>
+	    <td>mail :</td>
+	    <td><input type="text" wicket:id="mail"/></td>
+	  </tr>
+	  <tr>
+	    <td><input type="submit" id="submit" value="submit"/></td>
+	  </tr>
+	</table>
+	<div wicket:id="feedback"/>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+  <head>  
+    <title>create a new genome</title>
+  </head>
+  <body>
+    <wicket:extend>
+      <form wicket:id="form">
+	  <fieldset>
+	    <p>Create a new genome. Select </p>
+	    species name : <select type="text" wicket:id="species"/>
+	    version : <select type="text" wicket:id="version"/>
+	   	    
+	    <input type = "submit" value = "submit"/>
+	  </fieldset>
+	  <div wicket:id="feedback"/>
+      </form>
+    
+    </wicket:extend>
+  </body>
+</html>

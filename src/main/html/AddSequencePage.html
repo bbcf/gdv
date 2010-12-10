@@ -1,0 +1,24 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+<wicket:extend>
+<h1>Add a sequence</h1>
+
+<!-- <div wicket:id = "menu" class="navigationMenu"/> -->
+<div class ="bodyy">
+  <form wicket:id="form">
+    <fieldset>
+      <p>Create a new genome. Select </p>
+      species name : <select type="text" wicket:id="species"/>
+      version : <select type="text" wicket:id="version"/>
+      
+      <input type = "submit" value = "submit"/>
+    </fieldset>
+ </form>
+</div>
+  <div class="gdv_feedback" wicket:id="feedback"/>
+</wicket:extend>
+</body>
+</html>

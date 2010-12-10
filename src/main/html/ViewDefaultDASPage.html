@@ -1,0 +1,25 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+<wicket:extend>
+<h2>Default Tracks</h2>
+
+ 	<table  class="gdv_view_table">
+	  <tr>
+	    <th>species</th><th>file</th>
+	  </tr>
+	  <div wicket:id="annotations">
+	    <tr>
+	      <td><span wicket:id="a_seq_name"/></td>
+	        <td><span wicket:id="a_ass_name"/></td>
+	      <td><a wicket:id="a_file"><span wicket:id="a_name"/></a></td>
+	      <td> <a wicket:id="a_delete" href="#">delete</a></td>
+	    </tr>
+	  </div>
+	</table>
+	
+</wicket:extend>
+</body>
+</html>

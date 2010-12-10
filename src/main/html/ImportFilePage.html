@@ -1,0 +1,36 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+  <div class="gdv_desc_text">
+    <p>
+      Upload your file from the form below. You can provide a file or a link.<br/>
+      Format accepted are 
+      <a href="http://genome.ucsc.edu/FAQ/FAQformat#format3">GFF</a>,
+      <a href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">WIG</a> and
+      <a href ="http://genome.ucsc.edu/FAQ/FAQformat#format1">BED</a> (zip and gunzip are also supported).
+    </p>
+  </div>
+  <br/>
+ <form wicket:id="form">
+   <table>
+     <tr>
+       <td>Paste URL</td>
+       <td><textarea wicket:id="url" rows="3" cols="40"></textarea>
+	 <input wicket:id="clear" type = "button" value = "clear"/></td>
+     </tr>
+     <tr>
+       <td>OR select file containing the annotation</td>
+       <td><input type="file" wicket:id="upload"/></td>
+     </tr>
+     <tr>
+       <td><input type="submit" wicket:id="submit" value="submit"/></td>
+       <td><input type="checkbox" wicket:id="send_mail"/>
+	 send me a mail when the upload is complete</td>
+     </tr>
+   </table>
+    <div class="gdv_feedback" wicket:id="feedback"/>
+ </form>
+</body>
+</html>

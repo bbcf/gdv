@@ -1,0 +1,26 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+  <head>  
+    <title>views</title>
+  </head>
+  <body>
+    <wicket:extend>
+      <h2>Views informations</h2>
+	<table  class="gdv_view_table">
+	  <tr>
+	    <th>species</th><th>assembly</th><!-- <th>tracks</th> -->
+	  </tr>
+	  <div wicket:id="views">
+	    <tr>
+	      <td><span wicket:id="species"/></td>
+	      <td><span wicket:id="assembly"/></td>
+	     <!--  <td><span wicket:id="names"/></td> -->
+	      <td wicket:id="v_status"/>
+	      <td><img wicket:id="v_loader"/></td>
+	      <td><a href="#" wicket:id="go">go</a></td>
+	    </tr>
+	  </div>
+	</table>
+	<div class="gdv_feedback" wicket:id="feedback"/>
+    </wicket:extend>
+  </body>
+</html>
