@@ -255,6 +255,7 @@ public final class Configuration{
 
 
 	public static boolean init() {
+		Application.info("THIS IS GREAAT !!!");
 		if(instance==null){
 			synchronized(Configuration.class){
 				instance = new Configuration();
