@@ -16,15 +16,14 @@ create table admin (
 
 create table groups (
        id serial not null primary key,
-       groupname varchar(255) not null
+       mail varchar(255) not null,
+	   name varchar(255) not null
 );
 
 create table userToGroup (
-        group_id serial not null references groups(id),
+	group_id serial not null references groups(id) on delete cascade,
 	user_id serial not null references users(id) on delete cascade
 );
-
-
 
 
 
@@ -34,7 +33,10 @@ create table sequences (
 	jbrowse_id serial not null,
 	type varchar(255) not null
 );
-
+ create table species (
+ 	name varchar(255) not null
+ 
+ );
 
 --ANNOTATIONS AND TRACKS
 -- userInput : the file from user input
@@ -80,18 +82,6 @@ create table fileToTrack (
        track_id serial not null references tracks(id) on delete cascade
 );
 
--- VIEWS
--- create table views (
---        id serial not null primary key,
---        seq_id serial not null references sequences(id)
--- );
-
--- create table userToView (
---        	user_id serial not null references users(id) on delete cascade,
--- 	view_id serial not null references views(id) on delete cascade,
--- 	primary key (user_id,view_id)
--- );
-
 --PROJECTS
 create table projects (
        id serial not null primary key,
@@ -109,75 +99,3 @@ create table userToProject (
 	project_id serial not null references projects(id) on delete cascade,
 	primary key (user_id,project_id)
 );
-
--- -- viewTrack : the track as represented in the view of GDV
--- create table viewTracks (
---        id serial not null primary key,
---        name varchar(255) not null,
---        parameters text not null,
---        status int not null
--- );
-
--- -- annotation : one file can have multiple annotations
--- create table annotations (
---        id serial not null primary key,
---        name text not null
--- );
-
--- -- the two following tables creates the link 
--- -- between viewTracks and userInputs
--- create table viewTrackToAnnotation (
---        annotation_id serial not null references annotations(id) on delete cascade,
---        viewtrack_id serial not null references viewtracks(id) on delete cascade
--- );
-
--- create table annotationToUserInput (
---        annotation_id serial not null references annotations(id) on delete cascade,
---        userInput_id serial not null references userInput(id) on delete cascade
--- );
-
-
-
-
--- create table auto_annotations(
---        seq_id serial not null references sequences(id) on delete cascade,
---        annotation_id serial not null references annotations(id) on delete cascade
--- );
-
-
-
-
-
-
--- --VIEW
--- -- the view on jbrowse
--- create table views (
---        id serial not null primary key,
---        seq_id serial not null references sequences(id),
---        javascript text not null,
---        names text not null,
---        status int not null
--- );
-
-
--- create table internViews (
---        id serial not null primary key,
---        isdefault boolean not null
--- );
-
--- create table internViewToView (
---        internView_id serial not null references internViews(id) on delete cascade,
---        view_id serial not null references views(id) on delete cascade
--- );
-
--- --intern view to tracks
--- create table internViewToTracks(
---        internView_id serial not null references internViews(id) on delete cascade,
---        viewTrack_id serial not null references viewTracks(id) on delete cascade,
---        primary key (internView_id,viewTrack_id)
--- );
-
--- create table userToInternView(
---        internView_id serial not null references internViews(id) on delete cascade,
---        user_id serial not null references users(id) on delete cascade
--- );

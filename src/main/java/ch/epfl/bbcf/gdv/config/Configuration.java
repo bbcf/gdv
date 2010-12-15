@@ -37,7 +37,7 @@ import ch.epfl.bbcf.gdv.html.TrackStatus;
  *
  */
 public final class Configuration{
-	public String toto;
+
 	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/gdv.log";
 	public final static String GDV_VERSION = "gdv_dev-1";
 	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
