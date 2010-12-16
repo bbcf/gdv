@@ -19,8 +19,7 @@ import org.biojava.bio.seq.StrandedFeature.Strand;
 import org.biojava.utils.ParserException;
 import org.biojava.utils.SmallMap;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.ChromosomesNamesAssociationDAO;
+import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;

@@ -2,9 +2,9 @@ package ch.epfl.bbcf.gdv.control.model;
 
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.ProjectDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;

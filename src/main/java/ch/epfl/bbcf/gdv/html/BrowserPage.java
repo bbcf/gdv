@@ -12,9 +12,9 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Sequence;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.jbrowsor.JbrowsoRAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
@@ -130,9 +130,9 @@ public class BrowserPage extends SidebarPage{
 			if(t.getParameters().equalsIgnoreCase("params")){
 				String directory = tc.getFileFromTrackId(t.getId());
 				String imageType = null;
-				if(t.getFiletype().equalsIgnoreCase("quantitative")){
+				if(t.getType().equalsIgnoreCase("quantitative")){
 					imageType="ImageTrack";
-				} else if(t.getFiletype().equalsIgnoreCase("qualitative")){
+				} else if(t.getType().equalsIgnoreCase("qualitative")){
 					imageType="FeatureTrack";
 				} else {
 					Application.error("datatype not recognized : "+t.getId());

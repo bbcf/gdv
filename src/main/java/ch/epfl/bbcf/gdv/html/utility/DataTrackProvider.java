@@ -14,8 +14,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Project;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
 import ch.epfl.bbcf.gdv.access.generep.GeneRepAccess;
 import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;

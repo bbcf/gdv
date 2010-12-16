@@ -3,7 +3,7 @@ package ch.epfl.bbcf.gdv.html.utility;
 import java.io.Serializable;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 
 public class ProjectWrapper implements Serializable{
 	
@@ -26,7 +26,7 @@ public class ProjectWrapper implements Serializable{
 		return this.project.getSequenceId();
 	}
 	public String getDescription(){
-		return this.project.getDescription();
+		return this.project.getName();
 	}
 
 	/**

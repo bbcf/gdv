@@ -19,8 +19,8 @@ import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.DAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.dao.DAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.control.http.QueriesFilter;
 import ch.epfl.bbcf.gdv.formats.das.DAS;
 import ch.epfl.bbcf.gdv.html.PostPage;

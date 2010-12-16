@@ -12,9 +12,9 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.value.ValueMap;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.UsersDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 
@@ -41,16 +41,16 @@ public class FormChecker {
 		}
 	}
 
-	public void checkUsername(String username) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
-		boolean userAlreadyExist = dao.usernameExists(username);
-		//TMPUsersDAO tmpdao = new TMPUsersDAO(Connect.getConnection(session));
-		boolean tmpUserExist = true;//tmpdao.exists(username);
-		if(userAlreadyExist || tmpUserExist){
-			this.submitable = false;
-			form.info("username already exist - choose another one");
-		}
-	}
+//	public void checkUsername(String username) {
+//		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+//		boolean userAlreadyExist = dao.usernameExists(username);
+//		//TMPUsersDAO tmpdao = new TMPUsersDAO(Connect.getConnection(session));
+//		boolean tmpUserExist = true;//tmpdao.exists(username);
+//		if(userAlreadyExist || tmpUserExist){
+//			this.submitable = false;
+//			form.info("username already exist - choose another one");
+//		}
+//	}
 
 	public void checkMail(String mail) {
 		Pattern p = Pattern.compile(".+@.+\\.[a-z]{2,4}");
@@ -61,26 +61,26 @@ public class FormChecker {
 		}
 	}
 
-	public void checkUsernameAndMail(String username,String mail){
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
-		boolean userExist = dao.usernameExists(username);
-		if(userExist){
-			Users person = dao.getUserByName(username);
-			if(mail.equalsIgnoreCase(
-					person.getMail())){
-				this.submitable = true;
-			}
-			else{
-				this.submitable = false;
-				form.info("mail don't exist for this user");
-			}
-		}
-		else {
-			this.submitable = false;
-			form.info("user don't exist");
-		}
-
-	}
+//	public void checkUsernameAndMail(String username,String mail){
+//		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+//		boolean userExist = dao.usernameExists(username);
+//		if(userExist){
+//			Users person = dao.getUserByName(username);
+//			if(mail.equalsIgnoreCase(
+//					person.getMail())){
+//				this.submitable = true;
+//			}
+//			else{
+//				this.submitable = false;
+//				form.info("mail don't exist for this user");
+//			}
+//		}
+//		else {
+//			this.submitable = false;
+//			form.info("user don't exist");
+//		}
+//
+//	}
 
 	public boolean isFormSubmitable() {
 		return this.submitable;

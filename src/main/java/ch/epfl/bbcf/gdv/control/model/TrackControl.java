@@ -3,17 +3,12 @@ package ch.epfl.bbcf.gdv.control.model;
 import java.util.Date;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.TrackDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.UserInputDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.UsersDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.ProjectDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Annotation;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
-import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.UserInputDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.html.utility.TrackWrapper;
 
 public class TrackControl extends Control{
 

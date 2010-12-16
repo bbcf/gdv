@@ -3,12 +3,11 @@ package ch.epfl.bbcf.gdv.html.utility;
 import java.util.Comparator;
 import java.util.Date;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 
 public class TrackWrapper {
 
 	private Track track;
-
 	private Date date;
 
 	public TrackWrapper(Track t) {
@@ -80,28 +79,15 @@ public class TrackWrapper {
 	/**
 	 * @param filetype the filetype to set
 	 */
-	public void setFiletype(String filetype) {
-		this.track.setFiletype(filetype);
+	public void setType(String filetype) {
+		this.track.setType(filetype);
 	}
 	/**
 	 * @return the filetype
 	 */
-	public String getFiletype() {
-		return this.track.getFiletype();
+	public String getType() {
+		return this.track.getType();
 	}
-	/**
-	 * @param always the always to set
-	 */
-	public void setAlways(boolean always) {
-		this.track.setAlways(always);
-	}
-	/**
-	 * @return the always
-	 */
-	public boolean isAlways() {
-		return this.track.isAlways();
-	}
-
 
 	/**
 	 * @param date the date to set

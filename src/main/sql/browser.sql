@@ -1,101 +1,149 @@
--- USER AND GROUPS
-create table users (
-       id serial not null primary key,
-       mail varchar(255) unique not null,
-       name varchar(255),
-       firstname varchar(255),
-       title varchar(255),
-       phone varchar(255),
-       office varchar(255),
-       type varchar(255)
+--USER AND GROUP
+
+CREATE TABLE "users"
+(
+"id" SERIAL NOT NULL,
+"mail" VARCHAR(255) NOT NULL,
+"name" VARCHAR(255),
+"firstname" VARCHAR(255),
+"title" VARCHAR(255),
+"phone" VARCHAR(255),
+"office" VARCHAR(255),
+"type" VARCHAR(255) NOT NULL,
+PRIMARY KEY ("id")
 );
 
-create table admin (
-       id serial not null references users(id)
+CREATE TABLE "admin"
+(
+"id" SERIAL NOT NULL
 );
 
-create table groups (
-       id serial not null primary key,
-       mail varchar(255) not null,
-	   name varchar(255) not null
+CREATE TABLE "groups"
+(
+"id" SERIAL NOT NULL,
+"owner" SERIAL NOT NULL,
+"name" VARCHAR(255),
+PRIMARY KEY ("id")
 );
 
-create table userToGroup (
-	group_id serial not null references groups(id) on delete cascade,
-	user_id serial not null references users(id) on delete cascade
-);
-
-
-
---SEQUENCES
-create table sequences (
-	id serial not null primary key,
-	jbrowse_id serial not null,
-	type varchar(255) not null
-);
- create table species (
- 	name varchar(255) not null
- 
- );
-
---ANNOTATIONS AND TRACKS
--- userInput : the file from user input
-create table userInput (
-       id serial not null primary key,
-       file varchar(255) not null unique
-);
-
-create table userToInput (
-       user_id serial not null references users(id) on delete cascade,
-       input_id serial not null references userInput(id) on delete cascade,
-       the_date date not null
-);
-
-create table sequenceToUserInput (
-       seq_id serial not null references sequences(id) on delete cascade,
-       userInput_id serial not null references userInput(id) on delete cascade
+CREATE TABLE "userToGroup"
+(
+"user_id" SERIAL NOT NULL,
+"group_id" SERIAL NOT NULL
 );
 
 
--- tracks
-create table tracks (
-       id serial not null primary key,	
-       track_name varchar(255) not null,
-       paramaters text not null,
-       filetype varchar(255) not null,
-       always boolean not null,
-       status varchar(255) not null
+
+--SEQUENCE
+CREATE TABLE "sequences"
+(
+"id" SERIAL NOT NULL,
+"jbrowse_id" SERIAL NOT NULL,
+"type" VARCHAR(255) NOT NULL,
+"name" VARCHAR(255) NOT NULL,
+"species_id" INTEGER NOT NULL,
+PRIMARY KEY ("id")
 );
 
-create table userToTrack (
-        user_id serial not null references users(id) on delete cascade,
-       	track_id serial not null references tracks(id) on delete cascade
+CREATE TABLE "species"
+(
+"id" SERIAL NOT NULL,
+"name" VARCHAR(255) NOT NULL,
+PRIMARY KEY ("id")
 );
 
-create table adminTrack (
-       track_id serial not null references tracks(id) on delete cascade,
-       seq_id  serial not null references sequences(id) on delete cascade
+
+
+
+
+--INPUTS
+CREATE TABLE "tracks"
+(
+"id" SERIAL NOT NULL,
+"name" VARCHAR(255) NOT NULL,
+"paramaters" TEXT NOT NULL,
+"status" VARCHAR(255) NOT NULL,
+PRIMARY KEY ("id")
 );
 
-create table fileToTrack (
-       file_name varchar(255) not null references userInput(file) on delete cascade,
-       track_id serial not null references tracks(id) on delete cascade
+
+
+CREATE TABLE "input"
+(
+"id" SERIAL NOT NULL,
+"md5" VARCHAR(255) NOT NULL,
+PRIMARY KEY ("id")
 );
+
+CREATE TABLE "inputToTrack"
+(
+"input_id" SERIAL NOT NULL,
+"track_id" SERIAL NOT NULL
+);
+
+CREATE TABLE "userToInput"
+(
+"user_id" SERIAL NOT NULL,
+"input_id" SERIAL NOT NULL,
+"the_date" DATE NOT NULL,
+"name" VARCHAR(255) NOT NULL
+);
+
+
 
 --PROJECTS
-create table projects (
-       id serial not null primary key,
-       seq_id serial not null references sequences(id),	
-       description varchar(255) not null
+CREATE TABLE "projects"
+(
+"id" SERIAL NOT NULL,
+"cur_seqid" SERIAL NOT NULL,
+"name" VARCHAR(255) NOT NULL,
+PRIMARY KEY ("id")
 );
 
-create table projectToTrack (
-       project_id serial not null references projects(id) on delete cascade,
-       track_id serial not null references tracks(id) on delete cascade,
-       primary key (project_id,track_id)
+CREATE TABLE "userToProject"
+(
+"user_id" SERIAL NOT NULL,
+"project_id" SERIAL NOT NULL,
+PRIMARY KEY ("user_id","project_id")
 );
-create table userToProject (
-       	user_id serial not null references users(id) on delete cascade,
-	project_id serial not null references projects(id) on delete cascade,
-	primary key (user_id,project_id)
+
+CREATE TABLE "groupToProject"
+(
+"group_id" SERIAL NOT NULL,
+"project_id" SERIAL NOT NULL,
+PRIMARY KEY ("group_id","project_id")
 );
+
+
+
+--FOREIGN KEY
+
+
+ALTER TABLE "admin" ADD FOREIGN KEY ("id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "inputToTrack" ADD FOREIGN KEY ("input_id") REFERENCES "input" ("id") on delete cascade;
+
+ALTER TABLE "inputToTrack" ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
+
+ALTER TABLE "userToInput" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "userToInput" ADD FOREIGN KEY ("input_id") REFERENCES "input" ("id") on delete cascade;
+
+ALTER TABLE "groups" ADD FOREIGN KEY ("owner") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "userToGroup" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "userToGroup" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") on delete cascade;
+
+ALTER TABLE "sequences" ADD FOREIGN KEY ("species_id") REFERENCES "species" ("id") on delete cascade;
+
+ALTER TABLE "projects" ADD FOREIGN KEY ("cur_seqid") REFERENCES "sequences" ("id") on delete cascade;
+
+ALTER TABLE "userToProject" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "userToProject" ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
+
+ALTER TABLE "groupToProject" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") on delete cascade;
+
+ALTER TABLE "groupToProject" ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
+
