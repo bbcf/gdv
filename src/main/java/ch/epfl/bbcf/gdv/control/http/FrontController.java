@@ -92,12 +92,12 @@ public class FrontController {
 
 
 				//HTC
-			} else if(params.getId().equalsIgnoreCase("htc3cseq")){
+			} else if(params.getId().equalsIgnoreCase("hts3cseq")){
 				//NEW HTC3CSEQ PROJECT
 				/**
 				 * id : must be 'htc3cseq'
 				 * type : must be 'new_project'
-				 * htc3cseq_number : the obfuscated string
+				 * hts3cseq_number : the obfuscated string
 				 * name : the name of the project to create
 				 * seq_id : the sequence of the assembly (see genrep)
 				 */
@@ -116,18 +116,18 @@ public class FrontController {
 					String mail = params.getHtc3cseq_number()+"_htc3cseq";
 					ProjectControl pc = new ProjectControl(session);
 					if(!uc.sameMailExist(mail)){
-						int userId = uc.createNewUser(mail,"","","","","", "htc3cseq");
+						int userId = uc.createNewUser(mail,"","","","","", "hts3cseq");
 						int projectId = pc.createNewProject(seq_id,params.getName(),userId);
 						success(projectId);
 					} else {
 						Users user = uc.getuserByMail(mail);
-						session.signIn(user.getMail(), "htc3cseq");
+						session.signIn(user.getMail(), "hts3cseq");
 						int projectId = pc.createNewProject(seq_id,params.getName(),user.getId());
 						success(projectId);
 					}
 					//ADD TRACK TO PROJECT
 					/**
-					 * id : must be 'htc3cseq'
+					 * id : must be 'hts3cseq'
 					 * type : must be 'add_track'
 					 * url : the url where to fetch the file
 					 * project_id : the project the track belongs to
@@ -138,7 +138,7 @@ public class FrontController {
 					int projectId = Integer.parseInt(params.getProjectId());
 					UserControl uc = new UserControl(session);
 					Users u = uc.getUserByProjectId(projectId);
-					session.signIn(u.getMail(), "htc3cseq");
+					session.signIn(u.getMail(), "hts3cseq");
 					InputControl ic = new InputControl(session);
 					boolean result = ic.processInputs(projectId,params.getUrl(),null,params.getSeq_id(),false,false,null);
 					success();
