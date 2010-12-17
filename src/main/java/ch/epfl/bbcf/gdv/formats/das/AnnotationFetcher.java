@@ -96,7 +96,7 @@ public class AnnotationFetcher extends Thread{
 			md5 = ProcessLauncher.getFileMD5(gffFile);
 
 			InputControl ic = new InputControl(session);
-			ic.createNewAdminInput(md5,assemblyId,gffFile.getName(),gffFile);
+			//ic.createNewAdminInput(md5,assemblyId,gffFile.getName(),gffFile);
 //			JSONProcessor processor = new JSONProcessor(-1,gffFile,md5,null,"gff",session.getUser(),assemblyId,true,true);
 //			Future task = ManagerService.submitPricipalProcess(processor);
 		} catch (ProcessLauncherError e) {

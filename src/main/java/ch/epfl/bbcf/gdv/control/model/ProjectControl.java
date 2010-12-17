@@ -1,10 +1,15 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.SequenceDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
+import ch.epfl.bbcf.gdv.access.database.pojo.Species;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
@@ -96,6 +101,33 @@ public class ProjectControl extends Control{
 	public boolean userAuthorized(Project p) {
 		ProjectDAO dao = new ProjectDAO(Connect.getConnection(session));
 		return dao.userAuthorized(session.getUserId(),p.getId());
+	}
+
+	/**
+	 * get the species belonging
+	 * to this project id
+	 * @param id
+	 * @return
+	 */
+	public Species getSpeciesFromProjectId(int projectId) {
+		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection(session));
+		return spDAO.getSpeciesFromProjectId(projectId);
+	}
+
+	/**
+	 * get the sequences under this species id
+	 * (Select Option)
+	 * @param speciesId
+	 * @return
+	 */
+	public List<SelectOption> getSequencesFromSpeciesIdSO(int speciesId) {
+		SequenceDAO sDAO = new SequenceDAO(Connect.getConnection(session));
+		List<Sequence> seqs = sDAO.getSequencesFromSpeciesId(speciesId);
+		List<SelectOption> sos = new ArrayList<SelectOption>();
+		for(Sequence seq : seqs){
+			sos.add(new SelectOption(Integer.toString(seq.getId()), getName()));
+		}
+		return sos;
 	}
 
 }

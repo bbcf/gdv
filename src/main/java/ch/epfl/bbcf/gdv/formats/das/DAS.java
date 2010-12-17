@@ -37,7 +37,7 @@ import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.html.utility.DASWrapper;
+import ch.epfl.bbcf.gdv.html.wrapper.DASWrapper;
 import ch.epfl.bbcf.gdv.utility.Filter;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 import ch.epfl.bbcf.gdv.utility.thread.ManagerService;

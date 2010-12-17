@@ -6,7 +6,7 @@ import java.util.List;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
-import ch.epfl.bbcf.gdv.access.database.dao.UserInputDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.UserSession;
 
@@ -58,7 +58,7 @@ public class TrackControl extends Control{
 		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
 		tdao.removeConnection(session.getUserId(),track.getId());
 		String filename = tdao.getFileFromTrackId(track.getId());
-		UserInputDAO udao = new UserInputDAO(Connect.getConnection(session));
+		InputDAO udao = new InputDAO(Connect.getConnection(session));
 		udao.removeConnection(session.getUserId(),filename);
 		ProjectDAO vdao = new ProjectDAO(Connect.getConnection(session));
 		vdao.removeConnection(session.getUserId(),track.getId());
@@ -191,23 +191,23 @@ public class TrackControl extends Control{
 
 
 	/**
-	 * link the track to the user input
+	 * link the track to the input
 	 * @param trackId
-	 * @param database
+	 * @param inputId
 	 */
-	public static void linkToFile(int trackId, String database) {
+	public static void linkToInput(int trackId, int inputId) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		tdao.linkToFile(trackId,database);
+		tdao.linkToInput(trackId,inputId);
 	}
 
 	/**
 	 * link the track to an user
 	 * @param trackId
-	 * @param id
+	 * @param userId
 	 */
-	public static void linkToUser(int trackId, int id) {
+	public static void linkToUser(int trackId, int userId) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		tdao.linkToUser(id, trackId);
+		tdao.linkToUser(userId, trackId);
 
 	}
 
@@ -271,7 +271,7 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public Date getDate(int trackid) {
-		UserInputDAO udao = new UserInputDAO(Connect.getConnection(session));
+		InputDAO udao = new InputDAO(Connect.getConnection(session));
 		return udao.getDateFromTrackId(trackid,session.getUserId());
 	}
 
@@ -319,7 +319,13 @@ public class TrackControl extends Control{
 
 
 
-
+	/**
+	 * Update the fields of a track
+	 * @param trackId
+	 * @param name
+	 * @param filetype
+	 * @param status
+	 */
 	public static void updateTrackFields(int trackId,
 			String name, String filetype, String status) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
@@ -333,6 +339,15 @@ public class TrackControl extends Control{
 	public List<Track> getTracksFromProjectId(int projectId) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
 		return tdao.getTracksFromProjectId(projectId);
+	}
+
+
+
+
+
+	public static int createTmpTrack(String status) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		return tdao.createTmpTrack(status);
 	}
 
 

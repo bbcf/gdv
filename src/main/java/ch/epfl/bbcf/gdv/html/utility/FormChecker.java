@@ -147,14 +147,14 @@ public class FormChecker {
 	 * @param url
 	 * @param uploadField
 	 */
-	public void checkImportFile(String species, String version,
+	public void checkImportFile(String species,
 			String url, FileUploadField uploadField) {
 		Application.debug("subbmit");
 		if((null==url || url.equalsIgnoreCase("")) && null==uploadField.getFileUpload()){
 			this.submitable = false;
 			form.error("you must give an input");
 		}
-		if(null==species || null==version){
+		if(null==species){
 			this.submitable = false;
 			form.error("you must select an assembly");
 		}

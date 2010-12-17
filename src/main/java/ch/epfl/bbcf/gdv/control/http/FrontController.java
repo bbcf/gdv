@@ -140,7 +140,7 @@ public class FrontController {
 					Users u = uc.getUserByProjectId(projectId);
 					session.signIn(u.getMail(), "htc3cseq");
 					InputControl ic = new InputControl(session);
-					String result = ic.processInputs(projectId,params.getUrl(),null,params.getSeq_id(),false,false);
+					boolean result = ic.processInputs(projectId,params.getUrl(),null,params.getSeq_id(),false,false,null);
 					success();
 
 					//id not recognized

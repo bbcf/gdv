@@ -34,9 +34,9 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.formats.das.DAS;
 //import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccessManager;
-import ch.epfl.bbcf.gdv.html.utility.DASWrapper;
 import ch.epfl.bbcf.gdv.html.utility.DataDASProvider;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
+import ch.epfl.bbcf.gdv.html.wrapper.DASWrapper;
 
 public class ImportUCSCPage extends BasePage{
 
