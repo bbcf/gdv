@@ -1,5 +1,3 @@
---USER AND GROUP
-
 CREATE TABLE "users"
 (
 "id" SERIAL NOT NULL,
@@ -13,11 +11,6 @@ CREATE TABLE "users"
 PRIMARY KEY ("id")
 );
 
-CREATE TABLE "admin"
-(
-"id" SERIAL NOT NULL
-);
-
 CREATE TABLE "groups"
 (
 "id" SERIAL NOT NULL,
@@ -26,22 +19,15 @@ CREATE TABLE "groups"
 PRIMARY KEY ("id")
 );
 
-CREATE TABLE "userToGroup"
+CREATE TABLE "admin"
 (
-"user_id" SERIAL NOT NULL,
-"group_id" SERIAL NOT NULL
+"id" SERIAL NOT NULL
 );
 
-
-
---SEQUENCE
-CREATE TABLE "sequences"
+CREATE TABLE "input"
 (
 "id" SERIAL NOT NULL,
-"jbrowse_id" SERIAL NOT NULL,
-"type" VARCHAR(255) NOT NULL,
-"name" VARCHAR(255) NOT NULL,
-"species_id" INTEGER NOT NULL,
+"md5" VARCHAR(255) NOT NULL,
 PRIMARY KEY ("id")
 );
 
@@ -52,59 +38,22 @@ CREATE TABLE "species"
 PRIMARY KEY ("id")
 );
 
-
-
-
-
---INPUTS
-CREATE TABLE "tracks"
+CREATE TABLE "sequences"
 (
 "id" SERIAL NOT NULL,
+"jbrowse_id" SERIAL NOT NULL,
+"type" VARCHAR(255) NOT NULL,
 "name" VARCHAR(255) NOT NULL,
-"paramaters" TEXT NOT NULL,
-"status" VARCHAR(255) NOT NULL,
+"species_id" INTEGER NOT NULL,
 PRIMARY KEY ("id")
 );
 
-
-
-CREATE TABLE "input"
-(
-"id" SERIAL NOT NULL,
-"md5" VARCHAR(255) NOT NULL,
-PRIMARY KEY ("id")
-);
-
-CREATE TABLE "inputToTrack"
-(
-"input_id" SERIAL NOT NULL,
-"track_id" SERIAL NOT NULL
-);
-
-CREATE TABLE "userToInput"
-(
-"user_id" SERIAL NOT NULL,
-"input_id" SERIAL NOT NULL,
-"the_date" DATE NOT NULL,
-"name" VARCHAR(255) NOT NULL
-);
-
-
-
---PROJECTS
 CREATE TABLE "projects"
 (
 "id" SERIAL NOT NULL,
-"cur_seqid" SERIAL NOT NULL,
+"cur_seq_id" SERIAL NOT NULL,
 "name" VARCHAR(255) NOT NULL,
 PRIMARY KEY ("id")
-);
-
-CREATE TABLE "userToProject"
-(
-"user_id" SERIAL NOT NULL,
-"project_id" SERIAL NOT NULL,
-PRIMARY KEY ("user_id","project_id")
 );
 
 CREATE TABLE "groupToProject"
@@ -114,36 +63,76 @@ CREATE TABLE "groupToProject"
 PRIMARY KEY ("group_id","project_id")
 );
 
+CREATE TABLE "userToInput"
+(
+"user_id" SERIAL NOT NULL,
+"input_id" SERIAL NOT NULL,
+"the_date" DATE NOT NULL
+);
 
+CREATE TABLE "userToGroup"
+(
+"user_id" SERIAL NOT NULL,
+"group_id" SERIAL NOT NULL
+);
 
---FOREIGN KEY
+CREATE TABLE "userToProject"
+(
+"user_id" SERIAL NOT NULL,
+"project_id" SERIAL NOT NULL,
+PRIMARY KEY ("user_id","project_id")
+);
 
+CREATE TABLE "tracks"
+(
+"id" SERIAL NOT NULL,
+"name" VARCHAR(255) NOT NULL,
+"paramaters" TEXT NOT NULL,
+"status" VARCHAR(255) NOT NULL,
+"type" VARCHAR(255) NOT NULL,
+PRIMARY KEY ("id")
+);
 
-ALTER TABLE "admin" ADD FOREIGN KEY ("id") REFERENCES "users" ("id") on delete cascade;
+CREATE TABLE "projectToTrack"
+(
+"project_id" INTEGER NOT NULL,
+"track_id" INTEGER NOT NULL
+);
 
-ALTER TABLE "inputToTrack" ADD FOREIGN KEY ("input_id") REFERENCES "input" ("id") on delete cascade;
-
-ALTER TABLE "inputToTrack" ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
-
-ALTER TABLE "userToInput" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
-
-ALTER TABLE "userToInput" ADD FOREIGN KEY ("input_id") REFERENCES "input" ("id") on delete cascade;
+CREATE TABLE "inputToTrack"
+(
+"input_id" SERIAL NOT NULL,
+"track_id" SERIAL NOT NULL
+);
 
 ALTER TABLE "groups" ADD FOREIGN KEY ("owner") REFERENCES "users" ("id") on delete cascade;
 
-ALTER TABLE "userToGroup" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
-
-ALTER TABLE "userToGroup" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") on delete cascade;
+ALTER TABLE "admin" ADD FOREIGN KEY ("id") REFERENCES "users" ("id") on delete cascade;
 
 ALTER TABLE "sequences" ADD FOREIGN KEY ("species_id") REFERENCES "species" ("id") on delete cascade;
 
-ALTER TABLE "projects" ADD FOREIGN KEY ("cur_seqid") REFERENCES "sequences" ("id") on delete cascade;
-
-ALTER TABLE "userToProject" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
-
-ALTER TABLE "userToProject" ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
+ALTER TABLE "projects" ADD FOREIGN KEY ("cur_seq_id") REFERENCES "sequences" ("id") on delete cascade;
 
 ALTER TABLE "groupToProject" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") on delete cascade;
 
 ALTER TABLE "groupToProject" ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
 
+ALTER TABLE "userToInput" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "userToInput" ADD FOREIGN KEY ("input_id") REFERENCES "input" ("id") on delete cascade;
+
+ALTER TABLE "userToGroup" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "userToGroup" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") on delete cascade;
+
+ALTER TABLE "userToProject" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE "userToProject" ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
+
+ALTER TABLE "projectToTrack" ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
+
+ALTER TABLE "projectToTrack" ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
+
+ALTER TABLE "inputToTrack" ADD FOREIGN KEY ("input_id") REFERENCES "input" ("id") on delete cascade;
+
+ALTER TABLE "inputToTrack" ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;

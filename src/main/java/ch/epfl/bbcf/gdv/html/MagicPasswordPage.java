@@ -16,7 +16,7 @@ import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 
 /**
  * login page for project form htc3cseq
- * url must be formed like : http://GDV_URL/htc3cseq/'obfuscatedString'
+ * url must be formed like : http://GDV_URL/hts3cseq/'obfuscatedString'
  *
  */
 public class MagicPasswordPage extends WebPage{
