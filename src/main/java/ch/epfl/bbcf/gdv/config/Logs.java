@@ -99,7 +99,7 @@ public class Logs {
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY,true);
+			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/gdv.log",true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

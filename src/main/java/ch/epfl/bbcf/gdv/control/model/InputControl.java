@@ -74,16 +74,6 @@ public class InputControl extends Control{
 		return trackId;
 	}
 
-	//	private int createTrack(int userID, int projectId, 
-	//			String userInput, String assemblyId, String fileName,String fileType,boolean always,String status){
-	//		int trackId = TrackControl.createTrack(userID, assemblyId, fileName,fileType,always, status);
-	//		TrackControl.linkToFile(trackId,userInput);
-	//		TrackControl.linkToProject(trackId,projectId);
-	//		return trackId;
-	//	}
-
-
-
 
 	private Map<String, File> uploadFile(String url, FileUpload fileUpload, int userId) {
 		Map<String, File> tmpDir = new HashMap<String, File>();
@@ -104,42 +94,6 @@ public class InputControl extends Control{
 		Application.debug("end upload",userId);
 		return tmpDir;
 	}
-
-
-	/**
-	 * create an admin input, displayed for all users
-	 */
-//	public void createNewAdminInput(String md5, String assemblyId,String name, File file) {
-//		createNewUserInput(md5,1);
-//		File directory = new File(Configuration.getTracks_dir()+"/"+md5);
-//		if(!directory.exists()){
-//			int trackId = createAdminTrack(session.getUserId(), 
-//					md5, assemblyId, name,"qualitative", true,TrackControl.STATUS_PROCESSING);
-//
-//			Application.debug("processing json");
-//			Users user = new Users();
-//			user.setId(1);
-//			user.setMail("nomail");
-//
-//
-//			String jbrowsorId = Integer.toString(SequenceControl.getJbrowsorIdFromSequenceId(assemblyId));
-//			SQLiteProcessor processor = new SQLiteProcessor(trackId,file,"","gff",user,jbrowsorId,assemblyId,false,true);
-//			Future task = ManagerService.submitPricipalProcess(processor);
-//			//JSONProcessor processor = new JSONProcessor(trackId,file,md5,null,"gff",session.getUser(),assemblyId,false,true);
-//			//Future task = ManagerService.submitPricipalProcess(processor);
-//		}
-//	}
-//	private int createAdminTrack(int userId, String md5,
-//			String assemblyId, String name, String fileType, boolean always,
-//			String status) {
-//		int trackId = TrackControl.createAdminTrack(userId, assemblyId, name,fileType,always, status);
-//		TrackControl.linkToInput(trackId,md5+".db");
-//
-//		return trackId;
-//	}
-
-
-
 
 
 	/**
@@ -227,7 +181,9 @@ public class InputControl extends Control{
 					int inputId = createNewUserInput(database,user.getId());
 
 					Application.debug("user input created ",user.getId());
-					if(!SQLiteAccess.dbAlreadyCreated(database)){
+					if(admin){
+					//TODO
+					} else if(!SQLiteAccess.dbAlreadyCreated(database)){
 						Application.debug("enter sqlite processing ",user.getId());
 						TrackControl.updateTrackFields(trackId,file.getName(),filetype,TrackControl.STATUS_PROCESSING);
 						TrackControl.linkToInput(trackId,inputId);

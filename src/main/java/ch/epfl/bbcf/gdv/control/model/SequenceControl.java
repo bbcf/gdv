@@ -209,6 +209,7 @@ public class SequenceControl extends Control{
 		List<Sequence> seqs = sdao.getSequencesFromSpeciesId(Integer.parseInt(speciesId));
 		List<SelectOption> tab = new ArrayList<SelectOption>();
 		for(Sequence seq : seqs){
+			Application.debug("adding :"+seq.getId()+" "+seq.getName());
 			tab.add(new SelectOption(Integer.toString(seq.getId()),seq.getName()));
 		}
 		return tab;

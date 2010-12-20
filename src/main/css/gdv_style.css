@@ -49,6 +49,7 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 .ph_s{position:absolute;left:32em;margin:0em 7em 0em 0em;}
 .ph_v{position:absolute;left:55em;margin:0em 7em 0em 0em;}
 .ph_t{position:absolute;left:63em;margin:0em 7em 0em 0em;}
+.bdiv{position:absolute;right:7em;margin:0em 7em 0em 0em;}
 .ph_bi{position:absolute;right:7em;margin:0em 7em 0em 0em;}
 .ph_bv{position:absolute;right:1em;margin:0em 7em 0em 0em;}
 .pt {font-size:100%;width:101%;border:none;border-collapse:collapse;padding:0em 0em 0em 5em;}

@@ -21,6 +21,7 @@ import ch.epfl.bbcf.gdv.config.utility.RolesAuthorization;
 import ch.epfl.bbcf.gdv.html.AddSequencePage;
 import ch.epfl.bbcf.gdv.html.AdminPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
+import ch.epfl.bbcf.gdv.html.GroupPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
 import ch.epfl.bbcf.gdv.html.ImportUCSCPage;
@@ -38,8 +39,8 @@ import ch.epfl.bbcf.gdv.html.TrackStatus;
  */
 public final class Configuration{
 
-	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/gdv.log";
-	public final static String GDV_VERSION = "gdv_dev-1";
+	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
+	//public final static String GDV_VERSION = "gdv_dev-1";
 	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 	//URL MAPPING
 	//public static final String APPLI_SERV = "http://ptbbpc1.epfl.ch";
@@ -169,7 +170,7 @@ public final class Configuration{
 		//resourceSettings.addResourceFolder(DATA_JBROWSE);
 		//		resourceSettings.addResourceFolder(TRACKS_DIRECTORY);
 		//		//resourceSettings.addResourceFolder("/data/jbrowse/data/");
-		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/html/");
+				resourceSettings.addResourceFolder(Configuration.getWicketMainFolder()+"/html/");
 		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/js/");
 		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/css/");
 		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/img/");
@@ -193,6 +194,7 @@ public final class Configuration{
 				"/add_sequence",AddSequencePage.class);
 		application.mount(addSequence);
 		application.mount(new IndexedParamUrlCodingStrategy("/import_file", ImportFilePage.class));
+		application.mount(new IndexedParamUrlCodingStrategy("/groups", GroupPage.class));
 		//application.mount(new IndexedParamUrlCodingStrategy("/import_admin", ImportFileAdminPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/tracks_status", TrackStatus.class));
 		//application.mount(new IndexedParamUrlCodingStrategy("/views_status", ViewStatus.class));
@@ -241,7 +243,7 @@ public final class Configuration{
 	private static String gdv_appli_proxy,files_dir,tmp_dir,log_dir,
 	tracks_dir,public_dir,javascript_dir,css_dir,css_jbrowse_dir,
 	das_dir,databases_link_dir,compute_scores_daemon,
-	transform_to_sqlite_daemon,project_url;
+	transform_to_sqlite_daemon,project_url,gdv_version;
 
 	private static String[] javascript_files;
 	private static String[] jbrowse_css_files;
@@ -289,6 +291,8 @@ public final class Configuration{
 					instance.gdv_public_url = entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("wicket_main_folder")){
 					instance.wicket_main_folder = entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("gdv_version")){
+					instance.gdv_version = entry.getValue();
 				} else {
 					Application.warn("key : "+entry.getKey()+" not recognized");
 				}
@@ -297,9 +301,10 @@ public final class Configuration{
 					null!=instance.gdv_proxy_url &&
 					null!=instance.gdv_working_directory &&
 					null!=instance.gdv_public_url &&
-					null!=instance.wicket_main_folder){
+					null!=instance.wicket_main_folder && 
+					null!=instance.gdv_version){
 				Application.info("init parameters");
-				instance.gdv_appli_proxy=instance.gdv_proxy_url+"/gdv";
+				instance.gdv_appli_proxy=instance.gdv_proxy_url+"/"+instance.gdv_version;
 				instance.files_dir=instance.gdv_working_directory+"/files";
 				instance.tmp_dir=instance.gdv_working_directory+"/files/tmp";
 				instance.log_dir=instance.gdv_working_directory+"/log";

@@ -46,6 +46,7 @@ import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.database.DataProjectProvider;
 import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
+import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 import ch.epfl.bbcf.gdv.html.wrapper.ProjectWrapper;
@@ -136,7 +137,8 @@ public class ProjectPage extends BasePage{
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		
+//		DropDownChoice b;
+//		ProjectWrapper pp;
 		final Form existing_form = new Form("exist_form");
 		Label project_header = new Label("project_header","Existing projects");
 		add(project_header);
@@ -148,21 +150,33 @@ public class ProjectPage extends BasePage{
 				final ProjectWrapper pw = item.getModelObject();
 				item.add(new Label("description",pw.getDescription()));
 				item.add(new Label("project_species",pw.getSpeciesName()));
-				item.add( new DropDownChoice<SelectOption>(
-						"project_versions",new Model<SelectOption>(),pw.getSequences(),choiceRenderer){
+				DropDownChoice ddc = new DropDownChoice<SelectOption>(
+						"project_versions",new Model<SelectOption>(),SequenceControl.getSequencesFromSpeciesIdSO(Integer.toString(pw.getSpeciesId())),choiceRenderer){
 					protected boolean wantOnSelectionChangedNotifications() {
-						return true;
+						return false;
 					}
 					protected void onSelectionChanged(final SelectOption newSelection){
 						pw.setSequenceId(newSelection.getKey());
 					}
-				});
+				};
+				boolean setted = false;
+				for(SelectOption so : pw.getSequences()){ 
+					Application.debug(" so "+so.toString()+"   "+pw.getSequenceId());
+					if(so.getKey().equalsIgnoreCase(Integer.toString(pw.getSequenceId()))){
+						ddc.setDefaultModelObject(so);
+						setted=true;
+					}
+				}
+				if(!setted){
+					ddc.setDefaultModelObject(pw.getSequences().get(0));
+				}
+				item.add(ddc);
 				final Label track_number = new Label("tracks_number",Integer.toString(pw.getTracksNumber()));
 				track_number.setOutputMarkupId(true);
 				item.add(track_number);
 				item.add(new AjaxButton("import_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
-						importModal.setParams(pw.getSpeciesId(),pw.getId(),((UserSession)getSession()).getUserId());
+						importModal.setParams(pw.getSpeciesId(),pw.getId(),((UserSession)getSession()).getUserId(),false);
 						importModal.show(target);
 					}
 				});
@@ -346,76 +360,7 @@ public class ProjectPage extends BasePage{
 	
 	
 	
-	public class CustModalWindow extends ModalWindow{
-
-		private String speciesId;
-		private int userId;
-		private int projectId;
-		private Label label;
-
-
-		public CustModalWindow(String id) {
-			super(id);
-		}
-		public CustModalWindow(String id, IModel<?> model) {
-			super(id, model);
-		}
-
-		public void setParams(int speciesId,int userId,int projectId){
-			this.setSpeciesID(Integer.toString(speciesId));
-			this.setUserId(userId);
-			this.setProjectId(projectId);
-		}
-		/**
-		 * @param version the version to set
-		 */
-		public void setSpeciesID(String version) {
-			this.speciesId = version;
-		}
-		/**
-		 * @return the version
-		 */
-		public String getSpeciesId() {
-			return speciesId;
-		}
-		/**
-		 * @param userId the userId to set
-		 */
-		public void setUserId(int userId) {
-			this.userId = userId;
-		}
-		/**
-		 * @return the userId
-		 */
-		public int getUserId() {
-			return userId;
-		}
-		/**
-		 * @param projectId the projectId to set
-		 */
-		public void setProjectId(int projectId) {
-			this.projectId = projectId;
-		}
-		/**
-		 * @return the projectId
-		 */
-		public int getProjectId() {
-			return projectId;
-		}
-		/**
-		 * @param label the label to set
-		 */
-		public void setLabel(Label label) {
-			this.label = label;
-		}
-		/**
-		 * @return the label
-		 */
-		public Label getLabel() {
-			return label;
-		}
-
-	}
+	
 	public void refresh() {
 		setResponsePage(ProjectPage.class, new PageParameters());
 

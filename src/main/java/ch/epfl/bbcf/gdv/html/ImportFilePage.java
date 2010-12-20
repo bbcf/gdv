@@ -34,7 +34,6 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
-import ch.epfl.bbcf.gdv.html.ProjectPage.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 
@@ -46,11 +45,12 @@ public class ImportFilePage extends WebPage{
 	private FileUploadField uploadField;
 	private Form form;
 	private TextArea<String> url;
+	private boolean admin;
+
+	
 
 
-
-
-	public ImportFilePage(final ProjectPage projectPage, final CustModalWindow importModal) {
+	public ImportFilePage(final BasePage projectPage, final ch.epfl.bbcf.gdv.html.utility.CustModalWindow importModal) {
 		form = new Form("form");
 		form.add(new AjaxButton("submit"){
 			@Override
@@ -59,15 +59,16 @@ public class ImportFilePage extends WebPage{
 				boolean sendMail = properties.getBoolean("send_mail");
 				String species = importModal.getSpeciesId();
 				int projectId = importModal.getProjectId();
+				boolean admin = importModal.isAdmin();
 				FormChecker checker = new FormChecker(form_,(UserSession)getSession());
 				checker.checkImportFile(species,url,uploadField);
 				if(checker.isFormSubmitable()){
 					InputControl ic = new InputControl((UserSession)getSession());
 					boolean result = ic.processInputs(
-							projectId,url,uploadField.getFileUpload(),species,sendMail,false,new ArrayList<Group>());
+							projectId,url,uploadField.getFileUpload(),species,sendMail,admin,new ArrayList<Group>());
 					importModal.close(target);
 				} else {
-					
+
 				}
 
 

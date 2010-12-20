@@ -53,11 +53,10 @@ public class Application extends AuthenticatedWebApplication
 	protected void init() {
 		super.init();
 		theLogger = Logs.init();
-		Configuration.addRessourcesLocations(getResourceSettings());
 		if(!Configuration.init()){
 			fatal("configuration not initialized properly - APPLICATION WILL NOT WORK");
 		}
-		
+		Configuration.addRessourcesLocations(getResourceSettings());
 		loggers = new HashMap<Integer,Logger>();
 		
 		

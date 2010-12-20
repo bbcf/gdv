@@ -51,7 +51,9 @@ public class FormChecker {
 //			form.info("username already exist - choose another one");
 //		}
 //	}
-
+	/**
+	 * check if the string given is like a mail
+	 */
 	public void checkMail(String mail) {
 		Pattern p = Pattern.compile(".+@.+\\.[a-z]{2,4}");
 		Matcher m = p.matcher(mail);
