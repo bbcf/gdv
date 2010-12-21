@@ -1,0 +1,8 @@
+post_to_gdv.txt
+resources
+scripts
+target
+.DS_Store
+.settings
+*.~
+._*
