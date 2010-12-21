@@ -1,10 +1,10 @@
-post_to_gdv.txt
-resources
-scripts
-target
+/post_to_gdv.txt
+/resources/
+/scripts/
+/target/
 .DS_Store
-.settings
-.project
-.classpath
+/.settings
+/.project
+/.classpath
 *.~
 ._*

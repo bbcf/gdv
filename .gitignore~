@@ -4,5 +4,7 @@ scripts
 target
 .DS_Store
 .settings
+.project
+.classpath
 *.~
 ._*
