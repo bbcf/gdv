@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import mx4j.log.Logger;
 
 import ch.epfl.bbcf.gdv.config.Application;
 
