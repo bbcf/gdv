@@ -29,6 +29,7 @@ import ch.epfl.bbcf.gdv.html.LoginPage;
 import ch.epfl.bbcf.gdv.html.MagicPasswordPage;
 import ch.epfl.bbcf.gdv.html.PostPage;
 import ch.epfl.bbcf.gdv.html.ProjectPage;
+import ch.epfl.bbcf.gdv.html.SinclairPage;
 import ch.epfl.bbcf.gdv.html.TrackStatus;
 /**
  * Class called in the init() method of the Application class. It contains all about nice URL, 
@@ -189,6 +190,7 @@ public final class Configuration{
 		application.mount(new IndexedParamUrlCodingStrategy("/import_UCSC", ImportUCSCPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/admin", AdminPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/post", PostPage.class));
+		application.mount(new IndexedParamUrlCodingStrategy("/sinclair", SinclairPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/log", MagicPasswordPage.class));
 		HybridUrlCodingStrategy addSequence = new HybridUrlCodingStrategy(
 				"/add_sequence",AddSequencePage.class);
