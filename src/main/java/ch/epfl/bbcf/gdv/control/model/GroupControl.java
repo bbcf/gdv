@@ -44,7 +44,15 @@ public class GroupControl extends Control{
 		UsersDAO udao = new UsersDAO(Connect.getConnection(session));
 		return udao.getUserListFromGroupId(groupId);
 	}
-
+	/**
+	 * retrieve the list of mails belonging to a group
+	 * @param id
+	 * @return
+	 */
+	public List<String> getUserMailFromGroupId(int groupId) {
+		UsersDAO udao = new UsersDAO(Connect.getConnection(session));
+		return udao.getUserMailFromGroupId(groupId);
+	}
 	/**
 	 * get the owner mail for a group
 	 * @param id
@@ -56,6 +64,8 @@ public class GroupControl extends Control{
 		return u.getMail();
 	}
 
+
+	
 	/**
 	 * create a new group 
 	 * @param gn - the group name
@@ -93,5 +103,6 @@ public class GroupControl extends Control{
 		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
 		gdao.removeGroup(id);
 	}
+
 
 }

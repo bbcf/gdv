@@ -45,6 +45,9 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 .ph{width:100%;font-size:120%;padding:0.4em 0.4em 0.4em 0.6em;background-color:#D4D4D4;height:1.5em;}
 .ph img{height:1em;}
 .ph input{width:5em;height:1.5em;}
+.dtv_desc{position:relative;margin:0em 7em 0em 0em;}
+.dtv_but{position:relative;right:7em;margin:0em 7em 0em 0em;}
+
 .ph_d{position:absolute;margin:0em 7em 0em 0em;}
 .ph_s{position:absolute;left:32em;margin:0em 7em 0em 0em;}
 .ph_v{position:absolute;left:55em;margin:0em 7em 0em 0em;}

@@ -73,7 +73,8 @@ CREATE TABLE userToInput
 CREATE TABLE userToGroup
 (
 "user_mail" VARCHAR(255) NOT NULL,
-"group_id" SERIAL NOT NULL
+"group_id" SERIAL NOT NULL,
+PRIMARY KEY ("user_mail","group_id")
 );
 
 CREATE TABLE userToProject

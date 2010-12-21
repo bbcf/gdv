@@ -324,7 +324,33 @@ public class UsersDAO extends DAO<Users>{
 		}
 		return users;
 	}
-
+	/**
+	 * retrieve the list of users mails belonging to a group
+	 * @param groupId
+	 * @return
+	 */
+	public List<String> getUserMailFromGroupId(int groupId) {
+		List<String> users = new ArrayList<String>();
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "Select t1.user_mail from usertogroup as t1 " +
+				"where t1.group_id = ? ";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1, groupId);
+				ResultSet resultSet = this.executeQuery(statement);
+				this.endQuery(true);
+				while(resultSet.next()){
+					users.add(resultSet.getString(1));
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+				this.endQuery(false);
+			}
+		}
+		return users;
+	}
 	/**
 	 * get the owner for a group
 	 * @param groupId
@@ -354,6 +380,8 @@ public class UsersDAO extends DAO<Users>{
 		}
 		return null;
 	}
+
+	
 }
 
 

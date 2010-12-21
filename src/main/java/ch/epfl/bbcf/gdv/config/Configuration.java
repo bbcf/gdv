@@ -149,7 +149,7 @@ public final class Configuration{
 	}
 	private static String[] buidGDVCSSFiles(){
 		String[] css = new String[1];
-		css[0]=instance.css_dir+"/gdv_style.css";
+		css[0]=instance.gdv_public_url+"/css/gdv_style.css";
 		return css;
 	}
 	public static final String URL_LINK_TEMPLATE = "\" onClick=\"javascript:showLinkPanel('{name}'); return false\";";
