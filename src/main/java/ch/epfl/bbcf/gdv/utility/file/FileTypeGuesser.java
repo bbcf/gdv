@@ -70,6 +70,8 @@ public class FileTypeGuesser {
 			extension = "bedgraph";
 		} else if(ext.equalsIgnoreCase("gtf")){
 			extension = "gtf";
+		} else if(ext.equalsIgnoreCase("db")){
+			extension = "db";
 		}
 		
 		else {

@@ -15,6 +15,9 @@ public class RequestParameters {
 	{NEW_PROJECT_COMMAND,ADD_TRACK_COMMAND,ADD_SQLITE_COMMAND};
 
 	public static final String 
+	COMMAND_PARAM = "command",
+	MAIL_PARAM = "mail",
+	KEY_PARAM = "key",
 	PROJECT_ID_PARAM = "project_id",
 	DATATYPE_PARAM="datatype",
 	TYPE_PARAM="type",
@@ -28,23 +31,10 @@ public class RequestParameters {
 	private String url,projectId,
 	datatype,type,obfuscated,sequenceId,name;
 	
-	private String mail,pass;
+	private String mail,key,command;
 
 
-
-	public static boolean hasCommand(String cmd){
-		if(cmd.equalsIgnoreCase("h")|| cmd.equalsIgnoreCase("help")||
-				cmd.equalsIgnoreCase("usage")){
-			return false;
-		}
-		for(String str : commands){
-			if(str.equalsIgnoreCase(cmd)){
-				return true;
-			}
-			
-		}
-		return false;
-	}
+	
 
 	/**
 	 * method to tell the user
@@ -54,10 +44,14 @@ public class RequestParameters {
 	 */
 	private static Map<String,String[]> buildMapCommands() {
 		Map<String,String[]> map = new HashMap<String,String[]>();
-		String newProject[] = {TYPE_PARAM,SEQUENCE_ID_PARAM,NAME_PARAM,OBFUSCATED_PARAM};
-		String addTrack[] = {TYPE_PARAM,URL_PARAM,PROJECT_ID_PARAM,OBFUSCATED_PARAM};
+		String required[] = {MAIL_PARAM,KEY_PARAM,COMMAND_PARAM};
+		String newProject[] = {TYPE_PARAM,SEQUENCE_ID_PARAM,NAME_PARAM};
+		String groupProject[] = {OBFUSCATED_PARAM};
+		String addTrack[] = {URL_PARAM,PROJECT_ID_PARAM};
 		String addSqlite[] = {URL_PARAM,PROJECT_ID_PARAM,DATATYPE_PARAM};
+		map.put("Required for login",required);
 		map.put(NEW_PROJECT_COMMAND,newProject);
+		map.put(NEW_PROJECT_COMMAND+" for a group ",groupProject);
 		map.put(ADD_TRACK_COMMAND,addTrack);
 		map.put(ADD_SQLITE_COMMAND,addSqlite);
 		return map;
@@ -165,14 +159,22 @@ public class RequestParameters {
 
 
 
-	public void setPass(String pass) {
-		this.pass = pass;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 
 
-	public String getPass() {
-		return pass;
+	public String getKey() {
+		return key;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+
+	public String getCommand() {
+		return command;
 	}
 
 

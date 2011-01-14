@@ -93,6 +93,8 @@ public class Launcher extends Thread{
 			FileManagement.deleteDirectory(new File(filePath));
 			file = new File(newPath);
 			ext = Extension.GFF;
+		}else if(extension.equalsIgnoreCase("db")){
+			
 		}else {
 			RemoteAccess.sendTrackErrorMessage("extension not recognized : "+ext,"ext",trackId, filePath);
 			return;

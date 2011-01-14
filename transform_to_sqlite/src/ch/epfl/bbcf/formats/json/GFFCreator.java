@@ -75,7 +75,6 @@ public class GFFCreator extends JSONCreator{
 	@Override
 	public void writeValues(String chr, int start, int end, String name,
 			int strand, JSONArray feature, int featureCount, boolean finish) {
-		logger.debug("write values :"+chr+"("+start+","+end+") "+name+" count =  "+featureCount+"\n");
 		previousEnd = end;
 		curChunkSize+=featureCount;
 		if(featureCount==0){
@@ -87,16 +86,12 @@ public class GFFCreator extends JSONCreator{
 		if(firstChrOut){
 			previousChunkSize = 0;
 			write("["+start,chrOutJSON);
-			//logger.debug("writing "+chr+" ["+start);
 		}
 		if(!firstChunkOut && (curChunkSize%CHUNK_SIZE==0 || (curChunkSize%CHUNK_SIZE)<=featureCount)){
 			theChunk.closeChunk();
 			theChunk = new Chunk(curChunkSize,chr);
-//			write("]",chunk);
-//			close(chunk);
 			//write in the chrOutput
 			firstChunkOut=true;
-			//chunk = newChunk(chr,curChunkSize);
 			write(","+end+",{\"chunk\":\""+previousChunkSize+"\"}]",chrOutJSON);
 			previousChunkSize = curChunkSize;
 			if(!finish){
@@ -113,9 +108,7 @@ public class GFFCreator extends JSONCreator{
 			toWrite = ",";
 		}
 		toWrite+=feature;
-		//logger.debug("adding "+toWrite+" to chunk : "+chunk.toString());
 		theChunk.add(feature);
-		//write(toWrite,chunk);
 	}
 
 	@Override

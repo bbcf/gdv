@@ -37,7 +37,7 @@ import ch.epfl.bbcf.gdv.utility.thread.ManagerService;
 public class InputControl extends Control{
 
 	public enum InputType { NEW_FILE,NEW_SQLITE};
-	
+
 	public InputControl(UserSession session) {
 		super(session);
 	}
@@ -93,9 +93,9 @@ public class InputControl extends Control{
 	private int createTmpTrack(int projectId, String status) {
 		int trackId = TrackControl.createTmpTrack(status);
 		//if(TrackControl.linkToUser(trackId, userId)){
-			if(TrackControl.linkToProject(trackId, projectId)){
-				return trackId;
-			}
+		if(TrackControl.linkToProject(trackId, projectId)){
+			return trackId;
+		}
 		//}
 		return -1;
 	}
@@ -137,7 +137,7 @@ public class InputControl extends Control{
 		if(!admin){
 			uidao.linkToUser(userId, inputId);
 		}
-		
+
 		return inputId;
 	}
 
@@ -195,29 +195,27 @@ public class InputControl extends Control{
 				}
 				TrackControl.updateTrack(trackId, err);
 			}
-			//DECOMPRESSING
-			try {
-				//
-				Application.debug("decompressing",user.getId());
-				List<File> files = Decompressor.decompress(trackId,tmpFile);
-				Application.debug("decompressing : done",user.getId());
-				List<Future> futures = new ArrayList<Future>();
-				for(File file:files){
-					TrackControl.updateTrack(trackId, TrackControl.STATUS_MD5);
-					String md5 = ProcessLauncher.getFileMD5(file);
-					TrackControl.updateTrack(trackId, TrackControl.STATUS_FILETYPE);
-					String filetype = FileTypeGuesser.guessFileType(file);
-					TrackControl.updateTrack(trackId, TrackControl.STATUS_EXTENSION);
-					String extension = FileTypeGuesser.guessExtension(file);
+			switch(inputType){
+			case NEW_FILE:
+				try {
+					Application.debug("decompressing",user.getId());
+					List<File> files = Decompressor.decompress(trackId,tmpFile);
+					Application.debug("decompressing : done",user.getId());
+					List<Future> futures = new ArrayList<Future>();
+					for(File file:files){
+						TrackControl.updateTrack(trackId, TrackControl.STATUS_MD5);
+						String md5 = ProcessLauncher.getFileMD5(file);
+						TrackControl.updateTrack(trackId, TrackControl.STATUS_FILETYPE);
+						String filetype = FileTypeGuesser.guessFileType(file);
+						TrackControl.updateTrack(trackId, TrackControl.STATUS_EXTENSION);
+						String extension = FileTypeGuesser.guessExtension(file);
 
-					//PROCESSING
-					String database = md5+".db";
-					int inputId = createNewUserInput(database,user.getId(),admin);
-					if(inputId!=-1){
-						TrackControl.linkToInput(trackId, inputId);
-					}
-					switch(inputType){
-					case NEW_FILE:
+						//PROCESSING
+						String database = md5+".db";
+						int inputId = createNewUserInput(database,user.getId(),admin);
+						if(inputId!=-1){
+							TrackControl.linkToInput(trackId, inputId);
+						}
 						Application.debug("user input created ",user.getId());
 						if(!SQLiteAccess.dbAlreadyCreated(database)){
 							Application.debug("enter sqlite processing ",user.getId());
@@ -242,36 +240,47 @@ public class InputControl extends Control{
 							TrackControl.linkToProject(trackId,projectId);
 							TrackControl.updateTrackFields(trackId,file.getName(),filetype,TrackControl.STATUS_FINISHED);
 						}
-						break;
-					case NEW_SQLITE:
-						if(datatype.equalsIgnoreCase("qualitatif")){
-							TrackControl.updateTrack(trackId,"completed");
-						} else if(datatype.equalsIgnoreCase("quantitatif")){
-							SQLiteAccess.writeNewJobCalculScores(
-									Integer.toString(trackId),md5,Configuration.getFilesDir(),
-									md5,Configuration.getTracks_dir(),"0","nomail");
-						}
-						
-						
-						break;
-					
 					}
-					
-					
+				} catch (ZipException e) {
+					Application.error(e);
+					TrackControl.updateTrack(trackId, "not valid zip file");
+				} catch (IOException e) {
+					Application.error(e);
+					TrackControl.updateTrack(trackId, "not valid file");
+				} catch (ExtensionNotRecognizedException e) {
+					Application.error(e);
+					TrackControl.updateTrack(trackId, "not valid zip extension");
+				} catch (ProcessLauncherError e) {
+					TrackControl.updateTrack(trackId, "the server encountered an error");
+					return ;
+				}	
+
+
+
+
+
+
+
+
+			case NEW_SQLITE:
+				String database = tmpFile.getName();
+				FileManagement.moveFile(tmpFile, Configuration.getFilesDir());
+				int inputId = createNewUserInput(database,user.getId(),admin);
+				if(inputId!=-1){
+					TrackControl.linkToInput(trackId, inputId);
 				}
-			} catch (ZipException e) {
-				Application.error(e);
-				TrackControl.updateTrack(trackId, "not valid zip file");
-			} catch (IOException e) {
-				Application.error(e);
-				TrackControl.updateTrack(trackId, "not valid file");
-			} catch (ExtensionNotRecognizedException e) {
-				Application.error(e);
-				TrackControl.updateTrack(trackId, "not valid zip extension");
-			} catch (ProcessLauncherError e) {
-				TrackControl.updateTrack(trackId, "the server encountered an error");
-				return ;
-			}		
+				if(datatype.equalsIgnoreCase("qualitative")){
+					TrackControl.updateTrack(trackId,"completed");
+				} else if(datatype.equalsIgnoreCase("quantitative")){
+					SQLiteAccess.writeNewJobCalculScores(
+							Integer.toString(trackId),database,Configuration.getFilesDir(),
+							database,Configuration.getTracks_dir(),"0","nomail");
+				}
+			}
+
+
+
+
 		}
 	}
 

@@ -34,8 +34,7 @@ public abstract class Command {
 	protected void checkParams(String... params) {
 		for(String p : params){
 			if(null==p){
-				log.error("params needed == null");
-				throw new AbortWithHttpStatusException(400,true);
+				failed("missing param(s)");
 			}
 		}
 

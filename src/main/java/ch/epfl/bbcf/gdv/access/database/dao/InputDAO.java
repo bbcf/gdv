@@ -238,7 +238,7 @@ public class InputDAO extends DAO<Input>{
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
-				String query = "select the_date from input as t1 " +
+				String query = "select the_date from userToInput as t1 " +
 				"inner join inputtotrack as t2 on t1.input_id = t2.input_id " +
 				"where t1.user_id  = ? and t2.track_id = ? ;";
 				PreparedStatement statement = this.prepareStatement(query,

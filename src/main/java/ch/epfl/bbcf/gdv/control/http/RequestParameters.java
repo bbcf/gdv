@@ -4,14 +4,14 @@ import java.util.Map;
 
 public class RequestParameters {
 
-	private String id;//type of request
-	private String type;
-	private String datatype;
-	private String trackId;
-	private String message;
+	private String id; //request type : hidden from user (track_success,post_access,...)
+	private String type; //type of request from user (normal or for groups)
+	private String datatype; //qualitative or quantitative
+	private String trackId; 
+	private String message; 
 	private String db;
-	private String usermail;
-	private String command;
+	private String usermail;//mail to send a reply when at the end of processing files
+	private String command;//command launched by user (new project,add track,...)
 	private String name;
 	private String seqId;
 	private String url;
@@ -20,13 +20,16 @@ public class RequestParameters {
 	private String file;
 	private String obfuscated;
 	private String mail;
-	private String pass;
+	private String key;
 	
 	
 	public RequestParameters(Map<String, String[]> map) {
 		if(map!=null){
 			try{
 				this.id = map.get("id")[0];
+			} catch (NullPointerException e){};
+			try{
+				this.key = map.get("key")[0];
 			} catch (NullPointerException e){};
 			try{
 				this.type  = map.get("type")[0];
@@ -65,10 +68,13 @@ public class RequestParameters {
 				this.obfuscated = map.get("obfuscated")[0];
 			} catch (NullPointerException e){};
 			try{
-				this.obfuscated = map.get("datatype")[0];
+				this.datatype = map.get("datatype")[0];
 			} catch (NullPointerException e){};
 			try{
 				this.file = map.get("file")[0];
+			} catch (NullPointerException e){};
+			try{
+				this.mail = map.get("mail")[0];
 			} catch (NullPointerException e){};
 		}
 	}
@@ -298,13 +304,13 @@ public class RequestParameters {
 	}
 
 
-	public void setPass(String pass) {
-		this.pass = pass;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 
-	public String getPass() {
-		return pass;
+	public String getKey() {
+		return key;
 	}
 
 }

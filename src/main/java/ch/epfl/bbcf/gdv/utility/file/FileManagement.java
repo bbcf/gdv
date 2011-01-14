@@ -225,7 +225,10 @@ public class FileManagement {
 
 	}
 
-
+	public static boolean moveFile(File from,String to){
+		File dir = new File(to);
+		return from.renameTo(new File(dir, from.getName()));
+	}
 
 	public static boolean deleteDirectory(File directory) {
 		Application.debug("deleting : "+directory.getAbsolutePath());

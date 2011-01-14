@@ -12,6 +12,7 @@ import ch.epfl.authentication.TequilaAuthentication;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -39,13 +40,23 @@ public class PostAccess extends Command{
 
 	@Override
 	public void doRequest() {
-		checkParams(params.getCommand());
+		Application.debug("do request ");
+		//SIGN IN
+		checkParams(params.getMail(),params.getKey(),params.getCommand());
+		UserControl uc = new UserControl(session);
+		Users user = uc.getuserByMailAndPass(params.getMail(),params.getKey());
+		if(null==user){
+			failed("problem with your key and password - it can be a server error");
+		}
+		session.signIn(params.getMail(), "tequila");
+		Application.debug("signed in");
+		//PROCESSES
 		if(params.getCommand().equalsIgnoreCase(NEW_PROJECT)){
-			createNewProject();
+			createNewProject(user);
 		}else if(params.getCommand().equalsIgnoreCase(ADD_TRACK)){
-			addTrack();
+			addTrack(user);
 		}else if(params.getCommand().equalsIgnoreCase(ADD_SQLITE_FILE)){
-			addSqliteTrack();
+			addSqliteTrack(user);
 		}else if(params.getCommand().equalsIgnoreCase(REQUEST_LOGIN)){
 			requestLogin();
 		} else {
@@ -74,51 +85,51 @@ public class PostAccess extends Command{
 	 * url : the url where to fetch the file
 	 * project_id : the project the track belongs to
 	 * mail : the user
+	 * @param user 
 	 */
-	private void addSqliteTrack() {
-		checkParams(params.getUrl(),params.getProjectId(),params.getUsermail(),params.getDatatype());
+	private void addSqliteTrack(Users user) {
+		checkParams(params.getUrl(),params.getProjectId(),params.getDatatype());
 		int projectId = Integer.parseInt(params.getProjectId());
-		if(session.authenticate(params.getObfuscated(),"tequila")){
-			ProjectControl pc = new ProjectControl(session);
-			Project p = pc.getProject(projectId);
-			InputControl ic = new InputControl(session);
-			ic.processInputs(projectId, params.getUrl(), null,-1, p.getSequenceId(), false, false, 
-					new ArrayList<Group>(),InputType.NEW_SQLITE,params.getDatatype(),null);
-		}
+		ProjectControl pc = new ProjectControl(session);
+		Project p = pc.getProject(projectId);
+		InputControl ic = new InputControl(session);
+		boolean result = ic.processInputs(projectId, params.getUrl(), null,-1, p.getSequenceId(), false, false, 
+				new ArrayList<Group>(),InputType.NEW_SQLITE,params.getDatatype(),null);
+		success(result);
 	}
 
 	/**
 	 * Add a track to an already existing project
-	 * url : the url where to fetch the file
-	 * project_id : the project the track belongs to
-	 * obfuscated : the user
+	 * 
+	 * parameters needed :
+	 *  - url of the file
+	 *  - project_id 
+	 * @param user 
 	 */
-	private void addTrack() {
-		checkParams(params.getType());
-		if(Configuration.getGdv_types_access().contains(params.getType())){
-			checkParams(params.getUrl(),params.getProjectId(),params.getObfuscated());
-			int projectId = Integer.parseInt(params.getProjectId());
-			session.signIn(params.getObfuscated(),params.getType());
-			ProjectControl pc = new ProjectControl(session);
-			Project p = pc.getProject(projectId);
-			InputControl ic = new InputControl(session);
-			boolean result = ic.processInputs(projectId,params.getUrl(),null,-1,p.getSpecies().getId(),false,false,
-					new ArrayList<Group>(),InputType.NEW_FILE,null,null);
-			success(result);
-		} else {
-			throw new AbortWithHttpStatusException(400,true);
-		}
+	private void addTrack(Users user) {
+		checkParams(params.getUrl(),params.getProjectId());
+		int projectId = Integer.parseInt(params.getProjectId());
+		ProjectControl pc = new ProjectControl(session);
+		Project p = pc.getProject(projectId);
+		InputControl ic = new InputControl(session);
+		boolean result = ic.processInputs(projectId,params.getUrl(),null,-1,p.getSpecies().getId(),false,false,
+				new ArrayList<Group>(),InputType.NEW_FILE,null,null);
+		success(result);
 	}
 
 
 	/**
-	 * create a new user in gdv database (if not already exist), 
-	 * then create a project for him 
-	 * needed : - type : from which project (e.g hts3cseq)
-	 * 			- seq_id : the sequence id in Genrep
+	 * create a new project in GDV database
+	 * can be a group project (from hts3cseq,....)
+	 * or a project for the user logged in (said as "normal")
+	 * 
+	 * parameters needed : 
+	 * 	- for normal project creation : type,seq_id,name
+	 *  - for group project : type,seq_id,name,obfuscated
+	 * @param user 
 	 */
-	private void createNewProject() {
-		checkParams(params.getMail(),params.getPass(),params.getType(),params.getSequenceId());
+	private void createNewProject(Users user) {
+		checkParams(params.getType(),params.getSequenceId(),params.getName());
 		int seqId = -1;
 		try{
 			seqId = Integer.parseInt(params.getSequenceId());
@@ -128,34 +139,24 @@ public class PostAccess extends Command{
 		if(seqId==-1){
 			throw new AbortWithHttpStatusException(400,true);
 		}
-
 		if(Configuration.getGdv_types_access().contains(params.getType())){
-			UserControl uc = new UserControl(session);
 			ProjectControl pc = new ProjectControl(session);
+			//normal project creation
 			if(params.getType().equalsIgnoreCase("normal")){
-				Users user = uc.getuserByMailAndPass(params.getMail(),params.getPass());
-				if(null==user){
-					failed("problem with your key and password - it can be a server error");
-				}
 				int projectId = pc.createNewProject(seqId,params.getName(),user.getId());
 				success(projectId);
+				//project creation for group
 			} else {
-				/**
-				 * name : the name of the project
-				 * obfuscated : the mail of the new user to create
-				 */
-				checkParams(params.getName(),params.getObfuscated());
-				
-				String mail = params.getObfuscated();
-				
-				if(!uc.sameMailExist(mail)){
-					int userId = uc.createNewUser(mail,"","","","","",params.getType());
+				checkParams(params.getObfuscated());
+				UserControl uc = new UserControl(session);
+				if(!uc.sameMailExist(params.getObfuscated())){
+					int userId = uc.createNewUser(params.getObfuscated(),"","","","","",params.getType());
 					int projectId = pc.createNewProject(seqId,params.getName(),userId);
 					success(projectId);
 				} else {
-					Users user = uc.getuserByMail(mail);
-					session.signIn(user.getMail(), params.getType());
-					int projectId = pc.createNewProject(seqId,params.getName(),user.getId());
+					Users u = uc.getuserByMail(params.getObfuscated());
+					session.signIn(u.getMail(), params.getType());
+					int projectId = pc.createNewProject(seqId,params.getName(),u.getId());
 					success(projectId);
 				}
 			}

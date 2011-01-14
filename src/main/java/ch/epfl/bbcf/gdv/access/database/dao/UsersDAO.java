@@ -408,7 +408,7 @@ public class UsersDAO extends DAO<Users>{
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setString(1, mail);
-				statement.setString(1, pass);
+				statement.setString(2, pass);
 				ResultSet resultSet = this.executeQuery(statement);
 				if(resultSet.first()){
 					user = this.getUser(resultSet);

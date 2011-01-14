@@ -397,7 +397,6 @@ public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {
 				}
 				list.add(f);
 			}
-			logger.debug("chromosome "+curChr);
 			NCList.sort(list);
 			list = NCList.arrange(list);
 

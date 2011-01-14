@@ -30,7 +30,8 @@ public abstract class Command {
 	 * @return
 	 */
 	protected boolean send(String body2){
-		String body = "mail="+mail+"&pass="+pass+"&command="+command+"&"+body2;
+		System.out.println("sending request");
+		String body = "mail="+mail+"&key="+pass+"&command="+command+"&"+body2;
 		try {
 			System.out.println(InternetConnection.sendPOSTConnection(PostToGDV.GDV_ADRESS, body));
 			return true;
@@ -42,28 +43,40 @@ public abstract class Command {
 
 
 
-
+	/**
+	 * Creation of a new project on GDV
+	 * 
+	 * @author Yohan Jarosz
+	 *
+	 */
 	public static class Project extends Command{
 		protected Project(String command,String mail,String pass){
 			super(command, mail, pass);
 		}
 		@Override
 		protected boolean doRequest(String id, RequestParameters params) {
-			if(checkParams(params.getType(),params.getSequenceId(),params.getName(),params.getObfuscated())){
+			if(PostToGDV.checkParams(params.getType(),params.getSequenceId(),params.getName())){
+				
 				String body = "id="+id+"&"+RequestParameters.TYPE_PARAM+"="+params.getType()
 				+"&"+RequestParameters.SEQUENCE_ID_PARAM+"="+params.getSequenceId()
-				+"&"+RequestParameters.NAME_PARAM+"="+params.getName()
-				+"&"+RequestParameters.OBFUSCATED_PARAM+"="+params.getObfuscated();	
+				+"&"+RequestParameters.NAME_PARAM+"="+params.getName();
+				if(null!=params.getObfuscated()){
+					body+="&"+RequestParameters.OBFUSCATED_PARAM+"="+params.getObfuscated();
+				}
 				return send(body);
 			}
 			return false;
-
 		}
 
 
 	}
 
-
+	/**
+	 * Adding a track on GDV, already in SQLite format
+	 * 
+	 * @author Yohan Jarosz
+	 *
+	 */
 	public static class SQLite extends Command{
 		protected SQLite(String command,String mail,String pass){
 			super(command, mail, pass);
@@ -71,7 +84,7 @@ public abstract class Command {
 
 		@Override
 		protected boolean doRequest(String id, RequestParameters params) {
-			if(checkParams(params.getUrl(),params.getProjectId(),params.getDatatype())){
+			if(PostToGDV.checkParams(params.getUrl(),params.getProjectId(),params.getDatatype())){
 				String body = "id="+id+"&"+RequestParameters.URL_PARAM+"="+params.getUrl()
 				+"&"+RequestParameters.PROJECT_ID_PARAM+"="+params.getProjectId()
 				+"&"+RequestParameters.DATATYPE_PARAM+"="+params.getDatatype();
@@ -87,7 +100,12 @@ public abstract class Command {
 
 
 
-
+	/**
+	 * Adding a new track on GDV
+	 * 
+	 * @author Yohan Jarosz
+	 *
+	 */
 	public static class Track extends Command{
 		protected Track(String command,String mail,String pass){
 			super(command, mail, pass);
@@ -95,11 +113,9 @@ public abstract class Command {
 
 		@Override
 		protected boolean doRequest(String id, RequestParameters params) {
-			if(checkParams(params.getType(),params.getSequenceId(),params.getName(),params.getObfuscated())){
-				String body = "id="+id+"&"+RequestParameters.TYPE_PARAM+"="+params.getType()
-				+"&"+RequestParameters.SEQUENCE_ID_PARAM+"="+params.getSequenceId()
-				+"&"+RequestParameters.NAME_PARAM+"="+params.getName()
-				+"&"+RequestParameters.OBFUSCATED_PARAM+"="+params.getObfuscated();
+			if(PostToGDV.checkParams(params.getUrl(),params.getProjectId())){
+				String body = "id="+id+"&"+RequestParameters.URL_PARAM+"="+params.getUrl()
+				+"&"+RequestParameters.PROJECT_ID_PARAM+"="+params.getProjectId();
 				return send(body);
 			}
 			return false;
@@ -129,19 +145,6 @@ public abstract class Command {
 	}
 
 
-	/**
-	 * check if a parameter required is given or not
-	 * @param params
-	 * @return
-	 */
-	protected static boolean checkParams(String... params) {
-		for(String p : params){
-			if(null==p){
-				System.err.println("missing param(s)");
-				return false;
-			}
-		}
-		return true;
-	}
+
 }
 
