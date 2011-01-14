@@ -277,8 +277,6 @@
 		  <scope>compile</scope>
 		</dependency>
 
-<<<<<<< HEAD
-=======
 <!-- GDV -->
 <dependency>
                   <groupId>${group.id.bbcf}</groupId>
@@ -287,10 +285,6 @@
                   <scope>compile</scope>
                 </dependency>
 
-
-
-
->>>>>>> wah
 	</dependencies>
 	<build>
 		<resources>
