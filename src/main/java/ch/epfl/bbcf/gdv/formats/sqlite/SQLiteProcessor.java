@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.control.model.SpeciesControl;
 
 public class SQLiteProcessor implements Runnable{
 	public final static String FAST = "0";
@@ -19,11 +20,11 @@ public class SQLiteProcessor implements Runnable{
 	private Users user;
 	private String extension;
 	private boolean sendMail;
-	private String jbrowsorId;
+	//private String jbrowsorId;
 	private String tmpDir;
 	private boolean admin;
 	private int trackId;
-	private String nrAssemblyId;
+	private int speciesId;
 
 	/**
 	 * will transform GFF(quantitative) or WIG file into a 
@@ -38,16 +39,16 @@ public class SQLiteProcessor implements Runnable{
 	 * @param sendMail 
 	 * @param admin 
 	 */
-	public SQLiteProcessor(int trackId, File file, String tmpDir, String extension, Users user, String jbrowsorId, String nrAssemblyId, boolean sendMail, boolean admin) {
+	public SQLiteProcessor(int trackId, File file, String tmpDir, String extension, Users user, int speciesId, boolean sendMail, boolean admin) {
 		this.file = file;
 		this.user = user;
 		this.extension = extension;
 		this.sendMail = sendMail;
-		this.jbrowsorId = jbrowsorId;
+		//this.jbrowsorId = jbrowsorId;
 		this.tmpDir = tmpDir;
 		this.admin = admin;
 		this.trackId = trackId;
-		this.nrAssemblyId = nrAssemblyId;
+		this.speciesId = speciesId;
 	}
 
 	public void run() {
@@ -55,7 +56,9 @@ public class SQLiteProcessor implements Runnable{
 		if(!sendMail){
 			mail = "nomail";
 		}
-		SQLiteAccess.writeNewJobTransform(file.getAbsolutePath(), trackId, tmpDir, extension, mail, nrAssemblyId, user.getId());
+		String nrAssembly = SpeciesControl.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
+		SQLiteAccess.writeNewJobTransform(
+				file.getAbsolutePath(), trackId, tmpDir, extension, mail, nrAssembly, user.getId());
 	}
 
 	public static Map<String, String> getJSONDescriptor(String database,

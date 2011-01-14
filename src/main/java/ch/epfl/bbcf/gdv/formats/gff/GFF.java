@@ -48,8 +48,8 @@ public class GFF {
 //		return handler;
 //	}
 
-	public static String getGFFHeader(String assemblyId){
-		List<JSONObject> chromosomes = AssembliesAccess.getChromosomesByAssemblyId(assemblyId);
+	public static String getGFFHeader(int assemblyId){
+		List<JSONObject> chromosomes = AssembliesAccess.getChromosomesByNRAssemblyId(assemblyId);
 		String header = "";
 		for(JSONObject chromosome : chromosomes){
 			try {

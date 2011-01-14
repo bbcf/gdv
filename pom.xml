@@ -277,6 +277,20 @@
 		  <scope>compile</scope>
 		</dependency>
 
+<<<<<<< HEAD
+=======
+<!-- GDV -->
+<dependency>
+                  <groupId>${group.id.bbcf}</groupId>
+                  <artifactId>gtf2gff.jar</artifactId>
+                  <version>1</version>
+                  <scope>compile</scope>
+                </dependency>
+
+
+
+
+>>>>>>> wah
 	</dependencies>
 	<build>
 		<resources>

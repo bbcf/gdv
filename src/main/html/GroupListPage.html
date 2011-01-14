@@ -1,0 +1,29 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+    <div class="sh" wicket:id="project_info"/>
+    <form wicket:id="form">
+      <div wicket:id="group">
+	<input type="checkbox" wicket:id="groupselector">check/uncheck all</input><br/>
+	<table class="gdv_list">
+	  <tr wicket:id="group_data">
+	    <td class="gdv_p1" wicket:id="group_name"></td>
+	    <td class="gdv_p2" wicket:id="group_status"></td>
+	    <td><input class="gdv_b3" type="checkbox" wicket:id="checkbox"/></td>
+	  </tr>
+	</table>
+	<table class="gdv_list">
+	  <tr wicket:id="group_data2">
+	    <td class="gdv_p1" wicket:id="group_name2"></td>
+	    <td class="gdv_p2" wicket:id="group_status2"></td>
+	    <td><input class="gdv_b3" type="checkbox" wicket:id="checkbox2"/></td>
+	  </tr>
+	</table>
+      </div>
+      <br/><br/>
+      <input type="submit" wicket:id="submit" value="submit"/>
+    </form>
+  </body>
+</html>

@@ -36,20 +36,26 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.GroupDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Group;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
 import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.GroupControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
-import ch.epfl.bbcf.gdv.html.utility.DataProjectProvider;
-import ch.epfl.bbcf.gdv.html.utility.DataTrackProvider;
+import ch.epfl.bbcf.gdv.html.database.DataProjectProvider;
+import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
+import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
-import ch.epfl.bbcf.gdv.html.utility.ProjectWrapper;
+import ch.epfl.bbcf.gdv.html.utility.GroupModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
-import ch.epfl.bbcf.gdv.html.utility.TrackWrapper;
+import ch.epfl.bbcf.gdv.html.wrapper.ProjectWrapper;
+import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
 public class ProjectPage extends BasePage{
 
@@ -60,11 +66,17 @@ public class ProjectPage extends BasePage{
 	private DropDownChoice<SelectOption> ddcSpecies;
 	private DataView<ProjectWrapper> projectData;
 	private CustModalWindow importModal;
+	private GroupModalWindow groupModal;
+	
+	private final static IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
 
 	public ProjectPage(PageParameters p) {
 		super(p);
-
-		//CREATE NEW PROJECT
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////CREATE NEW PROJECT///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		final Form create_form = new Form("form");
 		Label header = new Label("create_header","Create new project");
 		add(header);
@@ -73,11 +85,10 @@ public class ProjectPage extends BasePage{
 				"project_name",new PropertyModel<String>(properties,"project_name"));
 		create_form.add(project_name);
 
-
-		SelectOption[] spOptions = SpeciesAccess.getOrganismsSelectOpt();
-		IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
+		List<SelectOption> spOptions = SequenceControl.getSpeciesSO();
+		//IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
 		ddcSpecies = new DropDownChoice<SelectOption>(
-				"species",new Model<SelectOption>(),Arrays.asList(spOptions),choiceRenderer){
+				"species",new Model<SelectOption>(),spOptions,choiceRenderer){
 			protected boolean wantOnSelectionChangedNotifications() {
 				return true;
 			}
@@ -85,26 +96,17 @@ public class ProjectPage extends BasePage{
 				ddcVersion.updateModel();
 			}
 		};
-		//->Assembly
+		
 		ddcVersion = new DropDownChoice<SelectOption>("version",new Model<SelectOption>(),
 				new LoadableDetachableModel<List<SelectOption>>() {
 			@Override
 			protected List<SelectOption> load() {
 				SelectOption so = (SelectOption) ddcSpecies.getDefaultModelObject();
-
 				if(null== so){
 					return new ArrayList<SelectOption>();
 				}
 				else {
-					List<SelectOption> allAssemblies = Arrays.asList(AssembliesAccess.getAssembliesBySpeciesIdSelectOpt(so.getKey()));
-					List<SelectOption> addedAssemblies = new ArrayList<SelectOption>();
-					SequenceControl gC = new SequenceControl((UserSession)getSession());
-					for (SelectOption s : allAssemblies){
-						if(gC.isCreatedOnJBrowsoR(s.getKey(),s.getValue())){
-							addedAssemblies.add(s);
-						}
-					}
-					return addedAssemblies;
+					return SequenceControl.getSequencesFromSpeciesIdSO(so.getKey());
 				}
 			}
 		},
@@ -112,10 +114,9 @@ public class ProjectPage extends BasePage{
 
 		create_form.add(ddcSpecies);
 		create_form.add(ddcVersion);
-
 		create_form.add(new Button("create_but"){
 			public void onSubmit(){
-				Application.debug("create but");
+			//	Application.debug("create but");
 				SelectOption species = (SelectOption) ddcSpecies.getDefaultModelObject();
 				SelectOption version = (SelectOption) ddcVersion.getDefaultModelObject();
 				String project_name = properties.getString("project_name");
@@ -132,49 +133,90 @@ public class ProjectPage extends BasePage{
 				}
 			}
 		});
-
 		create_form.add(new FeedbackPanel("feedback"));
-
-
 		add(create_form);
+		
+		
+		
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////EXISTING PROJECTS////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-		//EXISTING PROJECTS
+//		DropDownChoice b;
+//		ProjectWrapper pp;
 		final Form existing_form = new Form("exist_form");
 		Label project_header = new Label("project_header","Existing projects");
 		add(project_header);
 		DataProjectProvider dpp = new DataProjectProvider((UserSession)getSession());
+		//PROJECTS
 		projectData = new DataView<ProjectWrapper>("project_data",dpp) {
 			@Override
 			protected void populateItem(Item<ProjectWrapper> item) {
-				final ProjectWrapper pw = item.getModelObject();
-				item.add(new Label("description",pw.getDescription()));
-				item.add(new Label("project_species",pw.getSpecies()));
-				item.add(new Label("project_version",pw.getVersion()));
-				final Label track_number = new Label("tracks_number",Integer.toString(pw.getTracksNumber()));
+				final ProjectWrapper projectWrapper = item.getModelObject();
+				item.add(new Label("description",projectWrapper.getDescription()));
+				item.add(new Label("project_species",projectWrapper.getSpeciesName()));
+				DropDownChoice ddc = new DropDownChoice<SelectOption>(
+						"project_versions",new Model<SelectOption>(),
+						SequenceControl.getSequencesFromSpeciesIdSO(projectWrapper.getSpeciesId()),choiceRenderer){
+					protected boolean wantOnSelectionChangedNotifications() {
+						return false;
+					}
+					protected void onSelectionChanged(final SelectOption newSelection){
+						projectWrapper.setSequenceId(newSelection.getKey());
+						ProjectControl pc = new ProjectControl((UserSession)getSession());
+						pc.updateProject(projectWrapper.getId(),projectWrapper.getSequenceId());
+					}
+				};
+				boolean setted = false;
+				for(SelectOption so : projectWrapper.getSequences()){ 
+					//Application.debug(" so "+so.toString()+"   "+projectWrapper.getSequenceId());
+					if(so.getKey()==projectWrapper.getSequenceId()){
+						ddc.setDefaultModelObject(so);
+						setted=true;
+					}
+				}
+				if(!setted){
+					ddc.setDefaultModelObject(projectWrapper.getSequences().get(0));
+				}
+				item.add(ddc);
+				final Label track_number = new Label("tracks_number",Integer.toString(projectWrapper.getTracksNumber()));
 				track_number.setOutputMarkupId(true);
 				item.add(track_number);
 				item.add(new AjaxButton("import_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
-						importModal.setParams(pw.getSpecies(),pw.getVersionId(),pw.getId(),pw.getId());
+						importModal.setParams(
+								-1,projectWrapper.getSpeciesId(),((UserSession)getSession()).getUserId(),projectWrapper.getId(),false);
 						importModal.show(target);
 					}
 				});
 				item.add(new Button("view_but"){
 					public void onSubmit(){
 						PageParameters params 	= new PageParameters();
-						params.put("id", Integer.toString(pw.getId()));	
+						params.put("id", Integer.toString(projectWrapper.getId()));	
 						setResponsePage(BrowserPage.class,params);
 					}
 				});
+				
+				item.add(new AjaxButton("share_but"){
+					public void onSubmit(AjaxRequestTarget target, Form<?> form){
+						GroupControl gc = new GroupControl((UserSession)getSession());
+						if(!gc.checkIfGroupsForUser()){
+							PageParameters params 	= new PageParameters();
+							params.put("project_id", projectWrapper.getId());	
+							setResponsePage(PreferencesPage.class,params);
+						} else {
+							groupModal.setProject(projectWrapper);
+							groupModal.show(target);
+						}
+					}
+				});
 
-				//track display
+				
 				final WebMarkupContainer trackContainer = new WebMarkupContainer("tracks_container");
 				trackContainer.setOutputMarkupPlaceholderTag(true);
 				trackContainer.setVisible(false);
-
-
 				final Image image = new Image("arrow","../public/images/right_arrow.jpeg");
 				image.setOutputMarkupId(true);
 				AjaxLink link = new AjaxLink("arrow_link"){
@@ -194,8 +236,9 @@ public class ProjectPage extends BasePage{
 				};
 				link.add(image);
 				item.add(link);
-				DataTrackProvider dtp = new DataTrackProvider((UserSession)getSession(),pw);
+				DataTrackProvider dtp = new DataTrackProvider((UserSession)getSession(),projectWrapper);
 				int alt=0;
+				//TRACKS
 				DataView<TrackWrapper> trackData = new DataView<TrackWrapper>("track_data",dtp){
 					@Override
 					protected void populateItem(final Item<TrackWrapper> item) {
@@ -221,9 +264,7 @@ public class ProjectPage extends BasePage{
 								} 
 							});
 						}
-
 						item.add(label);
-
 						//->date
 						String date ="";
 						if(null!=track.getDate()){
@@ -231,13 +272,12 @@ public class ProjectPage extends BasePage{
 						}
 						Label theDate = new Label("track_date",date);
 						item.add(theDate);
-
 						//->status
 						final Image imgLoader = new Image("status_loader","/blue-loader.gif");
 						imgLoader.setOutputMarkupPlaceholderTag(true);
 						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
 						statusLabel.setOutputMarkupId(true);
-						if(!track.getStatus().equalsIgnoreCase("completed") || track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
+						if(!track.getStatus().equalsIgnoreCase("completed") || !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
 							statusLabel.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
@@ -251,10 +291,9 @@ public class ProjectPage extends BasePage{
 						item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel(){
 							@Override
 							public String getObject(){
-								return (item.getIndex() % 2 == 1) ? "pt_n" : "pt_alt";
+								return (item.getIndex() % 2 == 1) ? "list_n" : "list_alt";
 							}
 						}));
-
 
 						//-> delete link
 						final Link link = new Link("delete"){
@@ -292,8 +331,6 @@ public class ProjectPage extends BasePage{
 					}
 				};
 				alt++;
-
-
 				trackContainer.add(trackData);
 				item.add(trackContainer);
 			}
@@ -301,9 +338,7 @@ public class ProjectPage extends BasePage{
 		existing_form.add(projectData);
 		add(existing_form);
 
-
-
-		//MODAL PANEL
+		//MODAL PANEL IMPORT FILE
 		importModal = new CustModalWindow("modal_import"); 
 		add(importModal);
 		importModal.setPageCreator(new ModalWindow.PageCreator(){
@@ -317,94 +352,19 @@ public class ProjectPage extends BasePage{
 			}
 		});
 
-
+		//MODAL PANEL SHARE
+		groupModal = new GroupModalWindow("modal_group");
+		add(groupModal);
+		groupModal.setPageCreator(new ModalWindow.PageCreator() {
+			public Page createPage() {
+				return new GroupListPage(ProjectPage.this,groupModal);
+			}
+		});
+		importModal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+			public void onClose(AjaxRequestTarget target) {
+				setResponsePage(ProjectPage.class);
+			}
+		});
 	}
-	public class CustModalWindow extends ModalWindow{
-
-		private String species;
-		private String version;
-		private int userId;
-		private int projectId;
-		private Label label;
-
-
-		public CustModalWindow(String id) {
-			super(id);
-		}
-		public CustModalWindow(String id, IModel<?> model) {
-			super(id, model);
-		}
-
-		public void setParams(String species,String version,int userId,int projectId){
-			this.setSpecies(species);
-			this.setVersion(version);
-			this.setUserId(userId);
-			this.setProjectId(projectId);
-		}
-		/**
-		 * @param species the species to set
-		 */
-		public void setSpecies(String species) {
-			this.species = species;
-		}
-		/**
-		 * @return the species
-		 */
-		public String getSpecies() {
-			return species;
-		}
-		/**
-		 * @param version the version to set
-		 */
-		public void setVersion(String version) {
-			this.version = version;
-		}
-		/**
-		 * @return the version
-		 */
-		public String getVersion() {
-			return version;
-		}
-		/**
-		 * @param userId the userId to set
-		 */
-		public void setUserId(int userId) {
-			this.userId = userId;
-		}
-		/**
-		 * @return the userId
-		 */
-		public int getUserId() {
-			return userId;
-		}
-		/**
-		 * @param projectId the projectId to set
-		 */
-		public void setProjectId(int projectId) {
-			this.projectId = projectId;
-		}
-		/**
-		 * @return the projectId
-		 */
-		public int getProjectId() {
-			return projectId;
-		}
-		/**
-		 * @param label the label to set
-		 */
-		public void setLabel(Label label) {
-			this.label = label;
-		}
-		/**
-		 * @return the label
-		 */
-		public Label getLabel() {
-			return label;
-		}
-
-	}
-	public void refresh() {
-		setResponsePage(ProjectPage.class, new PageParameters());
-
-	}
+	
 }

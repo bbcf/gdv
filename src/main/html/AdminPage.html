@@ -3,18 +3,33 @@
  <title>Admin Section</title>
 </head>
 <body>
-<wicket:extend>
-  <wicket:link>
+  <wicket:extend>
+  
+    <form wicket:id="form">
+      <!-- import a file -->
+      <div class="bh" wicket:id="import_header"></div>
+      <br/>
+      <p>
+	You can import WIG(wiggle & bedgraph),BED,GFF and GTF files.
+      </p>
+      <select type="text" wicket:id="import_species"/>
+      <select type="text" wicket:id="import_version"/>
+      <input wicket:id="import_but" type="submit" value="submit"/>
+      <br/>
+      <!-- add a new sequence -->
+      <div class="bh" wicket:id="genome_header"></div>
+      
+      <p>Create a new genome. Select </p>
+	species name : <select type="text" wicket:id="species"/>
+	version : <select type="text" wicket:id="version"/>
+      <input type = "submit" value = "submit"/>
+        
+      <div wicket:id="modal_import"></div>
+      <div class="gdv_feedback" wicket:id="feedback"/>
     
-    <a href = "AddSequencePage.html">Add sequence</a><br/>
-    <br/>
-    <a href = "ImportUCSCPage.html">Add a new default DAS source</a><br/>
-    <br/>
-     <a href = "ImportFileAdminPage.html">import a track with a file or URL</a><br/>
-  </wicket:link>
-
-
-</wicket:extend>
+    </form>
+  
+  </wicket:extend>
 </body>
 </html>
 

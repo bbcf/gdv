@@ -303,7 +303,8 @@ public class SQLiteAccess {
 
 	public static void writeNewJobTransform(String filePath,int trackId, String tmpDir,
 			String extension,String mail, String nrAssemblyId,int userId) {
-		Application.info("write new sqlite job : file("+filePath+"),trackId("+trackId+"),tmpDir("+tmpDir+"),mail("+mail+")");
+		Application.info("write new sqlite job : file("+filePath+"),trackId("+trackId+"),tmpDir("+tmpDir+"),mail("+mail+")," +
+				"nrAssembly("+nrAssemblyId+"),userId("+userId+")");
 		Connection conn;
 		try {
 			conn = getConnectionOnTransformToSQLiteDaemonDirectory();

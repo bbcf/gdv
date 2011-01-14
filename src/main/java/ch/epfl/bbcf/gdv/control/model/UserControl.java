@@ -4,9 +4,9 @@ package ch.epfl.bbcf.gdv.control.model;
 import java.io.File;
 import java.io.IOException;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.UsersDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -58,5 +58,16 @@ public class UserControl extends Control{
 	public Users getuserByMail(String mail) {
 		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
 		return dao.getUserByEmail(mail);
+	}
+
+	public static boolean checkUserKey(String key, String mail) {
+		UsersDAO dao = new UsersDAO(Connect.getConnection());
+		Users u = dao.getUserByEmail(mail);
+		return u.getKey().equalsIgnoreCase(key);
+	}
+
+	public Users getuserByMailAndPass(String mail, String pass) {
+		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+		return dao.getUserByEmailAndPass(mail,pass);
 	}
 }

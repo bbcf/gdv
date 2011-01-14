@@ -1,15 +1,9 @@
 package ch.epfl.bbcf.gdv.formats.gff;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.biojava.bio.program.gff.GFFDocumentHandler;
 import org.biojava.bio.program.gff.GFFErrorHandler;
@@ -17,17 +11,12 @@ import org.biojava.bio.program.gff.GFFRecord;
 import org.biojava.bio.program.gff.IgnoreRecordException;
 import org.biojava.bio.seq.StrandedFeature.Strand;
 import org.biojava.utils.ParserException;
-import org.biojava.utils.SmallMap;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.ChromosomesNamesAssociationDAO;
 import ch.epfl.bbcf.gdv.config.Application;
-import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 /**
- * Class to handle the GFF files 
- * @author jarosz
+ * 
+ * @author Jarosz Yohan
  *
  */
 public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {

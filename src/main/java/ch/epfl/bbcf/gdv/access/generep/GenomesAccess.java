@@ -23,8 +23,12 @@ public class GenomesAccess extends GeneRepAccess{
 		return GeneRepAccess.URL+"genomes/";
 	}
 
-	
-	public static List<JSONObject> getGenomesBySpeciesId(String id){
+	/**
+	 * get the genome belonging to a species
+	 * @param id
+	 * @return
+	 */
+	public static List<JSONObject> getGenomesBySpeciesId(int id){
 		String result = InternetConnection.sendGETConnection(getUrl());
 		JSONArray json = null;
 		List<JSONObject> genomes = new ArrayList<JSONObject>();
@@ -32,7 +36,7 @@ public class GenomesAccess extends GeneRepAccess{
 			json = new JSONArray(result);
 			for(int i=0;i<json.length();i++){
 				JSONObject genome = (JSONObject) ((JSONObject) json.get(i)).get(GENOME_KEY);
-				if(genome.get(ORGANISM_ID_KEY).toString().equalsIgnoreCase(id)){
+				if(genome.get(ORGANISM_ID_KEY).toString().equalsIgnoreCase(Integer.toString(id))){
 					genomes.add(genome);
 				}
 			}

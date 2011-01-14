@@ -30,12 +30,12 @@ public class AnnotationFetcher extends Thread{
 	private String mapmaster;
 	private List<String> chrList;
 	private String type;
-	private String assemblyId;
+	private int assemblyId;
 	private UserSession session;
 	private static Logger log  = Logs.initDASLogger();
 
 	public AnnotationFetcher(UserSession session,XMLReader xmlreader, String mapmaster,
-			List<String> chrList, String type, String assemblyId) {
+			List<String> chrList, String type, int assemblyId) {
 		this.xmlReader = xmlreader;
 		this.mapmaster = mapmaster;
 		this.chrList = chrList;
@@ -96,7 +96,7 @@ public class AnnotationFetcher extends Thread{
 			md5 = ProcessLauncher.getFileMD5(gffFile);
 
 			InputControl ic = new InputControl(session);
-			ic.createNewAdminInput(md5,assemblyId,gffFile.getName(),gffFile);
+			//ic.createNewAdminInput(md5,assemblyId,gffFile.getName(),gffFile);
 //			JSONProcessor processor = new JSONProcessor(-1,gffFile,md5,null,"gff",session.getUser(),assemblyId,true,true);
 //			Future task = ManagerService.submitPricipalProcess(processor);
 		} catch (ProcessLauncherError e) {

@@ -21,18 +21,19 @@
     <form id="project_form" wicket:id="exist_form">
       <!-- projects -->
       <div wicket:id="project_data">
-	<div class="ph">
+	<div class="gdv_head">
 	  <a wicket:id="arrow_link" ><img wicket:id="arrow" class="gdv_arrow"/></a>
-	  <span class="ph_d" wicket:id="description"></span>
-	  <span class="ph_s" wicket:id="project_species"/>
-	  <span class="ph_v" wicket:id="project_version"/>
-	  <span class="ph_t" wicket:id="tracks_number"/>
-	  <input class="ph_bi" type="submit" wicket:id="import_but" value="Import"/>
-	  <input class="ph_bv" type="submit" wicket:id="view_but" value="View it"/>
+	  <span class="gdv_p1" wicket:id="description"></span>
+	  <span class="gdv_p2" wicket:id="project_species"/>
+	  <select class="gdv_p3" wicket:id="project_versions"/>
+	  <span class="gdv_p4" wicket:id="tracks_number"/>
+	  <input class="gdv_b3" type="submit" wicket:id="import_but" value="Import"/>
+	  <input class="gdv_b2" type="submit" wicket:id="view_but" value="View it"/>
+	  <input class="gdv_b1" type="submit" wicket:id="share_but" value="Share"/>
 	</div>
 	<!-- tracks -->
 	<div wicket:id="tracks_container">
-	  <table class="pt">
+	  <table class="gdv_list">
 	    <tr wicket:id="track_data">
 	      <td wicket:id="track_label"></td>
 	      <td wicket:id="track_date"></td>
@@ -46,6 +47,7 @@
      
     <!-- MODAL WINDOW -->
     <div wicket:id="modal_import"></div>
+    <div wicket:id="modal_group"></div>
     
   </wicket:extend>
 </body>

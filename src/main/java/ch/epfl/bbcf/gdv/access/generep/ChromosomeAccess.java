@@ -25,8 +25,8 @@ public class ChromosomeAccess extends GeneRepAccess{
 	}
 
 
-	public static List<String> getChromosomesListByAssemblyId(String assemblyId){
-		List<JSONObject> chromosomes = AssembliesAccess.getChromosomesByAssemblyId(assemblyId);
+	public static List<String> getChromosomesListByAssemblyId(int assemblyId){
+		List<JSONObject> chromosomes = AssembliesAccess.getChromosomesByNRAssemblyId(assemblyId);
 		List<String> chrList = new ArrayList<String>();
 		for(JSONObject chromosome : chromosomes){
 			JSONObject chr;

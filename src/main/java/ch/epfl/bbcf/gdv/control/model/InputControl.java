@@ -12,15 +12,17 @@ import java.util.zip.ZipException;
 
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.TrackDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.UserInputDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.UserInput;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Group;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Input;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.InputControl.InputType;
 import ch.epfl.bbcf.gdv.formats.json.JSONProcessor;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteProcessor;
@@ -34,23 +36,69 @@ import ch.epfl.bbcf.gdv.utility.thread.ManagerService;
 
 public class InputControl extends Control{
 
+	public enum InputType { NEW_FILE,NEW_SQLITE};
+	
 	public InputControl(UserSession session) {
 		super(session);
 	}
 
-	public String processInputs(int projectId, String url, FileUpload fileUpload,String sequenceId, boolean sendMail, boolean admin) {
-		//UPLOADING
-		int trackId = createTrack(session.getUserId(), projectId, 
-				"nomd5", sequenceId, "in process","notype", true,TrackControl.STATUS_UPLOADING);
-
+	/**
+	 * processing inputss from user - you can set projectId to -1 if you want an admin track
+	 * @param projectId - the project
+	 * @param url - url of the file if one
+	 * @param fileUpload - the fileupload if one
+	 * @param speciesId - the species id
+	 * @param sendMail - if the user want feedback
+	 * @param admin - if it's an admin track
+	 * @param datatype 
+	 * @param List<Group> - the list of group the track to share with
+	 * 
+	 * @return
+	 */
+	public boolean processInputs(int projectId, String url, 
+			FileUpload fileUpload, int sequenceId,int speciesId,boolean sendMail, boolean admin,
+			List<Group> groups,InputType type, String datatype,String name) {
+		int trackId =  -1;
+		if(admin){
+			trackId = createAdminTrack(TrackControl.STATUS_UPLOADING);
+		} else {
+			trackId = createTmpTrack(projectId,TrackControl.STATUS_UPLOADING);
+		}
 		Application.info("processing input - InputControl - for project : "+projectId, session.getUserId());
-
-		Uploader up = new Uploader(projectId,trackId,session.getUser(),url,fileUpload,sequenceId,sendMail,admin);
-		up.start();
-		return "Processing your file. Check the status in Track Info (It can make some time to appears - depending on your file size - )";
+		Uploader up = new Uploader(projectId,trackId,session.getUser(),url,
+				fileUpload,sequenceId,speciesId,sendMail,admin,type,datatype,name);
+		if(trackId!=-1){
+			up.start();
+			return true;
+		}
+		Application.error("not uploading create tmp track failed : "+projectId, session.getUserId());
+		return false;
 	}
 
+	/**
+	 * create tmp admin track
+	 * @param status
+	 * @return
+	 */
+	private int createAdminTrack(String status) {
+		return TrackControl.createTmpTrack(status);
+	}
 
+	/**
+	 * create tmp track
+	 * @param projectId
+	 * @param status
+	 * @return
+	 */
+	private int createTmpTrack(int projectId, String status) {
+		int trackId = TrackControl.createTmpTrack(status);
+		//if(TrackControl.linkToUser(trackId, userId)){
+			if(TrackControl.linkToProject(trackId, projectId)){
+				return trackId;
+			}
+		//}
+		return -1;
+	}
 
 
 	private Map<String, File> uploadFile(String url, FileUpload fileUpload, int userId) {
@@ -75,61 +123,22 @@ public class InputControl extends Control{
 
 
 	/**
-	 * create an admin input, displayed for all users
+	 * create a new input in the GDV database
+	 * @param md5
 	 */
-	public void createNewAdminInput(String md5, String assemblyId,String name, File file) {
-		createNewUserInput(md5,assemblyId,1);
-		File directory = new File(Configuration.getTracks_dir()+"/"+md5);
-		if(!directory.exists()){
-			int trackId = createAdminTrack(session.getUserId(), 
-					md5, assemblyId, name,"qualitative", true,TrackControl.STATUS_PROCESSING);
-
-			Application.debug("processing json");
-			Users user = new Users();
-			user.setId(1);
-			user.setMail("nomail");
-			
-			
-			String jbrowsorId = Integer.toString(SequenceControl.getJbrowsorIdFromSequenceId(assemblyId));
-			SQLiteProcessor processor = new SQLiteProcessor(trackId,file,"","gff",user,jbrowsorId,assemblyId,false,true);
-			Future task = ManagerService.submitPricipalProcess(processor);
-			//JSONProcessor processor = new JSONProcessor(trackId,file,md5,null,"gff",session.getUser(),assemblyId,false,true);
-			//Future task = ManagerService.submitPricipalProcess(processor);
-		}
-	}
-	private int createAdminTrack(int userId, String md5,
-			String assemblyId, String name, String fileType, boolean always,
-			String status) {
-		int trackId = TrackControl.createAdminTrack(userId, assemblyId, name,fileType,always, status);
-		TrackControl.linkToFile(trackId,md5+".db");
-		
-		return trackId;
-	}
-
-	private int createTrack(int userID, int projectId, 
-			String userInput, String assemblyId, String fileName,String fileType,boolean always,String status){
-		int trackId = TrackControl.createTrack(userID, assemblyId, fileName,fileType,always, status);
-		TrackControl.linkToFile(trackId,userInput);
-		TrackControl.linkToProject(trackId,projectId);
-		return trackId;
-	}
-
-
-
-
-
-	private static void createNewUserInput(String database,String sequenceId,int userId) {
-		Application.debug("create new user input : "+database,userId);
-		UserInputDAO uidao = new UserInputDAO(Connect.getConnection());
+	private static int createNewUserInput(String md5,int userId,boolean admin) {
+		InputDAO uidao = new InputDAO(Connect.getConnection());
 		int inputId = -1;
-		if(uidao.exist(database)){
-			inputId = uidao.getUserInputByFileName(database).getId();
+		if(uidao.exist(md5)){
+			inputId = uidao.getUserInputByFileName(md5).getId();
 		} else {
-			inputId = uidao.createNewInput(database);
+			inputId = uidao.createNewInput(md5);
 		}
-		uidao.linkToUser(userId, inputId);
-		uidao.linkToSequence(inputId, sequenceId);
-
+		if(!admin){
+			uidao.linkToUser(userId, inputId);
+		}
+		
+		return inputId;
 	}
 
 	private class Uploader extends Thread{
@@ -137,22 +146,30 @@ public class InputControl extends Control{
 		private int projectId;
 		private String url;
 		private FileUpload fileUpload;
-		private String sequenceId;
 		private boolean sendmail;
 		private boolean admin;
 		private int trackId;
 		private Users user;
+		private int speciesId;
+		private InputType inputType;
+		private String datatype;
+		private int sequenceId;
+		private String name;
 
 		public Uploader(int projectId, int trackId,Users user,String url, FileUpload fileUpload,
-				String assemblyId, boolean sendMail, boolean admin) {
+				int sequenceId,int speciesId,boolean sendMail, boolean admin,InputType type, String datatype,String name) {
 			this.projectId = projectId;
+			this.sequenceId = sequenceId;
 			this.url = url;
 			this.fileUpload = fileUpload;
-			this.sequenceId = assemblyId;
 			this.sendmail = sendMail;
 			this.admin = admin;
 			this.trackId = trackId;
 			this.user = user;
+			this.speciesId = speciesId;
+			this.inputType = type;
+			this.datatype=datatype;
+			this.name=name;
 		}
 
 		public void run(){
@@ -194,100 +211,53 @@ public class InputControl extends Control{
 					String extension = FileTypeGuesser.guessExtension(file);
 
 					//PROCESSING
-
-					//QUALITATIVE
-//					if(filetype.equalsIgnoreCase("qualitative")){
-//						Application.debug("qualitative",user.getId());
-//						createNewUserInput(md5,assemblyId,user.getId());
-//						File directory = new File(Configuration.TRACK_DIRECTORY+"/"+md5);
-//						if(!directory.exists()){
-//							TrackControl.updateTrackFields(trackId,file.getName(),"qualitative",TrackControl.STATUS_PROCESSING);
-//							TrackControl.linkToFile(trackId,md5);
-//							TrackControl.linkToProject(trackId,projectId);
-//							//							int trackId = createTrack(session.getUserId(), projectId, 
-//							//									md5, assemblyId, file.getName(),"qualitative", true,TrackControl.STATUS_PARSING);
-//							JSONProcessor processor = new JSONProcessor(trackId,file,md5,dir,extension,user,assemblyId,sendmail,admin);
-//							Future task = ManagerService.submitPricipalProcess(processor);
-//							futures.add(task);
-//
-//						} else {
-//							Track track = TrackControl.getTrackWithInputName(md5);
-//							if(null!=track){
-//								TrackControl.linkToUser(track.getId(),user.getId());
-//								TrackControl.linkToProject(track.getId(),projectId);
-//								TrackControl.deleteTrack(trackId);
-//							} else {
-//								Application.error("not find a track for this user input "+md5);
-//							}
-//						}
-//
-//
-//						//QUANTITATIVE
-//					} else if(filetype.equalsIgnoreCase("quantitative")){
-						String database = md5+".db";
-						createNewUserInput(database,sequenceId,user.getId());
-
+					String database = md5+".db";
+					int inputId = createNewUserInput(database,user.getId(),admin);
+					if(inputId!=-1){
+						TrackControl.linkToInput(trackId, inputId);
+					}
+					switch(inputType){
+					case NEW_FILE:
 						Application.debug("user input created ",user.getId());
 						if(!SQLiteAccess.dbAlreadyCreated(database)){
 							Application.debug("enter sqlite processing ",user.getId());
-							if(admin){
-								//TODO wig files are not processed by daemons
-							} else {
-								TrackControl.updateTrackFields(trackId,file.getName(),filetype,TrackControl.STATUS_PROCESSING);
-								TrackControl.linkToFile(trackId,database);
-								TrackControl.linkToProject(trackId,projectId);
-								//								int trackId = createTrack(session.getUserId(), projectId,
-								//										database, assemblyId, file.getName(),"quantitative", true,TrackControl.STATUS_PARSING);
-								String jbrowsorId = Integer.toString(SequenceControl.getJbrowsorIdFromSequenceId(sequenceId));
-								SQLiteProcessor processor = new SQLiteProcessor(trackId,file,dir,extension,user,jbrowsorId,sequenceId,sendmail,admin);
-								Future task = ManagerService.submitPricipalProcess(processor);
-								futures.add(task);
+							if(null==name){
+								name = file.getName();
 							}
+							TrackControl.updateTrackFields(trackId,name,filetype,TrackControl.STATUS_PROCESSING);
+							TrackControl.linkToInput(trackId,inputId);
+							if(admin){
+								TrackControl.createAdminTrack(sequenceId,trackId);
+							} else {
+								TrackControl.linkToProject(trackId,projectId);
+							}
+							//String jbrowsorId = Integer.toString(SequenceControl.getJbrowsorIdFromSequenceId(sequenceId));
+							SQLiteProcessor processor = new SQLiteProcessor(trackId,file,dir,extension,user,speciesId,sendmail,admin);
+							Future task = ManagerService.submitPricipalProcess(processor);
+							futures.add(task);
 
 						} else {//File already created link to user
 							Application.debug("file already processed ",user.getId());
-							Track track = TrackControl.getTrackWithInputName(database);
-							if(track!=null){
-								TrackControl.linkToUser(track.getId(), user.getId());
-								TrackControl.linkToProject(track.getId(),projectId);
-								TrackControl.deleteTrack(trackId);
-							} else {
-								Application.error("not find a track for this user input "+database);
-							}
-
-							//						Application.debug("file already processed ",session.getUserId());
-							//						TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
-							//						Track track = tdao.getTrackIdWithInputName(database,assemblyId);
-							//						if(track==null){
-							//							Application.debug("track doesn't exist for this sequence Id => create it ",session.getUserId());
-							//							Track sameTrack = tdao.getTrackByUserInput(database);
-							//							int trackId = TrackControl.createTrack(session.getUserId(), assemblyId,sameTrack.getName(), filetype,false,100);
-							//							TrackControl.linkToFile(trackId, database);
-							//							tdao.linkToUser(session.getUserId(),trackId);
-							//							UserInputDAO udao = new UserInputDAO(Connect.getConnection(session));
-							//							UserInput ui = udao.getUserInputByFileName(database);
-							//							udao.linkToUser(session.getUserId(), ui.getId());
-							//							TrackControl.updateTrack(trackId,100);
-							//						} else {
-							//							tdao.linkToUser(session.getUserId(),track.getId());
-							//							UserInputDAO udao = new UserInputDAO(Connect.getConnection(session));
-							//							UserInput ui = udao.getUserInputByFileName(database);
-							//							udao.linkToUser(session.getUserId(), ui.getId());
-							//							TrackControl.updateTrack(track.getId(),100);
-							//						}
+							TrackControl.linkToUser(trackId, user.getId());
+							TrackControl.linkToProject(trackId,projectId);
+							TrackControl.updateTrackFields(trackId,file.getName(),filetype,TrackControl.STATUS_FINISHED);
 						}
-//					}
-//					else {
-//						Application.error("will never append - InputControl ",user.getId());
-//					}
-
-
-
-
-
-
-
-
+						break;
+					case NEW_SQLITE:
+						if(datatype.equalsIgnoreCase("qualitatif")){
+							TrackControl.updateTrack(trackId,"completed");
+						} else if(datatype.equalsIgnoreCase("quantitatif")){
+							SQLiteAccess.writeNewJobCalculScores(
+									Integer.toString(trackId),md5,Configuration.getFilesDir(),
+									md5,Configuration.getTracks_dir(),"0","nomail");
+						}
+						
+						
+						break;
+					
+					}
+					
+					
 				}
 			} catch (ZipException e) {
 				Application.error(e);

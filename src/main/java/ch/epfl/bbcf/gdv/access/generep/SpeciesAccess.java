@@ -76,7 +76,7 @@ public class SpeciesAccess extends GeneRepAccess{
 		for(int i=0;i<organisms.size();i++){
 			JSONObject org = organisms.get(i);
 			try {
-				options[i] = new SelectOption(org.getString(ID_KEY),org.getString(NAME_KEY));
+				options[i] = new SelectOption(org.getInt(ID_KEY),org.getString(NAME_KEY));
 			} catch (JSONException e) {
 				Application.error(e);
 			}
@@ -84,10 +84,10 @@ public class SpeciesAccess extends GeneRepAccess{
 		return options;
 	}
 
-	public static SelectOption getOrganismsSelectOptionById(String sequenceId) {
+	public static SelectOption getOrganismsSelectOptionById(int sequenceId) {
 		SelectOption[] spOtions = getOrganismsSelectOpt();
 		for(SelectOption so : spOtions){
-			if(so.getKey().equalsIgnoreCase(sequenceId)){
+			if(so.getKey()==sequenceId){
 				return so;
 			}
 		}
@@ -99,7 +99,7 @@ public class SpeciesAccess extends GeneRepAccess{
 	 * @param sequenceId
 	 * @return
 	 */
-	public static JSONObject getOrganismById(String sequenceId) {
+	public static JSONObject getOrganismById(int sequenceId) {
 		String result = InternetConnection.sendGETConnection(getUrl());
 		JSONArray json = null;
 		JSONObject organism = null;
@@ -107,7 +107,7 @@ public class SpeciesAccess extends GeneRepAccess{
 			json = new JSONArray(result);
 			for(int i=0;i<json.length();i++){
 				organism =  (JSONObject) ((JSONObject) json.get(i)).get(ORGANISM_KEY);
-				if(organism.getString(ID_KEY).equalsIgnoreCase(sequenceId)){
+				if(organism.getString(ID_KEY).equalsIgnoreCase(Integer.toString(sequenceId))){
 					return organism;
 				}
 			}

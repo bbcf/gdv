@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.transform.GTF2GFF;
 
 public class FileTypeGuesser {
 
@@ -35,7 +36,7 @@ public class FileTypeGuesser {
 	 */
 	public static String guessFileType(File file) throws ExtensionNotRecognizedException, IOException{
 		String extension = guessExtension(file);
-		if(extension.equalsIgnoreCase("gff") || extension.equalsIgnoreCase("bed")){
+		if(extension.equalsIgnoreCase("gff") || extension.equalsIgnoreCase("bed") || extension.equalsIgnoreCase("gtf")){
 			return "qualitative";
 		}
 		return "quantitative";
@@ -67,7 +68,10 @@ public class FileTypeGuesser {
 		}
 		else if(ext.equalsIgnoreCase("bedgraph")){
 			extension = "bedgraph";
+		} else if(ext.equalsIgnoreCase("gtf")){
+			extension = "gtf";
 		}
+		
 		else {
 			throw new ExtensionNotRecognizedException(ext);
 		}

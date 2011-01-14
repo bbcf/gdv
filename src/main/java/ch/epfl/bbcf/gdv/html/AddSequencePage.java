@@ -37,8 +37,8 @@ public class AddSequencePage extends BasePage{
 	private Form form;
 	private DropDownChoice ddcSpecies;
 	private DropDownChoice  ddcVersion;
-	private String speciesId;
-	private String assemblyId;
+	private int speciesId = -1;
+	private int assemblyId = -1;
 	private FeedbackPanel feedback;
 	SelectOption[] spOptions = SpeciesAccess.getOrganismsSelectOpt();
 
@@ -50,7 +50,7 @@ public class AddSequencePage extends BasePage{
 
 		form = new Form("form"){
 			public void onSubmit(){
-				if(null!=speciesId && null!=assemblyId){
+				if(-1!=speciesId && -1!=assemblyId){
 					SequenceControl sc = new SequenceControl((UserSession)getSession());
 					boolean created = sc.createGenome(assemblyId,speciesId,feedback);
 					if(created){
@@ -86,11 +86,11 @@ public class AddSequencePage extends BasePage{
 				new LoadableDetachableModel<List<SelectOption>>() {
 			@Override
 			protected List<SelectOption> load() {
-				if(null==speciesId){
+				if(-1==speciesId){
 					return new ArrayList<SelectOption>();
 				}
 				else {
-					List<SelectOption> allAssemblies = Arrays.asList(AssembliesAccess.getAssembliesBySpeciesIdSelectOpt(speciesId));
+					List<SelectOption> allAssemblies = Arrays.asList(AssembliesAccess.getNRAssembliesBySpeciesIdSelectOpt(speciesId));
 					List<SelectOption> nonAddedAssemblies = new ArrayList<SelectOption>();
 					SequenceControl sc = new SequenceControl((UserSession)getSession());
 					Application.debug("seq control");
@@ -114,16 +114,16 @@ public class AddSequencePage extends BasePage{
 			}
 		};
 		
-		if(null!=speciesId){
+		if(-1!=speciesId){
 			for (SelectOption so : spOptions){
-				if(speciesId.equalsIgnoreCase(so.getKey())){
+				if(speciesId==so.getKey()){
 					ddcSpecies.setDefaultModelObject(so);
 				}
 			}
 		}
-		if(null!=assemblyId){
+		if(-1!=assemblyId){
 			for (SelectOption so : spOptions){
-				if(assemblyId.equalsIgnoreCase(so.getKey())){
+				if(assemblyId==so.getKey()){
 					ddcVersion.setDefaultModelObject(so);
 				}
 			}

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.authorization.strategies.role.RoleAuthorizationStrategy;
@@ -21,6 +22,7 @@ import ch.epfl.bbcf.gdv.config.utility.RolesAuthorization;
 import ch.epfl.bbcf.gdv.html.AddSequencePage;
 import ch.epfl.bbcf.gdv.html.AdminPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
+import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
 import ch.epfl.bbcf.gdv.html.ImportUCSCPage;
@@ -31,131 +33,55 @@ import ch.epfl.bbcf.gdv.html.ProjectPage;
 import ch.epfl.bbcf.gdv.html.TrackStatus;
 /**
  * Class called in the init() method of the Application class. It contains all about nice URL, 
- * ressources folders, and authorirization
+ * resources folders, and authorizations
  * 
  * @author yohan jarosz
  *
  */
 public final class Configuration{
 
-	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/gdv.log";
-	public final static String GDV_VERSION = "gdv_dev-1";
+	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
 	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
-	//URL MAPPING
-	//public static final String APPLI_SERV = "http://ptbbpc1.epfl.ch";
-	//	public static final String APPLI_URL = APPLI_SERV+"/"+GDV_VERSION;
 
-	//public static final String PROXY_URL = "http://svitsrv25.epfl.ch";
-	//public static final String PROXY_APPLI = PROXY_URL+"/gdv";
-	//public static final String FILES_ACCESS_URL = PROXY_URL+"/files";
-
-
-	//DIRECTORY MAPPING
-
-	//public static final String WORKING_DIRECTORY ="/data/gdv";
-	//public static final String PUBLIC_URL = "/public";
-
-	//	public static final String FILES_DIRECTORY = WORKING_DIRECTORY+"/files";
-	//	public static final String TMP_DIRECTORY = FILES_DIRECTORY+"/tmp";
-	//	//public static final String LOG_DIRECTORY = WORKING_DIRECTORY+"/log";
-	//	public static final String TRACK_DIRECTORY =WORKING_DIRECTORY+"/tracks";
-	//	public static final String TRACKS_DIRECTORY =WORKING_DIRECTORY+"/tracks/";
-	//	//public static final String BIN_DIRECTORY =WORKING_DIRECTORY+"/bin";
-	//	public static final String PUBLIC_DIRECTORY = WORKING_DIRECTORY+"/public";
-	//
-	//	public static final String JS_DIRECTORY =PUBLIC_URL+"/javascript";
-	//	public static final String CSS_DIRECTORY =PUBLIC_URL+"/css";
-	//	public static final String CSS_JBROWSE =PUBLIC_URL+"/css/jbrowsecss";
-	//	public static final String DAS_DIRECTORY = FILES_DIRECTORY+"/DAS";
-	//	//public final static String SRV_JBROWSE = "/srv/jbrowsor/current/jbrowse/";
-	//	//public final static String DATA_JBROWSE = "/data/jbrowse/";
-	//	public final static String DATABASES_LINKS =  WORKING_DIRECTORY+"/databases_link";
-	//	public static final String WICKET_MAIN_FOLDER ="/local_home/java/apache-tomcat-6.0.26" +
-	//	"/webapps/"+GDV_VERSION+"/WEB-INF/classes/";
-	//
-	//	public static final String CONF_DIR = WORKING_DIRECTORY+"/conf";
-	//	//DAEMON MAPPING
-	//	public static final String COMPUTE_SCORES_DIR = WORKING_DIRECTORY+"/compute_sqlite_scores";
-	//	public static final String CALCULATE_SCORES_DAEMON = COMPUTE_SCORES_DIR+"/jobs.db";
-
-	//	public static final String TRANSFORM_TO_SQLITE_DIR = WORKING_DIRECTORY+"/transform_to_sqlite";
-	//	public static final String TRANSFORM_TO_SQLITE_DAEMON = TRANSFORM_TO_SQLITE_DIR+"/jobs.db";
-	//
-	//	public static final String PROJECTS_URL = PROXY_APPLI+"/projects";
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//	public static final String[] BROWSER_JS = {
-	//		"/javascript/js_compressed/Browser.js_min.js" ,
-	//		"/javascript/js_compressed/Util.js_min.js" ,
-	//		"/javascript/js_compressed/NCList.js_min.js" ,
-	//		"/javascript/js_compressed/LazyPatricia.js_min.js" ,
-	//		"/javascript/js_compressed/Track.js_min.js" ,
-	//		"/javascript/js_compressed/SequenceTrack.js_min.js" ,
-	//		"/javascript/js_compressed/FeatureTrack.js_min.js" ,
-	//		"/javascript/js_compressed/StaticTrack.js_min.js" ,
-	//		"/javascript/js_compressed/ImageTrack.js_min.js" ,
-	//		"/javascript/js_compressed/prototype_reduced.js_min.js" ,
-	//		"/javascript/js_compressed/rectmarquee.js_min.js" ,
-	//		"/javascript/js_compressed/GenomeView.js_min.js" ,
-	//		"/javascript/jslib/dojo/dojo.js",
-	//		"/javascript/jslib/dojo/jbrowse_dojo.js"	,	
-	//		"/javascript/js_compressed/gdv_link.js_min.js" ,
-	//		"/javascript/js_compressed/gdv_canvas.js_min.js" ,
-	//		"/javascript/js_compressed/gdv_selection.js_min.js" ,
-	//		"/javascript/js_compressed/SelectionHandler.js_min.js" ,
-	//		"/javascript/js_compressed/NodeList-traverse.js_min.js" 
-	//
-	//	};
 	private static String[] buildJSFile() {
 		String[] js = new String[18];
-		js[0]=instance.javascript_dir+"/gdv_js/gdv_link.js";
-		js[1]=instance.javascript_dir+"/gdv_js/gdv_canvas.js";
-		js[2]=instance.javascript_dir+"/jb_js/Browser.js";
-		js[3]=instance.javascript_dir+"/jb_js/Track.js";
-		js[4]=instance.javascript_dir+"/jb_js/FeatureTrack.js";
-		js[5]=instance.javascript_dir+"/jb_js/SequenceTrack.js";
-		js[6]=instance.javascript_dir+"/jb_js/touchjBrowse.js";
-		js[7]=instance.javascript_dir+"/jb_js/ImageTrack.js";
-		js[8]=instance.javascript_dir+"/jb_js/Layout.js";
-		js[9]=instance.javascript_dir+"/jb_js/LazyArray.js";
-		js[10]=instance.javascript_dir+"/jb_js/LazyPatricia.js";
-		js[11]=instance.javascript_dir+"/jb_js/NCList.js";
-		js[12]=instance.javascript_dir+"/jb_js/UITracks.js";
-		js[13]=instance.javascript_dir+"/jb_js/Util.js";
-		js[14]=instance.javascript_dir+"/jb_js/GenomeView.js";
-		js[15]=instance.javascript_dir+"/jslib/dojo/dojo.js";
-		js[16]=instance.javascript_dir+"/jslib/dojo/jbrowse_dojo.js";
-		js[17]=instance.javascript_dir+"/jb_js/Selection.js";
+		js[0]=instance.javascript_url+"/js/gdv_link.js";
+		js[1]=instance.javascript_url+"/js/gdv_canvas.js";
+		js[2]=instance.javascript_url+"/js/Browser.js";
+		js[3]=instance.javascript_url+"/js/Track.js";
+		js[4]=instance.javascript_url+"/js/FeatureTrack.js";
+		js[5]=instance.javascript_url+"/js/SequenceTrack.js";
+		js[6]=instance.javascript_url+"/js/touchjBrowse.js";
+		js[7]=instance.javascript_url+"/js/ImageTrack.js";
+		js[8]=instance.javascript_url+"/js/Layout.js";
+		js[9]=instance.javascript_url+"/js/LazyArray.js";
+		js[10]=instance.javascript_url+"/js/LazyPatricia.js";
+		js[11]=instance.javascript_url+"/js/NCList.js";
+		js[12]=instance.javascript_url+"/js/UITracks.js";
+		js[13]=instance.javascript_url+"/js/Util.js";
+		js[14]=instance.javascript_url+"/js/GenomeView.js";
+		js[15]=instance.javascript_url+"/jslib/dojo/dojo.js";
+		js[16]=instance.javascript_url+"/jslib/dojo/jbrowse_dojo.js";
+		js[17]=instance.javascript_url+"/js/Selection.js";
 		return js;
 	}
 	private static String[] buildJbrowseCSSFiles() {
 		String[] css = new String[3];
-		css[0]=instance.css_jbrowse_dir+"/jslib/dijit/themes/tundra/tundra.css";
-		css[1]=instance.css_jbrowse_dir+"/jslib/dojo/resources/dojo.css";
-		css[2]=instance.css_jbrowse_dir+"/genome.css";
+		css[0]=instance.css_url+"/dijit/themes/tundra/tundra.css";
+		css[1]=instance.css_url+"/dojo/resources/dojo.css";
+		css[2]=instance.css_url+"/genome.css";
 		return css;
 	}
 	private static String[] buidGDVCSSFiles(){
 		String[] css = new String[1];
-		css[0]=instance.css_dir+"/gdv_style.css";
+		css[0]=instance.gdv_public_url+"/css/gdv_style.css";
 		return css;
 	}
 	public static final String URL_LINK_TEMPLATE = "\" onClick=\"javascript:showLinkPanel('{name}'); return false\";";
 
 	public final static Class[] admin_pages = {AddSequencePage.class,AdminPage.class,ImportUCSCPage.class};
 	public final static Class[] user_pages = {HomePage.class,ImportFilePage.class,ProjectPage.class,
-		BrowserPage.class};
+		BrowserPage.class,PreferencesPage.class};
 
 
 
@@ -165,23 +91,13 @@ public final class Configuration{
 
 	public static void addRessourcesLocations(IResourceSettings resourceSettings){
 		resourceSettings.addResourceFolder("conf/");
-		//resourceSettings.addResourceFolder(SRV_JBROWSE);
-		//resourceSettings.addResourceFolder(DATA_JBROWSE);
-		//		resourceSettings.addResourceFolder(TRACKS_DIRECTORY);
-		//		//resourceSettings.addResourceFolder("/data/jbrowse/data/");
-		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/html/");
-		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/js/");
-		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/css/");
-		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/img/");
-		//		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/../../jb/");
-		//		//		resourceSettings.addResourceFolder(Configuration.WICKET_MAIN_FOLDER+"/../../views/");
+		resourceSettings.addResourceFolder(Configuration.getWicketMainFolder()+"/html/");
 		resourceSettings.setResourceStreamLocator(new ch.epfl.bbcf.gdv.config.utility.RessourceLocator());
 	}
 
 
 	public static void addURLMounting(Application application) {
 		//SIMPLE MOUNT
-		//application.
 		application.mount(new IndexedParamUrlCodingStrategy("/home", HomePage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/projects", ProjectPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/login", LoginPage.class));
@@ -193,9 +109,8 @@ public final class Configuration{
 				"/add_sequence",AddSequencePage.class);
 		application.mount(addSequence);
 		application.mount(new IndexedParamUrlCodingStrategy("/import_file", ImportFilePage.class));
-		//application.mount(new IndexedParamUrlCodingStrategy("/import_admin", ImportFileAdminPage.class));
+		application.mount(new MixedParamUrlCodingStrategy("/preferences", PreferencesPage.class,new String[]{"project_id"}));
 		application.mount(new IndexedParamUrlCodingStrategy("/tracks_status", TrackStatus.class));
-		//application.mount(new IndexedParamUrlCodingStrategy("/views_status", ViewStatus.class));
 		application.mount(new MixedParamUrlCodingStrategy("/browser", BrowserPage.class,new String[] {"id"}));
 		//MOUNT WITH PARAMS
 		//		MixedParamUrlCodingStrategy confirmation = new MixedParamUrlCodingStrategy(
@@ -239,9 +154,12 @@ public final class Configuration{
 
 
 	private static String gdv_appli_proxy,files_dir,tmp_dir,log_dir,
-	tracks_dir,public_dir,javascript_dir,css_dir,css_jbrowse_dir,
+	tracks_dir,public_dir,javascript_url,css_url,css_jbrowse_dir,
 	das_dir,databases_link_dir,compute_scores_daemon,
-	transform_to_sqlite_daemon,project_url;
+	transform_to_sqlite_daemon,project_url,gdv_version;
+	
+	private static String gdv_post_access;
+	private static List<String> gdv_types_access;
 
 	private static String[] javascript_files;
 	private static String[] jbrowse_css_files;
@@ -277,18 +195,24 @@ public final class Configuration{
 		}
 		if(null!=input){
 			Yaml yaml = new Yaml();
-			Map<String, String> data = (Map<String, String>)yaml.load(input);
-			for(Map.Entry<String, String> entry : data.entrySet()){
+			Map<String, Object> data = (Map<String, Object>)yaml.load(input);
+			for(Map.Entry<String, Object> entry : data.entrySet()){
 				if(entry.getKey().equalsIgnoreCase("gdv_tomcat_server")){
-					instance.gdv_tomcat_server= entry.getValue();
+					instance.gdv_tomcat_server= (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_proxy_url")){
-					instance.gdv_proxy_url = entry.getValue();
+					instance.gdv_proxy_url = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_working_directory")){
-					instance.gdv_working_directory = entry.getValue();
+					instance.gdv_working_directory = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_public_url")){
-					instance.gdv_public_url = entry.getValue();
+					instance.gdv_public_url = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("wicket_main_folder")){
-					instance.wicket_main_folder = entry.getValue();
+					instance.wicket_main_folder = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("gdv_version")){
+					instance.gdv_version = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("gdv_post_access")){
+					instance.gdv_post_access = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("gdv_types_access")){
+					instance.gdv_types_access = (List<String>)entry.getValue();
 				} else {
 					Application.warn("key : "+entry.getKey()+" not recognized");
 				}
@@ -297,16 +221,17 @@ public final class Configuration{
 					null!=instance.gdv_proxy_url &&
 					null!=instance.gdv_working_directory &&
 					null!=instance.gdv_public_url &&
-					null!=instance.wicket_main_folder){
+					null!=instance.wicket_main_folder && 
+					null!=instance.gdv_version){
 				Application.info("init parameters");
-				instance.gdv_appli_proxy=instance.gdv_proxy_url+"/gdv";
+				instance.gdv_appli_proxy=instance.gdv_proxy_url+"/"+instance.gdv_version;
 				instance.files_dir=instance.gdv_working_directory+"/files";
 				instance.tmp_dir=instance.gdv_working_directory+"/files/tmp";
 				instance.log_dir=instance.gdv_working_directory+"/log";
 				instance.tracks_dir=instance.gdv_working_directory+"/tracks";
 				instance.public_dir=instance.gdv_working_directory+"/public";
-				instance.javascript_dir=instance.public_dir+"/javascript";
-				instance.css_dir=instance.public_dir+"/css";
+				instance.javascript_url=instance.gdv_public_url+"/javascript";
+				instance.css_url=instance.gdv_public_url+"/css";
 				instance.css_jbrowse_dir=instance.public_dir+"/css/jbrowsecss";
 				instance.das_dir=instance.files_dir+"/DAS";
 				instance.databases_link_dir=instance.gdv_working_directory+"/databases_link";
@@ -420,7 +345,7 @@ public final class Configuration{
 	 * @return the css_dir
 	 */
 	public static String getCss_dir() {
-		return instance.css_dir;
+		return instance.css_url;
 	}
 
 
@@ -436,7 +361,7 @@ public final class Configuration{
 	 * @return the javascript_dir
 	 */
 	public static String getJavascript_dir() {
-		return instance.javascript_dir;
+		return instance.javascript_url;
 	}
 
 
@@ -513,5 +438,14 @@ public final class Configuration{
 	}
 	public static String[] getGDVCSSFiles(){
 		return instance.gdv_css_files;
+	}
+	public static void setGdv_post_access(String gdv_post_access) {
+		Configuration.gdv_post_access = gdv_post_access;
+	}
+	public static String getGdv_post_access() {
+		return instance.gdv_post_access;
+	}
+	public static List<String> getGdv_types_access() {
+		return instance.gdv_types_access;
 	}
 }

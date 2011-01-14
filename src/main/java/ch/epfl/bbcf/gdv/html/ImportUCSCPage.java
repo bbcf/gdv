@@ -34,17 +34,17 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.formats.das.DAS;
 //import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccessManager;
-import ch.epfl.bbcf.gdv.html.utility.DASWrapper;
 import ch.epfl.bbcf.gdv.html.utility.DataDASProvider;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
+import ch.epfl.bbcf.gdv.html.wrapper.DASWrapper;
 
 public class ImportUCSCPage extends BasePage{
 
 	private Form form;
 	private DropDownChoice<SelectOption> ddcSpecies;
 	private DropDownChoice<SelectOption> ddcVersion;
-	private String speciesId;
-	protected String assemblyId;
+	private int speciesId = -1;
+	protected int assemblyId = -1;
 	protected String assemblyName;
 	private WebMarkupContainer dasContainer;
 	private ListView<DASWrapper> sources;
@@ -82,11 +82,11 @@ public class ImportUCSCPage extends BasePage{
 				new LoadableDetachableModel<List<SelectOption>>() {
 			@Override
 			protected List<SelectOption> load() {
-				if(null==speciesId){
+				if(-1==speciesId){
 					return new ArrayList<SelectOption>();
 				}
 				else {
-					List<SelectOption> allAssemblies = Arrays.asList(AssembliesAccess.getAssembliesBySpeciesIdSelectOpt(speciesId));
+					List<SelectOption> allAssemblies = Arrays.asList(AssembliesAccess.getNRAssembliesBySpeciesIdSelectOpt(speciesId));
 					List<SelectOption> addedAssemblies = new ArrayList<SelectOption>();
 					SequenceControl gC = new SequenceControl((UserSession)getSession());
 					for (SelectOption so : allAssemblies){

@@ -1,0 +1,10 @@
+/start.sh
+/stop.sh
+/conf/conf.yaml
+/ressources/
+/bin/
+.classpath
+.project
+/.settings/
+.DS_Store
+*~

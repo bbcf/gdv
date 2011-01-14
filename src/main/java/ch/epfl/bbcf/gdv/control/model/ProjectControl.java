@@ -1,10 +1,15 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.ProjectDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.SequenceDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
+import ch.epfl.bbcf.gdv.access.database.pojo.Species;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
@@ -35,6 +40,11 @@ public class ProjectControl extends Control{
 		return pdao.tracksNumberUnderProject(projectId);
 	}
 
+	public void updateProject(int id, int sequenceId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		pdao.updateProject(id, sequenceId);
+	}
+	
 	/**
 	 * create a new project for an user
 	 * @param species
@@ -44,7 +54,7 @@ public class ProjectControl extends Control{
 	public boolean createNewProject(SelectOption species, SelectOption version,
 			String projectName) {
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
-		int seq_id = Integer.parseInt(version.getKey());
+		int seq_id = version.getKey();
 		int projectId = pdao.createNewProject(seq_id,projectName);
 		if(projectId!=-1){
 			boolean created = pdao.linkToUser(projectId,session.getUserId());
@@ -79,13 +89,16 @@ public class ProjectControl extends Control{
 		return -1;
 	}
 	/**
-	 * get a project from its id
+	 * get a project from its id and add the species to it
 	 * @param projectId
 	 * @return
 	 */
 	public Project getProject(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
-		return pdao.getProject(projectId);
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		Project p = pdao.getProject(projectId);
+		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection(session));
+		p.setSpecies(spDAO.getSpeciesFromProjectId(projectId));
+		return p;
 	}
 
 	/**
@@ -97,5 +110,34 @@ public class ProjectControl extends Control{
 		ProjectDAO dao = new ProjectDAO(Connect.getConnection(session));
 		return dao.userAuthorized(session.getUserId(),p.getId());
 	}
+
+	/**
+	 * get the species belonging
+	 * to this project id
+	 * @param id
+	 * @return
+	 */
+	public Species getSpeciesFromProjectId(int projectId) {
+		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection(session));
+		return spDAO.getSpeciesFromProjectId(projectId);
+	}
+
+	/**
+	 * get the sequences under this species id
+	 * (Select Option)
+	 * @param speciesId
+	 * @return
+	 */
+	public List<SelectOption> getSequencesFromSpeciesIdSO(int speciesId) {
+		SequenceDAO sDAO = new SequenceDAO(Connect.getConnection(session));
+		List<Sequence> seqs = sDAO.getSequencesFromSpeciesId(speciesId);
+		List<SelectOption> sos = new ArrayList<SelectOption>();
+		for(Sequence seq : seqs){
+			sos.add(new SelectOption(seq.getId(), getName()));
+		}
+		return sos;
+	}
+
+	
 
 }

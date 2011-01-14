@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 public class SelectOption implements Serializable{
 
-	private String key;
+	private int key;
 	private String value;
 
-	public SelectOption(String key, String value) {
+	public SelectOption(int key, String value) {
 		this.setKey(key);
 		this.setValue(value);
 	}
@@ -15,14 +15,14 @@ public class SelectOption implements Serializable{
 	/**
 	 * @param key the key to set
 	 */
-	public void setKey(String key) {
+	public void setKey(int key) {
 		this.key = key;
 	}
 
 	/**
 	 * @return the key
 	 */
-	public String getKey() {
+	public int getKey() {
 		return key;
 	}
 
@@ -38,5 +38,9 @@ public class SelectOption implements Serializable{
 	 */
 	public String getValue() {
 		return value;
+	}
+	
+	public String toString(){
+		return key+" "+value;
 	}
 }

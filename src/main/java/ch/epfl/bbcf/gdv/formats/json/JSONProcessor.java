@@ -9,8 +9,8 @@ import java.util.Map.Entry;
 import org.json.JSONException;
 
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.access.generep.GeneRepAccess;
 import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -29,7 +29,7 @@ public class JSONProcessor  implements Runnable{
 	private Users user;
 	private String extension;
 	private boolean sendMail;
-	private String assemblyId;
+	private int assemblyId;
 	private String tmpDir;
 	private boolean admin;
 	private String md5;
@@ -48,7 +48,7 @@ public class JSONProcessor  implements Runnable{
 	 * @param admin if the track is a admin track
 	 */
 	public JSONProcessor(int projectId, File file, String md5 ,String tmpDirectory, String extension, Users user,
-			String assemblyId, boolean sendMail,boolean admin) {
+			int assemblyId, boolean sendMail,boolean admin) {
 		this.file = file;
 		this.user = user;
 		this.extension = extension;

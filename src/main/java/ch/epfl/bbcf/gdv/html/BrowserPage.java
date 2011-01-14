@@ -12,9 +12,9 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Sequence;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Track;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.jbrowsor.JbrowsoRAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
@@ -38,9 +38,9 @@ public class BrowserPage extends SidebarPage{
 		}
 		//adding speciesName on the view
 		SequenceControl sc = new SequenceControl((UserSession)getSession());
-		String [] tmp = sc.getSpeciesNameAndAssemblyNameFromAssemblyId(project.getSequenceId());
-		String species = tmp[0];
-		add(new Label("species",tmp[0]));
+		//String [] tmp = sc.getSpeciesNameAndAssemblyNameFromAssemblyId(project.getSpeciesId());
+		//String species = tmp[0];
+		add(new Label("species",project.getSpecies().getName()));
 
 		//adding static javascript and css
 		for(String cp : Configuration.getGDVCSSFiles()){
@@ -57,9 +57,9 @@ public class BrowserPage extends SidebarPage{
 		//get trackInfo.js 
 		TrackControl tc = new TrackControl((UserSession)getSession());
 		List<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
-		List<Track> adminTrack = tc.getAdminTracksFromSequenceId(project.getSequenceId());
+		List<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
 		tracks.addAll(adminTrack);
-		final String trackInfo = getTrackInfo(tracks,tc,species);
+		final String trackInfo = getTrackInfo(tracks,tc,project.getSpecies().getName());
 		//Application.debug("get track Info :"+trackInfo);
 		//get names
 		String names = getTrackNames(tracks);
@@ -77,7 +77,7 @@ public class BrowserPage extends SidebarPage{
 		"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+   "\",\n" +
 		//"dataRoot: \"/jbdata/\",\n"+
 //		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
-		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+seq.getJbrowsoRId()+"/"+"\",\n" +
+		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"/"+"\",\n" +
 		"trackData: trackInfo,\n" +
 		"defaultTracks : "+names+"" +
 		"});" +
@@ -130,9 +130,9 @@ public class BrowserPage extends SidebarPage{
 			if(t.getParameters().equalsIgnoreCase("params")){
 				String directory = tc.getFileFromTrackId(t.getId());
 				String imageType = null;
-				if(t.getFiletype().equalsIgnoreCase("quantitative")){
+				if(t.getType().equalsIgnoreCase("quantitative")){
 					imageType="ImageTrack";
-				} else if(t.getFiletype().equalsIgnoreCase("qualitative")){
+				} else if(t.getType().equalsIgnoreCase("qualitative")){
 					imageType="FeatureTrack";
 				} else {
 					Application.error("datatype not recognized : "+t.getId());

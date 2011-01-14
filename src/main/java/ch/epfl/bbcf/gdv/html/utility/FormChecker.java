@@ -12,9 +12,9 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.value.ValueMap;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.dao.UsersDAO;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 
@@ -41,17 +41,19 @@ public class FormChecker {
 		}
 	}
 
-	public void checkUsername(String username) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
-		boolean userAlreadyExist = dao.usernameExists(username);
-		//TMPUsersDAO tmpdao = new TMPUsersDAO(Connect.getConnection(session));
-		boolean tmpUserExist = true;//tmpdao.exists(username);
-		if(userAlreadyExist || tmpUserExist){
-			this.submitable = false;
-			form.info("username already exist - choose another one");
-		}
-	}
-
+//	public void checkUsername(String username) {
+//		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+//		boolean userAlreadyExist = dao.usernameExists(username);
+//		//TMPUsersDAO tmpdao = new TMPUsersDAO(Connect.getConnection(session));
+//		boolean tmpUserExist = true;//tmpdao.exists(username);
+//		if(userAlreadyExist || tmpUserExist){
+//			this.submitable = false;
+//			form.info("username already exist - choose another one");
+//		}
+//	}
+	/**
+	 * check if the string given is like a mail
+	 */
 	public void checkMail(String mail) {
 		Pattern p = Pattern.compile(".+@.+\\.[a-z]{2,4}");
 		Matcher m = p.matcher(mail);
@@ -61,26 +63,26 @@ public class FormChecker {
 		}
 	}
 
-	public void checkUsernameAndMail(String username,String mail){
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
-		boolean userExist = dao.usernameExists(username);
-		if(userExist){
-			Users person = dao.getUserByName(username);
-			if(mail.equalsIgnoreCase(
-					person.getMail())){
-				this.submitable = true;
-			}
-			else{
-				this.submitable = false;
-				form.info("mail don't exist for this user");
-			}
-		}
-		else {
-			this.submitable = false;
-			form.info("user don't exist");
-		}
-
-	}
+//	public void checkUsernameAndMail(String username,String mail){
+//		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+//		boolean userExist = dao.usernameExists(username);
+//		if(userExist){
+//			Users person = dao.getUserByName(username);
+//			if(mail.equalsIgnoreCase(
+//					person.getMail())){
+//				this.submitable = true;
+//			}
+//			else{
+//				this.submitable = false;
+//				form.info("mail don't exist for this user");
+//			}
+//		}
+//		else {
+//			this.submitable = false;
+//			form.info("user don't exist");
+//		}
+//
+//	}
 
 	public boolean isFormSubmitable() {
 		return this.submitable;
@@ -147,14 +149,14 @@ public class FormChecker {
 	 * @param url
 	 * @param uploadField
 	 */
-	public void checkImportFile(String species, String version,
+	public void checkImportFile(int species,
 			String url, FileUploadField uploadField) {
 		Application.debug("subbmit");
 		if((null==url || url.equalsIgnoreCase("")) && null==uploadField.getFileUpload()){
 			this.submitable = false;
 			form.error("you must give an input");
 		}
-		if(null==species || null==version){
+		if(-1==species){
 			this.submitable = false;
 			form.error("you must select an assembly");
 		}

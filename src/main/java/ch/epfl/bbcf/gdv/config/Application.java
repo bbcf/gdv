@@ -17,8 +17,8 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.spring.test.ApplicationContextMock;
 
-import ch.epfl.bbcf.gdv.access.gdv_prod.Connect;
-import ch.epfl.bbcf.gdv.access.gdv_prod.pojo.Users;
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.utility.FileResource;
 import ch.epfl.bbcf.gdv.html.BasePage;
 import ch.epfl.bbcf.gdv.html.HomePage;
@@ -53,11 +53,10 @@ public class Application extends AuthenticatedWebApplication
 	protected void init() {
 		super.init();
 		theLogger = Logs.init();
-		Configuration.addRessourcesLocations(getResourceSettings());
 		if(!Configuration.init()){
 			fatal("configuration not initialized properly - APPLICATION WILL NOT WORK");
 		}
-		
+		Configuration.addRessourcesLocations(getResourceSettings());
 		loggers = new HashMap<Integer,Logger>();
 		
 		

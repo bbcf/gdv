@@ -6,17 +6,21 @@ public class RequestParameters {
 
 	private String id;//type of request
 	private String type;
+	private String datatype;
 	private String trackId;
 	private String message;
 	private String db;
 	private String usermail;
-	private String htc3cseq_number;
+	private String command;
 	private String name;
-	private String seq_id;
+	private String seqId;
 	private String url;
 	private String projectId;
 	private String nrAssemblyId;
 	private String file;
+	private String obfuscated;
+	private String mail;
+	private String pass;
 	
 	
 	public RequestParameters(Map<String, String[]> map) {
@@ -40,13 +44,13 @@ public class RequestParameters {
 				this.usermail = map.get("usermail")[0];
 			} catch (NullPointerException e){};
 			try{
-				this.htc3cseq_number = map.get("htc3cseq_number")[0];
+				this.command = map.get("command")[0];
 			} catch (NullPointerException e){};
 			try{
 				this.name = map.get("name")[0];
 			} catch (NullPointerException e){};
 			try{
-				this.seq_id = map.get("seq_id")[0];
+				this.seqId = map.get("seq_id")[0];
 			} catch (NullPointerException e){};
 			try{
 				this.url = map.get("url")[0];
@@ -56,6 +60,12 @@ public class RequestParameters {
 			} catch (NullPointerException e){};
 			try{
 				this.nrAssemblyId = map.get("nrass")[0];
+			} catch (NullPointerException e){};
+			try{
+				this.obfuscated = map.get("obfuscated")[0];
+			} catch (NullPointerException e){};
+			try{
+				this.obfuscated = map.get("datatype")[0];
 			} catch (NullPointerException e){};
 			try{
 				this.file = map.get("file")[0];
@@ -147,18 +157,18 @@ public class RequestParameters {
 
 
 	/**
-	 * @param htc3cseq_number the htc3cseq_number to set
+	 * @param htc3cseq_number the command to set
 	 */
-	public void setHtc3cseq_number(String htc3cseq_number) {
-		this.htc3cseq_number = htc3cseq_number;
+	public void setCommand(String command) {
+		this.command = command;
 	}
 
 
 	/**
-	 * @return the htc3cseq_number
+	 * @return the command
 	 */
-	public String getHtc3cseq_number() {
-		return htc3cseq_number;
+	public String getCommand() {
+		return command;
 	}
 
 
@@ -179,18 +189,18 @@ public class RequestParameters {
 
 
 	/**
-	 * @param seq_id the seq_id to set
+	 * @param seq_id the species to set
 	 */
-	public void setSeq_id(String seq_id) {
-		this.seq_id = seq_id;
+	public void setSequenceId(String species) {
+		this.seqId = species;
 	}
 
 
 	/**
-	 * @return the seq_id
+	 * @return the species
 	 */
-	public String getSeq_id() {
-		return seq_id;
+	public String getSequenceId() {
+		return seqId;
 	}
 
 
@@ -255,6 +265,46 @@ public class RequestParameters {
 	 */
 	public String getFile() {
 		return file;
+	}
+
+
+	public void setObfuscated(String obfuscated) {
+		this.obfuscated = obfuscated;
+	}
+
+
+	public String getObfuscated() {
+		return obfuscated;
+	}
+
+
+	public void setDatatype(String datatype) {
+		this.datatype = datatype;
+	}
+
+
+	public String getDatatype() {
+		return datatype;
+	}
+
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+
+	public String getMail() {
+		return mail;
+	}
+
+
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
+
+
+	public String getPass() {
+		return pass;
 	}
 
 }

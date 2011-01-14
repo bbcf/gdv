@@ -17,22 +17,10 @@ public class RepositoryAccess extends GeneRepAccess{
 		return GeneRepAccess.URL+"repo_files.json";
 	}
 
-	public static String getURLFastaFileByAssemblyId(String assemblyId) {
+	public static String getURLFastaFileByAssemblyId(int assemblyId) {
 		String md5 = AssembliesAccess.getMD5ByAssemblyId(assemblyId);
-		String result = "http://ptbbpc1.epfl.ch/genrep/data/nr_assemblies/fasta/"+md5+".tar.gz";
+		String result = GeneRepAccess.URL+"data/nr_assemblies/fasta/"+md5+".tar.gz";
 		return result;
-//		JSONArray json = null;
-//		JSONObject repos = null;
-//		try {
-//			json = new JSONArray(result);
-//			for(int i=0;i<json.length();i++){
-//				repos =  (JSONObject) ((JSONObject) json.get(i)).get(REPOSITORY_KEY);
-//				return SERV+repos.getString(URL_KEY);
-//			}
-//		} catch (JSONException e) {
-//			Application.error(e);
-//		}
-//		return null;
 	}
 	
 }

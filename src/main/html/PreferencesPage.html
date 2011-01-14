@@ -1,0 +1,51 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+  <wicket:extend>
+    <!-- USER KEY -->
+    <div class="bh"  wicket:id="user_key_label"></div>
+    <br/><div class="sh"  wicket:id="user_key"></div><br/>
+    <!-- CREATE GROUP -->
+    <div class="bh"  wicket:id="create_header"></div>
+    <form  wicket:id="form">
+      <div id="pc">
+	<div class="cp">group name :  <input wicket:id="group_name"/></div>
+	<input class="c_b" type="submit" wicket:id="create_but" value="Create it"/>
+      </div>
+    </form>
+	
+    <!-- GROUPS -->
+    <div class="bh"  wicket:id="group_header"></div>
+    <form wicket:id="group_form">
+      <div wicket:id="group_data">
+	<div class="gdv_head">
+	    <span class="gdv_p1" wicket:id="group_name"></span>
+	    <span class="gdv_p2" wicket:id="group_status"></span>
+	    <input class="gdv_b1" type="submit" wicket:id="delete_group" value="delete"/>
+	    <input class="gdv_b2" type="submit" wicket:id="add_user" value="add"/>
+	</div>
+	    <!--users container-->
+	    <div wicket:id="users_container">
+	      <table class="gdv_list">
+		<tr wicket:id="user_data">
+		  <td wicket:id="user_mail"></td>
+		  <td> <input wicket:id="remove_user" type="submit" value="remove"/></td>
+		</tr>
+	      </table>
+	    </div>
+      </div>
+      <div wicket:id="group_data2">
+	<div class="gdv_head">
+	  <span class="gdv_p1" wicket:id="group_name2"></span>
+	  <span class="gdv_p2" wicket:id="group_status2"></span>
+	</div>
+      </div>
+    </form>
+    
+    <div wicket:id="modal_add_user"></div>
+    
+  </wicket:extend>
+</body>
+</html>
