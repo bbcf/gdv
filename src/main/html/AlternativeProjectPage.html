@@ -1,0 +1,40 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+  <wicket:extend>
+   
+    <div id="gdv_menu" wicket:id="menu"/>
+    <div id="gdv_body">
+      <!-- EXISTING PROJECTS -->
+      <div class="bh" wicket:id="project_header"></div>
+      <form id="project_form" wicket:id="exist_form">
+	<!-- projects -->
+	<div wicket:id="project_data">
+	  <div class="gdv_head">
+	    <a wicket:id="arrow_link" ><img wicket:id="arrow" class="gdv_arrow"/></a>
+	    <span class="gdv_p1" wicket:id="description"></span>
+	    <span class="gdv_p2" wicket:id="project_species"/>
+	    <select class="gdv_p3" wicket:id="project_versions"/>
+	    <span class="gdv_p4" wicket:id="tracks_number"/>
+	    <input class="gdv_b2" type="submit" wicket:id="view_but" value="View it"/>
+	    <input class="gdv_b1" type="submit" wicket:id="import_but" value="Import in profile"/>
+	  </div>
+	  <!-- tracks -->
+	  <div wicket:id="tracks_container">
+	    <table class="gdv_list">
+	      <tr wicket:id="track_data">
+		<td wicket:id="track_label"></td>
+		<td wicket:id="track_date"></td>
+		<td><span wicket:id="status"></span><img wicket:id="status_loader"/></td>
+		<td><a href="#" wicket:id="delete">delete</a></td>
+	      </tr>
+	    </table>
+	</div>
+	</div>
+      </form>
+    </div>
+  </wicket:extend>
+</body>
+</html>
