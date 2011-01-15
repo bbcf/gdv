@@ -49,13 +49,15 @@ public class UserSession extends AuthenticatedWebSession{
 
 	/**
 	 * basic method for authentification
+	 * this can be a normal identification :
+	 * email from user + tequila type
+	 * or obfuscatedkey + Configuration.getGdv_types_access() type
 	 */
 	@Override
 	public final boolean authenticate(final String email, final String type){
-		//Application.debug("authenticate user : "+email);
 		Session.set(this);
 		if (user == 0){
-			if(type.equalsIgnoreCase("tequila") || type.equalsIgnoreCase("htc3cseq")){
+			if(type.equalsIgnoreCase("tequila") || Configuration.getGdv_types_access().contains(type)){
 				UsersDAO dao = new UsersDAO(Connect.getConnection(this));
 				if(dao.emailExist(email)){
 					Users person = dao.getUserByEmail(email);

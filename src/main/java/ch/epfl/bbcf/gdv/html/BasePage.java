@@ -20,7 +20,8 @@ public class BasePage extends WebPage{
 		for(String cp : Configuration.getGDVCSSFiles()){
 			add(CSSPackageResource.getHeaderContribution(cp));
 		}
-		add(new MenuPage("menu"));
+		
+		add(new MenuPage("menu",Configuration.getNavigationLinks()));
 		
 	}
 }

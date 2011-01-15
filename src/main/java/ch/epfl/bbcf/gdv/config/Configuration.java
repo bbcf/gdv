@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import org.yaml.snakeyaml.Yaml;
 import ch.epfl.bbcf.gdv.config.utility.RolesAuthorization;
 import ch.epfl.bbcf.gdv.html.AddSequencePage;
 import ch.epfl.bbcf.gdv.html.AdminPage;
+import ch.epfl.bbcf.gdv.html.AlternativeProjectPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
 import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
@@ -84,8 +86,11 @@ public final class Configuration{
 		BrowserPage.class,PreferencesPage.class};
 
 
+	public final static Class[] navigation_links = {HomePage.class,AdminPage.class,ProjectPage.class,PreferencesPage.class};
 
-
+	public static List<Class> getNavigationLinks() {
+		return Arrays.asList(navigation_links);
+	}
 
 
 
@@ -100,6 +105,7 @@ public final class Configuration{
 		//SIMPLE MOUNT
 		application.mount(new IndexedParamUrlCodingStrategy("/home", HomePage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/projects", ProjectPage.class));
+		application.mount(new IndexedParamUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/login", LoginPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/import_UCSC", ImportUCSCPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/admin", AdminPage.class));
@@ -448,4 +454,5 @@ public final class Configuration{
 	public static List<String> getGdv_types_access() {
 		return instance.gdv_types_access;
 	}
+	
 }

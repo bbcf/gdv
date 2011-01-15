@@ -10,6 +10,7 @@ import org.apache.wicket.util.value.ValueMap;
 
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.LoginControl;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 
 
@@ -26,17 +27,14 @@ public class MagicPasswordPage extends WebPage{
 		
 		
 		String type = p.getString("0");
-		String pass = p.getString("1");
-		Application.debug("pass page "+type+" "+pass);
-		if(type.equalsIgnoreCase("hts3cseq")){
-			if(pass!=null){
-				pass+="_hts3cseq";
-				if(((UserSession)getSession()).authenticate(pass, "hts3cseq")){
-					setResponsePage(ProjectPage.class);
-				}
-			}
+		String key = p.getString("1");
+		Application.debug("pass page "+type+" "+key);
+		LoginControl lc = new LoginControl((UserSession)getSession());
+		boolean b = lc.logAlternativeUser(type,key);
+		if(b){
+			setResponsePage(AlternativeProjectPage.class);
 		} else {
-			throw new AbortWithHttpStatusException(400,true);
+			throw new AbortWithHttpStatusException(403,true);
 		}
 		
 	}
