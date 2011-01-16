@@ -1,0 +1,59 @@
+################################
+##HOW TO SEND PROCESSES TO GDV##
+################################
+
+#INTRO 
+
+First you need a mail and an user key.
+Login in GDV and go to preferences page you will have your personnal user key.
+
+Now there is two way : you can use the jar file provided or send by yourself
+a POST connection to "http://svitsrv25.epfl.ch/gdv_dev/post". If you send a POST
+by yourself you will have to add the parameter "id=gdv_post" in your request.
+
+#DEFINITION OF THE PARAMETERS
+
+REQUESTED :  - mail : login in tequila
+	     - key  : user key
+	     - command : one of [new_project, add_track,add_sqlite]
+
+REQUESTED BY COMMAND :  
+
+	  'new_project' :  - type : one of [hts3cseq,normal,htschipseq] 
+	  		   - seq_id : the nr_assembly id of the species in Genrep
+			   - name : name of the project
+
+	  'new_project' :  - obfuscated : the 'fake user' to create
+ 	  (add this parameter only if your project 'type' isn't 'normal')
+
+	  'add_track' :  - url : url to fetch
+	  	      	 - project_id : the project id in GDV
+
+
+	  'add_sqlite' :  - url : url to fetch 
+	  	       	  - project_id : the project id in GDV
+			  - datatype : one of [qualitative,quantitative] N.B :QUALITATIVE does not work yet 
+
+
+#REQUESTS EXAMPLES
+
+1) Want to create a project in your profile for yeast?
+   $java -jar --mail <your mail> -key <your user key> --command new_project --type normal --seq_id 98 --name TestProject 
+  - or -
+   POST at http://svitsrv25.epfl.ch/gdv_dev/post
+   with body = "id=gdv_post&mail=<your mail>&key=<your user key>&command=new_project&type=normal&seq_id=98&name=TestProject "
+)
+It will give you back an ID. This is the project id in GDV
+
+2) Want to create a project for a group, an experiment ?
+   same like request (1) but replace --type normal by the type of your experiment (hts3cseq,htschipseq) 
+   and then add the parameter --obfuscated=<thenewUser>
+
+3) Want to add a track to a project ? 
+   $java -jar  --mail <your mail> -key <your user key> --command add_track --url <http://salt/BED/myfile.wig> --project_id <project id>
+
+   for POST, see (1).  (don't forget to add id=gdv_post to the request's body)
+
+4) Want to add a track in sqlite format ? 
+$java -jar  --mail <your mail> -key <your user key> --command add_sqlite --url <http://salt/BED/myfile.db> --project_id <project id> --datatype quantitative
+(qualitative not working for the moment)
