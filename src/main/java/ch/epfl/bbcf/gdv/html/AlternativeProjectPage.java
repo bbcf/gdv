@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
@@ -15,7 +17,9 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -33,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 
@@ -54,11 +59,12 @@ import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
 import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 import ch.epfl.bbcf.gdv.html.utility.GroupModalWindow;
+import ch.epfl.bbcf.gdv.html.utility.MenuElement;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 import ch.epfl.bbcf.gdv.html.wrapper.ProjectWrapper;
 import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
-public class AlternativeProjectPage extends BasePage{
+public class AlternativeProjectPage extends WebPage{
 
 	protected final ValueMap properties = new ValueMap();
 	protected final DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
@@ -73,9 +79,12 @@ public class AlternativeProjectPage extends BasePage{
 
 	public AlternativeProjectPage(PageParameters p) {
 		super(p);
-
-		Class[] links = {ProjectPage.class};
-		add(new MenuPage("menu",Arrays.asList(links)));
+		for(String cp : Configuration.getGDVCSSFiles()){
+			add(CSSPackageResource.getHeaderContribution(cp));
+		}
+		MenuElement[] els = {new MenuElement(AlternativeProjectPage.class, "Limited Profile"),
+		new MenuElement(AlternativeProjectPage.class, "Projects")};
+		add(new MenuPage("menu",Arrays.asList(els)));
 
 
 
@@ -126,9 +135,14 @@ public class AlternativeProjectPage extends BasePage{
 				//IMPORT IN MY PROFILE
 				item.add(new AjaxButton("import_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
-						importModal.setParams(
-								-1,projectWrapper.getSpeciesId(),((UserSession)getSession()).getUserId(),projectWrapper.getId(),false);
-						importModal.show(target);
+						String pid = Integer.toString(projectWrapper.getId());
+						Cookie cook = new Cookie("PROJECT_ID",pid);
+						cook.setMaxAge(160);
+						((WebResponse)getRequestCycle().getResponse()).addCookie(cook);
+						((UserSession)getSession()).logOut();
+						((UserSession)getSession()).signOut();
+						((UserSession)getSession()).invalidateNow();
+						setResponsePage(LoginPage.class);
 					}
 				});
 				item.add(new Button("view_but"){

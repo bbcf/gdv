@@ -35,13 +35,34 @@ public class PreferencesPage extends BasePage{
 
 	public PreferencesPage(PageParameters p) {
 		super(p);
+		//////////////////////////////////
+		////LOGOUT///////////////////////
+		////////////////////////////////
+		final Form logout_form = new Form("logout_form");
+		logout_form.add(new Button("logout"){
+			public void onSubmit(){
+				((UserSession)getSession()).signOut();
+				((UserSession)getSession()).logOut();
+				((UserSession)getSession()).invalidateNow();
+				setResponsePage(HomePage.class);
+			}
+		});
+		add(logout_form);
+
+
+
+
+
+		///////////////////////////////////////
+		/////////////USER KEY/////////////////
+		/////////////////////////////////////
 		final int projectId = p.getInt("project_id",-1);
 		Users user = ((UserSession)getSession()).getUser();
 		Application.debug(user.getType());
 		Label userKeyLabel = new Label("user_key_label","user key");
 		userKeyLabel.setOutputMarkupPlaceholderTag(true);
 		add(userKeyLabel);
-		
+
 		String key = "";
 		if(user.getType().equalsIgnoreCase("tequila")){
 			key = user.getKey();
@@ -162,7 +183,7 @@ public class PreferencesPage extends BasePage{
 				item.add(new Label("group_name",gw.getName()));
 				item.add(new Label("group_status","belong"));
 			}
-			
+
 		};
 		groupForm.add(group_data);
 		groupForm.add(group_data2);

@@ -3,8 +3,15 @@
  <title>Genome Data Viewer</title>
 </head>
 <body>
-  <wicket:extend>
-   
+  <div id="gdv_banner">
+      <a href="http://svitsrv25.epfl.ch/gdv"><img id="gdv_logo" src="/public/images/logo_gdv.jpg" alt="GDV"/></a>
+      <a href="http://www.epfl.ch"><img id="epfl_logo" src="../public/images/epfl-logo.jpeg" alt="EPFL"/></a>
+      <a href="http://bbcf.epfl.ch/"><img id="bbcf_logo" src="../public/images/logo-bbcf.png" alt="EPFL"/></a>
+      <a href="http://www.systemsx.ch/projects/systemsxch-projects/sybit/"><img id="sybit_logo" src="../public/images/logo_sybit.jpg" alt="EPFL"/></a>
+      <div id="gdv_title"> GENOME DATA VIEWER</div>
+      <div class="clearer"></div>
+    </div>
+  <div id="gdv_column">
     <div id="gdv_menu" wicket:id="menu"/>
     <div id="gdv_body">
       <!-- EXISTING PROJECTS -->
@@ -31,10 +38,10 @@
 		<td><a href="#" wicket:id="delete">delete</a></td>
 	      </tr>
 	    </table>
-	</div>
+	  </div>
 	</div>
       </form>
     </div>
-  </wicket:extend>
+  </div>
 </body>
 </html>

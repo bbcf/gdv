@@ -53,6 +53,8 @@ public class UsersDAO extends DAO<Users>{
 				if(user.getType().equalsIgnoreCase("tequila")){
 					RandomKey r = new RandomKey();
 					statement.setString(9, r.getRandom());
+				} else {
+					statement.setString(9, "nokey");
 				}
 				this.executeUpdate(statement);
 				query = "select currval('users_id_seq') ; ";

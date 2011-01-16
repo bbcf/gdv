@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
@@ -33,6 +35,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 
@@ -67,16 +71,24 @@ public class ProjectPage extends BasePage{
 	private DataView<ProjectWrapper> projectData;
 	private CustModalWindow importModal;
 	private GroupModalWindow groupModal;
-	
+
 	private final static IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
 
 	public ProjectPage(PageParameters p) {
 		super(p);
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////CREATE NEW PROJECT///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		Cookie cook = ((WebRequest)getRequestCycle().getRequest()).getCookie("PROJECT_ID");
+		if(null!=cook){
+			ProjectControl pc = new ProjectControl((UserSession)getSession());
+			if(pc.importProject(cook.getValue())){
+				cook.setMaxAge(0);
+				((WebResponse)getRequestCycle().getResponse()).addCookie(cook);
+			}
+		}
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////CREATE NEW PROJECT///////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		final Form create_form = new Form("form");
 		Label header = new Label("create_header","Create new project");
 		add(header);
@@ -96,7 +108,7 @@ public class ProjectPage extends BasePage{
 				ddcVersion.updateModel();
 			}
 		};
-		
+
 		ddcVersion = new DropDownChoice<SelectOption>("version",new Model<SelectOption>(),
 				new LoadableDetachableModel<List<SelectOption>>() {
 			@Override
@@ -116,7 +128,7 @@ public class ProjectPage extends BasePage{
 		create_form.add(ddcVersion);
 		create_form.add(new Button("create_but"){
 			public void onSubmit(){
-			//	Application.debug("create but");
+				//	Application.debug("create but");
 				SelectOption species = (SelectOption) ddcSpecies.getDefaultModelObject();
 				SelectOption version = (SelectOption) ddcVersion.getDefaultModelObject();
 				String project_name = properties.getString("project_name");
@@ -135,17 +147,17 @@ public class ProjectPage extends BasePage{
 		});
 		create_form.add(new FeedbackPanel("feedback"));
 		add(create_form);
-		
-		
-		
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////EXISTING PROJECTS////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//		DropDownChoice b;
-//		ProjectWrapper pp;
+
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////EXISTING PROJECTS////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		//		DropDownChoice b;
+		//		ProjectWrapper pp;
 		final Form existing_form = new Form("exist_form");
 		Label project_header = new Label("project_header","Existing projects");
 		add(project_header);
@@ -198,7 +210,7 @@ public class ProjectPage extends BasePage{
 						setResponsePage(BrowserPage.class,params);
 					}
 				});
-				
+
 				item.add(new AjaxButton("share_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						GroupControl gc = new GroupControl((UserSession)getSession());
@@ -213,7 +225,7 @@ public class ProjectPage extends BasePage{
 					}
 				});
 
-				
+
 				final WebMarkupContainer trackContainer = new WebMarkupContainer("tracks_container");
 				trackContainer.setOutputMarkupPlaceholderTag(true);
 				trackContainer.setVisible(false);
@@ -366,5 +378,5 @@ public class ProjectPage extends BasePage{
 			}
 		});
 	}
-	
+
 }

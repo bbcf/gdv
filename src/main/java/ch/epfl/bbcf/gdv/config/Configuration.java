@@ -33,6 +33,7 @@ import ch.epfl.bbcf.gdv.html.MagicPasswordPage;
 import ch.epfl.bbcf.gdv.html.PostPage;
 import ch.epfl.bbcf.gdv.html.ProjectPage;
 import ch.epfl.bbcf.gdv.html.TrackStatus;
+import ch.epfl.bbcf.gdv.html.utility.MenuElement;
 /**
  * Class called in the init() method of the Application class. It contains all about nice URL, 
  * resources folders, and authorizations
@@ -82,13 +83,17 @@ public final class Configuration{
 	public static final String URL_LINK_TEMPLATE = "\" onClick=\"javascript:showLinkPanel('{name}'); return false\";";
 
 	public final static Class[] admin_pages = {AddSequencePage.class,AdminPage.class,ImportUCSCPage.class};
-	public final static Class[] user_pages = {HomePage.class,ImportFilePage.class,ProjectPage.class,
+	public final static Class[] user_pages = {ImportFilePage.class,ProjectPage.class,
 		BrowserPage.class,PreferencesPage.class};
 
+	//WARNING : this two list are oredered
+	public final static MenuElement[] navigation_links = {
+		new MenuElement(HomePage.class,"Home"),
+		new MenuElement(AdminPage.class,"Admin"),
+		new MenuElement(ProjectPage.class,"Projects"),
+		new MenuElement(PreferencesPage.class,"Preferences")};
 
-	public final static Class[] navigation_links = {HomePage.class,AdminPage.class,ProjectPage.class,PreferencesPage.class};
-
-	public static List<Class> getNavigationLinks() {
+	public static List<MenuElement> getNavigationLinks() {
 		return Arrays.asList(navigation_links);
 	}
 
@@ -163,7 +168,7 @@ public final class Configuration{
 	tracks_dir,public_dir,javascript_url,css_url,css_jbrowse_dir,
 	das_dir,databases_link_dir,compute_scores_daemon,
 	transform_to_sqlite_daemon,project_url,gdv_version;
-	
+
 	private static String gdv_post_access;
 	private static List<String> gdv_types_access;
 
@@ -454,5 +459,5 @@ public final class Configuration{
 	public static List<String> getGdv_types_access() {
 		return instance.gdv_types_access;
 	}
-	
+
 }

@@ -42,8 +42,10 @@ public class LoginPage extends BasePage{
 				getnewkey = true;
 			}
 			
-			//Application.debug("start logging process");
+			//the key of tequila
 			String key = null;
+			
+			
 			String query = this.getRequest().getQueryString();
 			if(query!=null){
 				String[] params = query.split("=");
@@ -51,18 +53,15 @@ public class LoginPage extends BasePage{
 					for(int i=0;i<params.length;i+=2){
 						if(params[i].equalsIgnoreCase("key")){
 							key = params[i+1];
-						}
+						} 
 					}
 				}
 			}
-			
-			//Application.debug("key="+key);
-			//zero key or not valid one
 			if(null==key || getnewkey){
 				
 				String requestKey = TequilaAuthentication._tequilaService.createRequest(
 						TequilaAuthentication._clientConfig, 
-						Configuration.getGdv_appli_proxy()+"/login");//+Configuration.GDV_MOUNT_PATH+"/login");
+						Configuration.getGdv_appli_proxy()+"/login");
 				Cookie cook = new Cookie("TEQUILA_KEY",requestKey);
 				cook.setMaxAge(160);
 				((WebResponse)getRequestCycle().getResponse()).addCookie(cook);
@@ -118,13 +117,13 @@ public class LoginPage extends BasePage{
 						//Application.debug("authentify in gdv");
 						if(session.authenticate(email,"tequila")){
 							Application.info("login : "+email);
-							setResponsePage(new HomePage(new PageParameters()));
+							setResponsePage(new ProjectPage(new PageParameters()));
 						}
 						else{
 							//CREATE USER
 							UserControl controller = new UserControl((UserSession)getSession());
 							if(controller.createNewUser(email,name,firstname,title,phone,office,"tequila")!=-1){
-								setResponsePage(new HomePage(new PageParameters()));
+								setResponsePage(new ProjectPage(new PageParameters()));
 							}
 							//TODO ERROR PAGE
 							//setResponsePage(new RedirectPage(Configuration.PROXY_URL+"/protected"));

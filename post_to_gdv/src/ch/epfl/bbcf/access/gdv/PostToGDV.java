@@ -138,7 +138,7 @@ public class PostToGDV {
 		"\n" +
 		"the args are given like;\n" +
 		"\t --<arg> <value> (without <>) " +
-		"like e.g: --name Bob";
+		"e.g: --name Bob";
 		System.out.println(str);
 		System.out.println();
 		System.out.println("--REQUESTED PARAMETERS : ");

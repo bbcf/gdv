@@ -7,9 +7,11 @@ import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.SequenceDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Species;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
@@ -44,7 +46,7 @@ public class ProjectControl extends Control{
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
 		pdao.updateProject(id, sequenceId);
 	}
-	
+
 	/**
 	 * create a new project for an user
 	 * @param species
@@ -138,6 +140,36 @@ public class ProjectControl extends Control{
 		return sos;
 	}
 
-	
+	/**
+	 * import the project for this user
+	 * form it's cookie value
+	 * (create a copy of the project and
+	 * link it to the tracks and user)
+	 * @param value
+	 * @return
+	 */
+	public boolean importProject(String value) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+		Project oldProject = pdao.getProject(Integer.parseInt(value));
+		List<Track> tracks = tdao.getTracksFromProjectId(oldProject.getId());
+		List<Project> projects = pdao.getProjectsFromUser(session.getUserId());
+		if(projects!=null){
+			for (Project p : projects){
+				if(p.getName().equalsIgnoreCase(oldProject.getName())){
+					return false;
+				}
+			}
+		}
+		int newProjectId = pdao.createNewProject(oldProject.getSequenceId(), oldProject.getName());
+		if(null!=tracks){
+			for(Track t : tracks){
+				tdao.linkToProject(t.getId(),newProjectId);
+			}
+		}
+		return pdao.linkToUser(newProjectId,session.getUserId());
+	}
+
+
 
 }
