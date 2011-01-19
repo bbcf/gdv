@@ -28,11 +28,11 @@ public class GFFCreator extends JSONCreator{
 		super.newChromosome(chr);
 	}
 	public void finalize(){
-		//logger.debug("finalize json output");
-		//logger.debug("write ] to chunk : "+chunk.toString());
-		//write("]",chunk);
-		write(","+previousEnd+",{\"chunk\":\""+previousChunkSize+"\"}]",chrOutJSON);
+		if(chrOutJSON!=null){
+			write(","+previousEnd+",{\"chunk\":\""+previousChunkSize+"\"}]",chrOutJSON);
+		}
 		close(chrOutJSON);
+		theChunk.closeChunk();
 		//close(chunk);
 		for(String chr:chrs){
 			File jsonFile = new File(Configuration.getJbrowseOutput()+"/"+database+"/"+chr+".json");
@@ -44,7 +44,7 @@ public class GFFCreator extends JSONCreator{
 			}
 			if(out!=null){
 				int featureCount = SQLiteAccess.getFeatureCountForChromosome(database, chr);
-				
+
 				int chrLength = SQLiteAccess.getLengthForChromosome(database,chr);
 				double t = (chrLength*2.5)/featureCount;
 				int threshold = 0;
@@ -54,9 +54,6 @@ public class GFFCreator extends JSONCreator{
 						break;
 					}
 
-				}
-				if(chr.equalsIgnoreCase("IImicron")){
-					chr = "2micron";
 				}
 				if(featureCount>0 && chrLength>0){
 					writeTrackDataAndHistoFiles(name,chrLength,threshold,featureCount,database,chr,out,clientConfig);

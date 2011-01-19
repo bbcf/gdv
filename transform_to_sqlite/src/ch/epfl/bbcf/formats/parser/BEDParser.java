@@ -78,14 +78,13 @@ public class BEDParser {
 			if(!chrList.contains(chr)){
 				chr = nameHandler.getChromosomeAltName(chr);
 			}
-			if(null==chr){
-				return;
-			}
 			int start = -1;
 			int end = -1;
 			try {
-				start = Integer.parseInt(chr_start_end_name_score_strand[1]);
-				end = Integer.parseInt(chr_start_end_name_score_strand[2]);
+				if(chr_start_end_name_score_strand.length>1){
+					start = Integer.parseInt(chr_start_end_name_score_strand[1]);
+					end = Integer.parseInt(chr_start_end_name_score_strand[2]);
+				}
 			}catch(NumberFormatException e){
 				String message = e.toString()+" at line "+lineNb+".";
 				throw new ParsingException(message);
@@ -103,14 +102,17 @@ public class BEDParser {
 					}
 				}
 			}
-			if(null==chromosome || !chromosome.equalsIgnoreCase(chr)){
-				chromosome = chr;
-				handler.newChromosome(chromosome);
-				jsonHandler.newChromosome(chromosome);
+			if(null!=chr){
+				if(null==chromosome || !chromosome.equalsIgnoreCase(chr)){
+					chromosome = chr;
+					handler.newChromosome(chromosome);
+					jsonHandler.newChromosome(chromosome);
+				}
+				if(start!=-1 && end!=-1){
+					handler.writeValues(chr, start, end, score, name, strand, null);
+					jsonHandler.writeValues(chr, start, end, score, name, strand, idDescriptor);
+				}
 			}
-			handler.writeValues(chr, start, end, score, name, strand, null);
-			jsonHandler.writeValues(chr, start, end, score, name, strand, idDescriptor);
-
 		}
 	}		
 

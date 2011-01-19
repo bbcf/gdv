@@ -65,6 +65,7 @@ public class Launcher extends Thread{
 	public void run(){
 		long start = System.currentTimeMillis();
 		//GETTING MD5
+		logger.debug("run : "+filePath);
 		File file = new File(filePath);
 		String md5 = null;
 		try {
@@ -88,10 +89,10 @@ public class Launcher extends Thread{
 		}else if(extension.equalsIgnoreCase("gff")){
 			ext = Extension.GFF;
 		}else if(extension.equalsIgnoreCase("gtf")){
-			String newPath = filePath.substring(0,filePath.length()-4)+".gff";
-			GTF2GFF.transform(filePath,newPath);
-			FileManagement.deleteDirectory(new File(filePath));
-			file = new File(newPath);
+//			String newPath = filePath.substring(0,filePath.length()-4)+".gff";
+//			GTF2GFF.transform(filePath,newPath);
+//			FileManagement.deleteDirectory(new File(filePath));
+//			file = new File(newPath);
 			ext = Extension.GFF;
 		}else if(extension.equalsIgnoreCase("db")){
 			
@@ -139,7 +140,7 @@ public class Launcher extends Thread{
 			RemoteAccess.sendTrackSucceed(trackId,database,mail,type);
 
 			//DELETING TMPDIR
-			logger.debug("TMPDIR : "+tmpdir);
+			//logger.debug("TMPDIR : "+tmpdir);
 			if(tmpdir!=null && !tmpdir.equalsIgnoreCase("") && !tmpdir.equalsIgnoreCase("tmp")){
 				FileManagement.deleteInTMPDirectory(tmpdir);
 			}

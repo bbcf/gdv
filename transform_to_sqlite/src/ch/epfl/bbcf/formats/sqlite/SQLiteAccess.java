@@ -93,7 +93,7 @@ public class SQLiteAccess {
 		try{
 			Connection conn = getConnectionOnFileDirectory(database);
 			Statement stat = conn.createStatement();
-			String query = "SELECT max(score) FROM "+chr+";";
+			String query = "SELECT max(score) FROM \""+chr+"\";";
 			ResultSet rs = getResultSet(stat, query);
 			Float f = null;
 			while (rs.next()) {
@@ -119,7 +119,7 @@ public class SQLiteAccess {
 		try{
 			Connection conn = getConnectionOnFileDirectory(database);
 			Statement stat = conn.createStatement();
-			String query = "SELECT max(end) FROM "+chr+";";
+			String query = "SELECT max(end) FROM \""+chr+"\";";
 			ResultSet rs = getResultSet(stat, query);
 			while (rs.next()) {
 				f= rs.getInt(1);
@@ -261,7 +261,7 @@ public class SQLiteAccess {
 		Connection conn;
 		try {
 			conn = getConnectionOnFileDirectory(database);
-			PreparedStatement prep = conn.prepareStatement("select count(*) from "+chr+" ;");
+			PreparedStatement prep = conn.prepareStatement("select count(*) from \""+chr+"\" ;");
 			ResultSet r = prep.executeQuery();
 			if(r.next()){
 				int result = r.getInt(1); 
@@ -300,11 +300,8 @@ public class SQLiteAccess {
 	public static ResultSet getStartEndForChromosome(Connection conn, String database2,
 			String chr) {
 		try {
-			if(chr.equalsIgnoreCase("2micron")){
-				chr = "IImicron";
-			}
 			Statement stat = conn.createStatement();
-			String query = "SELECT start,end FROM "+chr+"; ";
+			String query = "SELECT start,end FROM \""+chr+"\"; ";
 			ResultSet r = getResultSet(stat, query);
 			return r;
 		} catch (SQLException e) {
@@ -315,7 +312,7 @@ public class SQLiteAccess {
 
 	public static PreparedStatement initCountForChromosomePositionWindow(Connection conn,String chr){
 		try {
-			PreparedStatement stat = conn.prepareStatement("SELECT count(*) FROM "+chr+" where start >= ? and end<= ?; ");
+			PreparedStatement stat = conn.prepareStatement("SELECT count(*) FROM \""+chr+"\" where start >= ? and end<= ?; ");
 			return stat;
 		} catch (SQLException e) {
 			logger.error(e);

@@ -30,10 +30,10 @@ public class SQLiteQualitativeHandler extends SQLiteHandler{
 	public void newChromosome(String chr) {
 		try {
 			PreparedStatement stat = this.connection.prepareStatement("create table if not exists " +
-					""+chr+" (start integer,end integer,score real,name text,strand integer,attributes text);");
+					"\""+chr+"\" (start integer,end integer,score real,name text,strand integer,attributes text);");
 			stat.execute();
 			this.connection.commit();
-			PreparedStatement prep = this.connection.prepareStatement("insert into "+chr+" values (?,?,?,?,?,?);");
+			PreparedStatement prep = this.connection.prepareStatement("insert into \""+chr+"\" values (?,?,?,?,?,?);");
 			store.addChromosome(chr, prep);
 			
 		} catch (SQLException e) {

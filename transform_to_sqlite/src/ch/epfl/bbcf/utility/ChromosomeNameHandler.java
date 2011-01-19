@@ -58,34 +58,38 @@ public class ChromosomeNameHandler {
 
 
 	public String getAlternativeNames(String chr) {
-		Connection conn = getConnection(species);
-		if(null!=conn){
-			try {
-				PreparedStatement prep = conn.prepareStatement("select 1 from chromosome_names where used = ? limit 1;");
-				prep.setString(1, chr);
-				ResultSet r = prep.executeQuery();
-				if(r.next()){
-					r.close();
-					return chr;
-				} else {
-					prep = conn.prepareStatement("select used from chromosome_names where alt = ? limit 1;");
+		if(species.equalsIgnoreCase("105")){
+			return "chr";
+		} else {
+			Connection conn = getConnection(species);
+			if(null!=conn){
+				try {
+					PreparedStatement prep = conn.prepareStatement("select 1 from chromosome_names where used = ? limit 1;");
 					prep.setString(1, chr);
-					ResultSet n = prep.executeQuery();
-					if(n.next()){
-						String result = n.getString(1);
-						n.close();
-						return result;
+					ResultSet r = prep.executeQuery();
+					if(r.next()){
+						r.close();
+						return chr;
+					} else {
+						prep = conn.prepareStatement("select used from chromosome_names where alt = ? limit 1;");
+						prep.setString(1, chr);
+						ResultSet n = prep.executeQuery();
+						if(n.next()){
+							String result = n.getString(1);
+							n.close();
+							return result;
+						}
 					}
+					conn.close();
+				} catch (SQLException e) {
+					logger.error(e);
 				}
-				conn.close();
-			} catch (SQLException e) {
-				logger.error(e);
 			}
 		}
 		return null;
 	}
 
-	
+
 	private Connection getConnection(String assemblyId) {
 		if(assemblyId.equalsIgnoreCase("70")||
 				assemblyId.equalsIgnoreCase("76")){
@@ -93,19 +97,40 @@ public class ChromosomeNameHandler {
 		} else if(assemblyId.equalsIgnoreCase("75")||
 				assemblyId.equalsIgnoreCase("98")){
 			return getConnectionOnYeastAltsChromosomesNames();
+		} else if(assemblyId.equalsIgnoreCase("15")) {
+			return getConnectionOnCaulobacterCrescentusAltsChromosomesNames();
 		}
 		return null;
 	}
 
 
-//	public static String getUsedName(String chr,String assemblyId){
-//		if(assemblyId.equalsIgnoreCase("67")){
-//			return getMouseChromosomeAltName(chr);//SQLiteAccess.getMouseChromosomeAltName(chr);
-//		}
-//		return chr;
-//	}
+	//	public static String getUsedName(String chr,String assemblyId){
+	//		if(assemblyId.equalsIgnoreCase("67")){
+	//			return getMouseChromosomeAltName(chr);//SQLiteAccess.getMouseChromosomeAltName(chr);
+	//		}
+	//		return chr;
+	//	}
 
 
+
+
+
+	private Connection getConnectionOnCaulobacterCrescentusAltsChromosomesNames() {
+		try {
+			Class.forName("org.sqlite.JDBC").newInstance();
+			Connection conn = DriverManager.getConnection("jdbc:sqlite://"+Configuration.getDatabasesLink()+"/CaulobacterCrescentus_chr.db");
+			return conn;
+		} catch (InstantiationException e) {
+			System.out.println(e);
+		} catch (IllegalAccessException e) {
+			System.out.println(e);
+		} catch (ClassNotFoundException e) {
+			System.out.println(e);
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+		return null;
+	}
 
 
 

@@ -33,9 +33,6 @@ public class ConnectionStore {
 	
 	
 	public PreparedStatement getPreparedStatement(String chromosome){
-//		logger.debug(chromosome);
-//		logger.debug(statements);
-//		logger.debug(indexes);
 		return statements.get(indexes.get(chromosome));
 	}
 	public int getNbQueries(String chromosome){

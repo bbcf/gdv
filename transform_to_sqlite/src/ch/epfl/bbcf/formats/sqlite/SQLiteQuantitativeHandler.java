@@ -37,11 +37,11 @@ public class SQLiteQuantitativeHandler extends SQLiteHandler{
 
 		public void newChromosome(String chr){
 			try {
-				PreparedStatement stat = this.connection.prepareStatement("create table if not exists "+chr+" (start integer,end integer,score real);");
+				PreparedStatement stat = this.connection.prepareStatement("create table if not exists \""+chr+"\" (start integer,end integer,score real);");
 				//stat.executeUpdate("create table if not exists "+chr+" (start,end,score);");
 				stat.execute();
 				this.connection.commit();
-				PreparedStatement prep = this.connection.prepareStatement("insert into "+chr+" values (?,?,?);");
+				PreparedStatement prep = this.connection.prepareStatement("insert into \""+chr+"\" values (?,?,?);");
 				store.addChromosome(chr, prep);
 
 			} catch (SQLException e) {

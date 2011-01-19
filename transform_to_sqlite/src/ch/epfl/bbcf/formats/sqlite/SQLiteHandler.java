@@ -51,6 +51,7 @@ abstract class SQLiteHandler {
 
 
 	public boolean finalizeDatabase(String assemblyId){
+		logger.debug("FINALYSE DB");
 		try {
 			List<String> chrNames = getChromosomesNames();
 			if(!chrNames.isEmpty()){
@@ -59,16 +60,9 @@ abstract class SQLiteHandler {
 				GenRepAccess ga = new GenRepAccess(assemblyId);
 				for(String chr : chrNames){
 					int length = 0;
-					if(chr.equalsIgnoreCase("IImicron")){
-						length = ga.getChrLength("2micron");
-					} else {
-						length = ga.getChrLength(chr);
-					}
+					length = ga.getChrLength(chr);
 					if(length==0){
 						return false;
-					}
-					if(chr.equalsIgnoreCase("IImicron")){
-						chr = "2micron";
 					}
 					PreparedStatement prep = this.connection.prepareStatement("insert into chrNames values (?,?);");
 					prep.setString(1, chr);
@@ -79,6 +73,7 @@ abstract class SQLiteHandler {
 				this.connection.close();
 			}
 		} catch (SQLException e) {
+			logger.debug("ERROR");
 			logger.error(e);
 		}
 		return true;

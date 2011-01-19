@@ -145,7 +145,7 @@ public class FileManagement {
 	 * with key : the path, value : the file
 	 */
 	public static Map<String, File> uploadFileFromURL(String url,int userId){
-		//Application.debug("uploadFileFromURL",userId);
+		Application.debug("uploadFileFromURL : "+url,userId);
 		URL u = null;
 		try {
 			u = new URL(url);
@@ -216,7 +216,7 @@ public class FileManagement {
 			try {
 				fileUpload.writeTo(tmpFile);
 			} catch (IOException e) {
-				Application.error(e,userId);
+				Application.error(e);
 				return null;
 			}
 			tmpDir.put(Configuration.getTmp_dir()+"/"+uuid, tmpFile);

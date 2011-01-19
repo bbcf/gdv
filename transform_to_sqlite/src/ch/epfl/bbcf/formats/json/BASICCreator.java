@@ -187,15 +187,16 @@ public class BASICCreator extends JSONCreator{
 		
 
 		if(firstChrOut || firstChunkOut){
-			toWrite = "[["+start+","+end+","+score+",\""+name+",\""+strand+"]";
+			toWrite = "["+start+","+end+","+score+",\""+name+"\","+strand+"]";
 			firstChrOut = false;
 			firstChunkOut = false;
 		} else {
-			toWrite = ",["+start+","+end+","+score+",\""+name+",\""+strand+"]";
+			toWrite = "["+start+","+end+","+score+",\""+name+"\","+strand+"]";
 		}
 		try {
 			theChunk.add(new JSONArray(toWrite));
 		} catch (JSONException e) {
+			logger.warn("error here");
 			logger.error(e);
 		}
 		//write(toWrite,chunk);

@@ -205,6 +205,8 @@ public class AssembliesAccess extends GeneRepAccess{
 		if(null!=ass){
 			try {
 				String url = ass.getString(GTF_FILE_KEY);
+				Application.debug("XXXXXXXXXX"+url);
+				Application.debug(getShowNrUrl()+assemblyId+".gtf");
 				if(url!=null && !url.equalsIgnoreCase("null")){
 					return getShowNrUrl()+assemblyId+".gtf";
 				}

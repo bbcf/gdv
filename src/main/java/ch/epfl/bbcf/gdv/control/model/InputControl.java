@@ -261,7 +261,7 @@ public class InputControl extends Control{
 
 
 
-
+				break;
 			case NEW_SQLITE:
 				String database = tmpFile.getName();
 				FileManagement.moveFile(tmpFile, Configuration.getFilesDir());
@@ -276,6 +276,7 @@ public class InputControl extends Control{
 							Integer.toString(trackId),database,Configuration.getFilesDir(),
 							database,Configuration.getTracks_dir(),"0","nomail");
 				}
+				break;
 			}
 
 

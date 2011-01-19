@@ -176,9 +176,6 @@ abstract class JSONCreator {
 	public void newChromosome(String chr){
 		firstChrOut = true;
 		firstChunkOut = true;
-		if(chr.equalsIgnoreCase("IImicron")){
-			chr = "2micron";
-		}
 		File dir = new File(Configuration.getJbrowseOutput()+"/"+database+"/"+chr);
 		dir.mkdir();
 		this.curChunkSize = 0;
@@ -219,9 +216,6 @@ abstract class JSONCreator {
 		close(chrOutJSON);
 		//close(chunk);
 		for(String chr:chrs){
-			if(chr.equalsIgnoreCase("IImicron")){
-				chr = "2micron";
-			}
 			File jsonFile = new File(Configuration.getJbrowseOutput()+"/"+database+"/"+chr+".json");
 			OutputStream out = null;
 			try {
@@ -243,7 +237,7 @@ abstract class JSONCreator {
 				}
 				if(featureCount>0 && chrLength>0){
 					writeTrackDataAndHistoFiles(name,chrLength,threshold,featureCount,database,chr,out,clientConfig);
-					logger.debug("end : "+chr+":"+chrLength);
+					//logger.debug("end : "+chr+":"+chrLength);
 				} else {
 					jsonFile.delete();
 					logger.warn("not processed : "+chr+"(feature count = "+featureCount+" and chr length on genrep = "+chrLength+")");
@@ -267,6 +261,7 @@ abstract class JSONCreator {
 	protected OutputStream newChrOutput(String chr) {
 		try{
 			File tmp = new File(Configuration.getJbrowseOutput()+"/"+database+"/"+chr+"/featureNClist.json");
+			logger.debug("new chr output : "+Configuration.getJbrowseOutput()+"/"+database+"/"+chr+"/featureNClist.json");
 			return new FileOutputStream(tmp,true);
 		}catch(FileNotFoundException e){
 			logger.error(e);
@@ -711,7 +706,7 @@ abstract class JSONCreator {
 		private JSONArray array;
 		
 		protected Chunk(int nb,String chr){
-			logger.debug("new chunk for chr :"+chr+"with chunk nb ="+nb);
+			//logger.debug("new chunk for chr :"+chr+"with chunk nb ="+nb);
 			this.chunkNumber = nb;
 			this.chr = chr;
 			this.array = new JSONArray();
@@ -725,11 +720,8 @@ abstract class JSONCreator {
 		 * close it
 		 */
 		protected void closeChunk(){
-			logger.debug("closing chunk for chr :"+chr+"with chunk nb ="+chunkNumber);
-			logger.debug("writing on lazyFeature-"+curChunkSize);
-			if(chr.equalsIgnoreCase("IV")){
-				logger.debug(array.toString());
-			}
+//			logger.debug("closing chunk for chr :"+chr+" with chunk nb ="+chunkNumber);
+//			logger.debug("writing on lazyFeature - "+curChunkSize);
 			File tmp = new File(Configuration.getJbrowseOutput()+"/"+database+"/"+this.chr+"/lazyfeatures-"+chunkNumber+".json");
 			try {
 				OutputStream out = new FileOutputStream(tmp,true);

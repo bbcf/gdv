@@ -127,7 +127,7 @@ public class BrowserPage extends SidebarPage{
 		"},";
 		for(Track t : tracks){
 			String parameters ="";
-			if(t.getParameters().equalsIgnoreCase("params")){
+			if(t.getParameters().equalsIgnoreCase("params") || t.getName().equalsIgnoreCase("in process")){
 				String directory = tc.getFileFromTrackId(t.getId());
 				String imageType = null;
 				if(t.getType().equalsIgnoreCase("quantitative")){

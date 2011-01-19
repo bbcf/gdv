@@ -86,7 +86,9 @@ public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {
 
 	public void endDocument() {
 		sqliteHandler.finalizeDatabase(nrassemblyId);
-		gffChromosome.writeJSONOutput(jsonHandler);
+		if(gffChromosome!=null){
+			gffChromosome.writeJSONOutput(jsonHandler);
+		}
 		jsonHandler.setTypes(types);
 		jsonHandler.setSubFeatureHeaders(subFeatureHeaders);
 		jsonHandler.finalize();
@@ -277,7 +279,7 @@ public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {
 				this.end=old.end;
 			}
 		}
-		
+
 		public void init() {
 			this.featureCount++;
 			try {
@@ -323,10 +325,11 @@ public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {
 		}
 
 		public void nesting(GFFFeat nextFeat) {
+			
 			JSONArray nested = null;
 			try {
-				if(this.feature.length()+1==GFFCreator.SUBLISTINDEX){
-					nested = (JSONArray) this.feature.get(GFFCreator.SUBLISTINDEX);
+				if(this.feature.length()==GFFCreator.SUBLISTINDEX){
+					nested = (JSONArray) this.feature.get(GFFCreator.SUBLISTINDEX-1);
 				}
 				if(null!=nested){
 					nested.put(nextFeat.feature);
@@ -334,7 +337,7 @@ public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {
 					nested = new JSONArray();
 					nested.put(nextFeat.feature);
 				}
-				this.feature.put(GFFCreator.SUBLISTINDEX,nested);
+				this.feature.put(GFFCreator.SUBLISTINDEX-1,nested);
 				//update count
 				this.featureCount+=nextFeat.featureCount;
 			} catch (JSONException e) {
@@ -399,7 +402,6 @@ public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {
 			}
 			NCList.sort(list);
 			list = NCList.arrange(list);
-
 			boolean finish = false;
 			for(int i=0;i<list.size();i++){
 				GFFFeat f = list.get(i);
