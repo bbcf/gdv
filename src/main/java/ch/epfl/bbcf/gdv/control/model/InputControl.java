@@ -173,6 +173,7 @@ public class InputControl extends Control{
 		}
 
 		public void run(){
+			Application.debug("RUN() "+trackId);
 			Application.debug("upload file",user.getId());
 			Map<String, File> tmpDir  = uploadFile(url,fileUpload,user.getId());
 			Application.debug("upload file : done",user.getId());
@@ -197,6 +198,7 @@ public class InputControl extends Control{
 			}
 			switch(inputType){
 			case NEW_FILE:
+				Application.debug("NEW_FILE "+trackId);
 				try {
 					Application.debug("decompressing",user.getId());
 					List<File> files = Decompressor.decompress(trackId,tmpFile);
@@ -236,7 +238,6 @@ public class InputControl extends Control{
 
 						} else {//File already created link to user
 							Application.debug("file already processed ",user.getId());
-							TrackControl.linkToUser(trackId, user.getId());
 							TrackControl.linkToProject(trackId,projectId);
 							TrackControl.updateTrackFields(trackId,file.getName(),filetype,TrackControl.STATUS_FINISHED);
 						}
@@ -263,12 +264,17 @@ public class InputControl extends Control{
 
 				break;
 			case NEW_SQLITE:
+				Application.debug("NEW_SQLITE "+trackId);
 				String database = tmpFile.getName();
 				FileManagement.moveFile(tmpFile, Configuration.getFilesDir());
 				int inputId = createNewUserInput(database,user.getId(),admin);
 				if(inputId!=-1){
 					TrackControl.linkToInput(trackId, inputId);
 				}
+				if(null==name){
+					name = tmpFile.getName();
+				}
+				TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_PROCESSING);
 				if(datatype.equalsIgnoreCase("qualitative")){
 					TrackControl.updateTrack(trackId,"completed");
 				} else if(datatype.equalsIgnoreCase("quantitative")){

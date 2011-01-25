@@ -89,7 +89,7 @@ public class Launcher extends Thread{
 		}else if(extension.equalsIgnoreCase("gff")){
 			ext = Extension.GFF;
 		}else if(extension.equalsIgnoreCase("gtf")){
-//			String newPath = filePath.substring(0,filePath.length()-4)+".gff";
+//			String newPath = filePath.substring(0,filePath.length()-4);
 //			GTF2GFF.transform(filePath,newPath);
 //			FileManagement.deleteDirectory(new File(filePath));
 //			file = new File(newPath);

@@ -8,6 +8,7 @@ import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 
 public class TrackControl extends Control{
@@ -87,28 +88,7 @@ public class TrackControl extends Control{
 	//	}
 
 
-	/**
-	 * create a new track in gdv database and link it
-	 * DON'T FORGET TO CALL TrackControl.linkToFile(trackId,name) AFTER
-	 * to an user
-	 * @param userid
-	 * @param assemblyId
-	 * @param name
-	 * @param filetype
-	 * @param always
-	 * @param status
-	 */
-	public static int createTrack(int userid, String sequenceId, String name,
-			String filetype, boolean always, String status) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		int trackId = tdao.createNewTrack(sequenceId,name,filetype,always,status);
-		if(trackId!=-1){
-			tdao.linkToUser(userid,trackId);
-			return trackId;
-		}
-		return -1;
-
-	}
+	
 	/**
 	 * create an admin track ~ createTrack but link to admin instead of user
 	 * @param id
@@ -201,16 +181,7 @@ public class TrackControl extends Control{
 		tdao.linkToInput(trackId,inputId);
 	}
 
-	/**
-	 * DEPRECATED link the track to an user
-	 * @param trackId
-	 * @param userId
-	 */
-	public static boolean linkToUser(int trackId, int userId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		return tdao.linkToUser(userId, trackId);
-
-	}
+	
 
 
 	/**
@@ -329,6 +300,7 @@ public class TrackControl extends Control{
 	 */
 	public static void updateTrackFields(int trackId,
 			String name, String filetype, String status) {
+		Application.debug("UPDATE TRACK FIELD : "+trackId+" "+name+" "+filetype+" "+status);
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
 		tdao.updateTrackFields(trackId,name,filetype,status);
 	}

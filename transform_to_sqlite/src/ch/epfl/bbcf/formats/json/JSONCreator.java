@@ -261,7 +261,7 @@ abstract class JSONCreator {
 	protected OutputStream newChrOutput(String chr) {
 		try{
 			File tmp = new File(Configuration.getJbrowseOutput()+"/"+database+"/"+chr+"/featureNClist.json");
-			logger.debug("new chr output : "+Configuration.getJbrowseOutput()+"/"+database+"/"+chr+"/featureNClist.json");
+			//logger.debug("new chr output : "+Configuration.getJbrowseOutput()+"/"+database+"/"+chr+"/featureNClist.json");
 			return new FileOutputStream(tmp,true);
 		}catch(FileNotFoundException e){
 			logger.error(e);
@@ -555,6 +555,21 @@ abstract class JSONCreator {
 			"div.style.height=\\\"20px\\\"; " +
 			"div.style.marginTop =\\\"-8px\\\"; " +
 			"div.style.backgroundColor=\\\"red\\\";" +
+			"div.style.zIndex=\\\"10\\\";" +
+			"break ;" +
+			
+			"case \\\"ncRNA\\\": " +
+			"case \\\"tRNA\\\":" +
+			"div.style.height=\\\"20px\\\"; " +
+			"div.style.marginTop =\\\"-8px\\\"; " +
+			"div.style.backgroundColor=\\\"green\\\";" +
+			"div.style.zIndex=\\\"10\\\";" +
+			"break ;" +
+			
+			"case \\\"repeat_region\\\": " +
+			"div.style.height=\\\"20px\\\"; " +
+			"div.style.marginTop =\\\"-8px\\\"; " +
+			"div.style.backgroundColor=\\\"yellow\\\";" +
 			"div.style.zIndex=\\\"10\\\";" +
 			"break ;" +
 			

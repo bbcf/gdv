@@ -43,8 +43,8 @@ import ch.epfl.bbcf.gdv.html.utility.MenuElement;
  */
 public final class Configuration{
 
-	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
-	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
+	public final static String LOG_DIRECTORY = "/data/gdv/log/";
+	public final static String CONF_FILE = "/data/gdv/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
 		String[] js = new String[18];
@@ -101,6 +101,7 @@ public final class Configuration{
 
 	public static void addRessourcesLocations(IResourceSettings resourceSettings){
 		resourceSettings.addResourceFolder("conf/");
+		resourceSettings.addResourceFolder("/html/");
 		resourceSettings.addResourceFolder(Configuration.getWicketMainFolder()+"/html/");
 		resourceSettings.setResourceStreamLocator(new ch.epfl.bbcf.gdv.config.utility.RessourceLocator());
 	}

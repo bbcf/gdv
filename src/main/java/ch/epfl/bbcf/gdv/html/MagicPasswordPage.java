@@ -32,7 +32,7 @@ public class MagicPasswordPage extends WebPage{
 		LoginControl lc = new LoginControl((UserSession)getSession());
 		boolean b = lc.logAlternativeUser(type,key);
 		if(b){
-			setResponsePage(AlternativeProjectPage.class);
+			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
 		} else {
 			throw new AbortWithHttpStatusException(403,true);
 		}

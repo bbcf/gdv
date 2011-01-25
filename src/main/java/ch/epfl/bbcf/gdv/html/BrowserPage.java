@@ -1,6 +1,7 @@
 package ch.epfl.bbcf.gdv.html;
 
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.PageParameters;
@@ -10,7 +11,6 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
@@ -22,15 +22,20 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
-import ch.epfl.bbcf.gdv.formats.json.JSONProcessor;
+import ch.epfl.bbcf.gdv.html.utility.MenuElement;
 
 
 public class BrowserPage extends SidebarPage{
 
 	public BrowserPage(PageParameters p) {
 		super(p);
+//		MenuElement[] els = {new MenuElement(AlternativeProjectPage.class, "Limited Profile"),
+//				new MenuElement(AlternativeProjectPage.class, "Projects")};
+//		add(new MenuPage("menu",Arrays.asList(els)));
+
 		//getting parameters
 		int projectId = p.getInt("id");
+		
 		ProjectControl pc = new ProjectControl((UserSession)getSession());
 		final Project project = pc.getProject(projectId);
 		if(null==project || (null!=project && !pc.userAuthorized(project))){
@@ -52,8 +57,8 @@ public class BrowserPage extends SidebarPage{
 		for(String cp : Configuration.getJavascriptFiles()){
 			add(JavascriptPackageResource.getHeaderContribution(cp));
 		}
-		
-		
+
+
 		//get trackInfo.js 
 		TrackControl tc = new TrackControl((UserSession)getSession());
 		List<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
@@ -76,7 +81,7 @@ public class BrowserPage extends SidebarPage{
 		//"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+"\"+browserRoot,\n" +//+JbrowsoRAccess.SERV+"/\"+browserRoot," +
 		"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+   "\",\n" +
 		//"dataRoot: \"/jbdata/\",\n"+
-//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
+		//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
 		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"/"+"\",\n" +
 		"trackData: trackInfo,\n" +
 		"defaultTracks : "+names+"" +
@@ -137,7 +142,7 @@ public class BrowserPage extends SidebarPage{
 				} else {
 					Application.error("datatype not recognized : "+t.getId());
 				}
-				
+
 				String params = "{\n\"url\" : \"../"+directory+"/{refseq}.json\",\n" +
 				"\"label\" : \""+protect(t.getName())+"\",\n"+
 				"\"type\" : \""+imageType+"\",\n"+
@@ -162,6 +167,6 @@ public class BrowserPage extends SidebarPage{
 	private static String protect(String name) {
 		return name.replaceAll("\"", "\\\\\"");
 	}
-	
+
 
 }

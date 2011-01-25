@@ -240,7 +240,7 @@ public class TrackDAO extends DAO<Track>{
 	 * @param userid
 	 * @param trackId
 	 */
-	public boolean linkToUser(int userid, int trackId) {
+	public boolean linkToUseer(int userid, int trackId) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
@@ -487,11 +487,12 @@ public class TrackDAO extends DAO<Track>{
 			try {
 				String query = "select distinct t1.* from tracks as t1 " +
 				"inner join projectToTrack as t2 on t1.id = t2.track_id " +
-				"where t2.project_id = ? and t1.status = ? ;";
+				"where t2.project_id = ? and t1.status = ? and t1.name!= ? ;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1,projectId);
 				statement.setString(2,"completed");
+				statement.setString(3,"in process");
 				ResultSet resultSet = this.executeQuery(statement);
 				List<Track> tracks = getTracks(resultSet);
 				this.endQuery(true);

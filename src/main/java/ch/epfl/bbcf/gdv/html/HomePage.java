@@ -7,13 +7,21 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
 
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 
 public class HomePage extends BasePage{
 
 	public HomePage(PageParameters p) {
 		super(p);
+		Users user = ((UserSession)getSession()).getUser();
+		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
+			((UserSession)getSession()).signOut();
+			((UserSession)getSession()).logOut();
+			((UserSession)getSession()).invalidateNow();
+		}
 		Application.debug("Home page", ((UserSession)getSession()).getUserId());
 	}
 

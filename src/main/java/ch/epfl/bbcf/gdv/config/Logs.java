@@ -47,7 +47,7 @@ public class Logs {
 		out.addAppender(appender);
 		return out;
 	}
-	
+
 	public static Logger initDASLogger() {
 		Logger out = Logger.getLogger(DAS.class.getName());
 		out.setAdditivity(false);
@@ -77,7 +77,7 @@ public class Logs {
 		out.addAppender(appender);
 		return out;
 	}
-	
+
 	public static Logger initPOSTLogger(){
 		Logger out = Logger.getLogger(PostPage.class.getName());
 		out.setAdditivity(false);
@@ -85,7 +85,10 @@ public class Logs {
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/post.log",true);
+			if(out.getAppender(PostPage.class.getName())==null){
+				appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/post.log",true);
+				appender.setName(PostPage.class.getName());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -112,7 +115,7 @@ public class Logs {
 	 * 2 : debug SQL only
 	 * 3 : debug all but not SQL 
 	 */
-	
+
 	public static Logger initLogger(String name) {
 		Logger out = Logger.getLogger(name);
 		out.setAdditivity(false);
@@ -269,7 +272,7 @@ public class Logs {
 
 
 
-	
 
-	
+
+
 }

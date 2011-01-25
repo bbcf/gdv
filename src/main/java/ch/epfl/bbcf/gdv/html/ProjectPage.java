@@ -229,18 +229,19 @@ public class ProjectPage extends BasePage{
 				final WebMarkupContainer trackContainer = new WebMarkupContainer("tracks_container");
 				trackContainer.setOutputMarkupPlaceholderTag(true);
 				trackContainer.setVisible(false);
-				final Image image = new Image("arrow","../public/images/right_arrow.jpeg");
+				final Image image = new Image("arrow");
+				image.add(new SimpleAttributeModifier("src","../../tracks/img/right_arrow.jpeg"));
 				image.setOutputMarkupId(true);
 				AjaxLink link = new AjaxLink("arrow_link"){
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						if(trackContainer.isVisible()){
 							trackContainer.setVisible(false);
-							image.add(new SimpleAttributeModifier("src","../public/images/right_arrow.jpeg"));
+							image.add(new SimpleAttributeModifier("src","../../tracks/img/right_arrow.jpeg"));
 							target.addComponent(image);
 						} else {
 							trackContainer.setVisible(true);
-							image.add(new SimpleAttributeModifier("src","../public/images/down_arrow.jpeg"));
+							image.add(new SimpleAttributeModifier("src","../../tracks/img/down_arrow.jpeg"));
 							target.addComponent(image);
 						}
 						target.addComponent(trackContainer);
@@ -285,7 +286,8 @@ public class ProjectPage extends BasePage{
 						Label theDate = new Label("track_date",date);
 						item.add(theDate);
 						//->status
-						final Image imgLoader = new Image("status_loader","/blue-loader.gif");
+						final Image imgLoader = new Image("status_loader");
+						image.add(new SimpleAttributeModifier("src","../../tracks/img/blue-loader.gif"));
 						imgLoader.setOutputMarkupPlaceholderTag(true);
 						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
 						statusLabel.setOutputMarkupId(true);

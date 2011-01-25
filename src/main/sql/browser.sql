@@ -8,6 +8,8 @@ CREATE TABLE users
 "phone" VARCHAR(255),
 "office" VARCHAR(255),
 "type" VARCHAR(255) NOT NULL,
+"the_date" DATE NOT NULL,
+"key" VARCHAR(255),
 PRIMARY KEY ("id")
 );
 

@@ -98,6 +98,9 @@ public class ProjectControl extends Control{
 	public Project getProject(int projectId) {
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
 		Project p = pdao.getProject(projectId);
+		if(null==p){
+			return null;
+		}
 		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection(session));
 		p.setSpecies(spDAO.getSpeciesFromProjectId(projectId));
 		return p;

@@ -111,13 +111,19 @@ public class CustomGFFHandler implements GFFErrorHandler,GFFDocumentHandler {
 		String name = "";
 		String id = "";
 		Map<String,List<String>> attributes = rec.getGroupAttributes();
-
 		if (!attributes.isEmpty()){
 			Iterator<String> it = attributes.keySet().iterator();
 			while(it.hasNext()){
 				String str = it.next();
 				if(str.equalsIgnoreCase("name") || str.equalsIgnoreCase("gene_name")){
 					name=attributes.get(str).get(0);
+					if((name==null || name.equalsIgnoreCase(""))
+							&& attributes.size()>=2){
+						name = attributes.get(str).get(1);
+						while(name.endsWith("\"")){
+							name = name.substring(0,name.length()-1);
+						}
+					}
 				} 
 				if(str.equalsIgnoreCase("id") || str.equalsIgnoreCase("gene_id")){
 					id=attributes.get(str).get(0);

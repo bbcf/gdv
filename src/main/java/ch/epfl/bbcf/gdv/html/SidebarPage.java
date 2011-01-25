@@ -9,6 +9,6 @@ public class SidebarPage extends WebPage{
 
 	public SidebarPage(final PageParameters p){
 		add(new Sidebar("sidebar"));
-		
+
 	}
 }

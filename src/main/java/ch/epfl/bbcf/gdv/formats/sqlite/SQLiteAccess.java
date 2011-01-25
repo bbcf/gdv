@@ -295,6 +295,7 @@ public class SQLiteAccess {
 			Application.debug(trackId+" "+indb+" "+inPath+" "+outdb+" "+outPath+" "+fast+" "+usermail);
 		} catch (SQLException e) {
 			Application.error(e);
+			writeNewJobCalculScores(trackId, indb, inPath, outdb, outPath, fast, usermail);
 		}
 
 	}
