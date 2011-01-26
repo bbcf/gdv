@@ -1,18 +1,12 @@
 package ch.epfl.bbcf.gdv.config;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Category;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.spi.ErrorHandler;
@@ -20,7 +14,7 @@ import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
 import ch.epfl.bbcf.gdv.access.database.dao.DAO;
-import ch.epfl.bbcf.gdv.access.database.pojo.Users;
+import ch.epfl.bbcf.gdv.access.gfeatminer.GFeatMinerAccess;
 import ch.epfl.bbcf.gdv.control.http.QueriesFilter;
 import ch.epfl.bbcf.gdv.formats.das.DAS;
 import ch.epfl.bbcf.gdv.html.PostPage;
@@ -71,6 +65,23 @@ public class Logs {
 		RollingFileAppender appender = null;
 		try {
 			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/sql.log",true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		out.addAppender(appender);
+		return out;
+	}
+	public static Logger initGFeatMinerLogger() {
+		Logger out = Logger.getLogger(GFeatMinerAccess.class.getName());
+		out.setAdditivity(false);
+		out.setLevel(debugLevel);
+		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
+		RollingFileAppender appender = null;
+		try {
+			if(out.getAppender(GFeatMinerAccess.class.getName())==null){
+				appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/gFeatMiner.log",true);
+				appender.setName(GFeatMinerAccess.class.getName());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

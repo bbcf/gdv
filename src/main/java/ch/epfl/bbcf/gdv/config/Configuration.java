@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.wicket.authorization.strategies.role.RoleAuthorizationStrategy;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.target.coding.HybridUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.MixedParamUrlCodingStrategy;
@@ -34,6 +35,8 @@ import ch.epfl.bbcf.gdv.html.PostPage;
 import ch.epfl.bbcf.gdv.html.ProjectPage;
 import ch.epfl.bbcf.gdv.html.TrackStatus;
 import ch.epfl.bbcf.gdv.html.utility.MenuElement;
+import ch.epfl.bbcf.gdv.model.gfeatminer.GFeatMinerElement;
+import ch.epfl.bbcf.gdv.model.gfeatminer.GFeatMinerParameters;
 /**
  * Class called in the init() method of the Application class. It contains all about nice URL, 
  * resources folders, and authorizations
@@ -43,11 +46,11 @@ import ch.epfl.bbcf.gdv.html.utility.MenuElement;
  */
 public final class Configuration{
 
-	public final static String LOG_DIRECTORY = "/data/gdv/log/";
-	public final static String CONF_FILE = "/data/gdv/conf/gdv.yaml";
+	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
+	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
-		String[] js = new String[18];
+		String[] js = new String[20];
 		js[0]=instance.javascript_url+"/js/gdv_link.js";
 		js[1]=instance.javascript_url+"/js/gdv_canvas.js";
 		js[2]=instance.javascript_url+"/js/Browser.js";
@@ -63,9 +66,11 @@ public final class Configuration{
 		js[12]=instance.javascript_url+"/js/UITracks.js";
 		js[13]=instance.javascript_url+"/js/Util.js";
 		js[14]=instance.javascript_url+"/js/GenomeView.js";
-		js[15]=instance.javascript_url+"/jslib/dojo/dojo.js";
-		js[16]=instance.javascript_url+"/jslib/dojo/jbrowse_dojo.js";
-		js[17]=instance.javascript_url+"/js/Selection.js";
+		js[15]=instance.javascript_url+"/js/TrackSelection.js";
+		js[16]=instance.javascript_url+"/js/ZoneSelection.js";
+		js[17]=instance.javascript_url+"/jslib/dojo/dojo.js";
+		js[18]=instance.javascript_url+"/jslib/dojo/jbrowse_dojo.js";
+		js[19]=instance.javascript_url+"/js/Selection.js";
 		return js;
 	}
 	private static String[] buildJbrowseCSSFiles() {
@@ -86,7 +91,6 @@ public final class Configuration{
 	public final static Class[] user_pages = {ImportFilePage.class,ProjectPage.class,
 		BrowserPage.class,PreferencesPage.class};
 
-	//WARNING : this two list are oredered
 	public final static MenuElement[] navigation_links = {
 		new MenuElement(HomePage.class,"Home"),
 		new MenuElement(AdminPage.class,"Admin"),
@@ -96,7 +100,13 @@ public final class Configuration{
 	public static List<MenuElement> getNavigationLinks() {
 		return Arrays.asList(navigation_links);
 	}
-
+	
+	public final static GFeatMinerElement[] gFeatMinerElements={
+		new GFeatMinerElement("test",GFeatMinerParameters.getGFeatMinerParameters())
+	};
+	public static List<GFeatMinerElement> getGFeatMinerElements() {
+		return Arrays.asList(gFeatMinerElements);
+	}
 
 
 	public static void addRessourcesLocations(IResourceSettings resourceSettings){
@@ -460,5 +470,6 @@ public final class Configuration{
 	public static List<String> getGdv_types_access() {
 		return instance.gdv_types_access;
 	}
+	
 
 }

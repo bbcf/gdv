@@ -89,13 +89,19 @@ public class InternetConnection {
 				outStream.flush();
 				outStream.close();
 				String buffer;
-				inStream = new DataInputStream(urlConnection.getInputStream());
-				InputStreamReader isr = new InputStreamReader(inStream);
-				BufferedReader br = new BufferedReader(isr);
-				while(null!=(buffer = br.readLine())){
-					result+=buffer;
+				if(null!=urlConnection.getInputStream()){
+					inStream = new DataInputStream(urlConnection.getInputStream());
+					if(inStream!=null){
+						InputStreamReader isr = new InputStreamReader(inStream);
+						BufferedReader br = new BufferedReader(isr);
+						while(null!=(buffer = br.readLine())){
+							result+=buffer;
+						}
+					}
+					inStream.close();
+				} else {
+					Application.error("input stream is null");
 				}
-				inStream.close();
 				outStream.close();
 				if(null==result||result.equalsIgnoreCase("")){
 					Application.error("The connection to send no resut "+adress);
@@ -105,7 +111,7 @@ public class InternetConnection {
 				}
 				return result;
 			}
-			
+
 			catch(Exception e) {
 				Application.debug(body);
 				for(StackTraceElement el : e.getStackTrace()){

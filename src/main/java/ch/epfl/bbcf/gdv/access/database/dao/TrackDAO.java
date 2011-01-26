@@ -9,6 +9,7 @@ import java.util.List;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
@@ -95,7 +96,36 @@ public class TrackDAO extends DAO<Track>{
 				logger.error(e);
 			}
 		}
+		track.setInput(getInput(track.getId()));
 		return track;
+	}
+
+	/**
+	 * get the md5 of a track
+	 * @param id
+	 * @return
+	 */
+	private String getInput(int id) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select md5 from input as t1 " +
+						"inner join inputtotrack as t2 on t1.id = t2.input_id " +
+						"where t2.track_id = ? ";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,id);
+				ResultSet resultSet = this.executeQuery(statement);
+				if(resultSet.first()){
+					this.endQuery(true);
+					return resultSet.getString(1);
+				}
+			} catch (SQLException e) {
+				logger.error("getInput : "+e);
+				this.endQuery(false);
+			}
+		}
+		return null;
 	}
 
 	private List<Track> getTracks(ResultSet resultSet) {

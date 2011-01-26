@@ -9,12 +9,14 @@ public class Track implements Serializable{
 	private String parameters;
 	private String status;
 	private String type;
+	private String input;
 	
 	public Track(){
 		id=-1;
 		name="";
 		parameters="";
 		status="";
+		setInput("");
 	}
 	/**
 	 * @param parameters the parameters to set
@@ -78,5 +80,11 @@ public class Track implements Serializable{
 	}
 	public String getType() {
 		return type;
+	}
+	public void setInput(String input) {
+		this.input = input;
+	}
+	public String getInput() {
+		return input;
 	}
 }

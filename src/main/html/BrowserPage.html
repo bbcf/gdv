@@ -9,14 +9,14 @@
   <meta name="Keywords" content="genome,browser,browsing" /> 
 </head>
 <body>
-  <wicket:extend>
- <!--  <div id="gdv_column"> -->
-<!--     <div id="gdv_menu" wicket:id="menu"/> -->
-<!--     <div id="gdv_body"> -->
-      <span id="speciesName" wicket:id="species" style="display:none"/>
-      <div id="GenomeBrowser" style="height: 100%; width: 100%; padding: 0; border: 0;"></div>
+  <div id="gdv_column">
+      <div id="gdv_menu" wicket:id="menu"/>
+      
+      <div id="gfeat_menu" wicket:id="gfeat_menu"/>
+      <div id="gdv_body_browser">
+	<span id="speciesName" wicket:id="species" style="display:none"/>
+	<span id="tabpanel" wicket:id="tabs"/>
+      </div>
     </div>
-  
- </wicket:extend>
 </body>
 </html>
