@@ -4,9 +4,11 @@ import javax.servlet.http.Cookie;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.Session;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.protocol.http.WebRequest;
 
@@ -25,6 +27,20 @@ public class BasePage extends WebPage{
 		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
 			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
 		}
+		
+		Image gdv = new Image("gdv_logo");
+		gdv.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/logo_gdv.jpg"));
+		add(gdv);
+		Image epfl = new Image("epfl_logo");
+		epfl.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/epfl-logo.jpeg"));
+		add(epfl);
+		Image bbcf = new Image("bbcf_logo");
+		bbcf.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/logo-bbcf.png"));
+		add(bbcf);
+		Image sybit = new Image("sybit_logo");
+		sybit.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/logo_sybit.jpg"));
+		add(sybit);
+		
 		add(new MenuPage("menu",Configuration.getNavigationLinks()));
 		
 	}

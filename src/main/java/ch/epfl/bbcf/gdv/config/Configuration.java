@@ -12,7 +12,6 @@ import java.util.Map;
 import org.apache.wicket.authorization.strategies.role.RoleAuthorizationStrategy;
 import org.apache.wicket.authorization.strategies.role.Roles;
 import org.apache.wicket.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.target.coding.HybridUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.MixedParamUrlCodingStrategy;
@@ -51,33 +50,33 @@ public final class Configuration{
 
 	private static String[] buildJSFile() {
 		String[] js = new String[20];
-		js[0]=instance.javascript_url+"/js/gdv_link.js";
-		js[1]=instance.javascript_url+"/js/gdv_canvas.js";
-		js[2]=instance.javascript_url+"/js/Browser.js";
-		js[3]=instance.javascript_url+"/js/Track.js";
-		js[4]=instance.javascript_url+"/js/FeatureTrack.js";
-		js[5]=instance.javascript_url+"/js/SequenceTrack.js";
-		js[6]=instance.javascript_url+"/js/touchjBrowse.js";
-		js[7]=instance.javascript_url+"/js/ImageTrack.js";
-		js[8]=instance.javascript_url+"/js/Layout.js";
-		js[9]=instance.javascript_url+"/js/LazyArray.js";
-		js[10]=instance.javascript_url+"/js/LazyPatricia.js";
-		js[11]=instance.javascript_url+"/js/NCList.js";
-		js[12]=instance.javascript_url+"/js/UITracks.js";
-		js[13]=instance.javascript_url+"/js/Util.js";
-		js[14]=instance.javascript_url+"/js/GenomeView.js";
-		js[15]=instance.javascript_url+"/js/TrackSelection.js";
-		js[16]=instance.javascript_url+"/js/ZoneSelection.js";
-		js[17]=instance.javascript_url+"/jslib/dojo/dojo.js";
-		js[18]=instance.javascript_url+"/jslib/dojo/jbrowse_dojo.js";
-		js[19]=instance.javascript_url+"/js/Selection.js";
+		js[0]=instance.jbrowse_javascript_url+"/js/gdv_link.js";
+		js[1]=instance.jbrowse_javascript_url+"/js/gdv_canvas.js";
+		js[2]=instance.jbrowse_javascript_url+"/js/Browser.js";
+		js[3]=instance.jbrowse_javascript_url+"/js/Track.js";
+		js[4]=instance.jbrowse_javascript_url+"/js/FeatureTrack.js";
+		js[5]=instance.jbrowse_javascript_url+"/js/SequenceTrack.js";
+		js[6]=instance.jbrowse_javascript_url+"/js/touchjBrowse.js";
+		js[7]=instance.jbrowse_javascript_url+"/js/ImageTrack.js";
+		js[8]=instance.jbrowse_javascript_url+"/js/Layout.js";
+		js[9]=instance.jbrowse_javascript_url+"/js/LazyArray.js";
+		js[10]=instance.jbrowse_javascript_url+"/js/LazyPatricia.js";
+		js[11]=instance.jbrowse_javascript_url+"/js/NCList.js";
+		js[12]=instance.jbrowse_javascript_url+"/js/UITracks.js";
+		js[13]=instance.jbrowse_javascript_url+"/js/Util.js";
+		js[14]=instance.jbrowse_javascript_url+"/js/GenomeView.js";
+		js[15]=instance.jbrowse_javascript_url+"/js/TrackSelection.js";
+		js[16]=instance.jbrowse_javascript_url+"/js/ZoneSelection.js";
+		js[17]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
+		js[18]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
+		js[19]=instance.jbrowse_javascript_url+"/js/Selection.js";
 		return js;
 	}
 	private static String[] buildJbrowseCSSFiles() {
 		String[] css = new String[3];
-		css[0]=instance.css_url+"/dijit/themes/tundra/tundra.css";
-		css[1]=instance.css_url+"/dojo/resources/dojo.css";
-		css[2]=instance.css_url+"/genome.css";
+		css[0]=instance.jbrowse_javascript_url+"/jslib/dijit/themes/tundra/tundra.css";
+		css[1]=instance.jbrowse_javascript_url+"/jslib/dojo/resources/dojo.css";
+		css[2]=instance.jbrowse_css_url+"/genome.css";
 		return css;
 	}
 	private static String[] buidGDVCSSFiles(){
@@ -102,7 +101,10 @@ public final class Configuration{
 	}
 	
 	public final static GFeatMinerElement[] gFeatMinerElements={
-		new GFeatMinerElement("test",GFeatMinerParameters.getGFeatMinerParameters())
+		new GFeatMinerElement("Statistics",GFeatMinerParameters.getGFeatMinerParameters()),
+		new GFeatMinerElement("Operations",GFeatMinerParameters.getGFeatMinerParameters()),
+		new GFeatMinerElement("Motifs",GFeatMinerParameters.getGFeatMinerParameters()),
+		new GFeatMinerElement("Diagnostics",GFeatMinerParameters.getGFeatMinerParameters())
 	};
 	public static List<GFeatMinerElement> getGFeatMinerElements() {
 		return Arrays.asList(gFeatMinerElements);
@@ -176,9 +178,9 @@ public final class Configuration{
 
 
 	private static String gdv_appli_proxy,files_dir,tmp_dir,log_dir,
-	tracks_dir,public_dir,javascript_url,css_url,css_jbrowse_dir,
-	das_dir,databases_link_dir,compute_scores_daemon,
-	transform_to_sqlite_daemon,project_url,gdv_version;
+	tracks_dir,public_dir,jbrowse_static_files_url,jbrowse_css_url,
+	das_dir,databases_link_dir,compute_scores_daemon,jbrowse_javascript_url,
+	transform_to_sqlite_daemon,project_url,gdv_version,images_url,jbrowse_images_url;
 
 	private static String gdv_post_access;
 	private static List<String> gdv_types_access;
@@ -252,10 +254,14 @@ public final class Configuration{
 				instance.log_dir=instance.gdv_working_directory+"/log";
 				instance.tracks_dir=instance.gdv_working_directory+"/tracks";
 				instance.public_dir=instance.gdv_working_directory+"/public";
-				instance.javascript_url=instance.gdv_public_url+"/javascript";
-				instance.css_url=instance.gdv_public_url+"/css";
-				instance.css_jbrowse_dir=instance.public_dir+"/css/jbrowsecss";
+				
+				instance.jbrowse_static_files_url=instance.gdv_public_url+"/jbrowse";
+				instance.jbrowse_css_url=instance.jbrowse_static_files_url+"/css";
+				instance.jbrowse_javascript_url=instance.jbrowse_static_files_url+"/javascript";
+				instance.jbrowse_images_url=instance.jbrowse_static_files_url+"/img";
+				instance.images_url=instance.gdv_public_url+"/img";
 				instance.das_dir=instance.files_dir+"/DAS";
+				
 				instance.databases_link_dir=instance.gdv_working_directory+"/databases_link";
 				instance.compute_scores_daemon=instance.gdv_working_directory+"/compute_sqlite_scores/jobs.db";
 				instance.transform_to_sqlite_daemon=instance.gdv_working_directory+"/transform_to_sqlite/jobs.db";
@@ -367,23 +373,17 @@ public final class Configuration{
 	 * @return the css_dir
 	 */
 	public static String getCss_dir() {
-		return instance.css_url;
+		return instance.jbrowse_css_url;
 	}
 
 
-	/**
-	 * @return the css_jbrowse
-	 */
-	public static String getCssJbrowse_dir() {
-		return instance.css_jbrowse_dir;
-	}
-
+	
 
 	/**
 	 * @return the javascript_dir
 	 */
 	public static String getJavascript_dir() {
-		return instance.javascript_url;
+		return instance.jbrowse_static_files_url;
 	}
 
 
@@ -470,6 +470,10 @@ public final class Configuration{
 	public static List<String> getGdv_types_access() {
 		return instance.gdv_types_access;
 	}
-	
-
+	public static String getGdv_Images_url(){
+		return instance.images_url;
+	}
+	public static String getJbrowse_Images_url(){
+		return instance.jbrowse_images_url;
+	}
 }

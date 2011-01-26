@@ -99,7 +99,7 @@ public class BrowserPage extends WebPage{
 		//"dataRoot: \"/jbdata/\",\n"+
 		//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
 		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"/"+"\",\n" +
-		"styleRoot: \""+"../../"+Configuration.getGdvPublicUrl()+"/"+"\",\n" +
+		"styleRoot: \""+"../../"+Configuration.getJbrowse_Images_url()+"/"+"\",\n" +
 		"trackData: trackInfo,\n" +
 		"defaultTracks : "+names+"" +
 		"});" +

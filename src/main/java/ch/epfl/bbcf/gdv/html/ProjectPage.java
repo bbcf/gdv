@@ -47,6 +47,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
 import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.GroupControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
@@ -230,18 +231,18 @@ public class ProjectPage extends BasePage{
 				trackContainer.setOutputMarkupPlaceholderTag(true);
 				trackContainer.setVisible(false);
 				final Image image = new Image("arrow");
-				image.add(new SimpleAttributeModifier("src","../../tracks/img/right_arrow.jpeg"));
+				image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/right_arrow.jpeg"));
 				image.setOutputMarkupId(true);
 				AjaxLink link = new AjaxLink("arrow_link"){
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						if(trackContainer.isVisible()){
 							trackContainer.setVisible(false);
-							image.add(new SimpleAttributeModifier("src","../../tracks/img/right_arrow.jpeg"));
+							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/right_arrow.jpeg"));
 							target.addComponent(image);
 						} else {
 							trackContainer.setVisible(true);
-							image.add(new SimpleAttributeModifier("src","../../tracks/img/down_arrow.jpeg"));
+							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"down_arrow.jpeg"));
 							target.addComponent(image);
 						}
 						target.addComponent(trackContainer);
@@ -287,7 +288,7 @@ public class ProjectPage extends BasePage{
 						item.add(theDate);
 						//->status
 						final Image imgLoader = new Image("status_loader");
-						image.add(new SimpleAttributeModifier("src","../../tracks/img/blue-loader.gif"));
+						imgLoader.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/blue-loader.gif"));
 						imgLoader.setOutputMarkupPlaceholderTag(true);
 						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
 						statusLabel.setOutputMarkupId(true);
