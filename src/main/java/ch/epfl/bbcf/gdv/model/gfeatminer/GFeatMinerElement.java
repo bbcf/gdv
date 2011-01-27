@@ -10,20 +10,22 @@ public class GFeatMinerElement{
 
 	private String label;
 	private Map<String, String> params;
-	
+
 	public GFeatMinerElement(String label,Map<String,String>params) {
 		this.label = label;
 		this.params = params;
 	}
 
-	
-	
+
+
 	public void doJob(){
-		String result = GFeatMinerAccess.sendReauest(params);
-		Application.debug(result);
+		if(null!=params){
+			String result = GFeatMinerAccess.sendReauest(params);
+			Application.debug(result);
+		}
 	}
-	
-	
+
+
 	public void setLabel(String label) {
 		this.label = label;
 	}
@@ -31,7 +33,7 @@ public class GFeatMinerElement{
 	public String getLabel() {
 		return label;
 	}
-	
-	
-	
+
+
+
 }

@@ -49,7 +49,7 @@ public final class Configuration{
 	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
-		String[] js = new String[20];
+		String[] js = new String[19];
 		js[0]=instance.jbrowse_javascript_url+"/js/gdv_link.js";
 		js[1]=instance.jbrowse_javascript_url+"/js/gdv_canvas.js";
 		js[2]=instance.jbrowse_javascript_url+"/js/Browser.js";
@@ -69,7 +69,6 @@ public final class Configuration{
 		js[16]=instance.jbrowse_javascript_url+"/js/ZoneSelection.js";
 		js[17]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
 		js[18]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
-		js[19]=instance.jbrowse_javascript_url+"/js/Selection.js";
 		return js;
 	}
 	private static String[] buildJbrowseCSSFiles() {
@@ -102,9 +101,9 @@ public final class Configuration{
 	
 	public final static GFeatMinerElement[] gFeatMinerElements={
 		new GFeatMinerElement("Statistics",GFeatMinerParameters.getGFeatMinerParameters()),
-		new GFeatMinerElement("Operations",GFeatMinerParameters.getGFeatMinerParameters()),
-		new GFeatMinerElement("Motifs",GFeatMinerParameters.getGFeatMinerParameters()),
-		new GFeatMinerElement("Diagnostics",GFeatMinerParameters.getGFeatMinerParameters())
+		new GFeatMinerElement("Operations",null),
+		new GFeatMinerElement("Motifs",null),
+		new GFeatMinerElement("Diagnostics",null)
 	};
 	public static List<GFeatMinerElement> getGFeatMinerElements() {
 		return Arrays.asList(gFeatMinerElements);
@@ -475,5 +474,8 @@ public final class Configuration{
 	}
 	public static String getJbrowse_Images_url(){
 		return instance.jbrowse_images_url;
+	}
+	public static String getJbrowse_static_files_url(){
+		return instance.jbrowse_static_files_url;
 	}
 }

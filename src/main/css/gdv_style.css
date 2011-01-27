@@ -25,18 +25,18 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 {float:left;height:100%;}
 #gdv_banner a:link a:visited a:hover a:active {text-decoration:none;}
 #gdv_column{position:relative;width:100%;min-width:100em;}
-#gdv_menu{left:1em;position:absolute;top:1em;width:10em;padding:1em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
-#gfeat_menu{left:1em;position:relative;top:15em;width:10em;padding:1em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
+#gdv_menu{left:0em;position:absolute;top:1em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
+#gfeat_menu{left:0em;position:relative;top:15em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
 .menu_entry{font-size:1.3em;letter-spacing:150%}
 #gdv_body{position:relative;margin-left:14em;padding:1em;margin-right:1em;}
-#gdv_body_browser{position:relative;top:-18em;margin-left:14em;padding:1em;margin-right:1em;}
+#gdv_body_browser{position:relative;top:-18.5em;margin-left:14em;padding:1em;margin-right:1em;}
 #gdv_footer{margin-left:14em;margin-right:5em;padding:1em;line-height:200%;}
 /* TABBED PANEL */
 #tabpanel{float:left;width:100%;font-size:93%;line-height:normal;}
-#tabpanel ul{margin:0;list-style:none;padding:1em 1em 0;position:fixed;bottom:1em;}
+#tabpanel ul{background-color:grey;margin:0;list-style:none;padding:1em 1em 0;position:fixed;bottom:1em;}
 #tabpanel li{float:left;margin:0;padding:0;}
 #tabpanel a {display:block;padding:0.5em 1em 0.4em;text-decoration:none;}
-.selected {color:red;background-image:url("../../tracks/img/cds.png");}
+.selected {background-color:red;}
 /*gFeatMiner*/
 .gfeat_but{margin:1em};
 
