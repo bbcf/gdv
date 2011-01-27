@@ -380,7 +380,7 @@ public class UsersDAO extends DAO<Users>{
 			this.startQuery();
 			try {
 				String query = "Select t1.* from users as t1 " +
-				"inner join group as t2 on t1.id = t2.owner " +
+				"inner join groups as t2 on t1.id = t2.owner " +
 				"where t2.id = ? ";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -389,9 +389,9 @@ public class UsersDAO extends DAO<Users>{
 				Users u = null;
 				if(resultSet.first()){
 					u = this.getUser(resultSet);
+					this.endQuery(true);
+					return u;
 				}
-				this.endQuery(true);
-				return u;
 			} catch (SQLException e) {
 				logger.error(e);
 				this.endQuery(false);

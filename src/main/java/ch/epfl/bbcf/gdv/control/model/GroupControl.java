@@ -61,11 +61,14 @@ public class GroupControl extends Control{
 	public String getUserMailOwnerFromGroupId(int groupId) {
 		UsersDAO udao = new UsersDAO(Connect.getConnection(session));
 		Users u = udao .getUserOwnerFromGroupId(groupId);
-		return u.getMail();
+		if(null!=u){
+			return u.getMail();
+		}
+		return null;
 	}
 
 
-	
+
 	/**
 	 * create a new group 
 	 * @param gn - the group name
@@ -73,7 +76,7 @@ public class GroupControl extends Control{
 	public int createNewGroup(String gn) {
 		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
 		return gdao.createNewGroup(session.getUserId(),gn);
-		
+
 	}
 	/**
 	 * add a mail to this group
