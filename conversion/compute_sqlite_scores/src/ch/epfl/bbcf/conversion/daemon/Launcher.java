@@ -19,7 +19,7 @@ import ch.epfl.bbcf.utility.Sender;
 
 public class Launcher extends Thread{
 
-	private static final Logger logger = ManagerService.logger;
+	private static final Logger logger = Configuration.initLogger(Launcher.class.getName());
 	public final static int[]zooms = ScoreTree.zooms;
 	private String trackId;
 	private String indb;
