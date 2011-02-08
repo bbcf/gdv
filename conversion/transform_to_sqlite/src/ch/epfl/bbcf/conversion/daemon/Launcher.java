@@ -186,7 +186,7 @@ public class Launcher extends Thread{
 		}
 
 
-
+		convertor.setParameters(nrAssemblyId,chrList);
 
 		try {
 			//do sqlite

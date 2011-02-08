@@ -2,6 +2,7 @@ package ch.epfl.bbcf.conversion.convertor;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.json.JSONException;
 
@@ -10,6 +11,7 @@ import ch.epfl.bbcf.conversion.feature.JSONFeature;
 import ch.epfl.bbcf.feature.Feature;
 import ch.epfl.bbcf.feature.Track;
 import ch.epfl.bbcf.parser.Handler;
+import ch.epfl.bbcf.utility.ChromosomeNameHandler;
 
 public class Convertor implements Handler{
 
@@ -29,7 +31,12 @@ public class Convertor implements Handler{
 	 * the name of the input file
 	 */
 	private String fileName;
+
+	private List<String> chromosomeNameList;
 	
+	ChromosomeNameHandler nameHandler;
+
+	private String nrAssemblyId;
 	
 	/**
 	 * will convert a parsed file to sqlite and/or json
@@ -42,6 +49,7 @@ public class Convertor implements Handler{
 		this.setInputPath(inputPath);
 		this.fileName = inputPath.substring(inputPath.lastIndexOf("/")+1,inputPath.lastIndexOf("."));
 		this.extension = extension;
+		nameHandler = new ChromosomeNameHandler();
 	}
 	
 	/**
@@ -105,6 +113,15 @@ public class Convertor implements Handler{
 	
 	@Override
 	public void newFeature(Feature feature) {
+		String chr = feature.getChromosome();
+		if(!chromosomeNameList.contains(chr)){
+			chr = nameHandler.getChromosomeAltName(nrAssemblyId,chr);
+		}
+		if(null==chr){
+			return;
+		}
+		
+		
 		if(doSqlite){
 			try {
 				sqlite_handler.newFeature(feature);
@@ -174,6 +191,19 @@ public class Convertor implements Handler{
 
 	public String getInputPath() {
 		return inputPath;
+	}
+
+	/**
+	 * set the chromosome names list accepted by jbrowse
+	 * if a chromosome encountered in the file is not in 
+	 * this list, perhaps it's an other and need to be converted
+	 * (e.g chr1 to chrI)
+	 * @param nrAssemblyId - nrAssembly id form Genrep
+	 * @param chrList - the chromosome listw
+	 */
+	public void setParameters(String nrAssemblyId, List<String> chrList) {
+		this.nrAssemblyId = nrAssemblyId;
+		this.chromosomeNameList = chrList;
 	}
 	
 }
