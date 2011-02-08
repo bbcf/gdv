@@ -62,24 +62,24 @@ public class JSONProcessor  implements Runnable{
 
 
 
-	public static void buildJSONForQualitativeTrack(Track t, String database, String species) {
-		File directory = new File(Configuration.getTracks_dir()+"/"+database);
-		if(directory.mkdir()){
-			Map<String,String> altsNames = getAltNames(species);
-			//Map<String, String> params = GFF.getJSONDescriptor(new File(Configuration.FILES_DIRECTORY+"/"+dir),altsNames);
-			Map<String, String> params = SQLiteProcessor.getJSONDescriptor(database,altsNames);
-			Iterator<Entry<String, String>> it = params.entrySet().iterator();
-			while(it.hasNext()){
-				Entry<String,String> entry = it.next();
-				File tmp = new File(Configuration.getTracks_dir()+"/"+database+"/"+entry.getKey()+".json");
-				try {
-					FileManagement.writeTo(entry.getValue(), tmp);
-				} catch (IOException e) {
-					Application.debug(e);
-				}
-			}
-		}
-	}
+//	public static void buildJSONForQualitativeTrack(Track t, String database, String species) {
+//		File directory = new File(Configuration.getTracks_dir()+"/"+database);
+//		if(directory.mkdir()){
+//			Map<String,String> altsNames = getAltNames(species);
+//			//Map<String, String> params = GFF.getJSONDescriptor(new File(Configuration.FILES_DIRECTORY+"/"+dir),altsNames);
+//			Map<String, String> params = SQLiteProcessor.getJSONDescriptor(database,altsNames);
+//			Iterator<Entry<String, String>> it = params.entrySet().iterator();
+//			while(it.hasNext()){
+//				Entry<String,String> entry = it.next();
+//				File tmp = new File(Configuration.getTracks_dir()+"/"+database+"/"+entry.getKey()+".json");
+//				try {
+//					FileManagement.writeTo(entry.getValue(), tmp);
+//				} catch (IOException e) {
+//					Application.debug(e);
+//				}
+//			}
+//		}
+//	}
 
 
 

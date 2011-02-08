@@ -114,6 +114,7 @@ public class InternetConnection {
 
 			catch(Exception e) {
 				Application.debug(body);
+				Application.debug(e.getMessage());
 				for(StackTraceElement el : e.getStackTrace()){
 					Application.debug(el.getClassName()+"."+el.getMethodName()+"."+el.getLineNumber());
 				}

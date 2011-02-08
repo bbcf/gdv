@@ -1,0 +1,5 @@
+# path to a temporary directory (cannot be .)
+tmp_directory : /project/tmp
+# an url if you want feedback
+feedback_url : http://myServer.com/jbrowse/post
+

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="conversion">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="conversion.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/bbcf_parser.jar"/>
+        <pathelement location="lib/json.jar"/>
+        <pathelement location="lib/biojava.jar"/>
+        <pathelement location="lib/bytecode.jar"/>
+        <pathelement location="lib/log4j-1.2.16.jar"/>
+        <pathelement location="lib/snakeyaml-1.7rc1.jar"/>
+        <pathelement location="lib/bbcf_access.jar"/>
+        <pathelement location="lib/bbcf_sqlite.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+   
+    <target depends="init" name="compile">
+      <echo message="${ant.project.name}: ${ant.file}"/>
+      <javac includeantruntime="true" debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+        <src path="src"/>
+        <classpath refid="conversion.classpath"/>
+      </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+   
+    
+    <pathconvert property="mf.classpath" pathsep=" ">
+      <path refid="conversion.classpath"/>
+      <mapper>
+	<chainedmapper>
+	  <flattenmapper/>
+	  <globmapper from="*.jar" to="lib/*.jar"/>
+	</chainedmapper>
+      </mapper>
+    </pathconvert>
+
+    <target name="jar" depends="clean,compile">
+      <jar destfile="transform_to_sqlite.jar"
+           basedir="bin"
+           includes="**/*.class">
+	<manifest>
+          <attribute name="Main-Class" value="ch.epfl.bbcf.conversion.daemon.Daemon"/>
+          <attribute name="Class-Path" value="${mf.classpath}" />
+	</manifest>
+	</jar>
+    </target> 
+    <target name="daemon">
+        <java classname="ch.epfl.bbcf.conversion.daemon.Daemon" failonerror="true" fork="yes">
+            <classpath refid="conversion.classpath"/>
+        </java>
+    </target>
+</project>

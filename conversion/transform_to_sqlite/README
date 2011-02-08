@@ -1,0 +1,17 @@
+ DAEMON - transform flat files to SQLite and/or JSON outputs for GDV and Jbrowse
+
+### COMPILE and ARCHIVE source code
+jar file - run 'ant jar' to compile 'transform_to_sqlite.jar'
+
+
+
+### DIRECTORIES
+# lib - jar needed to run the daemon
+
+# start.sh & stop.sh - scripts to launch & stop the daemon : you must change the {path} to the right directory
+
+# conf/conf.yaml - the configuration script : change the parameters to match your configuration
+
+# src - source code
+
+# bin - compiled code

@@ -135,7 +135,7 @@ public class Connect implements Connection{
 		else {
 			identifier = session.getId();
 		}
-	//	Application.debug("get connection with id : "+identifier);
+		//	Application.debug("get connection with id : "+identifier);
 		if(null!=session){
 			//Application.debug(Connect.class+" get database connection : "+identifier);
 		}
@@ -155,6 +155,7 @@ public class Connect implements Connection{
 	}
 
 	public static void removeConnection(UserSession userSession) {
+		Application.debug("REMOVING CONNECTION "+userSession.getUserId());
 		if(Connect.databasePool.containsKey(userSession.getId())){
 			Connect conn = Connect.databasePool.get(userSession.getId());
 			try {
@@ -188,7 +189,7 @@ public class Connect implements Connection{
 				Application.error(e);
 			}
 		}
-		 Connect.databasePool = new HashMap<String, Connect>();
+		Connect.databasePool = new HashMap<String, Connect>();
 
 	}
 
@@ -486,24 +487,24 @@ public class Connect implements Connection{
 		}
 	}
 
-	/**
-	 * @param session the session to set
-	 */
-	public void setSession(UserSession session) {
-		this.session = session;
+		/**
+		 * @param session the session to set
+		 */
+		public void setSession(UserSession session) {
+			this.session = session;
+		}
+
+		/**
+		 * @return the session
+		 */
+		public UserSession getSession() {
+			return session;
+		}
+
+
+
+
+
+
 	}
-
-	/**
-	 * @return the session
-	 */
-	public UserSession getSession() {
-		return session;
-	}
-
-
-
-
-
-
-}
 
