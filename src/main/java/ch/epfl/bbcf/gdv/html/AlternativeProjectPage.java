@@ -178,7 +178,7 @@ public class AlternativeProjectPage extends WebPage{
 				};
 				link.add(image);
 				item.add(link);
-				DataTrackProvider dtp = new DataTrackProvider((UserSession)getSession(),projectWrapper);
+				final DataTrackProvider dtp = new DataTrackProvider((UserSession)getSession(),projectWrapper);
 				int alt=0;
 				//TRACKS
 				DataView<TrackWrapper> trackData = new DataView<TrackWrapper>("track_data",dtp){
@@ -239,15 +239,16 @@ public class AlternativeProjectPage extends WebPage{
 						}));
 
 						//-> delete link
-						final Link link = new Link("delete"){
+						final AjaxLink link = new AjaxLink("delete"){
 							@Override
-							public void onClick() {
+							public void onClick(AjaxRequestTarget target) {
 								TrackControl tc = new TrackControl((UserSession)getSession());
 								tc.removeTrackFromUser(track.getTrackInstance());
-								setResponsePage(ProjectPage.class);
+								dtp.detach();
+								target.addComponent(trackContainer);
 							}
 						};
-						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
+						//link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
 						link.setOutputMarkupPlaceholderTag(true);
 						item.add(link);
 					}
