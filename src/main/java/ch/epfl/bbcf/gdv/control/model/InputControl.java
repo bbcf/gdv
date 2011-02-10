@@ -291,12 +291,20 @@ public class InputControl extends Control{
 					name = tmpFile.getName();
 				}
 				TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_PROCESSING);
-				if(datatype.equalsIgnoreCase("qualitative")){
-					TrackControl.updateTrack(trackId,"completed");
-				} else if(datatype.equalsIgnoreCase("quantitative")){
-					SQLiteAccess.writeNewJobCalculScores(
-							Integer.toString(trackId),database,Configuration.getFilesDir(),
-							database,Configuration.getTracks_dir(),"0","nomail");
+				if(!SQLiteAccess.dbAlreadyCreated(database)){
+
+					if(datatype.equalsIgnoreCase("qualitative")){
+						TrackControl.updateTrack(trackId,"completed");
+						//PARSER DOJSON
+					} else if(datatype.equalsIgnoreCase("quantitative")){
+						SQLiteAccess.writeNewJobCalculScores(
+								Integer.toString(trackId),database,Configuration.getFilesDir(),
+								database,Configuration.getTracks_dir(),"0","nomail");
+					}
+				} else {
+					Application.debug("file already processed ",user.getId());
+					TrackControl.linkToProject(trackId,projectId);
+					TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_FINISHED);
 				}
 				break;
 			}
