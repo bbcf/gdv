@@ -271,7 +271,11 @@ public class Logs {
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/browser_queries.log",true);
+			if(out.getAppender(QueriesFilter.class.getName()) != null){
+				appender = (RollingFileAppender) out.getAppender(QueriesFilter.class.getName());
+			} else {
+				appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/browser_queries.log",true);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

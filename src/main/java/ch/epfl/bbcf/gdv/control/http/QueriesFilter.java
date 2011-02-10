@@ -25,32 +25,22 @@ public class QueriesFilter implements Filter{
 	private static Logger log = Logs.initQueriesLogger();
 	public void doGet(ServletRequest request, ServletResponse response) { 
 		try{
-			
 			Map<String, String[]> map = request.getParameterMap();
 			Params params = new Params(map);
-//			String post = "POST : ";
-//			for (Entry<String, String[]> entry : map.entrySet()){
-//				post+=" key : "+entry.getKey();
-//				for(String str : entry.getValue()){
-//					post+="\t"+str+"\n";
-//				}
-//			}
-//			Application.debug(post);
-
 			PrintWriter out = null;
 			try {
 				out = response.getWriter();
 			} catch (IOException e1) {
 				log.error(e1);
 			}
-
+			log.debug("guetting request");
 			if(out!=null && params.getId()!=null){
 				if(params.getId().equalsIgnoreCase("db_scores")){
 					if(params.getImgs()!=null && params.getDb()!=null){
 						String[]idList = params.getImgs().split(",");
 						String result=params.getDb();
 						result+=SQLiteAccess.getScoresForDatabaseByIdList(params.getDb(),idList);
-						//Application.debug(result);
+						log.debug(result);
 //						for(String id:idList){
 //							result+="$"+id+"="+SQLiteAccess.getScoresForDatabase(params.getDb(),id);
 //							Application.debug(result);
