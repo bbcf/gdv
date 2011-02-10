@@ -159,18 +159,18 @@ public class AlternativeProjectPage extends WebPage{
 				trackContainer.setOutputMarkupPlaceholderTag(true);
 				trackContainer.setVisible(false);
 				final Image image = new Image("arrow");
-				image.add(new SimpleAttributeModifier("src","../../tracks/img/right_arrow.jpeg"));
+				image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/right_arrow.jpeg"));
 				image.setOutputMarkupId(true);
 				AjaxLink link = new AjaxLink("arrow_link"){
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						if(trackContainer.isVisible()){
 							trackContainer.setVisible(false);
-							image.add(new SimpleAttributeModifier("src","../../tracks/img/right_arrow.jpeg"));
+							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/right_arrow.jpeg"));
 							target.addComponent(image);
 						} else {
 							trackContainer.setVisible(true);
-							image.add(new SimpleAttributeModifier("src","../../tracks/img/down_arrow.jpeg"));
+							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/down_arrow.jpeg"));
 							target.addComponent(image);
 						}
 						target.addComponent(trackContainer);
@@ -216,7 +216,7 @@ public class AlternativeProjectPage extends WebPage{
 						item.add(theDate);
 						//->status
 						final Image imgLoader = new Image("status_loader");
-						image.add(new SimpleAttributeModifier("src","../../tracks/img/blue-loader.gif"));
+						image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/blue-loader.gif"));
 						imgLoader.setOutputMarkupPlaceholderTag(true);
 						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
 						statusLabel.setOutputMarkupId(true);
@@ -269,7 +269,7 @@ public class AlternativeProjectPage extends WebPage{
 							ajaxRequestTarget.addComponent(image);
 						} else {
 							image.setVisible(true);
-							image.add(new SimpleAttributeModifier("src","../../tracks/img/blue-loader.gif"));
+							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/blue-loader.gif"));
 							ajaxRequestTarget.addComponent(image);
 						}
 						return status;

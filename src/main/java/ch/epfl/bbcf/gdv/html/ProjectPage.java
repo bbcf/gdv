@@ -244,7 +244,7 @@ public class ProjectPage extends BasePage{
 						} else {
 							trackContainer.setVisible(true);
 							projectWrapper.setListOpen(true);
-							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"down_arrow.jpeg"));
+							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/down_arrow.jpeg"));
 							target.addComponent(image);
 						}
 						target.addComponent(trackContainer);
