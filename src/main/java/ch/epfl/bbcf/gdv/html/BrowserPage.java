@@ -4,6 +4,7 @@ package ch.epfl.bbcf.gdv.html;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.AbstractBehavior;
@@ -77,9 +78,10 @@ public class BrowserPage extends WebPage{
 
 		//get trackInfo.js 
 		TrackControl tc = new TrackControl((UserSession)getSession());
-		List<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
-		List<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
+		Set<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
+		Set<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
 		tracks.addAll(adminTrack);
+		
 		final String trackInfo = getTrackInfo(tracks,tc,project.getSpecies().getName());
 		//Application.debug("get track Info :"+trackInfo);
 		//get names
@@ -150,7 +152,8 @@ public class BrowserPage extends WebPage{
 	 * @param tracks
 	 * @return
 	 */
-	private String getTrackNames(List<Track> tracks) {
+	private String getTrackNames(Set<Track> tracks) {
+		
 		String names = "\"DNA,";
 		for(Track t : tracks){
 			names+=protect(t.getName())+",";
@@ -166,7 +169,7 @@ public class BrowserPage extends WebPage{
 	 * @param tc
 	 * @return
 	 */
-	private String getTrackInfo(List<Track> tracks, TrackControl tc,String species) {
+	private String getTrackInfo(Set<Track> tracks, TrackControl tc,String species) {
 		String result ="trackInfo = [{"+
 		"\"url\" : \"data/seq/{refseq}/\","+
 		"\"args\" : {"+

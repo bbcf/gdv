@@ -10,6 +10,7 @@ import java.util.Map;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.control.model.InputControl.Extension;
 import ch.epfl.bbcf.gdv.control.model.SpeciesControl;
 
 public class SQLiteProcessor implements Runnable{
@@ -39,10 +40,10 @@ public class SQLiteProcessor implements Runnable{
 	 * @param sendMail 
 	 * @param admin 
 	 */
-	public SQLiteProcessor(int trackId, File file, String tmpDir, String extension, Users user, int speciesId, boolean sendMail, boolean admin) {
+	public SQLiteProcessor(int trackId, File file, String tmpDir, Extension extension, Users user, int speciesId, boolean sendMail, boolean admin) {
 		this.file = file;
 		this.user = user;
-		this.extension = extension;
+		this.extension = extension.toString();
 		this.sendMail = sendMail;
 		//this.jbrowsorId = jbrowsorId;
 		this.tmpDir = tmpDir;

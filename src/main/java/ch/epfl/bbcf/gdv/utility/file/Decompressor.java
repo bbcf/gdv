@@ -16,6 +16,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.control.model.InputControl.Extension;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 
 public class Decompressor {
@@ -36,14 +37,15 @@ public class Decompressor {
 	 * @throws ExtensionNotRecognizedException 
 	 */
 	public static List<File> decompress(int trackId, File file) throws ZipException, IOException, ExtensionNotRecognizedException{
-		String extension = FileTypeGuesser.guessExtension(file);
-		if(extension.equalsIgnoreCase("zip")){
+		Extension extension = FileTypeGuesser.guessExtension(file);
+		switch(extension){
+		case ZIP :
 			TrackControl.updateTrack(trackId, TrackControl.STATUS_DECOMPRESS);
 			return unzip(file);
-		} else if(extension.equalsIgnoreCase("gz")||extension.equalsIgnoreCase("gzip")){
+		case GZ : case GZIP:
 			TrackControl.updateTrack(trackId, TrackControl.STATUS_DECOMPRESS);
-			return ungunzip(file,extension);
-		} else {
+			return ungunzip(file,extension.toString());
+		default:
 			List<File> files = new ArrayList<File>();
 			files.add(file);
 			return files;
@@ -77,7 +79,7 @@ public class Decompressor {
 	}
 
 	private static List<File> ungunzip(File file,String extension) throws IOException {
-		
+
 		String zipname, source;
 		List<File> files = new ArrayList<File>();
 		zipname = file.getAbsolutePath();

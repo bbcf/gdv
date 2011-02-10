@@ -45,8 +45,8 @@ import ch.epfl.bbcf.gdv.model.gfeatminer.GFeatMinerParameters;
  */
 public final class Configuration{
 
-	public final static String LOG_DIRECTORY = "/data/gdv/log/";
-	public final static String CONF_FILE = "/data/gdv/conf/gdv.yaml";
+	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
+	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
 		String[] js = new String[19];

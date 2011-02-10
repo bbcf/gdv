@@ -32,11 +32,12 @@ public class DataTrackProvider extends SortableDataProvider<TrackWrapper>{
 	private UserSession session;
 	private List<TrackWrapper> tracks;
 	private ProjectWrapper project;
+	private TrackControl tc;
 
 	public DataTrackProvider(UserSession session, ProjectWrapper pw){
 		this.session = session;
 		this.project = pw;
-		TrackControl tc = new TrackControl(session);
+		tc = new TrackControl(session);
 		List<Track> t = tc.getTracksFromProjectId(pw.getId()); 
 		tracks = getTrackWrappers(t);
 		setSort("track_name", true);
@@ -94,8 +95,8 @@ public class DataTrackProvider extends SortableDataProvider<TrackWrapper>{
 	}
 
 	public void detach() {
-		//tracks= new ArrayList<Track>();
-
+		List<Track> t = tc.getTracksFromProjectId(project.getId()); 
+		tracks = getTrackWrappers(t);
 	}
 
 }

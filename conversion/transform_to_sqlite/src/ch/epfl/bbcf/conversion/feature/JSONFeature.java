@@ -15,9 +15,9 @@ public class JSONFeature {
 	
 	
 	public JSONFeature(Feature feature) {
+		setChromosome(feature.getChromosome());
 		if(feature instanceof GFFFeature){
 			GFFFeature feat = (GFFFeature)feature;
-			setChromosome(feat.getChromosome());
 			setId(feat.getId());
 			setName(feat.getName());
 			setType(feat.getType());

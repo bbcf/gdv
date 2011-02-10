@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.exception.JSONConversionException;
 import ch.epfl.bbcf.sqlite.SQLiteAccess;
 
@@ -107,7 +109,7 @@ import ch.epfl.bbcf.sqlite.SQLiteAccess;
  *
  */
 public abstract class JSONHandler {
-
+	protected static Logger log = Launcher.initLogger(JSONHandler.class.getName());
 	protected static int[]zooms = {2, 5, 10, 20, 50, 100, 200, 500, 1000,
 		2000, 5000, 10000, 20000, 50000, 100000,200000,500000,1000000};
 
@@ -137,6 +139,8 @@ public abstract class JSONHandler {
 
 	protected String databasePath;
 
+	private String outputName;
+
 
 	/**
 	 * handle the writing of JSON 
@@ -148,7 +152,7 @@ public abstract class JSONHandler {
 	 * @param outputDirectory - the ouputDir (MUST exist)
 	 * @param ressourceURL - the ressource url to put in the browser which link to the track
 	 */
-	public JSONHandler(String inputFileFullPath,String databasePath,String name, ClientConfig config,String outputDirectory,String ressourceURL) {
+	public JSONHandler(String inputFileFullPath,String databasePath,String name,String outputName, ClientConfig config,String outputDirectory,String ressourceURL) {
 		this.name = name;
 		this.fileName = inputFileFullPath.substring(inputFileFullPath.lastIndexOf("/")+1,inputFileFullPath.lastIndexOf("."));
 		this.outputDirectory = outputDirectory;
@@ -156,8 +160,9 @@ public abstract class JSONHandler {
 		this.firstChrOut = true;
 		this.chrs= new ArrayList<String>();
 		this.clientConfig = config;
+		this.outputName = outputName;
 		this.ressourceURL = ressourceURL;
-		File file = new File(outputDirectory+"/"+name);
+		File file = new File(outputDirectory+"/"+outputName);
 		file.mkdir();
 	}
 
@@ -174,10 +179,9 @@ public abstract class JSONHandler {
 	 * @throws FileNotFoundException 
 	 */
 	public void newChromosome(String chr) throws FileNotFoundException{
-		System.out.println("new chromosome "+chr);
 		firstChrOut = true;
 		firstChunkOut = true;
-		File dir = new File(outputDirectory+"/"+fileName+"/"+chr);
+		File dir = new File(outputDirectory+"/"+outputName+"/"+chr);
 		dir.mkdir();
 		this.curChunkSize = 0;
 		if(theChunk!=null){
@@ -186,7 +190,6 @@ public abstract class JSONHandler {
 		if(null!=chrOutJSON){
 			write("]",chrOutJSON);
 			chrOutJSON = newChrOutput(chr);
-			System.out.println(" new chrOutJSON ");
 		}
 		this.chrs.add(chr);
 		//chunk = newChunk(chr,curChunkSize);
@@ -221,7 +224,7 @@ public abstract class JSONHandler {
 		close(chrOutJSON);
 		SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(databasePath);
 		for(String chr:chrs){
-			File jsonFile = new File(outputDirectory+"/"+fileName+"/"+chr+".json");
+			File jsonFile = new File(outputDirectory+"/"+outputName+"/"+chr+".json");
 			OutputStream out = null;
 			out = new FileOutputStream(jsonFile,true);
 			{
@@ -237,7 +240,7 @@ public abstract class JSONHandler {
 				}
 				if(featureCount>0 && chrLength>0){
 					writeTrackDataAndHistoFiles(
-							name,chrLength,threshold,featureCount,inputFilePath,fileName,outputDirectory+"/"+fileName+"/",ressourceURL, chr, out,clientConfig);
+							name,chrLength,threshold,featureCount,inputFilePath,fileName,outputDirectory+"/"+outputName+"/",ressourceURL, chr, out,clientConfig);
 				} else {
 					jsonFile.delete();
 					throw new JSONConversionException("not processed : "+chr+"(feature count = "+featureCount+" and chr length on genrep = "+chrLength+")");
@@ -255,7 +258,7 @@ public abstract class JSONHandler {
 	 * @throws FileNotFoundException 
 	 */
 	protected OutputStream newChrOutput(String chr) throws FileNotFoundException {
-		File tmp = new File(outputDirectory+"/"+fileName+"/"+chr+"/featureNClist.json");
+		File tmp = new File(outputDirectory+"/"+outputName+"/"+chr+"/featureNClist.json");
 		return new FileOutputStream(tmp,true);
 	}
 
@@ -269,7 +272,7 @@ public abstract class JSONHandler {
 	 * @throws FileNotFoundException 
 	 */
 	protected OutputStream newChunk(String chr, int curChunkSize) throws FileNotFoundException {
-		File tmp = new File(outputDirectory+"/"+fileName+"/"+chr+"/lazyfeatures-"+curChunkSize+".json");
+		File tmp = new File(outputDirectory+"/"+outputName+"/"+chr+"/lazyfeatures-"+curChunkSize+".json");
 		return new FileOutputStream(tmp,true);
 	}
 
@@ -297,14 +300,12 @@ public abstract class JSONHandler {
 		//init ouputs
 		int curChunk = 0;
 		int curPos = 0;
-		System.out.println("new CO");
 		OutputStream outT = newHistChunkOutPut(outputDir,threshold,curChunk,chr);
 		List<Integer> counts = new ArrayList<Integer>();
 		int megathreshold = threshold*100;
 		int mCurPos = 0;
 		int mCurChunk = 0;
 		int mCount = 0;
-		System.out.println("new CO2");
 		OutputStream outMT = newHistChunkOutPut(outputDir,megathreshold,mCurChunk,chr);
 		List<Integer> mCounts = new ArrayList<Integer>();
 		//init connections
@@ -473,20 +474,14 @@ public abstract class JSONHandler {
 	 */
 	protected void writeTrackDataAndHistoFiles(String name2, int chrLength, int threshold,
 			int featureCount, String inputFilePath,String fileName,String outputPath,String ressourceUrl, String chr, OutputStream out,ClientConfig clientConfig2) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-		System.out.println("WTD&HF");
 		writeHeader(chr,out);
-		System.out.println("header f");
-		writeHistogramMeta(chrLength,threshold,fileName,chr,out,ressourceUrl);
-		System.out.println("histo meta f");
+		writeHistogramMeta(chrLength,threshold,outputName,chr,out,ressourceUrl);
 		writeHistoFiles(out,chrLength,outputPath,inputFilePath,chr,threshold,databasePath);
-		System.out.println("histo files f");
-		writeFeatureNCList(outputPath,fileName,chr,out);
-		System.out.println("nc list f");
-		writeAdditionalsParameters(name2,fileName,chr,featureCount,out,clientConfig2);
-		System.out.println("add params f");
+		writeFeatureNCList(outputPath,chr,out);
+		writeAdditionalsParameters(name2,outputName,chr,featureCount,out,clientConfig2);
 	}
 
-	protected static void writeAdditionalsParameters(String name,String fileName, String chr,
+	protected static void writeAdditionalsParameters(String name,String outputName, String chr,
 			int featureCount, OutputStream out,ClientConfig clientConfig2) {
 
 		String str = "\"lazyIndex\":2," +
@@ -498,7 +493,7 @@ public abstract class JSONHandler {
 		"\"type\":\"FeatureTrack\","+
 		"\"label\":\""+name+"\","+
 		//"\"sublistIndex\":4 ,"+
-		"\"lazyfeatureUrlTemplate\":\""+"../"+fileName+"/"+chr+"/lazyfeatures-{chunk}.json\"}";
+		"\"lazyfeatureUrlTemplate\":\""+"../"+outputName+"/"+chr+"/lazyfeatures-{chunk}.json\"}";
 		write(str,out);
 		close(out);
 	}
@@ -571,7 +566,7 @@ public abstract class JSONHandler {
 
 
 
-	protected static void writeFeatureNCList(String outputDir, String fileName,String chr, OutputStream out) throws FileNotFoundException {
+	protected static void writeFeatureNCList(String outputDir,String chr, OutputStream out) throws FileNotFoundException {
 		String str="\"featureNCList\":[";
 		write(str,out);
 		File tmp = new File(outputDir+"/"+chr+"/featureNClist.json");
@@ -585,13 +580,13 @@ public abstract class JSONHandler {
 
 
 	protected static void writeHistogramMeta(int chrLength, int threshold,
-			String fileName, String chr, OutputStream out,String ressourceUrl) {
+			String outputName, String chr, OutputStream out,String ressourceUrl) {
 		String str = "\"histogramMeta\":[" +
 		"{\"basesPerBin\":\""+threshold+"\"," +
 		"\"arrayParams\":{" +
 		"\"length\":"+Math.ceil(chrLength/threshold)+"," +
 		"\"chunkSize\":10000," +
-		"\"urlTemplate\":\""+ressourceUrl+"/"+fileName+"/"+chr+"/hist-"+threshold+"-{chunk}.json"+"\"" +
+		"\"urlTemplate\":\""+ressourceUrl+"/"+outputName+"/"+chr+"/hist-"+threshold+"-{chunk}.json"+"\"" +
 		"}}";
 
 		int megathreshold = threshold*100;
@@ -600,7 +595,7 @@ public abstract class JSONHandler {
 			"\"arrayParams\":{" +
 			"\"length\":"+Math.ceil(chrLength/megathreshold)+"," +
 			"\"chunkSize\":10000," +
-			"\"urlTemplate\":\""+ressourceUrl+"/"+fileName+"/"+chr+"/hist-"+megathreshold+"-{chunk}.json"+"\"" +
+			"\"urlTemplate\":\""+ressourceUrl+"/"+outputName+"/"+chr+"/hist-"+megathreshold+"-{chunk}.json"+"\"" +
 			"}}";
 		}
 		str+="],";
@@ -707,7 +702,7 @@ public abstract class JSONHandler {
 		 * close it
 		 */
 		protected void closeChunk(){
-			File tmp = new File(outputDirectory+"/"+fileName+"/"+this.chr+"/lazyfeatures-"+chunkNumber+".json");
+			File tmp = new File(outputDirectory+"/"+outputName+"/"+this.chr+"/lazyfeatures-"+chunkNumber+".json");
 			try {
 				OutputStream out = new FileOutputStream(tmp,true);
 				write(this.array.toString(),out);

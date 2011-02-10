@@ -1,6 +1,7 @@
 package ch.epfl.bbcf.gdv.html;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -17,7 +18,7 @@ import ch.epfl.bbcf.gdv.model.gfeatminer.GFeatMinerElement;
 
 public class GFeatMinerMenu extends Panel{
 
-	public GFeatMinerMenu(String id,List<Track> tracks) {
+	public GFeatMinerMenu(String id,Set<Track> tracks) {
 		super(id);
 
 		Label title = new Label("gfm","gFeatMiner");

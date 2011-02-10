@@ -38,6 +38,8 @@ public class InputControl extends Control{
 
 	public enum InputType { NEW_FILE,NEW_SQLITE};
 
+	public enum Extension {GFF,GFF3,GTF,WIG,BEDGRAPH,BED,BAM,SAM,DB,ZIP,GZ,GZIP};
+	public enum ZipExtension {};
 	public InputControl(UserSession session) {
 		super(session);
 	}
@@ -155,7 +157,21 @@ public class InputControl extends Control{
 		private String datatype;
 		private int sequenceId;
 		private String name;
-
+		/**
+		 * 
+		 * @param projectId - the project id
+		 * @param trackId - the track id
+		 * @param user - the user
+		 * @param url - the url if one
+		 * @param fileUpload - the uploadfield if one
+		 * @param sequenceId - the sequence id 
+		 * @param speciesId - the species id
+		 * @param sendMail - the boolean to send a feedback mail to user  
+		 * @param admin - the boolean if it's an admin track 
+		 * @param type - the input type (file or sqlite)
+		 * @param datatype - the datataype (qualitative or quantitative)
+		 * @param name - the name to give to the track
+		 */
 		public Uploader(int projectId, int trackId,Users user,String url, FileUpload fileUpload,
 				int sequenceId,int speciesId,boolean sendMail, boolean admin,InputType type, String datatype,String name) {
 			this.projectId = projectId;
@@ -210,7 +226,7 @@ public class InputControl extends Control{
 						TrackControl.updateTrack(trackId, TrackControl.STATUS_FILETYPE);
 						String filetype = FileTypeGuesser.guessFileType(file);
 						TrackControl.updateTrack(trackId, TrackControl.STATUS_EXTENSION);
-						String extension = FileTypeGuesser.guessExtension(file);
+						Extension extension = FileTypeGuesser.guessExtension(file);
 
 						//PROCESSING
 						String database = md5+".db";
@@ -250,7 +266,7 @@ public class InputControl extends Control{
 					TrackControl.updateTrack(trackId, "not valid file");
 				} catch (ExtensionNotRecognizedException e) {
 					Application.error(e);
-					TrackControl.updateTrack(trackId, "not valid zip extension");
+					TrackControl.updateTrack(trackId, "not valid extension, must be part of ");
 				} catch (ProcessLauncherError e) {
 					TrackControl.updateTrack(trackId, "the server encountered an error");
 					return ;

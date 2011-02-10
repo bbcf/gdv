@@ -20,7 +20,7 @@ public abstract class Command {
 	protected RequestParameters params;
 	protected WebResponse webResponse;
 
-	protected static Logger log = Logs.initPOSTLogger();
+	protected static Logger log = Logs.initPOSTLogger(Command.class.getName());
 
 	public Command(UserSession session, RequestParameters params, WebResponse webResponse) {
 		this.session = session;

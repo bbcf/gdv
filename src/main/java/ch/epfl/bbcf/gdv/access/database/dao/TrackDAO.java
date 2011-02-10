@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
@@ -140,6 +142,17 @@ public class TrackDAO extends DAO<Track>{
 		return jbTracks;
 	}
 
+	private Set<Track> getSetTracks(ResultSet resultSet) {
+		Set<Track> jbTracks = new HashSet<Track>();
+		try {
+			while (resultSet.next()) {
+				jbTracks.add(getTrack(resultSet));
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return jbTracks;
+	}
 	//	public List<Track> getJBTracksFromIds(List<Integer> ids) {
 	//		List<Track> annots = new ArrayList<Track>();
 	//		if(this.databaseConnected()){
@@ -511,7 +524,7 @@ public class TrackDAO extends DAO<Track>{
 	 * @param projectId
 	 * @return
 	 */
-	public List<Track> getCompletedTracksFromProjectId(int projectId) {
+	public Set<Track> getCompletedTracksFromProjectId(int projectId) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
@@ -524,7 +537,7 @@ public class TrackDAO extends DAO<Track>{
 				statement.setString(2,"completed");
 				statement.setString(3,"in process");
 				ResultSet resultSet = this.executeQuery(statement);
-				List<Track> tracks = getTracks(resultSet);
+				Set<Track> tracks = getSetTracks(resultSet);
 				this.endQuery(true);
 				return tracks;
 			} catch (SQLException e) {
@@ -534,6 +547,7 @@ public class TrackDAO extends DAO<Track>{
 		}
 		return null;
 	}
+
 
 
 	public List<Track> getTracksFromProjectId(int projectId) {
@@ -638,7 +652,7 @@ public class TrackDAO extends DAO<Track>{
 	 * @param sequenceId
 	 * @return
 	 */
-	public List<Track> getAdminTracksFromSequenceId(int sequenceId) {
+	public Set<Track> getAdminTracksFromSequenceId(int sequenceId) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
@@ -649,7 +663,7 @@ public class TrackDAO extends DAO<Track>{
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1,sequenceId);
 				ResultSet resultSet = this.executeQuery(statement);
-				List<Track> tracks = getTracks(resultSet);
+				Set<Track> tracks = getSetTracks(resultSet);
 				this.endQuery(true);
 				return tracks;
 			} catch (SQLException e) {

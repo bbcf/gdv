@@ -67,15 +67,16 @@ public class InternetConnection {
 	public static String sendPOSTConnection(final String adress,final String body){
 		String result ="";
 		if(testConnection(adress)){
+			HttpURLConnection urlConnection = null;
 			//Application.debug("POST connection to :"+adress+"\nwith body :\n"+body+"\n");
 			try {
 				URL url;
-				URLConnection urlConnection = null;
+				urlConnection = null;
 				DataOutputStream outStream;
 				DataInputStream inStream;
 				url = new URL(adress);
 				try {
-					urlConnection = url.openConnection();
+					urlConnection = (HttpURLConnection) url.openConnection();
 				} catch(IOException e) {
 					Application.error(e);
 				}
@@ -113,12 +114,20 @@ public class InternetConnection {
 			}
 
 			catch(Exception e) {
-				Application.debug(body);
-				Application.debug(e.getMessage());
-				for(StackTraceElement el : e.getStackTrace()){
-					Application.debug(el.getClassName()+"."+el.getMethodName()+"."+el.getLineNumber());
+				try {
+				DataInputStream errStream = new DataInputStream(urlConnection.getErrorStream());
+				String buffer;
+				if(errStream!=null){
+					InputStreamReader isr = new InputStreamReader(errStream);
+					BufferedReader br = new BufferedReader(isr);
+					while(null!=(buffer = br.readLine())){
+						result+=buffer;
+					}
 				}
-				Application.error(result);
+				errStream.close();
+				} catch(IOException e2){
+					Application.error(e2.getMessage());
+				}
 			}
 		}
 		return null;

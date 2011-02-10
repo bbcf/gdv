@@ -22,7 +22,7 @@ import ch.epfl.bbcf.gdv.control.model.TrackControl;
 
 public class PostPage extends WebPage{
 
-	private Logger log = Logs.initPOSTLogger();
+	private Logger log = Logs.initPOSTLogger(PostPage.class.getName());
 	public PostPage(PageParameters p) {
 		super(p);
 		String post = "POST => ";

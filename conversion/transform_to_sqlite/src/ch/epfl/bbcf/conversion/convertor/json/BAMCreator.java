@@ -9,8 +9,8 @@ import org.json.JSONException;
 
 public class BAMCreator extends JSONHandler{
 
-	public BAMCreator(String inputFileFullPath,String fullPathDatabase,String name,String outputDirectory,String ressourceURL,ClientConfig config) {
-		super(inputFileFullPath, fullPathDatabase, name, config, outputDirectory,
+	public BAMCreator(String inputFileFullPath,String fullPathDatabase,String name,String outputName,String outputDirectory,String ressourceURL,ClientConfig config) {
+		super(inputFileFullPath, fullPathDatabase, name,outputName, config, outputDirectory,
 				ressourceURL);
 	}
 
@@ -26,7 +26,6 @@ public class BAMCreator extends JSONHandler{
 			int strand, JSONArray feature, int featureCount,
 			boolean finish, float score) throws FileNotFoundException,
 			JSONException {
-		//System.out.println("Write values : "+chr+" start "+start+" stop "+end+" name "+name+" strand "+strand+" feature "+feature.toString()+" feature count "+featureCount);
 		previousEnd = end;
 		curChunkSize+=featureCount;
 		if(featureCount==0){

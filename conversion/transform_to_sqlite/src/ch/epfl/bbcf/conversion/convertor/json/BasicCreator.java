@@ -103,8 +103,8 @@ public class BasicCreator extends JSONHandler{
 	 * @param outputDirectory - the ouputDir (MUST exist)
 	 * @param ressourceURL - the ressource url to put in the browser which link to the track
 	 */
-	public BasicCreator(String inputFileFullPath,String fullPathDatabase,String name,String outputDirectory,String ressourceURL) {
-		super(inputFileFullPath,fullPathDatabase,name,ClientConfig.BASIC,outputDirectory,ressourceURL);
+	public BasicCreator(String inputFileFullPath,String fullPathDatabase,String name,String outputName,String outputDirectory,String ressourceURL) {
+		super(inputFileFullPath,fullPathDatabase,name,outputName,ClientConfig.BASIC,outputDirectory,ressourceURL);
 	}
 
 	@Override
@@ -112,50 +112,6 @@ public class BasicCreator extends JSONHandler{
 		String str = "{\"headers\":[\"start\",\"end\",\"score\",\"name\",\"strand\"],";
 		write(str,out);		
 	}
-
-//	/**
-//	 * method called by the parser when values
-//	 * are encountered
-//	 * @param chr
-//	 * @param start
-//	 * @param end
-//	 * @param score
-//	 * @param name
-//	 * @param attributes
-//	 * @param id
-//	 * @throws JSONException 
-//	 * @throws FileNotFoundException 
-//	 */
-//	public void writeValues(String chr,int start,int end,float score,String name,int strand,int id) throws JSONException, FileNotFoundException{
-//		System.out.println("WWWW");
-//		previousEnd = end;
-//		curChunkSize++;
-//		if(null==chrOutJSON){
-//			chrOutJSON = newChrOutput(chr);
-//		}
-//		if(firstChrOut){
-//			previousChunkSize = 0;
-//			write("["+start,chrOutJSON);
-//		}
-//		if(curChunkSize%CHUNK_SIZE==0){
-//			theChunk.closeChunk();
-//			theChunk = new Chunk(curChunkSize,chr);
-//			//write in the chrOutput
-//			firstChunkOut=true;
-//			write(","+end+",{\"chunk\":\""+previousChunkSize+"\"}]",chrOutJSON);
-//			previousChunkSize = curChunkSize;
-//			write(",["+start,chrOutJSON);
-//		}
-//		String toWrite;
-//		if(firstChrOut || firstChunkOut){
-//			toWrite = "["+start+","+end+","+score+",\""+name+"\","+strand+"]";
-//			firstChrOut = false;
-//			firstChunkOut = false;
-//		} else {
-//			toWrite = "["+start+","+end+","+score+",\""+name+"\","+strand+"]";
-//		}
-//		theChunk.add(new JSONArray(toWrite));
-//	}
 
 	@Override
 	public void writeValues(String chr, int start, int end, String name,

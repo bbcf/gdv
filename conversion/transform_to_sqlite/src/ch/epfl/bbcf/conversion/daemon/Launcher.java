@@ -20,9 +20,9 @@ import ch.epfl.bbcf.conversion.conf.Configuration.Extension;
 import ch.epfl.bbcf.conversion.convertor.Convertor;
 import ch.epfl.bbcf.conversion.convertor.Convertor.FileExtension;
 import ch.epfl.bbcf.conversion.exception.JSONConversionException;
+import ch.epfl.bbcf.conversion.parser.BAMParser;
 import ch.epfl.bbcf.conversion.parser.GFFParser;
 import ch.epfl.bbcf.exception.ParsingException;
-import ch.epfl.bbcf.parser.BAMParser;
 import ch.epfl.bbcf.parser.BEDParser;
 import ch.epfl.bbcf.parser.Parser;
 import ch.epfl.bbcf.parser.Parser.Processing;
@@ -88,7 +88,7 @@ public class Launcher extends Thread{
 
 
 		//////////   GETTING MD5   //////////
-		logger.debug("run : "+filePath);
+		logger.debug(this.getId()+" run : "+filePath);
 		File file = new File(filePath);
 		String md5 = null;
 		try {
@@ -121,6 +121,9 @@ public class Launcher extends Thread{
 			ext = Extension.GFF;
 		}else if(extension.equalsIgnoreCase("db")){
 
+		}else if(extension.equalsIgnoreCase("bam")||
+				extension.equalsIgnoreCase("sam")){
+			ext = Extension.BAM;
 		}else {
 			try {
 				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),"extension not recognized : "+ext,"ext",trackId, filePath);
@@ -138,7 +141,7 @@ public class Launcher extends Thread{
 		} catch (IOException e2) {
 			logger.error(e2);
 		}
-		logger.debug("chrlist from generep : "+chrList.toString());
+		logger.debug(this.getId()+" chrlist from generep : "+chrList.toString());
 		if(chrList.isEmpty()){
 			try {
 				RemoteAccess.sendChromosomeErrorMessage(Configuration.getFeedbackUrl(),"chromosome list is empty","chrlist",trackId,nrAssemblyId);
@@ -147,8 +150,9 @@ public class Launcher extends Thread{
 			}
 			return;
 		}
-
+		boolean doJSON = true;
 		//////////   PARSING   //////////
+		logger.debug(this.getId()+" start of parsing "+md5);
 		String database = md5+".db";
 		String type = "";
 		boolean wellParsed = false;
@@ -160,33 +164,34 @@ public class Launcher extends Thread{
 			parser = new WIGParser(Processing.SEQUENCIAL);
 			convertor = new Convertor(
 					file.getAbsolutePath(),
-					FileExtension.WIG);
+					FileExtension.WIG,nrAssemblyId);
+			doJSON = false;
 			break;
 		case BED:
 			type = "qualitative";
 			parser = new BEDParser(Processing.SEQUENCIAL);
 			convertor = new Convertor(
 					file.getAbsolutePath(),
-					FileExtension.BED);
+					FileExtension.BED,nrAssemblyId);
 			break;
 		case GFF:
 			type = "qualitative";
 			parser = new GFFParser(Processing.SEQUENCIAL);
 			convertor = new Convertor(
 					file.getAbsolutePath(),
-					FileExtension.GFF);
+					FileExtension.GFF,nrAssemblyId);
 			break;
 		case BAM:
 			type="qualitative";
 			parser = new BAMParser(Processing.SEQUENCIAL);
 			convertor = new Convertor(
 					file.getAbsolutePath(),
-					FileExtension.BAM);
+					FileExtension.BAM,nrAssemblyId);
 			break;
 		}
 
 
-
+		convertor.setParameters(nrAssemblyId,chrList);
 
 		try {
 			//do sqlite
@@ -218,8 +223,10 @@ public class Launcher extends Thread{
 		}
 		try {
 			//do JSON
-			convertor.doJBrowse(Configuration.getSqliteOutput()+"/"+database,
-					Configuration.getJbrowseOutput(), Configuration.getRessourceURL());
+			if(doJSON){
+				convertor.doJBrowse(Configuration.getSqliteOutput()+"/"+database,
+						Configuration.getJbrowseOutput(), Configuration.getRessourceURL(),database);
+			}
 		} catch (JSONConversionException e1) {
 			try {
 				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),e1.getMessage(),"parsing", trackId,filePath);
@@ -227,28 +234,31 @@ public class Launcher extends Thread{
 				logger.error(e);
 			}
 		}
-		try {
-			//parse file
-			parser.parse(file,convertor);
-		} catch (IOException e1) {
+		try{
 			try {
+				logger.debug("parse");
+				//parse file
+				parser.parse(file,convertor);
+				logger.debug("end parse");
+			} catch (IOException e1) {
+				logger.error(e1);
+				wellParsed = false;
 				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),e1.getMessage(),"parsing", trackId,filePath);
-			} catch (IOException e) {
-				logger.error(e);
-			}
-		} catch (ParsingException e1) {
-			try {
+				return;
+			} catch (ParsingException e1) {
+				logger.error(e1);
+				wellParsed = false;
 				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),e1.getMessage(),"parsing", trackId,filePath);
-			} catch (IOException e) {
-				logger.error(e);
+				return;
 			}
+		}catch(IOException e){
+			logger.error(e);
 		}
-
 		wellParsed = true;
-
-
+		logger.debug(this.getId()+" end of parsing");
 		//////////   FEEDBACK   //////////
 		if(wellParsed){
+			logger.debug(this.getId()+"well parsed");
 			try {
 				RemoteAccess.sendTrackSucceed(Configuration.getFeedbackUrl(),trackId,database,mail,type);
 			} catch (IOException e) {
@@ -262,6 +272,7 @@ public class Launcher extends Thread{
 		} else {
 			try {
 				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),"parsing error","parsing", trackId,filePath);
+				return;
 			} catch (IOException e) {
 				logger.error(e);
 			}

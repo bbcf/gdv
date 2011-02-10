@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.control.model.InputControl.Extension;
+import ch.epfl.bbcf.gdv.control.model.InputControl.ZipExtension;
 import ch.epfl.bbcf.transform.GTF2GFF;
 
 public class FileTypeGuesser {
@@ -15,11 +17,11 @@ public class FileTypeGuesser {
 	 * @return
 	 * @throws ExtensionNotRecognizedException 
 	 */
-	public static String guessExtension(File file) throws ExtensionNotRecognizedException{
+	public static Extension guessExtension(File file) throws ExtensionNotRecognizedException{
 		//Application.debug("guess extension");
 		String fileName = file.getName();
 		String tab[] = fileName.split("\\.");
-		String ext = processExtension(tab[tab.length-1]);
+		Extension ext = processExtension(tab[tab.length-1]);
 		//Application.debug(ext);
 		return ext;
 	}
@@ -35,43 +37,48 @@ public class FileTypeGuesser {
 	 * @throws IOException 
 	 */
 	public static String guessFileType(File file) throws ExtensionNotRecognizedException, IOException{
-		String extension = guessExtension(file);
-		if(extension.equalsIgnoreCase("gff") || extension.equalsIgnoreCase("bed") || extension.equalsIgnoreCase("gtf")){
+		Extension extension = guessExtension(file);
+		switch(extension){
+		case GFF:case BED:case GTF:case BEDGRAPH:case BAM:case SAM:
 			return "qualitative";
+		default :
+			return "quantitative";
 		}
-		return "quantitative";
 	}
 
 
 
 
 
-	private static String processExtension(String ext) throws ExtensionNotRecognizedException{
-		String extension = null;
+	private static Extension processExtension(String ext) throws ExtensionNotRecognizedException{
+		Extension extension = null;
 		if(ext.equalsIgnoreCase("gff")||ext.equalsIgnoreCase("gff3")){
-			extension = "gff";
+			extension = Extension.GFF;
 		}
 		else if (ext.equalsIgnoreCase("wig")||ext.equalsIgnoreCase("wiggle")){
-			extension = "wig";
+			extension = Extension.WIG;
 		}
 		else if (ext.equalsIgnoreCase("bed")){
-			extension = "bed";
+			extension = Extension.BED;
 		}
 		else if(ext.equalsIgnoreCase("zip")){
-			extension = "zip";
+			extension = Extension.ZIP;
 		}
 		else if(ext.equalsIgnoreCase("gzip")){
-			extension = "gzip";
+			extension = Extension.GZIP;
 		}
 		else if(ext.equalsIgnoreCase("gz")){
-			extension = "gz";
+			extension = Extension.GZ;
+		}
+		else if(ext.equalsIgnoreCase("bam")){
+			extension = Extension.BAM;
 		}
 		else if(ext.equalsIgnoreCase("bedgraph")){
-			extension = "bedgraph";
+			extension = Extension.BEDGRAPH;
 		} else if(ext.equalsIgnoreCase("gtf")){
-			extension = "gtf";
+			extension = Extension.GTF;
 		} else if(ext.equalsIgnoreCase("db")){
-			extension = "db";
+			extension = Extension.DB;
 		}
 		
 		else {

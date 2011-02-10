@@ -14,6 +14,8 @@
         <pathelement location="lib/snakeyaml-1.7rc1.jar"/>
         <pathelement location="lib/bbcf_access.jar"/>
         <pathelement location="lib/bbcf_sqlite.jar"/>
+	<pathelement location="lib/sam-1.38.jar"/>
+	<pathelement location="lib/sqlite-jdbc-3.7.2.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -26,6 +28,7 @@
     </target>
     <target name="clean">
         <delete dir="bin"/>
+	<delete file="transform_to_sqlite.jar"/>
     </target>
     <target depends="clean" name="cleanall"/>
    

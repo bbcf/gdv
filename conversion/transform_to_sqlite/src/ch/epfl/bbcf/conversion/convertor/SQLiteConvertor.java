@@ -1,11 +1,17 @@
 package ch.epfl.bbcf.conversion.convertor;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+
+import ch.epfl.bbcf.access.GenRepAccess;
 import ch.epfl.bbcf.conversion.convertor.Convertor.FileExtension;
+import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.feature.GFFFeature;
 import ch.epfl.bbcf.feature.BAMFeature;
 import ch.epfl.bbcf.feature.BEDFeature;
@@ -21,20 +27,24 @@ import ch.epfl.bbcf.sqlite.SQLiteAccess;
  */
 public class SQLiteConvertor{
 
+	private static Logger log = Launcher.initLogger(SQLiteConvertor.class.getName());
 	private SQLiteAccess handler;
 	private Track track;
 	private FileExtension extension;
-	
-	public SQLiteConvertor(String inputPath, FileExtension extension) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	private String assemblyId;
+
+	public SQLiteConvertor(String inputPath, FileExtension extension,String assemblyId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		handler = SQLiteAccess.getConnectionWithDatabase(inputPath);
 		this.extension = extension;
+		this.assemblyId = assemblyId;
 	}
-	public SQLiteConvertor(String inputPath, FileExtension extension, int limitQueriesSize) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public SQLiteConvertor(String inputPath, FileExtension extension, int limitQueriesSize,String assemblyId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		handler = SQLiteAccess.getConnectionWithDatabase(inputPath,limitQueriesSize);
 		this.extension = extension;
+		this.assemblyId = assemblyId;
 	}
-	
-	
+
+
 	public void newTrack(Track track) throws SQLException  {
 		if(null!=track){
 			//TODO create a new connection, a new database and close old one
@@ -42,21 +52,21 @@ public class SQLiteConvertor{
 		this.setTrack(track);
 		switch(extension){
 		case WIG:
-				handler.createNewDatabase("quantitative");
+			handler.createNewDatabase("quantitative");
 			break;
 		case BED:case BAM:case GFF:
-				System.out.println("create new db");
-				handler.createNewDatabase("qualitative");
+			handler.createNewDatabase("qualitative");
 			break;
 		}
-		
+
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	public void newFeature(Feature feature) throws SQLException {
+		
 		switch(extension){
 		case WIG:
 			WIGFeature wig_feat = (WIGFeature)feature;
@@ -96,22 +106,50 @@ public class SQLiteConvertor{
 		}
 	}
 
-	
+
 
 	public void start() {
-		
+
 	}
 
 	public void end() throws SQLException {
 		handler.commit();
 		List<String> chrNames = handler.getChromosomesNames();
+		GenRepAccess ga = null;
+		try {
+			ga = new GenRepAccess(assemblyId);
+		} catch (JSONException e) {
+			for (StackTraceElement el : e.getStackTrace()){
+				log.error(el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
+			}
+			log.error(e);
+		} catch (IOException e) {
+			for (StackTraceElement el : e.getStackTrace()){
+				log.error("--"+el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
+			}
+			log.error(e);
+		}
 		Map<String,Integer> map = new HashMap<String, Integer>();
 		for(String chr : chrNames){
-			map.put(chr,100000);
+			int length = 0;
+			try {
+				if(null!=ga){
+					length = ga.getChrLength(chr);
+				} else {
+					log.error("no connection to Genrep");
+				}
+			} catch (JSONException e) {
+				for (StackTraceElement el : e.getStackTrace()){
+					log.error("++"+el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
+				}
+				log.error(e);
+			}
+			if(length!=0){
+				map.put(chr,length);
+			}
 		}
 		handler.finalizeDatabase(map);
 		handler.close();
-		
 	}
 
 	public void finalize(){

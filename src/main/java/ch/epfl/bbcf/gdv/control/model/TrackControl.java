@@ -2,6 +2,7 @@ package ch.epfl.bbcf.gdv.control.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
@@ -255,7 +256,7 @@ public class TrackControl extends Control{
 	 * @param sequenceId
 	 * @return
 	 */
-	public List<Track> getAdminTracksFromSpeciesId(int sequenceId) {
+	public Set<Track> getAdminTracksFromSpeciesId(int sequenceId) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
 		return tdao.getAdminTracksFromSequenceId(sequenceId);
 	}
@@ -283,7 +284,7 @@ public class TrackControl extends Control{
 	 * @param projectId
 	 * @return
 	 */
-	public List<Track> getCompletedTracksFromProjectId(int projectId) {
+	public Set<Track> getCompletedTracksFromProjectId(int projectId) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
 		return tdao.getCompletedTracksFromProjectId(projectId);
 	}

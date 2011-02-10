@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -17,11 +18,14 @@ import ch.epfl.bbcf.conversion.convertor.json.GFFCreator;
 import ch.epfl.bbcf.conversion.convertor.json.JSONHandler;
 import ch.epfl.bbcf.conversion.convertor.json.JSONHandler.ClientConfig;
 import ch.epfl.bbcf.conversion.convertor.json.NCList;
+import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.exception.JSONConversionException;
 import ch.epfl.bbcf.conversion.feature.JSONFeature;
 import ch.epfl.bbcf.feature.Track;
 
 public class JBrowseConvertor {
+
+	public static final Logger logger = Launcher.initLogger(JBrowseConvertor.class.getName());
 
 	private String outputDirectory;
 	private FileExtension extension;
@@ -30,7 +34,7 @@ public class JBrowseConvertor {
 	private String inputPath;
 	private String ressourceUrl;
 	private String databasePath;
-	
+
 	List<String> types;
 
 	public JBrowseConvertor(String inputFileFullPath,
@@ -38,8 +42,9 @@ public class JBrowseConvertor {
 			String outputDirectory, 
 			String ressourceUrl,
 			String fileName, 
+			String outputName,
 			FileExtension extension
-			) throws JSONConversionException {
+	) throws JSONConversionException {
 		this.databasePath = fullPathDatabase;
 		this.outputDirectory = outputDirectory;
 		this.inputPath = inputFileFullPath;
@@ -47,15 +52,15 @@ public class JBrowseConvertor {
 		this.extension = extension;
 		switch(extension){
 		case BED:
-			json_handler = new BasicCreator(inputPath, fullPathDatabase,fileName, outputDirectory, ressourceUrl);
+			json_handler = new BasicCreator(inputPath, fullPathDatabase,fileName,outputName,outputDirectory, ressourceUrl);
 			break;
 		case WIG:
-			
+
 		case GFF:
-			json_handler = new GFFCreator(inputPath, fullPathDatabase,fileName, outputDirectory, ressourceUrl,ClientConfig.EXTENDED);
+			json_handler = new GFFCreator(inputPath, fullPathDatabase,fileName,outputName,outputDirectory, ressourceUrl,ClientConfig.EXTENDED);
 			break;
 		case BAM :
-			json_handler = new BAMCreator(inputPath, fullPathDatabase,fileName, outputDirectory, ressourceUrl,ClientConfig.BAM);
+			json_handler = new BAMCreator(inputPath, fullPathDatabase,fileName,outputName, outputDirectory, ressourceUrl,ClientConfig.BAM);
 			break;
 		}
 	}
@@ -70,7 +75,7 @@ public class JBrowseConvertor {
 		if(null==cur_chromosome){
 			cur_chromosome = new JSONChromosome(feature.getChromosome());
 			json_handler.newChromosome(feature.getChromosome());
-		} else if(!cur_chromosome.name.equalsIgnoreCase(feature.getChromosome())){
+		} else if(!cur_chromosome.getChromosomeName().equalsIgnoreCase(feature.getChromosome())){
 			cur_chromosome.writeJSONOutput(json_handler);
 			cur_chromosome = new JSONChromosome(feature.getChromosome());
 			json_handler.newChromosome(feature.getChromosome());
@@ -89,26 +94,25 @@ public class JBrowseConvertor {
 	}
 
 	public void end() {
-		System.out.println("END it ");
 		try {
 			cur_chromosome.writeJSONOutput(json_handler);
 			json_handler.endIt();
+			logger.debug("--");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (InstantiationException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (JSONConversionException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
-		System.out.println("END");
 	}
 
 	/**
@@ -117,7 +121,7 @@ public class JBrowseConvertor {
 	 *
 	 */
 	private class JSONChromosome{
-		private String name;
+		private String chromosome_name;
 		/**
 		 * Map containing all the features in the chromosome
 		 * key = the id of the feature, value = a list of feature with the same id
@@ -127,7 +131,7 @@ public class JBrowseConvertor {
 
 		public JSONChromosome(String chromosome){
 			features = new HashMap<String,JSONFeat>();
-			this.name = chromosome;
+			this.chromosome_name = chromosome;
 			randomId = 0;
 		}
 		/**
@@ -152,8 +156,8 @@ public class JBrowseConvertor {
 			}
 			features.put(key, feat);
 		}
-		
-		
+
+
 		public void writeJSONOutput(JSONHandler handler) throws JSONException, FileNotFoundException{
 			List<JSONFeat> list = new ArrayList<JSONFeat>();
 			for(Map.Entry<String, JSONFeat> entry : features.entrySet()){
@@ -174,19 +178,21 @@ public class JBrowseConvertor {
 					finish = true;
 				}
 				handler.writeValues(
-						this.name, f.start,f.end,f.parentName,f.strand,f.feature, f.featureCount,finish,0);
+						this.chromosome_name, f.start,f.end,f.parentName,f.strand,f.feature, f.featureCount,finish,0);
 			}
 		}
-		
-		
-		
+
+		public String getChromosomeName(){
+			return chromosome_name;
+		}
+
 	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * class wich handler a single feature
 	 * @author Yohan Jarosz
@@ -233,7 +239,7 @@ public class JBrowseConvertor {
 				this.subfeatures.put(new JSONArray("["+start+","+end+","+strand+",\""+type+"\"]"));
 				break;
 			}
-			
+
 			if(old.start<this.start){
 				this.start=old.start;
 			}
@@ -257,10 +263,10 @@ public class JBrowseConvertor {
 			}
 		}
 
-		
-		
-		
-		
+
+
+
+
 		public void initFeature() throws JSONException{
 			this.feature=new JSONArray("["+start+","+end+",\""+parentName+"\","+strand+"]");
 			if(featureCount>0){

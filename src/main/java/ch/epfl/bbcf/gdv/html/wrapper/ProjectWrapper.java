@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
-import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 
 public class ProjectWrapper implements Serializable{
@@ -15,10 +14,12 @@ public class ProjectWrapper implements Serializable{
 	private List<SelectOption> sequences;
 	private int tracksNumber;
 	private List<TrackWrapper> tracks;
+	private boolean listOpen;//if the list of track is open or not
 	
 	
 	public ProjectWrapper(Project p){
 		this.project = p;
+		this.setListOpen(false);
 	}
 
 	public int getId(){
@@ -90,6 +91,14 @@ public class ProjectWrapper implements Serializable{
 
 	public List<SelectOption> getSequences() {
 		return sequences;
+	}
+
+	public void setListOpen(boolean listOpen) {
+		this.listOpen = listOpen;
+	}
+
+	public boolean isListOpen() {
+		return listOpen;
 	}
 
 }

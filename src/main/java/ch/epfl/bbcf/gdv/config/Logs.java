@@ -89,16 +89,16 @@ public class Logs {
 		return out;
 	}
 
-	public static Logger initPOSTLogger(){
-		Logger out = Logger.getLogger(PostPage.class.getName());
+	public static Logger initPOSTLogger(String name){
+		Logger out = Logger.getLogger(name);
 		out.setAdditivity(false);
 		out.setLevel(debugLevel);
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			if(out.getAppender(PostPage.class.getName())==null){
+			if(out.getAppender(name)==null){
 				appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/post.log",true);
-				appender.setName(PostPage.class.getName());
+				appender.setName(name);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

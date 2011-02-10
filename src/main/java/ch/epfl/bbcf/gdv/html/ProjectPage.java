@@ -124,7 +124,7 @@ public class ProjectPage extends BasePage{
 			}
 		},
 		choiceRenderer);
-
+		
 		create_form.add(ddcSpecies);
 		create_form.add(ddcVersion);
 		create_form.add(new Button("create_but"){
@@ -237,11 +237,13 @@ public class ProjectPage extends BasePage{
 					@Override
 					public void onClick(AjaxRequestTarget target) {
 						if(trackContainer.isVisible()){
+							projectWrapper.setListOpen(false);
 							trackContainer.setVisible(false);
 							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/right_arrow.jpeg"));
 							target.addComponent(image);
 						} else {
 							trackContainer.setVisible(true);
+							projectWrapper.setListOpen(true);
 							image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"down_arrow.jpeg"));
 							target.addComponent(image);
 						}
@@ -250,10 +252,11 @@ public class ProjectPage extends BasePage{
 				};
 				link.add(image);
 				item.add(link);
-				DataTrackProvider dtp = new DataTrackProvider((UserSession)getSession(),projectWrapper);
+				final DataTrackProvider dtp = new DataTrackProvider((UserSession)getSession(),projectWrapper);
 				int alt=0;
-				//TRACKS
-				DataView<TrackWrapper> trackData = new DataView<TrackWrapper>("track_data",dtp){
+				final DataView<TrackWrapper> trackData;
+				//////////////////////////////////////////////////TRACKS
+				trackData = new DataView<TrackWrapper>("track_data",dtp){
 					@Override
 					protected void populateItem(final Item<TrackWrapper> item) {
 						final TrackWrapper track = item.getModelObject();
@@ -292,7 +295,7 @@ public class ProjectPage extends BasePage{
 						imgLoader.setOutputMarkupPlaceholderTag(true);
 						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
 						statusLabel.setOutputMarkupId(true);
-						if(!track.getStatus().equalsIgnoreCase("completed") || !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
+						if(!track.getStatus().equalsIgnoreCase("completed") && !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
 							statusLabel.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
@@ -311,16 +314,17 @@ public class ProjectPage extends BasePage{
 						}));
 
 						//-> delete link
-						final Link link = new Link("delete"){
+						final AjaxLink link = new AjaxLink("delete"){
 							@Override
-							public void onClick() {
+							public void onClick(AjaxRequestTarget target) {
 								TrackControl tc = new TrackControl((UserSession)getSession());
 								tc.removeTrackFromUser(track.getTrackInstance());
-								setResponsePage(ProjectPage.class);
+								dtp.detach();
+								target.addComponent(trackContainer);
 							}
 						};
-						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
-						link.setOutputMarkupPlaceholderTag(true);
+//						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
+//						link.setOutputMarkupPlaceholderTag(true);
 						item.add(link);
 					}
 
