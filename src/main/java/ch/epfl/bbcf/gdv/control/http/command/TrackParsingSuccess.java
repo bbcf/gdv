@@ -24,7 +24,7 @@ public class TrackParsingSuccess extends Command{
 
 	@Override
 	public void doRequest() {
-		log.debug("do request");
+		Application.debug("command do request");
 		checkParams(params.getType(),params.getDb(),params.getUsermail());
 		if(params.getType().equalsIgnoreCase("quantitative")){
 			Application.debug("writing new job to calcul score on "+params.getDb());
@@ -38,6 +38,7 @@ public class TrackParsingSuccess extends Command{
 				Sender.sendMessage(" File processed ","Your file has been processed by GDV you can now browse your projects at "+Configuration.getProjectUrl() , false, params.getUsermail());
 			}
 		} else {
+			Application.debug("exception 400");
 			throw new AbortWithHttpStatusException(400,true);
 		}
 	}
