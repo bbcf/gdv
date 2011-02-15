@@ -27,12 +27,9 @@ public class FrontController {
 		this.session = session;
 		this.params = params;
 		this.webResponse = webResponse;
-		Application.debug("new fc");
 	}
 
 	public void doRequest() {
-		log.debug("do Request");
-		Application.debug("do request");
 		if(params.getId()!=null){
 			Command command = null;
 			//CHANGE STATUS OF A TRACK
@@ -43,8 +40,6 @@ public class FrontController {
 				command = new TrackError(session,params,webResponse);
 				//TRANSFORM TO SQLITE SUCCED
 			} else if(params.getId().equalsIgnoreCase("track_parsing_success")){
-				log.debug("parsing success");
-				Application.debug("parsing success");
 				command = new TrackParsingSuccess(session, params, webResponse);
 				//POST ACCESS TO GDV
 			} else if(params.getId().equalsIgnoreCase(Configuration.getGdv_post_access())){

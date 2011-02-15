@@ -223,7 +223,7 @@ public class ProjectDAO extends DAO<Project>{
 			this.startQuery();
 			try {
 				String query = "update projects set cur_seq_id = ? " +
-						"where id = ? ;";
+				"where id = ? ;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(2, id);
@@ -237,7 +237,7 @@ public class ProjectDAO extends DAO<Project>{
 		}
 	}
 
-		
+
 	public boolean userAuthorized(int userId, int viewId) {
 		if(this.databaseConnected()){
 			this.startQuery();
@@ -391,9 +391,9 @@ public class ProjectDAO extends DAO<Project>{
 			this.startQuery();
 			try {
 				String query = "delete from projectToTrack as t1 " +
-						"where t1.track_id = ? and t1.project_id in " +
-						"(select project_id from usertoproject " +
-						"where user_id = ? );";
+				"where t1.track_id = ? and t1.project_id in " +
+				"(select project_id from usertoproject " +
+				"where user_id = ? );";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(2,userId);
@@ -429,7 +429,7 @@ public class ProjectDAO extends DAO<Project>{
 					this.endQuery(true);
 					return r.getInt(1);
 				}
-				
+
 			} catch (SQLException e) {
 				logger.error("tracksNumberUnderProject : "+e);
 				this.endQuery(false);
@@ -439,17 +439,57 @@ public class ProjectDAO extends DAO<Project>{
 	}
 
 
-	
+	public void deleteProject(int projectId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "delete from projects where id = ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,projectId);
+				this.executeUpdate(statement);
+				this.endQuery(true);
+			} catch (SQLException e) {
+				logger.error("tracksNumberUnderProject : "+e);
+				this.endQuery(false);
+			}
+		}
+	}
+
+
+	public void renameProject(int id, String input) {
+		Application.debug("renaming project "+id+"  "+input);
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "update projects set name = ? " +
+						"where id = ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setString(1,input);
+				statement.setInt(1,id);
+				this.executeUpdate(statement);
+				this.endQuery(true);
+				Application.debug("renaming project ok");
+			} catch (SQLException e) {
+				logger.error("renameProject : "+e);
+				this.endQuery(false);
+			}
+		}
+	}
 
 
 
-	
 
 
 
 
 
-	
+
+
+
+
+
 
 
 }

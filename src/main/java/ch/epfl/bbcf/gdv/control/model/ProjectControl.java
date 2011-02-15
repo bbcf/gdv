@@ -173,6 +173,16 @@ public class ProjectControl extends Control{
 		return pdao.linkToUser(newProjectId,session.getUserId());
 	}
 
+	public void deleteProject(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		pdao.deleteProject(projectId);
+	}
+
+	public void renameProject(int id, String input) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		pdao.renameProject(id,input);
+	}
+
 
 
 }

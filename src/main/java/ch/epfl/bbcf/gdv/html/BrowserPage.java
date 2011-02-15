@@ -3,6 +3,7 @@ package ch.epfl.bbcf.gdv.html;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -153,10 +154,24 @@ public class BrowserPage extends WebPage{
 	 * @return
 	 */
 	private String getTrackNames(Set<Track> tracks) {
-		
-		String names = "\"DNA,";
+		Set<String> nameSet = new HashSet<String>();
 		for(Track t : tracks){
-			names+=protect(t.getName())+",";
+			String nameToAdd = protect(t.getName());
+			if(!nameSet.contains(nameToAdd)){
+				nameSet.add(nameToAdd);
+			} else {
+				int cpt = 0;
+				String altName = nameToAdd;
+				while(nameSet.contains(altName)){
+					altName=nameToAdd+"_"+cpt;
+					cpt++;
+				}
+				nameSet.add(altName);
+			}
+		}
+		String names = "\"DNA,";
+		for(String name : nameSet){
+			names+=name+",";
 		}
 		names=names.substring(0, names.length()-1);
 		names+="\"";

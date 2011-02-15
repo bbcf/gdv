@@ -3,7 +3,6 @@ package ch.epfl.bbcf.gdv.html;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -16,6 +15,7 @@ import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -26,12 +26,10 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -40,13 +38,7 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
-import ch.epfl.bbcf.gdv.access.database.dao.GroupDAO;
-import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
-import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
-import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
-import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.GroupControl;
@@ -148,17 +140,11 @@ public class ProjectPage extends BasePage{
 		});
 		create_form.add(new FeedbackPanel("feedback"));
 		add(create_form);
-
-
-
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////EXISTING PROJECTS////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		//		DropDownChoice b;
-		//		ProjectWrapper pp;
 		final Form existing_form = new Form("exist_form");
 		Label project_header = new Label("project_header","Existing projects");
 		add(project_header);
@@ -168,8 +154,21 @@ public class ProjectPage extends BasePage{
 			@Override
 			protected void populateItem(Item<ProjectWrapper> item) {
 				final ProjectWrapper projectWrapper = item.getModelObject();
-				item.add(new Label("description",projectWrapper.getDescription()));
+				//### label
+				final AjaxEditableLabel<String> editableProjectName = new AjaxEditableLabel<String>("description",
+						new Model<String>(projectWrapper.getDescription())){
+					@Override
+					protected void onSubmit(AjaxRequestTarget target){
+						ProjectControl pc = new ProjectControl((UserSession)getSession());
+						pc.renameProject(projectWrapper.getId(),getEditor().getInput());
+				
+					}
+				};
+				item.add(editableProjectName);
+				//### species name
 				item.add(new Label("project_species",projectWrapper.getSpeciesName()));
+				
+				//###assembly
 				DropDownChoice ddc = new DropDownChoice<SelectOption>(
 						"project_versions",new Model<SelectOption>(),
 						SequenceControl.getSequencesFromSpeciesIdSO(projectWrapper.getSpeciesId()),choiceRenderer){
@@ -194,6 +193,7 @@ public class ProjectPage extends BasePage{
 					ddc.setDefaultModelObject(projectWrapper.getSequences().get(0));
 				}
 				item.add(ddc);
+				//### track number
 				final Label track_number = new Label("tracks_number",Integer.toString(projectWrapper.getTracksNumber()));
 				track_number.setOutputMarkupId(true);
 				item.add(track_number);
@@ -204,6 +204,7 @@ public class ProjectPage extends BasePage{
 						importModal.show(target);
 					}
 				});
+				//### view it
 				item.add(new Button("view_but"){
 					public void onSubmit(){
 						PageParameters params 	= new PageParameters();
@@ -211,7 +212,7 @@ public class ProjectPage extends BasePage{
 						setResponsePage(BrowserPage.class,params);
 					}
 				});
-
+				//### share it
 				item.add(new AjaxButton("share_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						GroupControl gc = new GroupControl((UserSession)getSession());
@@ -226,7 +227,16 @@ public class ProjectPage extends BasePage{
 					}
 				});
 
+				//### delete it
+				item.add(new AjaxButton("delete_but"){
+					public void onSubmit(AjaxRequestTarget target, Form<?> form){
+						ProjectControl pc = new ProjectControl((UserSession)getSession());
+						pc.deleteProject(projectWrapper.getId());
+					}
+				});
 
+				
+				//### tracks
 				final WebMarkupContainer trackContainer = new WebMarkupContainer("tracks_container");
 				trackContainer.setOutputMarkupPlaceholderTag(true);
 				trackContainer.setVisible(false);
@@ -295,7 +305,7 @@ public class ProjectPage extends BasePage{
 						imgLoader.setOutputMarkupPlaceholderTag(true);
 						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
 						statusLabel.setOutputMarkupId(true);
-						if(!track.getStatus().equalsIgnoreCase("completed") && !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
+						if(!track.getStatus().equalsIgnoreCase("completed") || !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
 							statusLabel.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
