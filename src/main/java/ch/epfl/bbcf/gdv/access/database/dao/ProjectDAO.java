@@ -467,7 +467,7 @@ public class ProjectDAO extends DAO<Project>{
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setString(1,input);
-				statement.setInt(1,id);
+				statement.setInt(2,id);
 				this.executeUpdate(statement);
 				this.endQuery(true);
 				Application.debug("renaming project ok");
