@@ -266,7 +266,9 @@ public class Launcher extends Thread{
 			}
 
 			//DELETING TMPDIR
+			logger.debug("delete tmpdir : "+tmpdir);
 			if(tmpdir!=null && !tmpdir.equalsIgnoreCase("") && !tmpdir.equalsIgnoreCase("tmp")){
+				logger.debug("deleting ...");
 				FileManagement.deleteInTMPDirectory(tmpdir);
 			}
 		} else {

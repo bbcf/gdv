@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.biojava.bio.BioException;
 import org.biojava.bio.program.gff.GFFDocumentHandler;
 import org.biojava.bio.program.gff.GFFErrorHandler;
@@ -20,6 +21,7 @@ import org.biojava.utils.ParserException;
 import ch.epfl.bbcf.conversion.convertor.Convertor;
 import ch.epfl.bbcf.conversion.convertor.JBrowseConvertor;
 import ch.epfl.bbcf.conversion.convertor.json.GFFCreator;
+import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.feature.GFFFeature;
 import ch.epfl.bbcf.exception.ParsingException;
 import ch.epfl.bbcf.parser.Handler;
@@ -38,6 +40,7 @@ public class GFFParser extends Parser implements GFFErrorHandler,GFFDocumentHand
 	private Handler handler;
 	private List<String> types;
 	private static final String subFeatureHeaders = "[\"start\",\"end\",\"strand\",\"type\"]";
+	public static final Logger logger = Launcher.initLogger(GFFParser.class.getName());
 
 	public GFFParser(Processing type) {
 		super(type);
@@ -122,6 +125,8 @@ public class GFFParser extends Parser implements GFFErrorHandler,GFFDocumentHand
 	}
 
 	private int getStrand(Strand strand) {
+		logger.debug("Strand : "+strand);
+		logger.debug("token : "+strand.getToken());
 		int s = 0;
 		if(strand.getToken()==45){
 			s=-1;

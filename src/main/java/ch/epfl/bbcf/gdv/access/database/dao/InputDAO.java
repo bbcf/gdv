@@ -285,6 +285,26 @@ public class InputDAO extends DAO<Input>{
 		}
 		return false;
 	}
+	/**
+	 * remove an input from the db
+	 * @param input - the name of the input (generally the md5)
+	 */
+	public void remove(String input) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "delete from input where md5 = ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setString(1,input);
+				this.executeUpdate(statement);
+				this.endQuery(true);
+			} catch (SQLException e) {
+				logger.error("remove : "+e);
+				this.endQuery(false);
+			}
+		}
+	}
 }
 
 

@@ -316,6 +316,15 @@ public class InputControl extends Control{
 		}
 	}
 
+	/**
+	 * remove an input from the db
+	 * @param input - the name of the input (generally the md5)
+	 */
+	public void removeInput(String input) {
+		InputDAO idao = new InputDAO(Connect.getConnection(session));
+		idao.remove(input);
+	}
+
 
 
 }

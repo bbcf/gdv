@@ -1,11 +1,19 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
+import java.io.File;
+
 import org.apache.wicket.protocol.http.WebResponse;
 
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
+import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
+import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class TrackError extends Command{
 
@@ -32,6 +40,17 @@ public class TrackError extends Command{
 		} else if(params.getType().equalsIgnoreCase("chrList")){
 			TrackControl.updateTrack(trackId,"server error ("+params.getMessage()+")");
 		}
+		Application.error("deleting track : "+trackId);
+		TrackControl tc = new TrackControl(session);
+		Track track = tc.getTrackById(trackId);
+		tc.deleteTrack(trackId);
+		InputControl ic = new InputControl(session);
+		ic.removeInput(track.getInput());
+		FileManagement.deleteDirectory(
+				new File(
+						Configuration.getFilesDir()+"/"+track.getName()));
+		
+		
 		
 	}
 
