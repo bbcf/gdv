@@ -43,7 +43,9 @@ public class BAMParser extends Parser{
 		handler.start();
 		cur_track = new Track();
 		newTrack(handler, cur_track);
-		for (final SAMRecord samRecord : inputSam) {
+		SAMRecordIterator it = inputSam.iterator();
+		while(it.hasNext()){
+			SAMRecord samRecord = it.next();
 			logger.debug("new record");
 			BAMFeature feature = new BAMFeature();
 			feature.setReadName(samRecord.getReadName());
