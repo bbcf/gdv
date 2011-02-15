@@ -125,12 +125,10 @@ public class GFFParser extends Parser implements GFFErrorHandler,GFFDocumentHand
 	}
 
 	private int getStrand(Strand strand) {
-		logger.debug("Strand : "+strand);
-		logger.debug("token : "+strand.getToken());
 		int s = 0;
-		if(strand.getToken()==45){
+		if(strand.getToken()==45 || strand.equals("-")){
 			s=-1;
-		} else if(strand.getToken()==43){
+		} else if(strand.getToken()==43 || strand.equals("+")){
 			s=1;
 		}
 		return s;

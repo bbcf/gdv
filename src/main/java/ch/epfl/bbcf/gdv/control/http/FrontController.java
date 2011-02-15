@@ -29,6 +29,7 @@ public class FrontController {
 	}
 
 	public void doRequest() {
+		log.debug("do Request");
 		if(params.getId()!=null){
 			Command command = null;
 			//CHANGE STATUS OF A TRACK
@@ -48,9 +49,11 @@ public class FrontController {
 			if(null!=command){
 				command.doRequest();
 			} else {
+				log.error("no command");
 				new AbortWithHttpStatusException(400,true);
 			}
 		} else {
+			log.error("no id");
 			throw new AbortWithHttpStatusException(400,true);
 		}
 
