@@ -46,16 +46,17 @@ public class InputControl extends Control{
 
 	/**
 	 * processing inputss from user - you can set projectId to -1 if you want an admin track
-	 * @param projectId - the project
-	 * @param url - url of the file if one
-	 * @param fileUpload - the fileupload if one
-	 * @param speciesId - the species id
-	 * @param sendMail - if the user want feedback
-	 * @param admin - if it's an admin track
-	 * @param datatype 
-	 * @param List<Group> - the list of group the track to share with
 	 * 
-	 * @return
+	 * @param projectId - the project id
+	 * @param url - the url where to fetch the file if one
+	 * @param fileUpload - the uploadfield if one
+	 * @param sequenceId - the sequence id 
+	 * @param speciesId - the species id
+	 * @param sendMail - the boolean to send a feedback mail to user  
+	 * @param admin - the boolean if it's an admin track 
+	 * @param type - the input type (file or sqlite)
+	 * @param datatype - the datataype (qualitative or quantitative)
+	 * @param name - the name to give to the track
 	 */
 	public boolean processInputs(int projectId, String url, 
 			FileUpload fileUpload, int sequenceId,int speciesId,boolean sendMail, boolean admin,

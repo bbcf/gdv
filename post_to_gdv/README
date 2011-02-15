@@ -28,11 +28,13 @@ REQUESTED BY COMMAND :
 
 	  'add_track' :  - url : url to fetch
 	  	      	 - project_id : the project id in GDV
+	  	      	   OPTIONNAL : - name : the name you want to give to the track
 
 
 	  'add_sqlite' :  - url : url to fetch 
 	  	       	  - project_id : the project id in GDV
 			  - datatype : one of [qualitative,quantitative] N.B :QUALITATIVE does not work yet 
+			  OPTIONNAL : - name : the name you want to give to the track
 
 
 #REQUESTS EXAMPLES

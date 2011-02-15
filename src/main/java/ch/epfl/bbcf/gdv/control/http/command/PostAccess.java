@@ -93,8 +93,9 @@ public class PostAccess extends Command{
 		ProjectControl pc = new ProjectControl(session);
 		Project p = pc.getProject(projectId);
 		InputControl ic = new InputControl(session);
+		String name = params.getName();
 		boolean result = ic.processInputs(projectId, params.getUrl(), null,-1, p.getSequenceId(), false, false, 
-				new ArrayList<Group>(),InputType.NEW_SQLITE,params.getDatatype(),null);
+				new ArrayList<Group>(),InputType.NEW_SQLITE,params.getDatatype(),name);
 		success(result);
 	}
 
@@ -112,8 +113,9 @@ public class PostAccess extends Command{
 		ProjectControl pc = new ProjectControl(session);
 		Project p = pc.getProject(projectId);
 		InputControl ic = new InputControl(session);
+		String name = params.getName();
 		boolean result = ic.processInputs(projectId,params.getUrl(),null,-1,p.getSpecies().getId(),false,false,
-				new ArrayList<Group>(),InputType.NEW_FILE,null,null);
+				new ArrayList<Group>(),InputType.NEW_FILE,null,name);
 		success(result);
 	}
 
