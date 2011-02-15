@@ -347,6 +347,16 @@ public class TrackControl extends Control{
 
 
 
+	public boolean renameTrack(int id, String input) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		tdao.resetParams(id);
+		return tdao.renameTrack(id,input);
+	}
+
+
+
+
+
 
 
 

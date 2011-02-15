@@ -44,7 +44,6 @@ public class Application extends AuthenticatedWebApplication
 	 */
 	public Application()
 	{
-		
 	}
 	@Override
 	public RequestCycle newRequestCycle(Request request, Response response) {

@@ -1,11 +1,15 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
 import java.io.File;
+import java.util.List;
 
+import org.apache.wicket.protocol.http.IRequestLogger;
+import org.apache.wicket.protocol.http.RequestLogger.SessionData;
 import org.apache.wicket.protocol.http.WebResponse;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
@@ -13,6 +17,7 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
+import ch.epfl.bbcf.gdv.control.model.UserControl;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class TrackError extends Command{
@@ -42,15 +47,19 @@ public class TrackError extends Command{
 		}
 		Application.error("deleting track : "+trackId);
 		TrackControl tc = new TrackControl(session);
+		try {
+			Thread.sleep(30000);
+		} catch (InterruptedException e) {
+			Application.error(e);
+		}
+		
+		TrackControl.deleteTrack(trackId);
 		Track track = tc.getTrackById(trackId);
-		tc.deleteTrack(trackId);
 		InputControl ic = new InputControl(session);
 		ic.removeInput(track.getInput());
 		FileManagement.deleteDirectory(
 				new File(
 						Configuration.getFilesDir()+"/"+track.getName()));
-		
-		
 		
 	}
 

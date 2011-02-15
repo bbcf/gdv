@@ -20,28 +20,30 @@
     <div class="bh" wicket:id="project_header"></div>
     <form id="project_form" wicket:id="exist_form">
       <!-- projects -->
-      <div wicket:id="project_data">
-	<div class="gdv_head">
-	  <a wicket:id="arrow_link" ><img wicket:id="arrow" class="gdv_arrow"/></a>
-	  <span class="gdv_p1" wicket:id="description"></span>
-	  <span class="gdv_p2" wicket:id="project_species"/>
-	  <select class="gdv_p3" wicket:id="project_versions"/>
-	  <span class="gdv_p4" wicket:id="tracks_number"/>
-	  <input class="gdv_b_import" type="submit" wicket:id="import_but" value="Import"/>
-	  <input class="gdv_b_viewit" type="submit" wicket:id="view_but" value="View it"/>
-	  <input class="gdv_b_share" type="submit" wicket:id="share_but" value="Share"/>
-	  <input class="gdv_b_deleteit" type="submit" wicket:id="delete_but" value="Delete it"/>
-	</div>
-	<!-- tracks -->
-	<div wicket:id="tracks_container">
-	  <table class="gdv_list">
-	    <tr wicket:id="track_data">
-	      <td wicket:id="track_label"></td>
-	      <td wicket:id="track_date"></td>
-	      <td><span wicket:id="status"></span><img wicket:id="status_loader"/></td>
-	      <td><a href="#" wicket:id="delete">delete</a></td>
-	    </tr>
-	  </table>
+      <div wicket:id="projects_container">
+	<div wicket:id="project_data">
+	  <div class="gdv_head">
+	    <a wicket:id="arrow_link" ><img wicket:id="arrow" class="gdv_arrow"/></a>
+	    <span class="gdv_p1" wicket:id="description"></span>
+	    <span class="gdv_p2" wicket:id="project_species"/>
+	    <span class="gdv_p3" wicket:id="project_version"/>
+	    <span class="gdv_p4" wicket:id="tracks_number"/>
+	    <input class="gdv_b_import" type="submit" wicket:id="import_but" value="Import"/>
+	    <input class="gdv_b_viewit" type="submit" wicket:id="view_but" value="View it"/>
+	    <input class="gdv_b_share" type="submit" wicket:id="share_but" value="Share"/>
+	    <input class="gdv_b_deleteit" type="submit" wicket:id="delete_but" value="Delete it"/>
+	  </div>
+	  <!-- tracks -->
+	  <div wicket:id="tracks_container">
+	    <table class="gdv_list">
+	      <tr wicket:id="track_data">
+		<td> <span wicket:id="track_label"/></td>
+		<td wicket:id="track_date"></td>
+		<td><span wicket:id="status"></span><img wicket:id="status_loader"/></td>
+		<td><a href="#" wicket:id="delete">delete</a></td>
+	      </tr>
+	    </table>
+	  </div>
 	</div>
       </div>
     </form>

@@ -82,11 +82,11 @@ public class BrowserPage extends WebPage{
 		Set<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
 		Set<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
 		tracks.addAll(adminTrack);
-		
-		final String trackInfo = getTrackInfo(tracks,tc,project.getSpecies().getName());
+		Set<Track> formattedTracks = getFormattedTracks(tc,tracks);
+		final String trackInfo = getTrackInfo(formattedTracks,tc,project.getSpecies().getName());
 		//Application.debug("get track Info :"+trackInfo);
 		//get names
-		String names = getTrackNames(tracks);
+		String names = getTrackNames(formattedTracks);
 		//get refseq.js
 		SequenceControl seqc = new SequenceControl((UserSession)getSession());
 		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());
@@ -147,6 +147,36 @@ public class BrowserPage extends WebPage{
 
 
 	}
+	/**
+	 * If two track names are the same, jBrowse will bug
+	 * so this method will update the track name & params
+	 * @param tc 
+	 * @param tracks
+	 * @return
+	 */
+	private Set<Track> getFormattedTracks(TrackControl tc, Set<Track> tracks) {
+		Set<String> nameSet = new HashSet<String>();
+		Set<Track> formattedTracks = new HashSet<Track>();
+		for(Track t : tracks){
+			String nameToAdd = protect(t.getName());
+			if(!nameSet.contains(nameToAdd)){
+				nameSet.add(nameToAdd);
+				formattedTracks.add(t);
+			} else {
+				int cpt = 1;
+				String altName = nameToAdd;
+				while(nameSet.contains(altName)){
+					altName=nameToAdd+"_"+cpt;
+					cpt++;
+				}
+				nameSet.add(altName);
+				tc.renameTrack(t.getId(), altName);
+				t.setName(altName);
+				formattedTracks.add(t);
+			}
+		}
+		return formattedTracks;
+	}
 
 	/**
 	 * build the track names that will be showed in the browser
@@ -154,28 +184,36 @@ public class BrowserPage extends WebPage{
 	 * @return
 	 */
 	private String getTrackNames(Set<Track> tracks) {
-		Set<String> nameSet = new HashSet<String>();
+		String names = "\"DNA,";
 		for(Track t : tracks){
 			String nameToAdd = protect(t.getName());
-			if(!nameSet.contains(nameToAdd)){
-				nameSet.add(nameToAdd);
-			} else {
-				int cpt = 0;
-				String altName = nameToAdd;
-				while(nameSet.contains(altName)){
-					altName=nameToAdd+"_"+cpt;
-					cpt++;
-				}
-				nameSet.add(altName);
-			}
-		}
-		String names = "\"DNA,";
-		for(String name : nameSet){
-			names+=name+",";
+			names+=nameToAdd+",";
 		}
 		names=names.substring(0, names.length()-1);
 		names+="\"";
 		return names;
+//		Set<String> nameSet = new HashSet<String>();
+//		for(Track t : tracks){
+//			String nameToAdd = protect(t.getName());
+//			if(!nameSet.contains(nameToAdd)){
+//				nameSet.add(nameToAdd);
+//			} else {
+//				int cpt = 0;
+//				String altName = nameToAdd;
+//				while(nameSet.contains(altName)){
+//					altName=nameToAdd+"_"+cpt;
+//					cpt++;
+//				}
+//				nameSet.add(altName);
+//			}
+//		}
+//		String names = "\"DNA,";
+//		for(String name : nameSet){
+//			names+=name+",";
+//		}
+//		names=names.substring(0, names.length()-1);
+//		names+="\"";
+//		return names;
 	}
 
 	/**

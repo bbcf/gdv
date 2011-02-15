@@ -30,18 +30,20 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 
 	private UserSession session;
 	private List<ProjectWrapper> projects;
+	ProjectControl controller;
 
 	public DataProjectProvider(UserSession session){
 		this.session = session;
 		
 		ProjectControl pc = new ProjectControl(session);
+		controller = pc;
 		List<Project> p = pc.getProjectsFromUser();
-		projects = getProjectsWrappers(pc,p);
+		projects = getProjectsWrappers(p);
 		setSort("name", true);
 	}
 
 
-	private List<ProjectWrapper> getProjectsWrappers(ProjectControl controller, List<Project> projects) {
+	private List<ProjectWrapper> getProjectsWrappers(List<Project> projects) {
 		List<ProjectWrapper> wrappers = new ArrayList<ProjectWrapper>();
 		for(Project project : projects){
 			ProjectWrapper wrapper = new ProjectWrapper(project);
@@ -78,6 +80,8 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 	}
 
 	public void detach() {
+		List<Project> p = controller.getProjectsFromUser();
+		projects = getProjectsWrappers(p);
 	}
 
 }

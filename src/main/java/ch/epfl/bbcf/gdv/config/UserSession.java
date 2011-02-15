@@ -28,7 +28,6 @@ import ch.epfl.bbcf.gdv.control.model.UserControl;
 public class UserSession extends AuthenticatedWebSession{
 
 
-
 	private static final long serialVersionUID = 8871190803192332L;
 	/** Tracks the status of the lengthy process of uploading. 
 	 * These are declared volatile to make sure the JVM writes the value
@@ -53,6 +52,7 @@ public class UserSession extends AuthenticatedWebSession{
 	 * email from user + tequila type
 	 * or obfuscatedkey + Configuration.getGdv_types_access() type
 	 */
+	
 	@Override
 	public final boolean authenticate(final String email, final String type){
 		Session.set(this);

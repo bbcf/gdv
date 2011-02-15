@@ -458,7 +458,6 @@ public class ProjectDAO extends DAO<Project>{
 
 
 	public void renameProject(int id, String input) {
-		Application.debug("renaming project "+id+"  "+input);
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {

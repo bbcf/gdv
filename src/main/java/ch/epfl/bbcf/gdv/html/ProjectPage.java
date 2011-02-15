@@ -10,6 +10,7 @@ import javax.servlet.http.Cookie;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -38,6 +39,7 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 
+import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -116,7 +118,7 @@ public class ProjectPage extends BasePage{
 			}
 		},
 		choiceRenderer);
-		
+
 		create_form.add(ddcSpecies);
 		create_form.add(ddcVersion);
 		create_form.add(new Button("create_but"){
@@ -148,6 +150,8 @@ public class ProjectPage extends BasePage{
 		final Form existing_form = new Form("exist_form");
 		Label project_header = new Label("project_header","Existing projects");
 		add(project_header);
+		final WebMarkupContainer projectContainer = new WebMarkupContainer("projects_container");
+		projectContainer.setOutputMarkupPlaceholderTag(true);
 		DataProjectProvider dpp = new DataProjectProvider((UserSession)getSession());
 		//PROJECTS
 		projectData = new DataView<ProjectWrapper>("project_data",dpp) {
@@ -157,42 +161,47 @@ public class ProjectPage extends BasePage{
 				//### label
 				final AjaxEditableLabel<String> editableProjectName = new AjaxEditableLabel<String>("description",
 						new Model<String>(projectWrapper.getDescription())){
+					
 					@Override
 					protected void onSubmit(AjaxRequestTarget target){
 						ProjectControl pc = new ProjectControl((UserSession)getSession());
 						pc.renameProject(projectWrapper.getId(),getEditor().getInput());
-				
+
 					}
 				};
 				item.add(editableProjectName);
 				//### species name
 				item.add(new Label("project_species",projectWrapper.getSpeciesName()));
-				
+
 				//###assembly
-				DropDownChoice ddc = new DropDownChoice<SelectOption>(
-						"project_versions",new Model<SelectOption>(),
-						SequenceControl.getSequencesFromSpeciesIdSO(projectWrapper.getSpeciesId()),choiceRenderer){
-					protected boolean wantOnSelectionChangedNotifications() {
-						return false;
-					}
-					protected void onSelectionChanged(final SelectOption newSelection){
-						projectWrapper.setSequenceId(newSelection.getKey());
-						ProjectControl pc = new ProjectControl((UserSession)getSession());
-						pc.updateProject(projectWrapper.getId(),projectWrapper.getSequenceId());
-					}
-				};
-				boolean setted = false;
-				for(SelectOption so : projectWrapper.getSequences()){ 
-					//Application.debug(" so "+so.toString()+"   "+projectWrapper.getSequenceId());
-					if(so.getKey()==projectWrapper.getSequenceId()){
-						ddc.setDefaultModelObject(so);
-						setted=true;
-					}
-				}
-				if(!setted){
-					ddc.setDefaultModelObject(projectWrapper.getSequences().get(0));
-				}
-				item.add(ddc);
+				SequenceControl secC = new SequenceControl((UserSession)getSession());
+				Sequence seq = secC.getSequenceFromId(projectWrapper.getSequenceId());
+				Label assemblyName = new Label("project_version",seq.getName());
+				item.add(assemblyName);
+//				DropDownChoice ddc = new DropDownChoice<SelectOption>(
+//						"project_versions",new Model<SelectOption>(),
+//						SequenceControl.getSequencesFromSpeciesIdSO(projectWrapper.getSpeciesId()),choiceRenderer){
+//					protected boolean wantOnSelectionChangedNotifications() {
+//						return false;
+//					}
+//					protected void onSelectionChanged(final SelectOption newSelection){
+//						projectWrapper.setSequenceId(newSelection.getKey());
+//						ProjectControl pc = new ProjectControl((UserSession)getSession());
+//						pc.updateProject(projectWrapper.getId(),projectWrapper.getSequenceId());
+//					}
+//				};
+//				boolean setted = false;
+//				for(SelectOption so : projectWrapper.getSequences()){ 
+//					//Application.debug(" so "+so.toString()+"   "+projectWrapper.getSequenceId());
+//					if(so.getKey()==projectWrapper.getSequenceId()){
+//						ddc.setDefaultModelObject(so);
+//						setted=true;
+//					}
+//				}
+//				if(!setted){
+//					ddc.setDefaultModelObject(projectWrapper.getSequences().get(0));
+//				}
+//				item.add(ddc);
 				//### track number
 				final Label track_number = new Label("tracks_number",Integer.toString(projectWrapper.getTracksNumber()));
 				track_number.setOutputMarkupId(true);
@@ -232,14 +241,28 @@ public class ProjectPage extends BasePage{
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						ProjectControl pc = new ProjectControl((UserSession)getSession());
 						pc.deleteProject(projectWrapper.getId());
+						projectData.detach();
+						target.addComponent(projectContainer);
 					}
 				});
 
 				
-				//### tracks
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				//////////////////////////////////////////////////TRACKS//////////////////////////////////////////////////////
+				//### container
 				final WebMarkupContainer trackContainer = new WebMarkupContainer("tracks_container");
 				trackContainer.setOutputMarkupPlaceholderTag(true);
 				trackContainer.setVisible(false);
+				//### arrow
 				final Image image = new Image("arrow");
 				image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/right_arrow.jpeg"));
 				image.setOutputMarkupId(true);
@@ -262,57 +285,74 @@ public class ProjectPage extends BasePage{
 				};
 				link.add(image);
 				item.add(link);
+				
+				
+				//### tracks
 				final DataTrackProvider dtp = new DataTrackProvider((UserSession)getSession(),projectWrapper);
 				int alt=0;
 				final DataView<TrackWrapper> trackData;
-				//////////////////////////////////////////////////TRACKS
 				trackData = new DataView<TrackWrapper>("track_data",dtp){
 					@Override
 					protected void populateItem(final Item<TrackWrapper> item) {
 						final TrackWrapper track = item.getModelObject();
-						//->name
-						final Label label = new Label("track_label",track.getName());
+						//### name
+						 final AjaxEditableLabel<String> editableTrackName = new AjaxEditableLabel<String>("track_label",
+								new Model<String>(track.getName())){
+							@Override
+							protected void onSubmit(AjaxRequestTarget target){
+								TrackControl tc = new TrackControl((UserSession)getSession());
+								Track newTrack = tc.getTrackById(track.getId());
+								if(null!=newTrack && null!=track.getName() && !track.getName().equalsIgnoreCase("in process")){
+									tc.renameTrack(track.getId(),getEditor().getInput());
+								}
+							}
+						};
 						if(track.getName().equalsIgnoreCase("in process")){
-							label.setOutputMarkupId(true);
-							label.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
+							editableTrackName.setOutputMarkupId(true);
+							final AbstractAjaxTimerBehavior behaviour = new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
-									label.setDefaultModelObject(getLabel(track.getId()));
-									target.addComponent(label);
+									editableTrackName.setDefaultModelObject(getLabel(track.getId(),editableTrackName,this));
+									target.addComponent(editableTrackName);
 								}
-								private String getLabel(int id) {
+								private String getLabel(int id, AjaxEditableLabel label, AbstractAjaxTimerBehavior behaviour) {
 									TrackControl tc = new TrackControl((UserSession)getSession());
 									Track newTrack = tc.getTrackById(track.getId());
 									if(null==newTrack || null==track.getName()){
 										return "in process";
 									}
+									behaviour.stop();
 									return newTrack.getName();
-
 								} 
-							});
+							};
+							editableProjectName.add(behaviour);
 						}
-						item.add(label);
-						//->date
+						
+						item.add(editableTrackName);
+						
+						
+						//### date
 						String date ="";
 						if(null!=track.getDate()){
 							date = dateFormat.format(track.getDate());
 						}
 						Label theDate = new Label("track_date",date);
 						item.add(theDate);
-						//->status
+						//### status
 						final Image imgLoader = new Image("status_loader");
 						imgLoader.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/blue-loader.gif"));
 						imgLoader.setOutputMarkupPlaceholderTag(true);
-						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
+						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage()),null));
 						statusLabel.setOutputMarkupId(true);
-						if(!track.getStatus().equalsIgnoreCase("completed") || !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
-							statusLabel.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
+						if(!track.getStatus().equalsIgnoreCase("completed") && !track.getStatus().equalsIgnoreCase("error")){
+							final AbstractAjaxTimerBehavior behaviour = new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
-									statusLabel.setDefaultModelObject(getStatus(track,imgLoader,target));
+									statusLabel.setDefaultModelObject(getStatus(track,imgLoader,target,this));
 									target.addComponent(statusLabel);
 								} 
-							});
+							};
+							statusLabel.add(behaviour);
 						}
 						item.add(imgLoader);
 						item.add(statusLabel);
@@ -323,7 +363,7 @@ public class ProjectPage extends BasePage{
 							}
 						}));
 
-						//-> delete link
+						//### delete
 						final AjaxLink link = new AjaxLink("delete"){
 							@Override
 							public void onClick(AjaxRequestTarget target) {
@@ -333,13 +373,13 @@ public class ProjectPage extends BasePage{
 								target.addComponent(trackContainer);
 							}
 						};
-//						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
-//						link.setOutputMarkupPlaceholderTag(true);
+						//						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
+						//						link.setOutputMarkupPlaceholderTag(true);
 						item.add(link);
 					}
 
 					private String getStatus(TrackWrapper track, Image image,
-							AjaxRequestTarget ajaxRequestTarget) {
+							AjaxRequestTarget ajaxRequestTarget, AbstractAjaxTimerBehavior behaviour) {
 						TrackControl tc = new TrackControl((UserSession)getSession());
 						Track newTrack = tc.getTrackById(track.getId());
 						String status="";
@@ -351,6 +391,9 @@ public class ProjectPage extends BasePage{
 						}
 						if(status.equalsIgnoreCase("completed") || status.equalsIgnoreCase(TrackControl.STATUS_ERROR)){
 							image.setVisible(false);
+							if(null!=behaviour){
+								behaviour.stop();
+							}
 							ajaxRequestTarget.addComponent(image);
 						} else {
 							image.setVisible(true);
@@ -364,8 +407,18 @@ public class ProjectPage extends BasePage{
 				item.add(trackContainer);
 			}
 		};
-		existing_form.add(projectData);
+		projectContainer.add(projectData);
+		existing_form.add(projectContainer);
 		add(existing_form);
+
+
+
+
+
+
+
+
+
 
 		//MODAL PANEL IMPORT FILE
 		importModal = new CustModalWindow("modal_import"); 

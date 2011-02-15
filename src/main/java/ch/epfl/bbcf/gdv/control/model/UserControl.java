@@ -3,6 +3,7 @@ package ch.epfl.bbcf.gdv.control.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
@@ -69,5 +70,10 @@ public class UserControl extends Control{
 	public Users getuserByMailAndPass(String mail, String pass) {
 		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
 		return dao.getUserByEmailAndPass(mail,pass);
+	}
+
+	public List<Users> getUserFromTrackId(int trackId) {
+		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+		return dao.getUserFromTrackId(trackId);
 	}
 }

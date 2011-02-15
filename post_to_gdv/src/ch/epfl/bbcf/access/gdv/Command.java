@@ -2,7 +2,9 @@ package ch.epfl.bbcf.access.gdv;
 
 import java.io.IOException;
 
-import ch.epfl.bbcf.access.connection.InternetConnection;
+import ch.epfl.bbcf.access.InternetConnection;
+
+
 
 
 public abstract class Command {
@@ -30,10 +32,9 @@ public abstract class Command {
 	 * @return
 	 */
 	protected boolean send(String body2){
-		System.out.println("sending request");
 		String body = "mail="+mail+"&key="+pass+"&command="+command+"&"+body2;
 		try {
-			System.out.println(InternetConnection.sendPOSTConnection(PostToGDV.GDV_ADRESS, body));
+			System.out.println(InternetConnection.sendPOSTConnection(PostToGDV.GDV_ADRESS, body,InternetConnection.MIME_TYPE_TEXT));
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -88,6 +89,9 @@ public abstract class Command {
 				String body = "id="+id+"&"+RequestParameters.URL_PARAM+"="+params.getUrl()
 				+"&"+RequestParameters.PROJECT_ID_PARAM+"="+params.getProjectId()
 				+"&"+RequestParameters.DATATYPE_PARAM+"="+params.getDatatype();
+				if(null!=params.getName()){
+					body+="&"+RequestParameters.NAME_PARAM+"="+params.getName();
+				}
 				return send(body);
 			}
 			return false;
@@ -116,6 +120,9 @@ public abstract class Command {
 			if(PostToGDV.checkParams(params.getUrl(),params.getProjectId())){
 				String body = "id="+id+"&"+RequestParameters.URL_PARAM+"="+params.getUrl()
 				+"&"+RequestParameters.PROJECT_ID_PARAM+"="+params.getProjectId();
+				if(null!=params.getName()){
+					body+="&"+RequestParameters.NAME_PARAM+"="+params.getName();
+				}
 				return send(body);
 			}
 			return false;

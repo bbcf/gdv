@@ -701,6 +701,48 @@ public class TrackDAO extends DAO<Track>{
 		return false;
 	}
 
+	public boolean renameTrack(int id, String input) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "update tracks set name = ? " +
+						"where id = ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setString(1,input);
+				statement.setInt(2,id);
+				this.executeUpdate(statement);
+				this.endQuery(true);
+				return true;
+			} catch (SQLException e) {
+				logger.error("renameTrack : "+e);
+				this.endQuery(false);
+			}
+		}
+		return false;
+	}
+
+	public boolean resetParams(int id) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "update tracks set paramaters = ? " +
+						"where id = ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setString(1,"params");
+				statement.setInt(2,id);
+				this.executeUpdate(statement);
+				this.endQuery(true);
+				return true;
+			} catch (SQLException e) {
+				logger.error("renameTrack : "+e);
+				this.endQuery(false);
+			}
+		}
+		return false;
+	}
+
 	
 
 	
