@@ -17,7 +17,7 @@ import ch.epfl.bbcf.gdv.html.PostPage;
 
 public class FrontController {
 
-	private static Logger log = Logs.initPOSTLogger(PostPage.class.getName());
+	private static Logger log = Logs.initPOSTLogger(FrontController.class.getName());
 	private RequestParameters params;
 	private UserSession session;
 	private WebResponse webResponse;
