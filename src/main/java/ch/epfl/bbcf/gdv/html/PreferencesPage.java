@@ -6,6 +6,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,14 +42,16 @@ public class PreferencesPage extends BasePage{
 		////LOGOUT///////////////////////
 		////////////////////////////////
 		final Form logout_form = new Form("logout_form");
-		logout_form.add(new Button("logout"){
+		Button logoutBut = new Button("logout"){
 			public void onSubmit(){
 				((UserSession)getSession()).signOut();
 				((UserSession)getSession()).logOut();
 				((UserSession)getSession()).invalidateNow();
 				setResponsePage(HomePage.class);
 			}
-		});
+		};
+		logoutBut.add(new SimpleAttributeModifier("title","logout from GDV"));
+		logout_form.add(logoutBut);
 		add(logout_form);
 
 
@@ -91,7 +94,7 @@ public class PreferencesPage extends BasePage{
 				"group_name",new PropertyModel<String>(properties,"group_name"));
 		create_form.add(group_name);
 
-		create_form.add(new Button("create_but"){
+		Button createBut = new Button("create_but"){
 			public void onSubmit(){
 				String gn = properties.getString("group_name");
 				if(gn!=null){
@@ -104,7 +107,9 @@ public class PreferencesPage extends BasePage{
 					setResponsePage(PreferencesPage.class);
 				}
 			}
-		});
+		};
+		createBut.add(new SimpleAttributeModifier("title","create a new group"));
+		create_form.add(createBut);
 		add(create_form);
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,8 +128,12 @@ public class PreferencesPage extends BasePage{
 			@Override
 			protected void populateItem(Item<GroupWrapper> item) {
 				final GroupWrapper gw = item.getModelObject();
-				item.add(new Label("group_name",gw.getName()));
-				item.add(new Label("group_status","owner"));
+				Label groupName = new Label("group_name",gw.getName());
+				groupName.add(new SimpleAttributeModifier("title","group name"));
+				item.add(groupName);
+				Label groupStatus = new Label("group_status","owner");
+				groupStatus.add(new SimpleAttributeModifier("title","you own this group"));
+				item.add(groupStatus);
 				AjaxButton abdg = new AjaxButton("delete_group"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						GroupControl gc = new GroupControl((UserSession)getSession());
@@ -132,6 +141,7 @@ public class PreferencesPage extends BasePage{
 						dgp.detach();
 					}
 				};
+				abdg.add(new SimpleAttributeModifier("title","delete the group"));
 				item.add(abdg);
 				AjaxButton addUser = new AjaxButton("add_user"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
@@ -140,6 +150,7 @@ public class PreferencesPage extends BasePage{
 						target.addComponent(userContainer);
 					}
 				};
+				addUser.add(new SimpleAttributeModifier("title","add an user with his email"));
 				item.add(addUser);
 
 				//users data
@@ -151,7 +162,9 @@ public class PreferencesPage extends BasePage{
 					@Override
 					protected void populateItem(final Item<String> item) {
 						final String mail = item.getModelObject();
-						item.add(new Label("user_mail",mail));
+						Label userLab = new Label("user_mail",mail);
+						userLab.add(new SimpleAttributeModifier("title","user"));
+						item.add(userLab);
 						//### delete
 						final AjaxLink rmUser = new AjaxLink("delete_user"){
 							@Override
@@ -162,6 +175,7 @@ public class PreferencesPage extends BasePage{
 								dugp.detach();
 							}
 						};
+						rmUser.add(new SimpleAttributeModifier("title","delete user"));
 						item.add(rmUser);
 						item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel(){
 							@Override
@@ -183,8 +197,11 @@ public class PreferencesPage extends BasePage{
 			@Override
 			protected void populateItem(Item<GroupWrapper> item) {
 				final GroupWrapper gw = item.getModelObject();
-				item.add(new Label("group_name2",gw.getName()));
-				item.add(new Label("group_status2","member"));
+				Label uName = new Label("group_name2",gw.getName());
+				uName.add(new SimpleAttributeModifier("title","group name"));
+				item.add(uName);
+				Label gStat = new Label("group_status2","member");
+				gStat.add(new SimpleAttributeModifier("title","you are member of this group"));
 			}
 
 		};

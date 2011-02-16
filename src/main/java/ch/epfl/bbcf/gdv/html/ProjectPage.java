@@ -91,6 +91,7 @@ public class ProjectPage extends BasePage{
 
 		TextField<String> project_name = new TextField<String>(
 				"project_name",new PropertyModel<String>(properties,"project_name"));
+		project_name.add(new SimpleAttributeModifier("title","a name for your project"));
 		create_form.add(project_name);
 
 		List<SelectOption> spOptions = SequenceControl.getSpeciesSO();
@@ -122,7 +123,7 @@ public class ProjectPage extends BasePage{
 
 		create_form.add(ddcSpecies);
 		create_form.add(ddcVersion);
-		create_form.add(new Button("create_but"){
+		Button createBut = new Button("create_but"){
 			public void onSubmit(){
 				//	Application.debug("create but");
 				SelectOption species = (SelectOption) ddcSpecies.getDefaultModelObject();
@@ -140,7 +141,9 @@ public class ProjectPage extends BasePage{
 					}
 				}
 			}
-		});
+		};
+		createBut.add(new SimpleAttributeModifier("title","create the project"));
+		create_form.add(createBut);
 		create_form.add(new FeedbackPanel("feedback"));
 		add(create_form);
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////

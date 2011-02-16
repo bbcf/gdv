@@ -28,7 +28,7 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 #gdv_menu{left:0em;position:absolute;top:1em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
 #gfeat_menu{left:0em;position:relative;top:15em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
 .menu_entry{font-size:1.3em;letter-spacing:150%}
-#gdv_body{position:relative;margin-left:10em;padding:0.5em;margin-right:0.5em;}
+#gdv_body{position:relative;margin-left:10em;padding:1em;margin-right:0.5em;}
 #gdv_body_browser{position:relative;top:-18.5em;margin-left:10em;padding:0.5em;margin-right:0em;}
 #gdv_footer{margin-left:14em;margin-right:5em;padding:1em;line-height:200%;}
 /* TABBED PANEL */
