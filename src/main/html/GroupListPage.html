@@ -3,21 +3,23 @@
  <title>Genome Data Viewer</title>
 </head>
 <body>
-    <div class="sh" wicket:id="project_info"/>
+    <div class="sh" wicket:id="project_info"/><br/>
+    <div class="sh" wicket:id="project_info2"/><br/>
+    <div class="sh" wicket:id="project_info3"/><br/>
     <form wicket:id="form">
       <div wicket:id="group">
 	<input type="checkbox" wicket:id="groupselector">check/uncheck all</input><br/>
+	<div class="sh" wicket:id="title1"/>
 	<table class="gdv_list">
 	  <tr wicket:id="group_data">
 	    <td class="gdv_p1" wicket:id="group_name"></td>
-	    <td class="gdv_p2" wicket:id="group_status"></td>
 	    <td><input class="gdv_b_checkbox" type="checkbox" wicket:id="checkbox"/></td>
 	  </tr>
 	</table>
+	<div class="sh" wicket:id="title2"/>
 	<table class="gdv_list">
 	  <tr wicket:id="group_data2">
 	    <td class="gdv_p1" wicket:id="group_name2"></td>
-	    <td class="gdv_p2" wicket:id="group_status2"></td>
 	    <td><input class="gdv_b3" type="checkbox" wicket:id="checkbox2"/></td>
 	  </tr>
 	</table>

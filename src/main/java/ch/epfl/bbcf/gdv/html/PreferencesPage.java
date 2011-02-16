@@ -184,7 +184,7 @@ public class PreferencesPage extends BasePage{
 			protected void populateItem(Item<GroupWrapper> item) {
 				final GroupWrapper gw = item.getModelObject();
 				item.add(new Label("group_name2",gw.getName()));
-				item.add(new Label("group_status2","belong"));
+				item.add(new Label("group_status2","member"));
 			}
 
 		};

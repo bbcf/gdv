@@ -38,8 +38,16 @@ public class GroupListPage extends WebPage{
 		
 		final ProjectWrapper project = groupModal.getProject();
 
-		Label projectInfo = new Label("project_info","sharing project "+project.getDescription()+" with group(s) :");
+		Label projectInfo = new Label("project_info","sharing project");
+		Label projectInfo2 = new Label("project_info2",project.getDescription());
+		Label projectInfo3 = new Label("project_info3",	" with group(s) :");
 		add(projectInfo);
+		add(projectInfo2);
+		add(projectInfo3);
+		Label title1 = new Label("title1","owner");
+		Label title2 = new Label("title2","member");
+		add(title1);
+		add(title2);
 		Form form = new Form("form");
 		form.add(new AjaxButton("submit"){
 			@Override
@@ -63,9 +71,7 @@ public class GroupListPage extends WebPage{
 			protected void populateItem(final Item<GroupWrapper> item) {
 				final GroupWrapper gw = item.getModelObject();
 				item.add(new Label("group_name",gw.getName()));
-				item.add(new Label("group_status","owner"));
 				item.add(new Check<GroupWrapper>("checkbox",item.getModel()));
-
 				item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel(){
 					@Override
 					public String getObject(){
@@ -82,7 +88,6 @@ public class GroupListPage extends WebPage{
 			protected void populateItem(final Item<GroupWrapper> item) {
 				final GroupWrapper gw = item.getModelObject();
 				item.add(new Label("group_name2",gw.getName()));
-				item.add(new Label("group_status2","belong"));
 				item.add(new Check<GroupWrapper>("checkbox2",item.getModel()));
 				item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel(){
 					@Override

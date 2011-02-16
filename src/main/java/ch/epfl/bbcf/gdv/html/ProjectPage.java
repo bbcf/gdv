@@ -182,30 +182,6 @@ public class ProjectPage extends BasePage{
 				Sequence seq = secC.getSequenceFromId(projectWrapper.getSequenceId());
 				Label assemblyName = new Label("project_version",seq.getName());
 				item.add(assemblyName);
-				//				DropDownChoice ddc = new DropDownChoice<SelectOption>(
-				//						"project_versions",new Model<SelectOption>(),
-				//						SequenceControl.getSequencesFromSpeciesIdSO(projectWrapper.getSpeciesId()),choiceRenderer){
-				//					protected boolean wantOnSelectionChangedNotifications() {
-				//						return false;
-				//					}
-				//					protected void onSelectionChanged(final SelectOption newSelection){
-				//						projectWrapper.setSequenceId(newSelection.getKey());
-				//						ProjectControl pc = new ProjectControl((UserSession)getSession());
-				//						pc.updateProject(projectWrapper.getId(),projectWrapper.getSequenceId());
-				//					}
-				//				};
-				//				boolean setted = false;
-				//				for(SelectOption so : projectWrapper.getSequences()){ 
-				//					//Application.debug(" so "+so.toString()+"   "+projectWrapper.getSequenceId());
-				//					if(so.getKey()==projectWrapper.getSequenceId()){
-				//						ddc.setDefaultModelObject(so);
-				//						setted=true;
-				//					}
-				//				}
-				//				if(!setted){
-				//					ddc.setDefaultModelObject(projectWrapper.getSequences().get(0));
-				//				}
-				//				item.add(ddc);
 				//### track number
 				final Label track_number = new Label("tracks_number",Integer.toString(projectWrapper.getTracksNumber()));
 				track_number.setOutputMarkupId(true);
