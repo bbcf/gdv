@@ -28,7 +28,7 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 #gdv_menu{left:0em;position:absolute;top:1em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
 #gfeat_menu{left:0em;position:relative;top:15em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
 .menu_entry{font-size:1.3em;letter-spacing:150%}
-#gdv_body{position:relative;margin-left:10em;padding:0.5em;margin-right:0em;}
+#gdv_body{position:relative;margin-left:10em;padding:0.5em;margin-right:0.5em;}
 #gdv_body_browser{position:relative;top:-18.5em;margin-left:10em;padding:0.5em;margin-right:0em;}
 #gdv_footer{margin-left:14em;margin-right:5em;padding:1em;line-height:200%;}
 /* TABBED PANEL */
@@ -61,11 +61,11 @@ div.clearer {clear: left; line-height: 0; height: 0;}
     right:1em;
     margin:0em 7em 0em 0em;
 }
-.gdv_p1{position:absolute;margin:0em 7em 0em 0em;max-width:20em;overflow:hidden;}
-.gdv_p2{position:absolute;left:25em;margin:0em 7em 0em 0em;max-width:10em;overflow:hidden;}
-.gdv_p3{position:absolute;left:41em;margin:0em 7em 0em 0em;}
-.gdv_p4{position:absolute;left:60em;margin:0em 7em 0em 0em;}
-.gdv_p5{position:absolute;left:70em;margin:0em 7em 0em 0em;}
+.gdv_p1{position:absolute;margin:0em 7em 0em 0em;max-width:17em;overflow:hidden;}
+.gdv_p2{position:absolute;left:22em;margin:0em 7em 0em 0em;max-width:10em;overflow:hidden;}
+.gdv_p3{position:absolute;left:35em;margin:0em 7em 0em 0em;}
+.gdv_p4{position:absolute;left:54em;margin:0em 7em 0em 0em;}
+.gdv_p5{position:absolute;left:64em;margin:0em 7em 0em 0em;}
 /*BUTTONS*/
 .gdv_b_import{position:absolute;right:-5em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
 .gdv_b_viewit{position:absolute;right:1em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
