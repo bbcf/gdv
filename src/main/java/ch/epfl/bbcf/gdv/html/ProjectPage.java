@@ -242,7 +242,6 @@ public class ProjectPage extends BasePage{
 						ProjectControl pc = new ProjectControl((UserSession)getSession());
 						pc.deleteProject(projectWrapper.getId());
 						projectData.detach();
-						target.addComponent(projectContainer);
 					}
 				});
 
