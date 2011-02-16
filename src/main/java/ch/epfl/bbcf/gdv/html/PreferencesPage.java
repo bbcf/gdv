@@ -116,7 +116,7 @@ public class PreferencesPage extends BasePage{
 		Label group_header = new Label("group_header","manage groups");
 		add(group_header);
 		final Form groupForm = new Form("group_form");
-		//owner
+		/////////////////////////OWNER
 		final DataGroupProvider dgp = new DataGroupProvider((UserSession)getSession(),DataGroupProvider.OWNER);
 		DataView<GroupWrapper> group_data = new DataView<GroupWrapper>("group_data",dgp) {
 			private WebMarkupContainer userContainer;
@@ -177,14 +177,14 @@ public class PreferencesPage extends BasePage{
 			}
 		};
 		
-		//belong 
+		///////////////////BELONG
 		DataGroupProvider dgp2 = new DataGroupProvider((UserSession)getSession(),DataGroupProvider.BELONG);
 		DataView<GroupWrapper> group_data2 = new DataView<GroupWrapper>("group_data2",dgp2) {
 			@Override
 			protected void populateItem(Item<GroupWrapper> item) {
 				final GroupWrapper gw = item.getModelObject();
-				item.add(new Label("group_name",gw.getName()));
-				item.add(new Label("group_status","belong"));
+				item.add(new Label("group_name2",gw.getName()));
+				item.add(new Label("group_status2","belong"));
 			}
 
 		};
