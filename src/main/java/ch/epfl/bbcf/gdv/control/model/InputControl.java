@@ -190,7 +190,7 @@ public class InputControl extends Control{
 		}
 
 		public void run(){
-			Application.debug("RUN() "+trackId);
+			Application.debug("upload "+trackId);
 			Application.debug("upload file",user.getId());
 			Map<String, File> tmpDir  = uploadFile(url,fileUpload,user.getId());
 			Application.debug("upload file : done",user.getId());
@@ -212,6 +212,7 @@ public class InputControl extends Control{
 					err+=url;
 				}
 				TrackControl.updateTrack(trackId, err);
+				return;
 			}
 			switch(inputType){
 			case NEW_FILE:
@@ -292,28 +293,23 @@ public class InputControl extends Control{
 					name = tmpFile.getName();
 				}
 				TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_PROCESSING);
-				if(!SQLiteAccess.dbAlreadyCreated(database)){
-
-					if(datatype.equalsIgnoreCase("qualitative")){
-						TrackControl.updateTrack(trackId,"completed");
-						//PARSER DOJSON
-					} else if(datatype.equalsIgnoreCase("quantitative")){
-						SQLiteAccess.writeNewJobCalculScores(
-								Integer.toString(trackId),database,Configuration.getFilesDir(),
-								database,Configuration.getTracks_dir(),"0","nomail");
-					}
-				} else {
-					Application.debug("file already processed ",user.getId());
-					TrackControl.linkToProject(trackId,projectId);
-					TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_FINISHED);
+				if(datatype.equalsIgnoreCase("qualitative")){
+					TrackControl.updateTrack(trackId,"qualitative data not visualizable for the moment");
+					//PARSER DOJSON
+				} else if(datatype.equalsIgnoreCase("quantitative")){
+					SQLiteAccess.writeNewJobCalculScores(
+							Integer.toString(trackId),database,Configuration.getFilesDir(),
+							database,Configuration.getTracks_dir(),"0","nomail");
 				}
+				TrackControl.linkToProject(trackId,projectId);
+				//TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_FINISHED);
 				break;
 			}
-
-
-
-
 		}
+
+
+
+
 	}
 
 	/**

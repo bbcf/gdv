@@ -45,7 +45,7 @@ public class BrowserPage extends WebPage{
 		ProjectControl pc = new ProjectControl((UserSession)getSession());
 		final Project project = pc.getProject(projectId);
 		if(null==project || (null!=project && !pc.userAuthorized(project))){
-			return;
+			setResponsePage(HomePage.class);
 		}
 
 		//change the display of the top menu if the user is logged as a group

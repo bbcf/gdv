@@ -34,7 +34,7 @@ public abstract class Command {
 	protected boolean send(String body2){
 		String body = "mail="+mail+"&key="+pass+"&command="+command+"&"+body2;
 		try {
-			System.out.println(InternetConnection.sendPOSTConnection(PostToGDV.GDV_ADRESS, body,InternetConnection.MIME_TYPE_TEXT));
+			System.out.println(InternetConnection.sendPOSTConnection(PostToGDV.GDV_ADRESS, body,InternetConnection.MIME_TYPE_FORM_APPLICATION));
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -57,7 +57,6 @@ public abstract class Command {
 		@Override
 		protected boolean doRequest(String id, RequestParameters params) {
 			if(PostToGDV.checkParams(params.getType(),params.getSequenceId(),params.getName())){
-				
 				String body = "id="+id+"&"+RequestParameters.TYPE_PARAM+"="+params.getType()
 				+"&"+RequestParameters.SEQUENCE_ID_PARAM+"="+params.getSequenceId()
 				+"&"+RequestParameters.NAME_PARAM+"="+params.getName();
