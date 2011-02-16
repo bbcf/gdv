@@ -28,8 +28,8 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 #gdv_menu{left:0em;position:absolute;top:1em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
 #gfeat_menu{left:0em;position:relative;top:15em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
 .menu_entry{font-size:1.3em;letter-spacing:150%}
-#gdv_body{position:relative;margin-left:14em;padding:1em;margin-right:0em;}
-#gdv_body_browser{position:relative;top:-18.5em;margin-left:10em;padding:1em;margin-right:0em;}
+#gdv_body{position:relative;margin-left:10em;padding:0.5em;margin-right:0em;}
+#gdv_body_browser{position:relative;top:-18.5em;margin-left:10em;padding:0.5em;margin-right:0em;}
 #gdv_footer{margin-left:14em;margin-right:5em;padding:1em;line-height:200%;}
 /* TABBED PANEL */
 #tabpanel{float:left;width:100%;font-size:93%;line-height:normal;}
@@ -58,19 +58,19 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 .dtv_desc{position:relative;margin:0em 7em 0em 0em;}
 .dtv_but{
     position:relative;
-    right:7em;
+    right:1em;
     margin:0em 7em 0em 0em;
 }
-.gdv_p1{position:absolute;margin:0em 7em 0em 0em;}
-.gdv_p2{position:absolute;left:32em;margin:0em 7em 0em 0em;}
-.gdv_p3{position:absolute;left:55em;margin:0em 7em 0em 0em;}
-.gdv_p4{position:absolute;left:63em;margin:0em 7em 0em 0em;}
-.gdv_p5{position:absolute;left:71em;margin:0em 7em 0em 0em;}
+.gdv_p1{position:absolute;margin:0em 7em 0em 0em;max-width:20em;overflow:hidden;}
+.gdv_p2{position:absolute;left:25em;margin:0em 7em 0em 0em;}
+.gdv_p3{position:absolute;left:35em;margin:0em 7em 0em 0em;}
+.gdv_p4{position:absolute;left:55em;margin:0em 7em 0em 0em;}
+.gdv_p5{position:absolute;left:65em;margin:0em 7em 0em 0em;}
 /*BUTTONS*/
-.gdv_b_import{position:absolute;right:1em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
-.gdv_b_viewit{position:absolute;right:7em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
-.gdv_b_share{position:absolute;right:13em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
-.gdv_b_deleteit{position:absolute;right:19em;margin:0em 7em 0em 0em;width:6em;height:1.5em;}
+.gdv_b_import{position:absolute;right:-5em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
+.gdv_b_viewit{position:absolute;right:1em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
+.gdv_b_share{position:absolute;right:7em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
+.gdv_b_deleteit{position:absolute;right:13em;margin:0em 7em 0em 0em;width:6em;height:1.5em;}
 .gdv_b_importinprofile{position:absolute;right:18em;margin:0em 7em 0em 0em;width:10em;height:1.5em;}
 .gdv_b_checkbox{position:absolute;right:13em;margin:0em 7em 0em 0em;}
 
