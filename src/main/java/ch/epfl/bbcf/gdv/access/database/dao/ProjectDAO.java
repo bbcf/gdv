@@ -9,6 +9,7 @@ import java.util.List;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 
 public class ProjectDAO extends DAO<Project>{
@@ -288,7 +289,34 @@ public class ProjectDAO extends DAO<Project>{
 		}
 		return views;
 	}
-
+	public List<Project> getAllProjectsFromUser(Users user) {
+		List<Project> projects = new ArrayList<Project>();
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select t1.* from projects as t1 " +
+				"inner join usertoProject as t2 on t1.id = t2.project_id " +
+				"where t2.user_id = ? " +
+				"union " +
+				"select t3.* from projects as t3 " +
+				"inner join grouptoproject as t4 on t3.id = t4.project_id " +
+				"inner join userToGroup as t5 on t4.group_id = t5.group_id " +
+				"where t5.user_mail = ?  ;";	
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1, user.getId());
+				statement.setString(2, user.getMail());
+				ResultSet resultSet = this.executeQuery(statement);
+				projects = getProjects(resultSet);
+				this.endQuery(true);
+				return projects;
+			} catch (SQLException e) {
+				logger.error(e);
+				this.endQuery(false);
+			}
+		}
+		return projects;
+	}
 
 	/**
 	 * true if the user has a view with this sequenceId
@@ -476,12 +504,6 @@ public class ProjectDAO extends DAO<Project>{
 			}
 		}
 	}
-
-
-
-
-
-
 
 
 

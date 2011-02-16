@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.dao.GroupDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.SequenceDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
+import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Species;
@@ -22,14 +24,7 @@ public class ProjectControl extends Control{
 		super(session);
 	}
 
-	/**
-	 * get the projects belonging to an user
-	 * @return
-	 */
-	public List<Project> getProjectsFromUser() {
-		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
-		return pdao.getProjectsFromUser(session.getUserId());
-	}
+	
 
 	/**
 	 * get the number of tracks belonging to 
@@ -183,6 +178,28 @@ public class ProjectControl extends Control{
 		pdao.renameProject(id,input);
 	}
 
+	public List<Group> getGroupNameFromProjectId(int id,String mail) {
+		GroupDAO dao = new GroupDAO(Connect.getConnection(session));
+		return dao.getGroupNameFromProjectIdandUserMail(id,mail);
+	}
+
+	/**
+	 * get the projects belonging to an user
+	 * plus all projects the user belongs to
+	 * @return
+	 */
+	public List<Project> getAllProjectFromUser() {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
+		return pdao.getAllProjectsFromUser(session.getUser());
+	}
+	/**
+	 * get the projects belonging to an user
+	 * @return
+	 */
+	public List<Project> getProjectsFromUser() {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
+		return pdao.getProjectsFromUser(session.getUserId());
+	}
 
 
 }

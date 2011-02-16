@@ -170,6 +170,10 @@ public class ProjectPage extends BasePage{
 					}
 				};
 				item.add(editableProjectName);
+				
+				//### from group
+				item.add(new Label("group_names",projectWrapper.getGroupName()));
+				
 				//### species name
 				item.add(new Label("project_species",projectWrapper.getSpeciesName()));
 

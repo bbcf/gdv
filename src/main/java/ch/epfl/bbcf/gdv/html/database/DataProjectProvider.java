@@ -14,9 +14,11 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Species;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
 import ch.epfl.bbcf.gdv.access.generep.GeneRepAccess;
 import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
@@ -31,13 +33,15 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 	private UserSession session;
 	private List<ProjectWrapper> projects;
 	ProjectControl controller;
+	private Users user;
 
 	public DataProjectProvider(UserSession session){
 		this.session = session;
-		
+		this.user = session.getUser();
 		ProjectControl pc = new ProjectControl(session);
 		controller = pc;
-		List<Project> p = pc.getProjectsFromUser();
+		//List<Project> p = pc.getProjectsFromUser();
+		List<Project> p = pc.getAllProjectFromUser();
 		projects = getProjectsWrappers(p);
 		setSort("name", true);
 	}
@@ -51,6 +55,13 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 			wrapper.setSpeciesName(species.getName());
 			wrapper.setSpeciesId(species.getId());
 			wrapper.setSequences(controller.getSequencesFromSpeciesIdSO(species.getId()));
+			List<Group> groups = controller.getGroupNameFromProjectId(project.getId(),user.getMail());
+			String groupNames = "";
+			for(Group group:groups){
+				groupNames+=group.getName()+",";
+			}
+			groupNames = groupNames.substring(0, groupNames.length()-1);
+			wrapper.setGroupName(groupNames);
 			//->get tracks number
 			int tn = controller.tracksNumberUnderProject(project.getId());
 			wrapper.setTracksNumber(tn);

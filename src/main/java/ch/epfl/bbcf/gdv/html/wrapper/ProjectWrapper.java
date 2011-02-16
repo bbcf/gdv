@@ -14,7 +14,8 @@ public class ProjectWrapper implements Serializable{
 	private List<SelectOption> sequences;
 	private int tracksNumber;
 	private List<TrackWrapper> tracks;
-	private boolean listOpen;//if the list of track is open or not
+	private boolean listOpen;//if the list of track is open or not on the view
+	private String groupName;
 	
 	
 	public ProjectWrapper(Project p){
@@ -99,6 +100,14 @@ public class ProjectWrapper implements Serializable{
 
 	public boolean isListOpen() {
 		return listOpen;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getGroupName() {
+		return groupName;
 	}
 
 }
