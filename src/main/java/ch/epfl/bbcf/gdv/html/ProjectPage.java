@@ -41,6 +41,7 @@ import org.apache.wicket.util.value.ValueMap;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.GroupControl;
@@ -173,7 +174,6 @@ public class ProjectPage extends BasePage{
 				
 				//### from group
 				item.add(new Label("group_names",projectWrapper.getGroupName()));
-				
 				//### species name
 				item.add(new Label("project_species",projectWrapper.getSpeciesName()));
 
