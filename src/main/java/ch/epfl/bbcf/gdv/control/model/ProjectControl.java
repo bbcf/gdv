@@ -147,7 +147,6 @@ public class ProjectControl extends Control{
 	 * @return
 	 */
 	public boolean importProject(String value) {
-		Application.debug("IMPORT PROJECT");
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
 		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
 		Project oldProject = pdao.getProject(Integer.parseInt(value));

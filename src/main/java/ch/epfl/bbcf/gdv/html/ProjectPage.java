@@ -73,8 +73,6 @@ public class ProjectPage extends BasePage{
 	public ProjectPage(PageParameters p) {
 		super(p);
 		Cookie cook = ((WebRequest)getRequestCycle().getRequest()).getCookie("PROJECT_ID");
-		Application.debug("COOOK");
-		Application.debug(cook.getValue());
 		if(null!=cook){
 			ProjectControl pc = new ProjectControl((UserSession)getSession());
 			if(pc.importProject(cook.getValue())){
