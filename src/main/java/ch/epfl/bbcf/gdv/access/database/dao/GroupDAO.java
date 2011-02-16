@@ -241,7 +241,7 @@ public class GroupDAO extends DAO<Group>{
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
-				String query = "select t1.name from groups as t1 " +
+				String query = "select t1.* from groups as t1 " +
 						"inner join grouptoproject as t2 on t2.group_id = t1.id " +
 						"inner join usertogroup as t3 on t3.group_id = t1.id " +
 						"where t2.project_id = ? " +
@@ -249,6 +249,7 @@ public class GroupDAO extends DAO<Group>{
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1, id);
+				statement.setString(2, mail);
 				ResultSet resultSet = this.executeQuery(statement);
 				List<Group> groups = getGroups(resultSet);
 				this.endQuery(true);
