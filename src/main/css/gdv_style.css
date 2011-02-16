@@ -90,3 +90,11 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 .pt td{padding:1em 1em 1em 4em;}
 .pt_alt{background-color:#FFFFFF;}
 .pt_n{background-color:#F5F5F5;}
+
+
+
+
+/*GROUP LIST PAGE*/
+.sh1{width:98.5%;font-size:150%;font-weight:normal;background-color:#696969;padding:0.4em 0.4em 0.4em 0.6em;}
+.sh2{width:98.5%;font-size:90%;font-weight:normal;background-color:#A9A9A9;padding:0.4em 0.4em 0.4em 0.6em;}
+
