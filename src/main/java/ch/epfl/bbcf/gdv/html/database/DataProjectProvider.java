@@ -62,6 +62,9 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 			}
 			if(groupNames.length()>0){
 				groupNames = groupNames.substring(0, groupNames.length()-1);
+				wrapper.setAdmin(true);
+			} else {
+				wrapper.setAdmin(false);
 			}
 			wrapper.setGroupName(groupNames);
 			//->get tracks number

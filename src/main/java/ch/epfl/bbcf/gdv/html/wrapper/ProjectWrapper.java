@@ -16,6 +16,7 @@ public class ProjectWrapper implements Serializable{
 	private List<TrackWrapper> tracks;
 	private boolean listOpen;//if the list of track is open or not on the view
 	private String groupName;
+	private boolean isAdmin;//if the user is the owner of the project, can delete it, etc...
 	
 	
 	public ProjectWrapper(Project p){
@@ -108,6 +109,14 @@ public class ProjectWrapper implements Serializable{
 
 	public String getGroupName() {
 		return groupName;
+	}
+
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+
+	public boolean isAdmin() {
+		return isAdmin;
 	}
 
 }
