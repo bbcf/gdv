@@ -202,6 +202,7 @@ public class PreferencesPage extends BasePage{
 				item.add(uName);
 				Label gStat = new Label("group_status2","member");
 				gStat.add(new SimpleAttributeModifier("title","you are member of this group"));
+				item.add(gStat);
 			}
 
 		};
