@@ -156,7 +156,7 @@ public class ProjectControl extends Control{
 		if(projects!=null){
 			for (Project p : projects){
 				if(p.getName().equalsIgnoreCase(oldProject.getName())){
-					return false;
+					//return false;
 				}
 			}
 		}
