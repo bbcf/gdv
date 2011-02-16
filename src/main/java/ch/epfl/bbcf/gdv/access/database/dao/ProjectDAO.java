@@ -239,16 +239,22 @@ public class ProjectDAO extends DAO<Project>{
 	}
 
 
-	public boolean userAuthorized(int userId, int viewId) {
+	public boolean userAuthorized(Users user, int viewId) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
 				String query = "select 1 from usertoproject as t1 " +
-				"where t1.project_id =  ? and t1.user_id = ? limit 1  ;";
+				"where t1.project_id =  ? and t1.user_id = ? limit 1  " +
+				"union " +
+				"select 1 from grouptoproject as t2 " +
+				"inner join userToGroup as t3 on t2.group_id = t3.group_id " +
+				"where t3.user_mail = ? limit 1;";
+				
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1, viewId);
-				statement.setInt(2, userId);
+				statement.setInt(2, user.getId());
+				statement.setString(3, user.getMail());
 				ResultSet resultSet = this.executeQuery(statement);
 				if (resultSet.first()) {
 					this.endQuery(true);

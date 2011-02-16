@@ -108,7 +108,7 @@ public class ProjectControl extends Control{
 	 */
 	public boolean userAuthorized(Project p) {
 		ProjectDAO dao = new ProjectDAO(Connect.getConnection(session));
-		return dao.userAuthorized(session.getUserId(),p.getId());
+		return dao.userAuthorized(session.getUser(),p.getId());
 	}
 
 	/**
