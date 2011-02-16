@@ -44,10 +44,7 @@ public class GroupListPage extends WebPage{
 		add(projectInfo);
 		add(projectInfo2);
 		add(projectInfo3);
-		Label title1 = new Label("title1","owner");
-		Label title2 = new Label("title2","member");
-		add(title1);
-		add(title2);
+		
 		Form form = new Form("form");
 		form.add(new AjaxButton("submit"){
 			@Override
@@ -63,6 +60,10 @@ public class GroupListPage extends WebPage{
 		});
 		group = new CheckGroup<GroupWrapper>("group", new ArrayList<GroupWrapper>());
 		form.add(group);
+		Label title1 = new Label("title1","owner");
+		Label title2 = new Label("title2","member");
+		group.add(title1);
+		group.add(title2);
 		group.add(new CheckGroupSelector("groupselector"));
 
 		DataGroupProvider dgp = new DataGroupProvider((UserSession)getSession(),DataGroupProvider.OWNER);
