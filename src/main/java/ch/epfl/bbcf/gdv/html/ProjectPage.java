@@ -170,39 +170,49 @@ public class ProjectPage extends BasePage{
 
 					}
 				};
+				editableProjectName.add(new SimpleAttributeModifier("title",projectWrapper.getDescription()));
 				item.add(editableProjectName);
 
 				//### from group
-				item.add(new Label("group_names",projectWrapper.getGroupName()));
+				Label groupName = new Label("group_names",projectWrapper.getGroupName());
+				groupName.add(new SimpleAttributeModifier("title","group name"));
+				item.add(groupName);
 				//### species name
-				item.add(new Label("project_species",projectWrapper.getSpeciesName()));
-
+				Label species = new Label("project_species",projectWrapper.getSpeciesName());
+				species.add(new SimpleAttributeModifier("title","species"));
+				item.add(species);
 				//###assembly
 				SequenceControl secC = new SequenceControl((UserSession)getSession());
 				Sequence seq = secC.getSequenceFromId(projectWrapper.getSequenceId());
 				Label assemblyName = new Label("project_version",seq.getName());
+				assemblyName.add(new SimpleAttributeModifier("title","assembly name"));
 				item.add(assemblyName);
 				//### track number
 				final Label track_number = new Label("tracks_number",Integer.toString(projectWrapper.getTracksNumber()));
+				track_number.add(new SimpleAttributeModifier("title","track number"));
 				track_number.setOutputMarkupId(true);
 				item.add(track_number);
-				item.add(new AjaxButton("import_but"){
+				AjaxButton importBut = new AjaxButton("import_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						importModal.setParams(
 								-1,projectWrapper.getSpeciesId(),((UserSession)getSession()).getUserId(),projectWrapper.getId(),false);
 						importModal.show(target);
 					}
-				});
+				};
+				importBut.add(new SimpleAttributeModifier("title","import a new track"));
+				item.add(importBut);
 				//### view it
-				item.add(new Button("view_but"){
+				Button viewBut = new Button("view_but"){
 					public void onSubmit(){
 						PageParameters params 	= new PageParameters();
 						params.put("id", Integer.toString(projectWrapper.getId()));	
 						setResponsePage(BrowserPage.class,params);
 					}
-				});
+				};
+				viewBut.add(new SimpleAttributeModifier("title","jump to visualization"));
+				item.add(viewBut);
 				//### share it
-				item.add(new AjaxButton("share_but"){
+				AjaxButton shareBut = new AjaxButton("share_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						GroupControl gc = new GroupControl((UserSession)getSession());
 						if(!gc.checkIfGroupsForUser()){
@@ -214,8 +224,9 @@ public class ProjectPage extends BasePage{
 							groupModal.show(target);
 						}
 					}
-				});
-
+				};
+				shareBut.add(new SimpleAttributeModifier("title","share project with a group"));
+				item.add(shareBut);
 				//### delete it
 				AjaxButton del;
 
@@ -235,6 +246,7 @@ public class ProjectPage extends BasePage{
 					del.setOutputMarkupPlaceholderTag(true);
 					del.setVisible(false);
 				}
+				del.add(new SimpleAttributeModifier("title","delete the project"));
 				item.add(del);
 
 
@@ -316,7 +328,8 @@ public class ProjectPage extends BasePage{
 									return newTrack.getName();
 								} 
 							};
-							editableProjectName.add(behaviour);
+							editableTrackName.add(new SimpleAttributeModifier("title","track name"));
+							editableTrackName.add(behaviour);
 						}
 
 						item.add(editableTrackName);
@@ -328,6 +341,7 @@ public class ProjectPage extends BasePage{
 							date = dateFormat.format(track.getDate());
 						}
 						Label theDate = new Label("track_date",date);
+						theDate.add(new SimpleAttributeModifier("title","date of import"));
 						item.add(theDate);
 						//### status
 						final Image imgLoader = new Image("status_loader");
@@ -346,6 +360,7 @@ public class ProjectPage extends BasePage{
 							statusLabel.add(behaviour);
 						}
 						item.add(imgLoader);
+						statusLabel.add(new SimpleAttributeModifier("title","track status"));
 						item.add(statusLabel);
 						item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel(){
 							@Override
@@ -366,6 +381,7 @@ public class ProjectPage extends BasePage{
 						};
 						//						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
 						//						link.setOutputMarkupPlaceholderTag(true);
+						link.add(new SimpleAttributeModifier("title","delete track"));
 						item.add(link);
 					}
 
