@@ -27,15 +27,15 @@
 	<div class="gdv_head">
 	    <span class="gdv_p1" wicket:id="group_name"></span>
 	    <span class="gdv_p2" wicket:id="group_status"></span>
-	    <input class="gdv_b1" type="submit" wicket:id="delete_group" value="delete"/>
-	    <input class="gdv_b2" type="submit" wicket:id="add_user" value="add"/>
+	    <input class="gdv_b_import" type="submit" wicket:id="delete_group" value="delete"/>
+	    <input class="gdv_b_viewit" type="submit" wicket:id="add_user" value="add"/>
 	</div>
 	    <!--users container-->
 	    <div wicket:id="users_container">
 	      <table class="gdv_list">
 		<tr wicket:id="user_data">
 		  <td wicket:id="user_mail"></td>
-		  <td> <input wicket:id="remove_user" type="submit" value="remove"/></td>
+		  <td><a href="#" wicket:id="delete_user">delete</a></td>
 		</tr>
 	      </table>
 	    </div>

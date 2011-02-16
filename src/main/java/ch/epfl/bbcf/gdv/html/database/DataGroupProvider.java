@@ -23,18 +23,24 @@ public class DataGroupProvider extends SortableDataProvider<GroupWrapper>{
 	public final static int BELONG = 2;
 
 	private List<GroupWrapper> groups;
+	private GroupControl controller;
+	private int type;
+	private Users user;
 
 	public DataGroupProvider(UserSession session, int tag) {
 		GroupControl gc = new GroupControl(session);
+		controller = gc;
+		type = tag;
+		user = session.getUser();
 		List<Group> g = new ArrayList<Group>();
-		switch(tag){
-		case OWNER : g = gc.getGroupOwnedByUser(session.getUserId());
+		switch(type){
+		case OWNER : g = controller.getGroupOwnedByUser(user.getId());
 		break;
-		case BELONG : g = gc.getGroupBelongingToUser(session.getUser().getMail());
+		case BELONG : g = controller.getGroupBelongingToUser(user.getMail());
 		break;
 		default : g = new ArrayList<Group>();
 		}
-		groups = getGroupWrappers(g,tag,gc);
+		groups = getGroupWrappers(g,type,controller);
 
 	}
 
@@ -76,5 +82,15 @@ public class DataGroupProvider extends SortableDataProvider<GroupWrapper>{
 	public int size() {
 		return groups.size();
 	}
-
+	public void detach() {
+		List<Group> g = new ArrayList<Group>();
+		switch(type){
+		case OWNER : g = controller.getGroupOwnedByUser(user.getId());
+		break;
+		case BELONG : g = controller.getGroupBelongingToUser(user.getMail());
+		break;
+		default : g = new ArrayList<Group>();
+		}
+		groups = getGroupWrappers(g,type,controller);
+	}
 }

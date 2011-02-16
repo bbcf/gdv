@@ -4,6 +4,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -21,6 +22,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.GroupControl;
+import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.database.DataGroupProvider;
 import ch.epfl.bbcf.gdv.html.database.DataUserGroupProvider;
 import ch.epfl.bbcf.gdv.html.utility.GroupModalWindow;
@@ -115,7 +117,7 @@ public class PreferencesPage extends BasePage{
 		add(group_header);
 		final Form groupForm = new Form("group_form");
 		//owner
-		DataGroupProvider dgp = new DataGroupProvider((UserSession)getSession(),DataGroupProvider.OWNER);
+		final DataGroupProvider dgp = new DataGroupProvider((UserSession)getSession(),DataGroupProvider.OWNER);
 		DataView<GroupWrapper> group_data = new DataView<GroupWrapper>("group_data",dgp) {
 			private WebMarkupContainer userContainer;
 			@Override
@@ -127,7 +129,7 @@ public class PreferencesPage extends BasePage{
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						GroupControl gc = new GroupControl((UserSession)getSession());
 						gc.removeGroup(gw.getId());
-						setResponsePage(PreferencesPage.class);
+						dgp.detach();
 					}
 				};
 				item.add(abdg);
@@ -144,21 +146,21 @@ public class PreferencesPage extends BasePage{
 				userContainer = new WebMarkupContainer("users_container");
 				userContainer.setOutputMarkupPlaceholderTag(true);
 				userContainer.setVisible(true);
-				DataUserGroupProvider dugp = new DataUserGroupProvider(gw.getUsersMails());
+				final DataUserGroupProvider dugp = new DataUserGroupProvider(gw.getUsersMails());
 				DataView<String> userData = new DataView<String>("user_data",dugp) {
 					@Override
 					protected void populateItem(final Item<String> item) {
 						final String mail = item.getModelObject();
 						item.add(new Label("user_mail",mail));
-						AjaxButton rmUser = new AjaxButton("remove_user"){
+						//### delete
+						final AjaxLink rmUser = new AjaxLink("delete_user"){
 							@Override
-							protected void onSubmit(AjaxRequestTarget target,
-									Form<?> form) {
+							public void onClick(AjaxRequestTarget target) {
 								GroupControl gc = new GroupControl((UserSession)getSession());
 								gc.removeUserFromGroup(gw.getId(),mail);
-								setResponsePage(PreferencesPage.class);
+								dugp.removeUserMail(mail);
+								dugp.detach();
 							}
-
 						};
 						item.add(rmUser);
 						item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel(){
@@ -174,6 +176,7 @@ public class PreferencesPage extends BasePage{
 
 			}
 		};
+		
 		//belong 
 		DataGroupProvider dgp2 = new DataGroupProvider((UserSession)getSession(),DataGroupProvider.BELONG);
 		DataView<GroupWrapper> group_data2 = new DataView<GroupWrapper>("group_data2",dgp2) {

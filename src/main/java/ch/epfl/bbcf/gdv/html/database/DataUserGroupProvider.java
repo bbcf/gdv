@@ -38,5 +38,12 @@ public class DataUserGroupProvider  extends SortableDataProvider<String>{
 	public int size() {
 		return users.size();
 	}
+	public void detach() {
+	}
+
+
+	public void removeUserMail(String mail) {
+		users.remove(mail);
+	}
 
 }
