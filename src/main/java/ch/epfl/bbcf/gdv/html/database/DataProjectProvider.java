@@ -60,7 +60,9 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 			for(Group group:groups){
 				groupNames+=group.getName()+",";
 			}
-			groupNames = groupNames.substring(0, groupNames.length()-1);
+			if(groupNames.length()>0){
+				groupNames = groupNames.substring(0, groupNames.length()-1);
+			}
 			wrapper.setGroupName(groupNames);
 			//->get tracks number
 			int tn = controller.tracksNumberUnderProject(project.getId());
@@ -74,9 +76,9 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 
 
 	public Iterator<? extends ProjectWrapper> iterator(int first, int count) {
-			return projects.iterator();
+		return projects.iterator();
 	}
-	
+
 	public IModel<ProjectWrapper> model(final ProjectWrapper object) {
 		return new LoadableDetachableModel<ProjectWrapper>(){
 			@Override
