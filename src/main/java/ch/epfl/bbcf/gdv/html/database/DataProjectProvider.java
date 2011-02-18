@@ -96,7 +96,7 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 	}
 
 	public void detach() {
-		List<Project> p = controller.getProjectsFromUser();
+		List<Project> p = controller.getAllProjectFromUser();
 		projects = getProjectsWrappers(p);
 	}
 

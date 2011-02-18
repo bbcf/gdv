@@ -11,6 +11,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.LoginControl;
 
 public class HomePage extends BasePage{
 
@@ -18,9 +19,8 @@ public class HomePage extends BasePage{
 		super(p);
 		Users user = ((UserSession)getSession()).getUser();
 		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
-			((UserSession)getSession()).signOut();
-			((UserSession)getSession()).logOut();
-			((UserSession)getSession()).invalidateNow();
+			LoginControl lc = new LoginControl((UserSession)getSession());
+			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
 		}
 		Application.debug("Home page", ((UserSession)getSession()).getUserId());
 	}

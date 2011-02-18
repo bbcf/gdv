@@ -51,7 +51,7 @@ public class Sender {
 			msg.setHeader("MIME-Version", "1.0");
 			msg.setHeader("Content-Type", content.getContentType());
 			msg.setSentDate(new Date());
-			msg.setFrom(new InternetAddress(Configuration.getConf().getMailAdress()));
+			msg.setFrom(new InternetAddress(Configuration.getMailAdress()));
 			msg.setRecipients(Message.RecipientType.TO,mail);	
 			return msg;
 		} catch (MessagingException e) {
@@ -67,12 +67,12 @@ public class Sender {
 	private static boolean sendMessage(Session mailSession, MimeMessage msg, String mail, boolean toAdmin) {
 		Transport tr;
 		try {
-			tr = mailSession.getTransport(Configuration.getConf().getMailTransport());
-			tr.connect(Configuration.getConf().getMailHost(),Configuration.getConf().getMailUser(), Configuration.getConf().getMailPasswd());
+			tr = mailSession.getTransport(Configuration.getMailTransport());
+			tr.connect(Configuration.getMailHost(),Configuration.getMailUser(), Configuration.getMailPasswd());
 			Address[] addresses = null;
 			if(toAdmin){
 				addresses = new Address[2];
-				addresses[1]=new InternetAddress(Configuration.getConf().getMailAdress());
+				addresses[1]=new InternetAddress(Configuration.getMailAdress());
 			}
 			else {
 				addresses = new Address[1];
@@ -99,14 +99,14 @@ public class Sender {
 		Properties props = System.getProperties();
 		// Setup mail server
 		//props.put("mail.transport.protocol", Configuration.getConf().getMailTransport());
-		props.put("mail.smtp.host", Configuration.getConf().getMailHost());
+		props.put("mail.smtp.host", Configuration.getMailHost());
 		props.put("mail.smtp.port", "465");
 	//	props.put(Configuration.getConf().getMailHost(), Configuration.getConf().getMailTransport());
 		//props.put("mail.smtp.ssl.enable", true);
 		props.put("mail.smtp.auth", true);
 		Authenticator authenticator = new Authenticator() {
 		    protected PasswordAuthentication getPasswordAuthentication() {
-		        return new PasswordAuthentication(Configuration.getConf().getMailAdress(), Configuration.getConf().getMailPasswd());
+		        return new PasswordAuthentication(Configuration.getMailAdress(), Configuration.getMailPasswd());
 		    }
 		};
 		// Get session
@@ -166,8 +166,8 @@ public class Sender {
 	}
 
 	public static void main(String[]args){
-		Configuration.init();
-		sendMessage("test subject", "test message",false, "yohan.jarosz@epfl.ch");
+		//Configuration.init();
+		//sendMessage("test subject", "test message",false, "yohan.jarosz@epfl.ch");
 	}
 	
 }

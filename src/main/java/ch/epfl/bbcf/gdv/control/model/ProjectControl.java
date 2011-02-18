@@ -152,13 +152,13 @@ public class ProjectControl extends Control{
 		Project oldProject = pdao.getProject(Integer.parseInt(value));
 		List<Track> tracks = tdao.getTracksFromProjectId(oldProject.getId());
 		List<Project> projects = pdao.getProjectsFromUser(session.getUserId());
-		if(projects!=null){
-			for (Project p : projects){
-				if(p.getName().equalsIgnoreCase(oldProject.getName())){
-					//return false;
-				}
-			}
-		}
+//		if(projects!=null){
+//			for (Project p : projects){
+//				if(p.getName().equalsIgnoreCase(oldProject.getName())){
+//					//return false;
+//				}
+//			}
+//		}
 		int newProjectId = pdao.createNewProject(oldProject.getSequenceId(), oldProject.getName());
 		if(null!=tracks){
 			for(Track t : tracks){

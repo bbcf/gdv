@@ -11,6 +11,7 @@ import javax.servlet.http.Cookie;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -44,6 +45,7 @@ import org.apache.wicket.util.value.ValueMap;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.GroupDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
+import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
 import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
@@ -79,11 +81,12 @@ public class AlternativeProjectPage extends WebPage{
 
 	public AlternativeProjectPage(PageParameters p) {
 		super(p);
+		Application.debug("AlternativeProjectPage");
 		for(String cp : Configuration.getGDVCSSFiles()){
 			add(CSSPackageResource.getHeaderContribution(cp));
 		}
 		MenuElement[] els = {new MenuElement(AlternativeProjectPage.class, "Limited Profile"),
-		new MenuElement(AlternativeProjectPage.class, "Projects")};
+				new MenuElement(AlternativeProjectPage.class, "Projects")};
 		add(new MenuPage("menu",Arrays.asList(els)));
 
 
@@ -103,37 +106,53 @@ public class AlternativeProjectPage extends WebPage{
 			@Override
 			protected void populateItem(Item<ProjectWrapper> item) {
 				final ProjectWrapper projectWrapper = item.getModelObject();
-				item.add(new Label("description",projectWrapper.getDescription()));
-				item.add(new Label("project_species",projectWrapper.getSpeciesName()));
-				DropDownChoice ddc = new DropDownChoice<SelectOption>(
-						"project_versions",new Model<SelectOption>(),
-						SequenceControl.getSequencesFromSpeciesIdSO(projectWrapper.getSpeciesId()),choiceRenderer){
-					protected boolean wantOnSelectionChangedNotifications() {
-						return false;
-					}
-					protected void onSelectionChanged(final SelectOption newSelection){
-						projectWrapper.setSequenceId(newSelection.getKey());
-						ProjectControl pc = new ProjectControl((UserSession)getSession());
-						pc.updateProject(projectWrapper.getId(),projectWrapper.getSequenceId());
-					}
-				};
-				boolean setted = false;
-				for(SelectOption so : projectWrapper.getSequences()){ 
-					if(so.getKey()==projectWrapper.getSequenceId()){
-						ddc.setDefaultModelObject(so);
-						setted=true;
-					}
-				}
-				if(!setted){
-					ddc.setDefaultModelObject(projectWrapper.getSequences().get(0));
-				}
-				item.add(ddc);
+				//### name
+				Label desc = new Label("description",projectWrapper.getDescription());
+				desc.add(new SimpleAttributeModifier("title",projectWrapper.getDescription()));
+				item.add(desc);
+				//### species
+				Label speciesName = new Label("project_species",projectWrapper.getSpeciesName());
+				speciesName.add(new SimpleAttributeModifier("title","species"));
+				item.add(speciesName);
+				//### assembly
+				//###assembly
+				SequenceControl secC = new SequenceControl((UserSession)getSession());
+				Sequence seq = secC.getSequenceFromId(projectWrapper.getSequenceId());
+				Label assemblyName = new Label("project_version",seq.getName());
+				assemblyName.add(new SimpleAttributeModifier("title","assembly name"));
+				item.add(assemblyName);
+
+				//				DropDownChoice ddc = new DropDownChoice<SelectOption>(
+				//						"project_versions",new Model<SelectOption>(),
+				//						SequenceControl.getSequencesFromSpeciesIdSO(projectWrapper.getSpeciesId()),choiceRenderer){
+				//					protected boolean wantOnSelectionChangedNotifications() {
+				//						return false;
+				//					}
+				//					protected void onSelectionChanged(final SelectOption newSelection){
+				//						projectWrapper.setSequenceId(newSelection.getKey());
+				//						ProjectControl pc = new ProjectControl((UserSession)getSession());
+				//						pc.updateProject(projectWrapper.getId(),projectWrapper.getSequenceId());
+				//					}
+				//				};
+				//				boolean setted = false;
+				//				for(SelectOption so : projectWrapper.getSequences()){ 
+				//					if(so.getKey()==projectWrapper.getSequenceId()){
+				//						ddc.setDefaultModelObject(so);
+				//						setted=true;
+				//					}
+				//				}
+				//				if(!setted){
+				//					ddc.setDefaultModelObject(projectWrapper.getSequences().get(0));
+				//				}
+				//				item.add(ddc);
+				//### track number
 				final Label track_number = new Label("tracks_number",Integer.toString(projectWrapper.getTracksNumber()));
 				track_number.setOutputMarkupId(true);
+				track_number.add(new SimpleAttributeModifier("title","track number"));
 				item.add(track_number);
 
 				//IMPORT IN MY PROFILE
-				item.add(new AjaxButton("import_but"){
+				AjaxButton importBut = new AjaxButton("import_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						String pid = Integer.toString(projectWrapper.getId());
 						Cookie cook = new Cookie("PROJECT_ID",pid);
@@ -144,16 +163,19 @@ public class AlternativeProjectPage extends WebPage{
 						((UserSession)getSession()).invalidateNow();
 						setResponsePage(LoginPage.class);
 					}
-				});
-				item.add(new Button("view_but"){
+				};
+				importBut.add(new SimpleAttributeModifier("title","import the current project in your account"));
+				item.add(importBut);
+
+				Button viewBut = new Button("view_but"){
 					public void onSubmit(){
 						PageParameters params 	= new PageParameters();
 						params.put("id", Integer.toString(projectWrapper.getId()));	
 						setResponsePage(BrowserPage.class,params);
 					}
-				});
-
-
+				};
+				viewBut.add(new SimpleAttributeModifier("title","jump to visualization"));
+				item.add(viewBut);
 
 				final WebMarkupContainer trackContainer = new WebMarkupContainer("tracks_container");
 				trackContainer.setOutputMarkupPlaceholderTag(true);
@@ -189,22 +211,25 @@ public class AlternativeProjectPage extends WebPage{
 						final Label label = new Label("track_label",track.getName());
 						if(track.getName().equalsIgnoreCase("in process")){
 							label.setOutputMarkupId(true);
-							label.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
+
+							final AbstractAjaxTimerBehavior behaviour = new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
-									label.setDefaultModelObject(getLabel(track.getId()));
+									label.setDefaultModelObject(getLabel(track.getId(),this));
 									target.addComponent(label);
 								}
-								private String getLabel(int id) {
+								private String getLabel(int id, AjaxSelfUpdatingTimerBehavior behavior) {
 									TrackControl tc = new TrackControl((UserSession)getSession());
 									Track newTrack = tc.getTrackById(track.getId());
 									if(null==newTrack || null==track.getName()){
 										return "in process";
 									}
+									behavior.stop();
 									return newTrack.getName();
 
 								} 
-							});
+							};
+							label.add(behaviour);
 						}
 						item.add(label);
 						//->date
@@ -218,16 +243,17 @@ public class AlternativeProjectPage extends WebPage{
 						final Image imgLoader = new Image("status_loader");
 						image.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/blue-loader.gif"));
 						imgLoader.setOutputMarkupPlaceholderTag(true);
-						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage())));
+						final Label statusLabel = new Label("status",getStatus(track,imgLoader,new AjaxRequestTarget(getPage()),null));
 						statusLabel.setOutputMarkupId(true);
-						if(!track.getStatus().equalsIgnoreCase("completed") || !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
-							statusLabel.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
+						if(!track.getStatus().equalsIgnoreCase("completed") && !track.getStatus().equalsIgnoreCase(TrackControl.STATUS_ERROR)){
+							final AbstractAjaxTimerBehavior behaviour = new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
-									statusLabel.setDefaultModelObject(getStatus(track,imgLoader,target));
+									statusLabel.setDefaultModelObject(getStatus(track,imgLoader,target,this));
 									target.addComponent(statusLabel);
 								} 
-							});
+							};
+							statusLabel.add(behaviour);
 						}
 						item.add(imgLoader);
 						item.add(statusLabel);
@@ -254,7 +280,7 @@ public class AlternativeProjectPage extends WebPage{
 					}
 
 					private String getStatus(TrackWrapper track, Image image,
-							AjaxRequestTarget ajaxRequestTarget) {
+							AjaxRequestTarget ajaxRequestTarget, AjaxSelfUpdatingTimerBehavior behavior) {
 						TrackControl tc = new TrackControl((UserSession)getSession());
 						Track newTrack = tc.getTrackById(track.getId());
 						String status="";
@@ -266,6 +292,9 @@ public class AlternativeProjectPage extends WebPage{
 						}
 						if(status.equalsIgnoreCase("completed") || status.equalsIgnoreCase(TrackControl.STATUS_ERROR)){
 							image.setVisible(false);
+							if(null!=behavior){
+								behavior.stop();
+							}
 							ajaxRequestTarget.addComponent(image);
 						} else {
 							image.setVisible(true);
@@ -285,4 +314,11 @@ public class AlternativeProjectPage extends WebPage{
 
 	}
 
+	@Override
+	protected void configureResponse() {
+		super.configureResponse();
+		WebResponse response = getWebRequestCycle().getWebResponse();
+		response.setHeader("Cache-Control",
+		"no-cache, max-age=0,must-revalidate, no-store");
+	}
 }

@@ -1,0 +1,45 @@
+### GDV CONFIGURATION FILE
+### email yohan.jarosz{-@-}epfl.ch for more information 
+
+################GDV
+#server where gdv war archive is on
+gdv_tomcat_server : http://yourserver.com
+
+#proxy to access application
+gdv_proxy_url : http://yourproxy.com
+
+#working directory on the filesystem
+gdv_working_directory : /data/GDV
+
+#url where to fecth static ressources (gdv_proxy_url+gdv_public_url)
+gdv_public_url : /data/public/ressources
+
+#complete path to the classes of wicket on the filesystem (needed for linking to HTML markup ?? should place it in META-INF ??)
+wicket_main_folder : /apps/apache-tomcat-{myVersion}/webapps/gdv-{version}/WEB-INF/classes/
+
+#will match the path in the url to the application
+gdv_version : gdv
+
+#gdv password to enable post access
+##an id to filter post request 
+gdv_post_access : gdv_post_request
+
+#list of access types for POST request(commas separated in [])
+gdv_types_access : [normal,myproject1,myPipeline1,...]
+
+################ JBROWSE
+#JBrowse browserRoot (access to tracks)
+jb_browser_root : ../../tracks_dir/
+
+#JBrowse dataRoot (access to data)
+jb_data_root : ../../tracks_dir/
+
+################ PGSQL
+#name of the database
+psql_db : gdv_dev
+
+#name of the user
+psql_user : java
+
+#password
+psql_pwd : J8eTJmxsVf

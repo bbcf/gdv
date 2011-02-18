@@ -98,10 +98,10 @@ public class BrowserPage extends WebPage{
 		"containerID: \"GenomeBrowser\",\n" +
 		"refSeqs: refSeqs,\n" +
 		//"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+"\"+browserRoot,\n" +//+JbrowsoRAccess.SERV+"/\"+browserRoot," +
-		"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+   "\",\n" +
+		"browserRoot: \""+ Configuration.getJb_browser_root()+   "\",\n" +
 		//"dataRoot: \"/jbdata/\",\n"+
 		//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
-		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"/"+"\",\n" +
+		"dataRoot: \""+Configuration.getJb_data_root()+"/"+"\",\n" +
 		"styleRoot: \""+"../../"+Configuration.getJbrowse_static_files_url()+"/"+"\",\n" +
 		"trackData: trackInfo,\n" +
 		"defaultTracks : "+names+"" +
@@ -235,7 +235,11 @@ public class BrowserPage extends WebPage{
 		for(Track t : tracks){
 			String parameters ="";
 			if(t.getParameters().equalsIgnoreCase("params") || t.getName().equalsIgnoreCase("in process")){
+				Application.debug("TRACK ID "+t.getId());
+				
 				String directory = tc.getFileFromTrackId(t.getId());
+				Application.debug("TRACK ID "+directory);
+				
 				String imageType = null;
 				if(t.getType().equalsIgnoreCase("quantitative")){
 					imageType="ImageTrack";
@@ -244,7 +248,6 @@ public class BrowserPage extends WebPage{
 				} else {
 					Application.error("datatype not recognized : "+t.getId());
 				}
-
 				String params = "{\n\"url\" : \"../"+directory+"/{refseq}.json\",\n" +
 				"\"label\" : \""+protect(t.getName())+"\",\n"+
 				"\"type\" : \""+imageType+"\",\n"+

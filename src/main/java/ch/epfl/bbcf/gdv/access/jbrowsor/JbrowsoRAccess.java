@@ -24,7 +24,7 @@ public abstract class JbrowsoRAccess {
 	public final static String GET_VIEW = SERV+"jbrowse_views.json";
 	public final static String JBROWSE = SERV+"jbrowse";
 	public final static String JAVASCRIPT_VIEW = SERV+"jbrowse_views/";//don't forget to add '[viewId].js
-	public final static String JBROWSE_DATA = "../../tracks_dev/";
+	//public final static String JBROWSE_DATA = "../../tracks_dev/";
 	
 	//private static final String CALLBACK_URL = Configuration.APPLI_URL+"/tracks_status/";
 //	public static final String[] JBrowseJavascript = {

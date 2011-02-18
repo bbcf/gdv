@@ -45,8 +45,8 @@ import ch.epfl.bbcf.gdv.model.gfeatminer.GFeatMinerParameters;
  */
 public final class Configuration{
 
-	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
-	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
+//	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
+//	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
 		String[] js = new String[19];
@@ -163,6 +163,7 @@ public final class Configuration{
 
 	}
 
+
 	private Configuration(){
 	}
 	private static Configuration instance;
@@ -179,8 +180,10 @@ public final class Configuration{
 	private static String gdv_appli_proxy,files_dir,tmp_dir,log_dir,
 	tracks_dir,public_dir,jbrowse_static_files_url,jbrowse_css_url,
 	das_dir,databases_link_dir,compute_scores_daemon,jbrowse_javascript_url,
-	transform_to_sqlite_daemon,project_url,gdv_version,images_url,jbrowse_images_url;
-
+	transform_to_sqlite_daemon,project_url,gdv_version,images_url,
+	jbrowse_images_url,log_directory,jb_browser_root,jb_data_root,
+	psql_db,psql_user,psql_pwd;
+	
 	private static String gdv_post_access;
 	private static List<String> gdv_types_access;
 
@@ -195,23 +198,23 @@ public final class Configuration{
 	private static String mail_passwd;
 
 
-	public static boolean init() {
+	public static boolean init(String metaInfPath,File confFile) {
 		if(instance==null){
 			synchronized(Configuration.class){
 				instance = new Configuration();
 			}
 		}
 		if(instance!=null){
-			return readConfigurationFile();
+			return readConfigurationFile(metaInfPath,confFile);
 		} 
 		return false;
 	}
 
-	private static boolean readConfigurationFile() {
+	private static boolean readConfigurationFile(String metaInfPath, File confFile) {
 		Application.info("reading conf file");
 		InputStream input = null;
 		try {
-			input = new FileInputStream(new File(Configuration.CONF_FILE));
+			input = new FileInputStream(confFile);
 		} catch (FileNotFoundException e) {
 			Application.error(e);
 			return false;
@@ -236,6 +239,16 @@ public final class Configuration{
 					instance.gdv_post_access = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_types_access")){
 					instance.gdv_types_access = (List<String>)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("jb_browser_root")){
+					instance.jb_browser_root = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("jb_data_root")){
+					instance.jb_data_root = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("psql_db")){
+					instance.psql_db = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("psql_user")){
+					instance.psql_user = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("psql_pwd")){
+					instance.psql_pwd = (String)entry.getValue();
 				} else {
 					Application.warn("key : "+entry.getKey()+" not recognized");
 				}
@@ -268,6 +281,7 @@ public final class Configuration{
 				instance.javascript_files = buildJSFile();
 				instance.jbrowse_css_files = buildJbrowseCSSFiles();
 				instance.gdv_css_files = buidGDVCSSFiles();
+				instance.log_directory = metaInfPath+"/logs/";
 				return true;
 			}
 			Application.error("parameters not corrects");
@@ -281,12 +295,12 @@ public final class Configuration{
 
 
 
-	public static Configuration getConf(){
-		if(null==instance){
-			init();
-		}
-		return instance;
-	}
+//	public static Configuration getConf(){
+//		if(null==instance){
+//			init();
+//		}
+//		return instance;
+//	}
 
 
 
@@ -330,19 +344,19 @@ public final class Configuration{
 
 
 	//MAIL CONF
-	public String getMailAdress(){
+	public static String getMailAdress(){
 		return instance.mail_adress;
 	}
-	public String getMailTransport(){
+	public static String getMailTransport(){
 		return instance.mail_transport;
 	}
-	public String getMailHost(){
+	public static String getMailHost(){
 		return instance.mail_host;
 	}
-	public String getMailUser(){
+	public static String getMailUser(){
 		return instance.mail_user;
 	}
-	public String getMailPasswd(){
+	public static String getMailPasswd(){
 		return instance.mail_passwd;
 	}
 
@@ -477,5 +491,23 @@ public final class Configuration{
 	}
 	public static String getJbrowse_static_files_url(){
 		return instance.jbrowse_static_files_url;
+	}
+	public static String getLog_directory() {
+		return instance.log_directory;
+	}
+	public static String getJb_browser_root() {
+		return instance.jb_browser_root;
+	}
+	public static String getJb_data_root() {
+		return instance.jb_data_root;
+	}
+	public static String getPsql_db() {
+		return instance.psql_db;
+	}
+	public static String getPsql_user() {
+		return instance.psql_user;
+	}
+	public static String getPsql_pwd() {
+		return instance.psql_pwd;
 	}
 }

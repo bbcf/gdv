@@ -1,8 +1,11 @@
 package ch.epfl.bbcf.gdv.config;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.ServletContext;
 
 
 import org.apache.log4j.Appender;
@@ -15,6 +18,8 @@ import org.apache.wicket.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebSession;
+import org.apache.wicket.settings.IApplicationSettings;
+import org.apache.wicket.settings.ISessionSettings;
 import org.apache.wicket.spring.test.ApplicationContextMock;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
@@ -51,8 +56,17 @@ public class Application extends AuthenticatedWebApplication
 	}
 	protected void init() {
 		super.init();
-		theLogger = Logs.init();
-		if(!Configuration.init()){
+		ServletContext ctx = this.getServletContext();
+		String curDir = System.getProperty("user.dir");
+		String ctxPath = ctx.getContextPath();
+		String metaInf = curDir+"/../webapps"+ctxPath+"/META-INF";
+		File confFile = new File(metaInf+"/gdv.yaml");
+		if(!confFile.exists()){
+			fatal("configuration file not exist - APPLICATION WILL NOT WORK");
+		}
+		
+		theLogger = Logs.init(metaInf);
+		if(!Configuration.init(metaInf,confFile)){
 			fatal("configuration not initialized properly - APPLICATION WILL NOT WORK");
 		}
 		Configuration.addRessourcesLocations(getResourceSettings());

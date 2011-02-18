@@ -41,10 +41,10 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 public class Connect implements Connection{
 
 	public static final String DRIVER = "org.postgresql.Driver";
-	public static final String BASE = "gdv_dev";
-	public static final String	URL = "jdbc:postgresql://127.0.0.1/"+BASE;
-	public static final String USER = "java";
-	public static final String PASSWD ="java_gdv_bbcf";//it's no use in fact :D
+	//public static final String BASE = "gdv_dev";
+	public static final String	URL = "jdbc:postgresql://127.0.0.1/"+Configuration.getPsql_db();
+	//public static final String USER = "java";
+	//public static final String PASSWD ="java_gdv_bbcf";//it's no use in fact :D
 	/**
 	 * The next serial number to be assigned
 	 */
@@ -110,17 +110,17 @@ public class Connect implements Connection{
 	public static Connect getConnection() {
 		String driver = DRIVER;
 		String	url = URL;
-		String user = USER;
-		String passwd = PASSWD;
-		String base = BASE;
+		String user = Configuration.getPsql_user();
+		String passwd = Configuration.getPsql_pwd();
+		String base = Configuration.getPsql_db();
 		return Connect.getConnection(null,driver,url,user,passwd,base);
 	}
 	public static Connect getConnection(UserSession session){
 		String driver = DRIVER;
 		String	url = URL;
-		String user = USER;
-		String passwd = PASSWD;
-		String base = BASE;
+		String user = Configuration.getPsql_user();
+		String passwd = Configuration.getPsql_pwd();
+		String base = Configuration.getPsql_db();
 		return Connect.getConnection(session,driver,url,user,passwd,base);
 
 	}

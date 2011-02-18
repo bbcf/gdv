@@ -71,6 +71,7 @@ public class InputControl extends Control{
 		Uploader up = new Uploader(projectId,trackId,session.getUser(),url,
 				fileUpload,sequenceId,speciesId,sendMail,admin,type,datatype,name);
 		if(trackId!=-1){
+			Application.debug("trackId = "+trackId);
 			up.start();
 			return true;
 		}
@@ -190,9 +191,10 @@ public class InputControl extends Control{
 		}
 
 		public void run(){
-			Application.debug("upload "+trackId);
+			//Application.debug("upload "+trackId);
 			Application.debug("upload file",user.getId());
 			Map<String, File> tmpDir  = uploadFile(url,fileUpload,user.getId());
+			//Application.debug("uploaded "+trackId);
 			Application.debug("upload file : done",user.getId());
 			Iterator<String> it = tmpDir.keySet().iterator();
 			File tmpFile = null;
@@ -201,6 +203,7 @@ public class InputControl extends Control{
 				dir = it.next();
 				tmpFile=tmpDir.get(dir);
 				dir = dir.substring(dir.lastIndexOf("/")+1,dir.length());
+				//Application.debug("track "+trackId+"  dir "+dir);
 			}
 			if(null==tmpFile){
 				Application.error("failed to process inputs",user.getId());
@@ -216,7 +219,7 @@ public class InputControl extends Control{
 			}
 			switch(inputType){
 			case NEW_FILE:
-				Application.debug("NEW_FILE "+trackId);
+				//Application.debug("NEW_FILE "+trackId);
 				try {
 					Application.debug("decompressing",user.getId());
 					List<File> files = Decompressor.decompress(trackId,tmpFile);
@@ -235,6 +238,9 @@ public class InputControl extends Control{
 						int inputId = createNewUserInput(database,user.getId(),admin);
 						if(inputId!=-1){
 							TrackControl.linkToInput(trackId, inputId);
+						} else {
+							//TODO error
+							return;
 						}
 						Application.debug("user input created ",user.getId());
 						if(!SQLiteAccess.dbAlreadyCreated(database)){
@@ -243,11 +249,11 @@ public class InputControl extends Control{
 								name = file.getName();
 							}
 							TrackControl.updateTrackFields(trackId,name,filetype,TrackControl.STATUS_PROCESSING);
-							TrackControl.linkToInput(trackId,inputId);
+							//TrackControl.linkToInput(trackId,inputId);
 							if(admin){
 								TrackControl.createAdminTrack(sequenceId,trackId);
 							} else {
-								TrackControl.linkToProject(trackId,projectId);
+								//TrackControl.linkToProject(trackId,projectId);
 							}
 							//String jbrowsorId = Integer.toString(SequenceControl.getJbrowsorIdFromSequenceId(sequenceId));
 							SQLiteProcessor processor = new SQLiteProcessor(trackId,file,dir,extension,user,speciesId,sendmail,admin);
@@ -256,7 +262,7 @@ public class InputControl extends Control{
 
 						} else {//File already created link to user
 							Application.debug("file already processed ",user.getId());
-							TrackControl.linkToProject(trackId,projectId);
+							//TrackControl.linkToProject(trackId,projectId);
 							TrackControl.updateTrackFields(trackId,file.getName(),filetype,TrackControl.STATUS_FINISHED);
 						}
 					}
@@ -284,10 +290,17 @@ public class InputControl extends Control{
 			case NEW_SQLITE:
 				Application.debug("NEW_SQLITE "+trackId);
 				String database = tmpFile.getName();
+				String fullPath = tmpFile.getAbsolutePath();
+				String tmpdir = fullPath.substring(fullPath.lastIndexOf("/")+1,fullPath.length());
+				Application.debug("TMP DIR = "+tmpdir);
+				//TODO delete
 				FileManagement.moveFile(tmpFile, Configuration.getFilesDir());
+				
 				int inputId = createNewUserInput(database,user.getId(),admin);
 				if(inputId!=-1){
 					TrackControl.linkToInput(trackId, inputId);
+				} else {
+					//TODO error
 				}
 				if(null==name){
 					name = tmpFile.getName();
@@ -297,11 +310,12 @@ public class InputControl extends Control{
 					TrackControl.updateTrack(trackId,"qualitative data not visualizable for the moment");
 					//PARSER DOJSON
 				} else if(datatype.equalsIgnoreCase("quantitative")){
+					//Application.debug("write job "+trackId);
 					SQLiteAccess.writeNewJobCalculScores(
 							Integer.toString(trackId),database,Configuration.getFilesDir(),
 							database,Configuration.getTracks_dir(),"0","nomail");
 				}
-				TrackControl.linkToProject(trackId,projectId);
+				//TrackControl.linkToProject(trackId,projectId);
 				//TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_FINISHED);
 				break;
 			}

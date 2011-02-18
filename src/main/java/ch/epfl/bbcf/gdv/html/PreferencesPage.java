@@ -9,6 +9,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -23,6 +24,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.GroupControl;
+import ch.epfl.bbcf.gdv.control.model.LoginControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.database.DataGroupProvider;
 import ch.epfl.bbcf.gdv.html.database.DataUserGroupProvider;
@@ -41,12 +43,12 @@ public class PreferencesPage extends BasePage{
 		//////////////////////////////////
 		////LOGOUT///////////////////////
 		////////////////////////////////
+		final WebPage thisPage = this;
 		final Form logout_form = new Form("logout_form");
 		Button logoutBut = new Button("logout"){
 			public void onSubmit(){
-				((UserSession)getSession()).signOut();
-				((UserSession)getSession()).logOut();
-				((UserSession)getSession()).invalidateNow();
+				LoginControl lc = new LoginControl((UserSession)getSession());
+				lc.logOut(thisPage,true);
 				setResponsePage(HomePage.class);
 			}
 		};

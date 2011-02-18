@@ -501,10 +501,10 @@ public abstract class JSONHandler {
 
 	protected static String getClientConfig(ClientConfig ccfg) {
 		switch(ccfg){
-		case BASIC :return "{\"featureCss\":\"background-color: #0000FF; " +
+		case BASIC :return "{\"labelScale\":5,\"subfeatureScale\":10,\"featureCss\":\"background-color: #0000FF; " +
 		"height: 5px;\",\"histCss\":\"background-color: #0000FF;\"}";
 		case EXTENDED :
-			return "{\"featureCallback\":\"" +
+			return "{\"labelScale\":5,\"subfeatureScale\":10,\"featureCallback\":\"" +
 			"(function(feat, fields, div) { " +
 			"if (fields.type){ " +
 			"div.style.backgroundColor=\\\"#3333D7\\\";" +

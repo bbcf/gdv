@@ -32,7 +32,7 @@ public class Logs {
 		SimpleLayout layout = new SimpleLayout();
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/"+userId+".log",true);
+			appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/"+userId+".log",true);
 			appender.setName(Integer.toString(userId));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -49,7 +49,7 @@ public class Logs {
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/das.log",true);
+			appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/das.log",true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -64,7 +64,7 @@ public class Logs {
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/sql.log",true);
+			appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/sql.log",true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -79,7 +79,7 @@ public class Logs {
 		RollingFileAppender appender = null;
 		try {
 			if(out.getAppender(GFeatMinerAccess.class.getName())==null){
-				appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/gFeatMiner.log",true);
+				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/gFeatMiner.log",true);
 				appender.setName(GFeatMinerAccess.class.getName());
 			}
 		} catch (IOException e) {
@@ -97,7 +97,7 @@ public class Logs {
 		RollingFileAppender appender = null;
 		try {
 			if(out.getAppender(name)==null){
-				appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/post.log",true);
+				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/post.log",true);
 				appender.setName(name);
 			}
 		} catch (IOException e) {
@@ -106,14 +106,14 @@ public class Logs {
 		out.addAppender(appender);
 		return out;
 	}
-	public static Logger init() {
+	public static Logger init(String directory) {
 		Logger out = Logger.getLogger(Application.class.getName());
 		out.setAdditivity(false);
 		out.setLevel(debugLevel);
-		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
+		PatternLayout layout = new PatternLayout("[%-5p] %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/gdv.log",true);
+			appender = new RollingFileAppender(layout,directory+"/logs/gdv.log",true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -134,7 +134,7 @@ public class Logs {
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/gdv.log",true);
+			appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/gdv.log",true);
 		} catch (IOException e) {
 			Application.error(e);
 		}
@@ -274,7 +274,7 @@ public class Logs {
 			if(out.getAppender(QueriesFilter.class.getName()) != null){
 				appender = (RollingFileAppender) out.getAppender(QueriesFilter.class.getName());
 			} else {
-				appender = new RollingFileAppender(layout,Configuration.LOG_DIRECTORY+"/browser_queries.log",true);
+				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/browser_queries.log",true);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

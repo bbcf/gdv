@@ -49,7 +49,7 @@ public class PostAccess extends Command{
 			failed("problem with your key and password - it can be a server error");
 		}
 		session.signIn(params.getMail(), "tequila");
-		Application.debug("signed in");
+		//Application.debug("signed in");
 		//PROCESSES
 		if(params.getCommand().equalsIgnoreCase(NEW_PROJECT)){
 			createNewProject(user);
