@@ -36,10 +36,10 @@ jb_data_root : ../../tracks_dir/
 
 ################ PGSQL
 #name of the database
-psql_db : gdv_dev
+psql_db : mydb_gdv
 
 #name of the user
-psql_user : java
+psql_user : gdvuser
 
 #password
-psql_pwd : J8eTJmxsVf
+psql_pwd : 123456789
