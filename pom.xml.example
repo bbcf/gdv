@@ -2,17 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.epfl.bbcf</groupId>
-	<artifactId>gdv_dev</artifactId>
+	<artifactId>{YOUR ARTIFACT}</artifactId>
 	<packaging>war</packaging>
-	<version>1</version>
-	<!-- TODO project name  -->
-	<name>gdv</name>
+	<version>{YOUR VERSION}</version>
+	<name>{YOUR NAME}</name>
 	<description>Genome Data Viewer :
 	a javascript genome browser</description>
-	<!--
-		TODO <organization> <name>company name</name> <url>company url</url>
-		</organization>
-	-->
+	
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -27,12 +23,7 @@
 			<artifactId>wicket</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
-		<!--
-			OPTIONAL <dependency> <groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-extensions</artifactId>
-			<version>${wicket.version}</version> </dependency>
-		-->
-
+		
 		<!-- LOGGING DEPENDENCIES - LOG4J -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
