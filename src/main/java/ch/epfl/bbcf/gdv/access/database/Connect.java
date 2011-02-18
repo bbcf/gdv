@@ -181,19 +181,21 @@ public class Connect implements Connection{
 
 	}
 	public static void removeAllConnection() {
-		Iterator<String> it = Connect.databasePool.keySet().iterator();
-		while(it.hasNext()){
-			String key = it.next();
-			Connect conn = Connect.databasePool.get(key);
-			try {
-				if(null!=conn){
-					conn.close();
+		if(null!=Connect.databasePool){
+			Iterator<String> it = Connect.databasePool.keySet().iterator();
+			while(it.hasNext()){
+				String key = it.next();
+				Connect conn = Connect.databasePool.get(key);
+				try {
+					if(null!=conn){
+						conn.close();
+					}
+				} catch (SQLException e) {
+					Application.error(e);
 				}
-			} catch (SQLException e) {
-				Application.error(e);
 			}
+			Connect.databasePool = new HashMap<String, Connect>();
 		}
-		Connect.databasePool = new HashMap<String, Connect>();
 
 	}
 
@@ -491,24 +493,24 @@ public class Connect implements Connection{
 		}
 	}
 
-		/**
-		 * @param session the session to set
-		 */
-		public void setSession(UserSession session) {
-			this.session = session;
-		}
-
-		/**
-		 * @return the session
-		 */
-		public UserSession getSession() {
-			return session;
-		}
-
-
-
-
-
-
+	/**
+	 * @param session the session to set
+	 */
+	public void setSession(UserSession session) {
+		this.session = session;
 	}
+
+	/**
+	 * @return the session
+	 */
+	public UserSession getSession() {
+		return session;
+	}
+
+
+
+
+
+
+}
 
