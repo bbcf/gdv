@@ -1,11 +1,13 @@
 ################################
 ##HOW TO SEND PROCESSES TO GDV##
 ################################
+#BUILD
+download project, cd project directory and run the comment "ant jar"
 
 #INTRO 
 
 First you need a mail and an user key.
-Login in GDV and go to preferences page you will have your personnal user key.
+Login in GDV and go to preferences page you will have your personal user key.
 
 Now there is two way : you can use the jar file provided or send by yourself
 a POST connection to "http://svitsrv25.epfl.ch/gdv_dev/post". If you send a POST

@@ -1,0 +1,11 @@
+### GENOME DATA VIEWER ###
+
+GDV is a Genome browser developed at the Bioinformatics & Biostatistics Core Facility, EPFL, Lausanne, Switzerland.
+
+- src - the sources files of the web application.
+- conversion - sources files for two java daemons needed to transform inputs files by users to an unique format approved by the BBCF.
+- post_to_gdv - source files of a runnable jar file to send POST request to GDV.
+
+
+
+-- more documentation is coming --
