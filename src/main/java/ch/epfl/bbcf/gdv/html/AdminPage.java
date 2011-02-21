@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -20,6 +21,7 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
@@ -215,6 +217,12 @@ public class AdminPage extends BasePage{
 					}
 				};
 				link.add(new SimpleAttributeModifier("title","delete the track in the database and flat file associated"));
+				item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel(){
+					@Override
+					public String getObject(){
+						return (item.getIndex() % 2 == 1) ? "list_n" : "list_alt";
+					}
+				}));
 				item.add(link);
 			}
 		};
