@@ -180,8 +180,6 @@ public class AdminPage extends BasePage{
 				importModal.show(target);
 			}
 		});
-		add(form);
-		
 		
 		//LIST OF ADMIN TRACKS
 		//## header
@@ -234,7 +232,7 @@ public class AdminPage extends BasePage{
 		
 		
 		
-		
+		add(form);
 		
 		
 		
