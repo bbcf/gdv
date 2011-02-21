@@ -120,20 +120,20 @@ public final class Configuration{
 
 	public static void addURLMounting(Application application) {
 		//SIMPLE MOUNT
-		application.mount(new IndexedParamUrlCodingStrategy("/home", HomePage.class));
-		application.mount(new IndexedParamUrlCodingStrategy("/projects", ProjectPage.class));
-		application.mount(new IndexedParamUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
-		application.mount(new IndexedParamUrlCodingStrategy("/login", LoginPage.class));
-		application.mount(new IndexedParamUrlCodingStrategy("/import_UCSC", ImportUCSCPage.class));
-		application.mount(new IndexedParamUrlCodingStrategy("/admin", AdminPage.class));
-		application.mount(new IndexedParamUrlCodingStrategy("/post", PostPage.class));
+		application.mount(new HybridUrlCodingStrategy("/home", HomePage.class));
+		application.mount(new HybridUrlCodingStrategy("/projects", ProjectPage.class));
+		application.mount(new HybridUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
+		application.mount(new HybridUrlCodingStrategy("/login", LoginPage.class));
+		application.mount(new HybridUrlCodingStrategy("/import_UCSC", ImportUCSCPage.class));
+		application.mount(new HybridUrlCodingStrategy("/admin", AdminPage.class));
+		application.mount(new HybridUrlCodingStrategy("/post", PostPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/log", MagicPasswordPage.class));
 		HybridUrlCodingStrategy addSequence = new HybridUrlCodingStrategy(
 				"/add_sequence",AddSequencePage.class);
 		application.mount(addSequence);
-		application.mount(new IndexedParamUrlCodingStrategy("/import_file", ImportFilePage.class));
+		application.mount(new HybridUrlCodingStrategy("/import_file", ImportFilePage.class));
 		application.mount(new MixedParamUrlCodingStrategy("/preferences", PreferencesPage.class,new String[]{"project_id"}));
-		application.mount(new IndexedParamUrlCodingStrategy("/tracks_status", TrackStatus.class));
+		application.mount(new HybridUrlCodingStrategy("/tracks_status", TrackStatus.class));
 		application.mount(new MixedParamUrlCodingStrategy("/browser", BrowserPage.class,new String[] {"id"}));
 		//MOUNT WITH PARAMS
 		//		MixedParamUrlCodingStrategy confirmation = new MixedParamUrlCodingStrategy(

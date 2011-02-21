@@ -48,14 +48,10 @@
            basedir="bin"
            includes="**/*.class">
 	<manifest>
-          <attribute name="Main-Class" value="ch.epfl.bbcf.conversion.daemon.Daemon"/>
+          <attribute name="Main-Class" value="ch.epfl.bbcf.access.gdv.PostToGDV"/>
           <attribute name="Class-Path" value="${mf.classpath}" />
 	</manifest>
 	</jar>
     </target> 
-    <target name="daemon">
-        <java classname="ch.epfl.bbcf.conversion.daemon.Daemon" failonerror="true" fork="yes">
-            <classpath refid="postToGDV.classpath"/>
-        </java>
-    </target>
+  
 </project>

@@ -1,5 +1,6 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,10 @@ import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
+import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class TrackControl extends Control{
 
@@ -89,7 +93,7 @@ public class TrackControl extends Control{
 	//	}
 
 
-	
+
 	/**
 	 * create an admin track ~ createTrack but link to admin instead of user
 	 * @param id
@@ -182,7 +186,7 @@ public class TrackControl extends Control{
 		tdao.linkToInput(trackId,inputId);
 	}
 
-	
+
 
 
 	/**
@@ -340,7 +344,7 @@ public class TrackControl extends Control{
 	public static boolean createAdminTrack(int sequenceId, int trackId) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
 		return tdao.createAdminTrack(sequenceId,trackId);
-		
+
 	}
 
 
@@ -351,6 +355,32 @@ public class TrackControl extends Control{
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
 		tdao.resetParams(id);
 		return tdao.renameTrack(id,input);
+	}
+
+
+
+
+
+	public Set<Track> getAllAdminTracks() {
+		TrackDAO dao = new TrackDAO(Connect.getConnection(session));
+		return dao.getAllAdminTracks();
+	}
+
+
+
+
+	/**
+	 * Remove the admon track from the database and also the 
+	 * flat files on the filesystem
+	 * @param trackInstance
+	 */
+	public void removeAdminTrack(Track track) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+		tdao.deleteTrack(track.getId());
+		InputDAO idao = new InputDAO(Connect.getConnection(session));
+		idao.remove(track.getInput());
+		FileManagement.deleteDirectory(new File(Configuration.getFilesDir()+"/"+track.getInput()));
+		FileManagement.deleteDirectory(new File(Configuration.getTracks_dir()+"/"+track.getInput()));
 	}
 
 

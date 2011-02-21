@@ -7,7 +7,10 @@ import java.util.List;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -15,16 +18,23 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
 import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
+import ch.epfl.bbcf.gdv.control.model.TrackControl;
+import ch.epfl.bbcf.gdv.html.database.DataAdminTrackProvider;
+import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
 import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
+import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
 
 public class AdminPage extends BasePage{
@@ -63,7 +73,7 @@ public class AdminPage extends BasePage{
 			}
 		};
 
-		//-->SPECIES
+		//## species
 		DropDownChoice ddcSpecies = new DropDownChoice<SelectOption>("species",new Model(),Arrays.asList(spOptions),choiceRenderer){
 				protected boolean wantOnSelectionChangedNotifications() {
 					return true;
@@ -74,7 +84,7 @@ public class AdminPage extends BasePage{
 				}
 		};
 			
-		//-->VERSION
+		//## version
 		ddcVersion = new DropDownChoice("version",new Model(),
 				new LoadableDetachableModel<List<SelectOption>>() {
 			@Override
@@ -127,7 +137,7 @@ public class AdminPage extends BasePage{
 		form.add(import_header);
 		
 		List<SelectOption> spOptions = SequenceControl.getSpeciesSO();
-		//SPECIES
+		//## species
 		final DropDownChoice<SelectOption> ddcImportForSpecies = new DropDownChoice<SelectOption>(
 				"import_species",new Model<SelectOption>(),spOptions,choiceRenderer){
 			protected boolean wantOnSelectionChangedNotifications() {
@@ -139,7 +149,7 @@ public class AdminPage extends BasePage{
 		};
 		form.add(ddcImportForSpecies);
 		
-		//VERSION
+		//## version
 		final DropDownChoice<SelectOption> ddcImportForVersion  = new DropDownChoice<SelectOption>("import_version",new Model<SelectOption>(),
 				new LoadableDetachableModel<List<SelectOption>>() {
 			@Override
@@ -171,7 +181,44 @@ public class AdminPage extends BasePage{
 		add(form);
 		
 		
-		
+		//LIST OF ADMIN TRACKS
+		//## header
+		Label tracks = new Label("list_header","Track list");
+		form.add(tracks);
+		//## track list
+		final DataAdminTrackProvider dtp = new DataAdminTrackProvider((UserSession)getSession());
+		final DataView<TrackWrapper> trackData;
+		trackData = new DataView<TrackWrapper>("track_data",dtp){
+			@Override
+			protected void populateItem(final Item<TrackWrapper> item) {
+				final TrackWrapper track = item.getModelObject();
+				//### name
+				final AjaxEditableLabel<String> editableTrackName = new AjaxEditableLabel<String>("track_label",
+						new Model<String>(track.getName())){
+					@Override
+					protected void onSubmit(AjaxRequestTarget target){
+						TrackControl tc = new TrackControl((UserSession)getSession());
+						Track newTrack = tc.getTrackById(track.getId());
+						if(null!=newTrack && null!=track.getName() && !track.getName().equalsIgnoreCase("in process")){
+							tc.renameTrack(track.getId(),getEditor().getInput());
+						}
+					}
+				};
+				item.add(editableTrackName);
+				//## delete
+				final AjaxLink link = new AjaxLink("delete"){
+					@Override
+					public void onClick(AjaxRequestTarget target) {
+						TrackControl tc = new TrackControl((UserSession)getSession());
+						tc.removeAdminTrack(track.getTrackInstance());
+						dtp.detach();
+					}
+				};
+				link.add(new SimpleAttributeModifier("title","delete the track in the database and flat file associated"));
+				item.add(link);
+			}
+		};
+		form.add(trackData);
 		
 		
 		

@@ -24,8 +24,6 @@ public class MagicPasswordPage extends WebPage{
 
 	
 	public MagicPasswordPage(PageParameters p){
-		Application.debug("MAgIC");
-		
 		String type = p.getString("0");
 		String key = p.getString("1");
 		Application.debug("pass page "+type+" "+key);
@@ -33,7 +31,6 @@ public class MagicPasswordPage extends WebPage{
 		lc.logOut(this,false);
 		boolean b = lc.logAlternativeUser(type,key);
 		if(b){
-			Application.debug("redirect");
 			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
 		} else {
 			throw new AbortWithHttpStatusException(403,true);

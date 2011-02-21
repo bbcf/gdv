@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class PostToGDV {
 
-	public static final String GDV_ADRESS = "http://svitsrv25.epfl.ch/gdv_dev/post";
+	public static final String GDV_ADRESS = "http://svitsrv25.epfl.ch/gdv/post";
 	private static final String GDV_POST = "gdv_post";
 
 	/**

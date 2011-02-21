@@ -674,6 +674,26 @@ public class TrackDAO extends DAO<Track>{
 		return null;
 	}
 
+	public Set<Track> getAllAdminTracks() {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select t1.* from tracks as t1 " +
+				"inner join admin_tracks as t2 on t1.id = t2.track_id ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				ResultSet resultSet = this.executeQuery(statement);
+				Set<Track> tracks = getSetTracks(resultSet);
+				this.endQuery(true);
+				return tracks;
+			} catch (SQLException e) {
+				logger.error("getAdminTracksFromSequenceId : "+e);
+				this.endQuery(false);
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * create a track visible for all users
 	 * @param speciesId
@@ -742,6 +762,8 @@ public class TrackDAO extends DAO<Track>{
 		}
 		return false;
 	}
+
+
 
 	
 

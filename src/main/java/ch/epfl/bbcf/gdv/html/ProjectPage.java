@@ -156,7 +156,7 @@ public class ProjectPage extends BasePage{
 		add(project_header);
 		final WebMarkupContainer projectContainer = new WebMarkupContainer("projects_container");
 		projectContainer.setOutputMarkupPlaceholderTag(true);
-		DataProjectProvider dpp = new DataProjectProvider((UserSession)getSession());
+		final DataProjectProvider dpp = new DataProjectProvider((UserSession)getSession());
 		//PROJECTS
 		projectData = new DataView<ProjectWrapper>("project_data",dpp) {
 			@Override
@@ -238,7 +238,7 @@ public class ProjectPage extends BasePage{
 						public void onSubmit(AjaxRequestTarget target, Form<?> form){
 							ProjectControl pc = new ProjectControl((UserSession)getSession());
 							pc.deleteProject(projectWrapper.getId());
-							projectData.detach();
+							dpp.detach();
 						}
 					};
 				} else {
@@ -379,7 +379,7 @@ public class ProjectPage extends BasePage{
 								TrackControl tc = new TrackControl((UserSession)getSession());
 								tc.removeTrackFromUser(track.getTrackInstance());
 								dtp.detach();
-								target.addComponent(trackContainer);
+								//target.addComponent(trackContainer);
 							}
 						};
 						//						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
