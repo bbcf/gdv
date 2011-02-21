@@ -176,7 +176,7 @@ public class FileManagement {
 		UUID uuid = UUID.randomUUID();
 		File dir = new File(Configuration.getTmp_dir()+"/"+uuid);
 		if(!dir.mkdir()){
-			Application.error("cannot create directory uploadFileFromURL :"+uuid);
+			Application.error("cannot create directory uploadFileFromURL :"+Configuration.getTmp_dir()+"/"+uuid);
 			return null;
 		}
 		else {
