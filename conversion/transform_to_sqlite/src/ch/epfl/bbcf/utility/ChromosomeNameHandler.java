@@ -28,7 +28,13 @@ public class ChromosomeNameHandler {
 
 
 
-
+	/**
+	 * get the chromosome alternative name
+	 * Process
+	 * @param assemblyId - the assembly id from Genrep
+	 * @param chr - the chromosome
+	 * @return
+	 */
 	public String getChromosomeAltName(String assemblyId, String chr) {
 		if(altsNames.containsKey(chr)){
 			return altsNames.get(chr);
@@ -36,7 +42,7 @@ public class ChromosomeNameHandler {
 			String newChr = getAlternativeNames(assemblyId, chr);
 			altsNames.put(chr,newChr);
 			if(null==newChr){
-				logger.warn("chromosome "+ chr+" not processed (no equivalence is found on genrep).");
+				logger.warn("chromosome "+ chr+" not processed (no equivalence is found on genrep)  for nr_assembly id = "+assemblyId+".");
 			}
 			return newChr;
 		}
@@ -47,8 +53,15 @@ public class ChromosomeNameHandler {
 
 
 
-
-	public static String getAlternativeNames(String assemblyId, String chr) {
+	/**
+	 * get the chromosome alternative name
+	 * SQL query
+	 * @param assemblyId - the assembly id from Genrep
+	 * @param chr - the chromosome
+	 * @return
+	 */
+	private static String getAlternativeNames(String assemblyId, String chr) {
+		//logger.debug("get alt name for :"+chr);
 		Connection conn = getConnection(assemblyId);
 		if(null!=conn){
 			try {
@@ -57,6 +70,7 @@ public class ChromosomeNameHandler {
 				ResultSet r = prep.executeQuery();
 				if(r.next()){
 					r.close();
+					//logger.debug("\t: "+chr);
 					return chr;
 				} else {
 					prep = conn.prepareStatement("select used from chromosome_names where alt = ? limit 1;");
@@ -65,6 +79,7 @@ public class ChromosomeNameHandler {
 					if(n.next()){
 						String result = n.getString(1);
 						n.close();
+						//logger.debug("\t: "+result);
 						return result;
 					}
 				}
@@ -76,56 +91,33 @@ public class ChromosomeNameHandler {
 		return null;
 	}
 
-
+	/**
+	 * retrieve the right connection
+	 * depending on the assembly id
+	 * @param assemblyId
+	 * @return
+	 */
 	private static Connection getConnection(String assemblyId) {
-		if(assemblyId.equalsIgnoreCase("67")){
-			return getConnectionOnMouseAltsChromosomesNames();
+		if(assemblyId.equalsIgnoreCase("70")){
+			return getConnectionToDatabase("mouse_chr.db");
+		} else if(assemblyId.equalsIgnoreCase("105")){
+			return getConnectionToDatabase("CaulobacterCrescentus_chr.db");
+		} else if(assemblyId.equalsIgnoreCase("75")||assemblyId.equalsIgnoreCase("98")){
+			return getConnectionToDatabase("yeast_chr.db");
 		}
-		return null;
+		return getConnectionToDatabase("default.db");
 	}
 
 
-//	public static String getUsedName(String chr,String assemblyId){
-//		if(assemblyId.equalsIgnoreCase("67")){
-//			return getMouseChromosomeAltName(chr);
-//		}
-//		return chr;
-//	}
-
-
-
-
-
-	private static String getMouseChromosomeAltName(String chr){
-		Connection conn = getConnectionOnMouseAltsChromosomesNames();
-		try {
-			PreparedStatement prep = conn.prepareStatement("select 1 from chromosome_names where used = ? limit 1;");
-			prep.setString(1, chr);
-			ResultSet r = prep.executeQuery();
-			if(r.next()){
-				r.close();
-				conn.close();
-				return chr;
-			}
-			prep = conn.prepareStatement("select used from chromosome_names where alt = ? limit 1;");
-			prep.setString(1, chr);
-			ResultSet n = prep.executeQuery();
-			if(n.next()){
-				String result = n.getString(1);
-				n.close();
-				conn.close();
-				return result; 
-			}
-		} catch (SQLException e) {
-			logger.error(e);
-		}
-		return chr;
-	}
-
-	private static Connection getConnectionOnMouseAltsChromosomesNames(){
+	/**
+	 * retrieve the connection to the database specified
+	 * @param database - the database
+	 * @return - a Connection you have to close after use
+	 */
+	private static Connection getConnectionToDatabase(String database){
 		try {
 			Class.forName("org.sqlite.JDBC").newInstance();
-			Connection conn = DriverManager.getConnection("jdbc:sqlite://"+Configuration.getDatabasesLink()+"/mouse_chr.db");
+			Connection conn = DriverManager.getConnection("jdbc:sqlite://"+Configuration.getDatabasesLink()+"/"+database);
 			return conn;
 		} catch (InstantiationException e) {
 			logger.error(e);
@@ -138,6 +130,7 @@ public class ChromosomeNameHandler {
 		}
 		return null;
 	}
+
 
 
 

@@ -190,7 +190,7 @@ public class ScoreTree extends Thread {
 
 	/**
 	 * Build a new sqlite database from the sqlite with position and score.
-	 * It will store scores at différents zoom levels.
+	 * It will store scores at differents zoom levels.
 	 * The new sqlite database will be organised like that :
 	 * one table per chromosome and zoom like 'name_zoomLevel' 
 	 * (e.g. chromosome1 (chr1) at zoom 200 : chr1_200)

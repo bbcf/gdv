@@ -215,7 +215,7 @@ public abstract class JSONHandler {
 	 * @throws InstantiationException 
 	 * @throws JSONConversionException 
 	 */
-	public void endIt() throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, JSONConversionException{
+	public void endIt() throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
 		theChunk.closeChunk();
 		if(chrOutJSON!=null){
 			write(","+previousEnd+",{\"chunk\":\""+previousChunkSize+"\"}]",chrOutJSON);
@@ -243,7 +243,7 @@ public abstract class JSONHandler {
 							name,chrLength,threshold,featureCount,inputFilePath,fileName,outputDirectory+"/"+outputName+"/",ressourceURL, chr, out,clientConfig);
 				} else {
 					jsonFile.delete();
-					throw new JSONConversionException("not processed : "+chr+"(feature count = "+featureCount+" and chr length on genrep = "+chrLength+")");
+					log.error("not processed : "+chr+"(feature count = "+featureCount+" and chr length on genrep = "+chrLength+")");
 				}
 			}
 		}

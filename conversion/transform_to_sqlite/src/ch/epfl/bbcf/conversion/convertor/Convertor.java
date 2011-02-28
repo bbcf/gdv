@@ -129,6 +129,7 @@ public class Convertor implements Handler{
 		if(null==chr){
 			return;
 		}
+		feature.setChromosome(chr);
 		if(doSqlite){
 			try {
 				sqlite_handler.newFeature(feature);
@@ -177,7 +178,6 @@ public class Convertor implements Handler{
 
 	@Override
 	public void end() {
-		logger.debug("END");
 		if(!endCalled){
 			endCalled = true;
 			if(doSqlite){

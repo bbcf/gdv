@@ -148,7 +148,9 @@ public class SQLiteConvertor{
 				map.put(chr,length);
 			}
 		}
+		log.debug("finalize db");
 		handler.finalizeDatabase(map);
+		log.debug("finalized");
 		handler.close();
 	}
 

@@ -45,15 +45,18 @@ public class TrackError extends Command{
 		} else if(params.getType().equalsIgnoreCase("chrList")){
 			TrackControl.updateTrack(trackId,"server error ("+params.getMessage()+")");
 		}
-		Application.error("deleting track : "+trackId);
-		TrackControl tc = new TrackControl(session);
-		try {
-			Thread.sleep(30000);
-		} catch (InterruptedException e) {
-			Application.error(e);
-		}
+		//don't delete the track, just the input
+		//let the user delete the track
 		
-		TrackControl.deleteTrack(trackId);
+//		Application.error("deleting track : "+trackId);
+		TrackControl tc = new TrackControl(session);
+//		try {
+//			Thread.sleep(30000);
+//		} catch (InterruptedException e) {
+//			Application.error(e);
+//		}
+		
+		//TrackControl.deleteTrack(trackId);
 		Track track = tc.getTrackById(trackId);
 		InputControl ic = new InputControl(session);
 		ic.removeInput(track.getInput());

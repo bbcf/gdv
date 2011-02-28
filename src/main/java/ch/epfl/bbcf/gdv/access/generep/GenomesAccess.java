@@ -24,7 +24,7 @@ public class GenomesAccess extends GeneRepAccess{
 	}
 
 	/**
-	 * get the genome belonging to a species
+	 * get the genomes belonging to a species
 	 * @param id
 	 * @return
 	 */

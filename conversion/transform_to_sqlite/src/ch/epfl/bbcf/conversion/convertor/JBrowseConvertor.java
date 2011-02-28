@@ -96,8 +96,8 @@ public class JBrowseConvertor {
 	public void end() {
 		try {
 			cur_chromosome.writeJSONOutput(json_handler);
+			logger.debug("output writed");
 			json_handler.endIt();
-			logger.debug("--");
 		} catch (FileNotFoundException e) {
 			logger.error(e);
 		} catch (JSONException e) {
@@ -110,9 +110,7 @@ public class JBrowseConvertor {
 			logger.error(e);
 		} catch (SQLException e) {
 			logger.error(e);
-		} catch (JSONConversionException e) {
-			logger.error(e);
-		}
+		} 
 	}
 
 	/**
