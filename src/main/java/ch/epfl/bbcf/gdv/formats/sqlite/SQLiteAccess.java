@@ -476,12 +476,14 @@ public class SQLiteAccess {
 		String query = "SELECT start,end FROM \""+chr+"\" where name = ?; ";
 		PreparedStatement prep = conn.prepareStatement(query);
 		prep.setString(1, name);
-		ResultSet r = getResultSet(prep, query);
+		prep.execute();
+		ResultSet r = prep.getResultSet();
 		while(r.next()){
 			result.add(r.getInt(1));
 			result.add(r.getInt(2));
 		}
 		r.close();
+		conn.close();
 		return result;
 	}
 

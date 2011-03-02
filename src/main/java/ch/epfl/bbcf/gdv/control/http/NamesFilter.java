@@ -42,24 +42,35 @@ public class NamesFilter implements Filter{
 		try{
 			Map<String, String[]> map = request.getParameterMap();
 			params = new Params(map);
+			log.debug("gettt");
 			out = response.getWriter();
 		} catch (IOException e1) {
 			log.error(e1);
 		}
 		if(out!=null && params.getId()!=null && params.getDb()!=null && params.getName()!=null && params.getChr()!=null){
+			log.debug("all!=null");
 			if(params.getId().equalsIgnoreCase("find_name")){
+				log.debug("find_name");
 				try {
 					List<Integer> positions = SQLiteAccess.searchForGeneNameOnChromosome(
 							params.getDb(),params.getChr(), params.getName());
+					log.debug("sql result");
 					response.setContentType("text/plain");
 					String result="";
 					for(int i : positions){
 						result+=i+",";
 					}
-					result=result.substring(0, result.length()-1);
+					if(!result.equalsIgnoreCase("")){
+						result=result.substring(0, result.length()-1);
+					}
+					log.debug(result);
 					out.write(result);
+					log.debug("writed");
 				} catch (SQLException e) {
-					log.error(e);
+					StackTraceElement[] els = e.getStackTrace();
+					for(StackTraceElement el : els){
+						log.error(el.getFileName()+":"+el.getClassName()+"."+el.getMethodName()+"."+el.getLineNumber());
+					}
 				}
 			}
 		}
