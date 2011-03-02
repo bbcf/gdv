@@ -403,30 +403,30 @@ public class SQLiteAccess {
 	 * @param img the image's number
 	 * @return
 	 */
-//	public static String getScoresForDatabase(String db, String img) {
-//		String result = "{";
-//		Connection conn;
-//		try {
-//			Map<String,String> map = new HashMap<String, String>();
-//			conn = getConnectionOnCalculatedSQLite(db);
-//			PreparedStatement stat = conn.prepareStatement("select pos,score from sc where number= ? order by pos asc");
-//			stat.setString(1, img);
-//			ResultSet rs = stat.executeQuery();
-//			while (rs.next()) {
-//				result+=""+rs.getString(1)+":"+rs.getString(2)+",";
-//			}
-//			rs.close();
-//			if(result.length()>1){
-//				result=result.substring(0, result.length()-1);
-//			}
-//			result+="}";
-//			return result;
-//		} catch (SQLException e) {
-//			Application.error(e);
-//		}
-//		return null;
-//
-//	}
+	//	public static String getScoresForDatabase(String db, String img) {
+	//		String result = "{";
+	//		Connection conn;
+	//		try {
+	//			Map<String,String> map = new HashMap<String, String>();
+	//			conn = getConnectionOnCalculatedSQLite(db);
+	//			PreparedStatement stat = conn.prepareStatement("select pos,score from sc where number= ? order by pos asc");
+	//			stat.setString(1, img);
+	//			ResultSet rs = stat.executeQuery();
+	//			while (rs.next()) {
+	//				result+=""+rs.getString(1)+":"+rs.getString(2)+",";
+	//			}
+	//			rs.close();
+	//			if(result.length()>1){
+	//				result=result.substring(0, result.length()-1);
+	//			}
+	//			result+="}";
+	//			return result;
+	//		} catch (SQLException e) {
+	//			Application.error(e);
+	//		}
+	//		return null;
+	//
+	//	}
 
 	public static String getScoresForDatabaseByIdList(String db, String[] idList) {
 		//result+="$"+id+"="+SQLiteAccess.getScoresForDatabase(params.getDb(),id);
@@ -460,6 +460,31 @@ public class SQLiteAccess {
 
 	}
 
+
+	/**
+	 * try to find coordinates (start,end) of a gene by it's name
+	 * @param chr - the chromosome
+	 * @param name - the gene name
+	 * @param db - the database
+	 * @return a list of coordinates (start,end,start,end,start,end,....)
+	 * @throws SQLException
+	 */
+	public static List<Integer> searchForGeneNameOnChromosome(String db,String chr,String name) throws SQLException {
+		Connection conn;
+		conn = getConnectionOnFileDirectory(db);
+		List<Integer> result = new ArrayList<Integer>();
+		String query = "SELECT start,end FROM \""+chr+"\" where name = ?; ";
+		PreparedStatement prep = conn.prepareStatement(query);
+		prep.setString(1, name);
+		ResultSet r = getResultSet(prep, query);
+		while(r.next()){
+			result.add(r.getInt(1));
+			result.add(r.getInt(2));
+		}
+		r.close();
+		return result;
+	}
+
 	public static ResultSet getValuesForChromosome(
 			Connection conn, String chr) {
 		try {
@@ -484,5 +509,8 @@ public class SQLiteAccess {
 		}
 		return 0;
 	}
+
+
+
 
 }

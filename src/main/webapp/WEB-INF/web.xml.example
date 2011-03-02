@@ -38,6 +38,17 @@
     <url-pattern>/gdv_queries/*</url-pattern>
   </filter-mapping>
 
+<!-- DATABASE NAMES -->
+<filter>
+  <filter-name>Names</filter-name>
+  <filter-class>ch.epfl.bbcf.gdv.control.http.NamesFilter</filter-class>
+</filter>
+
+  <filter-mapping>
+    <filter-name>Namess</filter-name>
+    <url-pattern>/gdv_names/*</url-pattern>
+  </filter-mapping>
+
 <!-- GDV -->
 
 

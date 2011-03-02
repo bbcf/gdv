@@ -20,6 +20,13 @@ import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
 
+/**
+ * This class is intended to 
+ * suppport queries form the browser
+ * to fetch scores on quantitatives tracks
+ * @author Jarosz Yohan
+ *
+ */
 public class QueriesFilter implements Filter{
 
 	private static Logger log = Logs.initQueriesLogger();

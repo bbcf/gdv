@@ -49,26 +49,28 @@ public final class Configuration{
 //	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
-		String[] js = new String[19];
+		String[] js = new String[21];
 		js[0]=instance.jbrowse_javascript_url+"/js/gdv_link.js";
 		js[1]=instance.jbrowse_javascript_url+"/js/gdv_canvas.js";
 		js[2]=instance.jbrowse_javascript_url+"/js/Browser.js";
 		js[3]=instance.jbrowse_javascript_url+"/js/Track.js";
-		js[4]=instance.jbrowse_javascript_url+"/js/FeatureTrack.js";
-		js[5]=instance.jbrowse_javascript_url+"/js/SequenceTrack.js";
-		js[6]=instance.jbrowse_javascript_url+"/js/touchjBrowse.js";
-		js[7]=instance.jbrowse_javascript_url+"/js/ImageTrack.js";
-		js[8]=instance.jbrowse_javascript_url+"/js/Layout.js";
-		js[9]=instance.jbrowse_javascript_url+"/js/LazyArray.js";
-		js[10]=instance.jbrowse_javascript_url+"/js/LazyPatricia.js";
-		js[11]=instance.jbrowse_javascript_url+"/js/NCList.js";
-		js[12]=instance.jbrowse_javascript_url+"/js/UITracks.js";
-		js[13]=instance.jbrowse_javascript_url+"/js/Util.js";
-		js[14]=instance.jbrowse_javascript_url+"/js/GenomeView.js";
-		js[15]=instance.jbrowse_javascript_url+"/js/TrackSelection.js";
-		js[16]=instance.jbrowse_javascript_url+"/js/ZoneSelection.js";
-		js[17]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
-		js[18]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
+		js[4]=instance.jbrowse_javascript_url+"/js/LinkPanel.js";
+		js[5]=instance.jbrowse_javascript_url+"/js/GeneNames.js";
+		js[6]=instance.jbrowse_javascript_url+"/js/FeatureTrack.js";
+		js[7]=instance.jbrowse_javascript_url+"/js/SequenceTrack.js";
+		js[8]=instance.jbrowse_javascript_url+"/js/touchjBrowse.js";
+		js[9]=instance.jbrowse_javascript_url+"/js/ImageTrack.js";
+		js[10]=instance.jbrowse_javascript_url+"/js/Layout.js";
+		js[11]=instance.jbrowse_javascript_url+"/js/LazyArray.js";
+		js[12]=instance.jbrowse_javascript_url+"/js/LazyPatricia.js";
+		js[13]=instance.jbrowse_javascript_url+"/js/NCList.js";
+		js[14]=instance.jbrowse_javascript_url+"/js/UITracks.js";
+		js[15]=instance.jbrowse_javascript_url+"/js/Util.js";
+		js[16]=instance.jbrowse_javascript_url+"/js/GenomeView.js";
+		js[17]=instance.jbrowse_javascript_url+"/js/TrackSelection.js";
+		js[18]=instance.jbrowse_javascript_url+"/js/ZoneSelection.js";
+		js[19]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
+		js[20]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
 		return js;
 	}
 	private static String[] buildJbrowseCSSFiles() {
