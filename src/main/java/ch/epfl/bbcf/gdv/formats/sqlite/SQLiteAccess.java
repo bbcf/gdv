@@ -8,9 +8,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import ch.epfl.bbcf.gdv.access.sqlite.pojo.ChromosomeFeature;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -461,31 +464,7 @@ public class SQLiteAccess {
 	}
 
 
-	/**
-	 * try to find coordinates (start,end) of a gene by it's name
-	 * @param chr - the chromosome
-	 * @param name - the gene name
-	 * @param db - the database
-	 * @return a list of coordinates (start,end,start,end,start,end,....)
-	 * @throws SQLException
-	 */
-	public static List<Integer> searchForGeneNameOnChromosome(String db,String chr,String name) throws SQLException {
-		Connection conn;
-		conn = getConnectionOnFileDirectory(db);
-		List<Integer> result = new ArrayList<Integer>();
-		String query = "SELECT start,end FROM \""+chr+"\" where name = ?; ";
-		PreparedStatement prep = conn.prepareStatement(query);
-		prep.setString(1, name);
-		prep.execute();
-		ResultSet r = prep.getResultSet();
-		while(r.next()){
-			result.add(r.getInt(1));
-			result.add(r.getInt(2));
-		}
-		r.close();
-		conn.close();
-		return result;
-	}
+
 
 	public static ResultSet getValuesForChromosome(
 			Connection conn, String chr) {
@@ -513,6 +492,96 @@ public class SQLiteAccess {
 	}
 
 
+	////////////////////////
+	private Connection conn;
+	public SQLiteAccess(String database){
+		this.conn = getConnection(database);
+	}
+
+	public void close(){
+		try {
+			this.conn.close();
+		} catch (SQLException e) {
+			Application.error(e);
+		}
+	}
+	private Connection getConnection(String database) {
+		try {
+			Class.forName("org.sqlite.JDBC").newInstance();
+			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+database);
+			return conn;
+		} catch (InstantiationException e) {
+			Application.error(e);
+		} catch (IllegalAccessException e) {
+			Application.error(e);
+		} catch (ClassNotFoundException e) {
+			Application.error(e);
+		} catch (SQLException e) {
+			Application.error(e);
+		}
+		return null;
+	}
+
+
+
+
+	/**
+	 * try to find coordinates (start,end) of a gene by it's name
+	 * @param chr - the chromosome
+	 * @param name - the gene name
+	 * @param db - the database
+	 * @return a list of coordinates (start,end,start,end,start,end,....)
+	 * @throws SQLException
+	 */
+	public List<Integer> searchForGeneNameOnChromosome(String db,String chr,String name) throws SQLException {
+		List<Integer> result = new ArrayList<Integer>();
+		String query = "SELECT start,end FROM \""+chr+"\" where name = ?; ";
+		PreparedStatement prep = this.conn.prepareStatement(query);
+		prep.setString(1, name);
+		prep.execute();
+		ResultSet r = prep.getResultSet();
+		while(r.next()){
+			result.add(r.getInt(1));
+			result.add(r.getInt(2));
+		}
+		r.close();
+		return result;
+	}
+	/**
+	 * trying to find names that match more or less the
+	 * input of the user (limited to 10 entries)
+	 * @param db - the database
+	 * @param chr - the chromosome
+	 * @param name - the string to match
+	 * @param log 
+	 * @return
+	 * @throws SQLException 
+	 */
+	public Map<String, List<Integer>> suggestGeneNamesAndPositionsForChromosome(
+			String db, String chr, String name) throws SQLException {
+		Map<String, List<Integer>> result = new HashMap<String, List<Integer>>();
+		String query = "SELECT name,start,end FROM \""+chr+"\" where name like ? limit 10; ";
+		PreparedStatement prep = this.conn.prepareStatement(query);
+		prep.setString(1,"%"+name+"%");
+		prep.execute();
+		ResultSet r = prep.getResultSet();
+		while(r.next()){
+			String rname = r.getString(1);
+			int start = r.getInt(2);
+			int end = r.getInt(3);
+			List<Integer> list;
+			if(result.containsKey(rname)){
+				list = result.get(rname);
+			} else {
+				list = new ArrayList<Integer>();
+			}
+			list.add(start);
+			list.add(end);
+			result.put(rname, list);
+		}
+		r.close();
+		return result;
+	}
 
 
 }
