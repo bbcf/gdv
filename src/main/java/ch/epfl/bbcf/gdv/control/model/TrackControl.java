@@ -1,6 +1,7 @@
 package ch.epfl.bbcf.gdv.control.model;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -283,15 +284,6 @@ public class TrackControl extends Control{
 
 
 
-	/**
-	 * get the tracks from project id
-	 * @param projectId
-	 * @return
-	 */
-	public Set<Track> getCompletedTracksFromProjectId(int projectId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
-		return tdao.getCompletedTracksFromProjectId(projectId);
-	}
 
 
 
@@ -381,6 +373,25 @@ public class TrackControl extends Control{
 		idao.remove(track.getInput());
 		FileManagement.deleteDirectory(new File(Configuration.getFilesDir()+"/"+track.getInput()));
 		FileManagement.deleteDirectory(new File(Configuration.getTracks_dir()+"/"+track.getInput()));
+	}
+
+
+
+	/**
+	 * get the tracks from project id
+	 * @param projectId
+	 * @return
+	 */
+	public Set<Track> getCompletedTracksFromProjectId(int projectId) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+		return tdao.getCompletedTracksFromProjectId(projectId);
+	}
+
+
+	public Set<Track> getCompletedTracksFromProjectIdAndTrackNames(int projectId,
+			String[] tracksNames) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+		return tdao.getCompletedTracksFromProjectIdAndTrackNames(projectId,Arrays.asList(tracksNames));
 	}
 
 

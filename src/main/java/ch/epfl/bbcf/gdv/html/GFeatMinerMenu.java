@@ -3,6 +3,8 @@ package ch.epfl.bbcf.gdv.html;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -29,9 +31,10 @@ public class GFeatMinerMenu extends Panel{
 			@Override
 			protected void populateItem(ListItem<GFeatMinerElement> item) {
 				final GFeatMinerElement el = item.getModelObject();
-				Button button = new Button("gfeat_but"){
-					public void onSubmit(){
-						el.doJob();
+				Button button = new AjaxButton("gfeat_but"){
+					@Override
+					protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+						el.doJob(target);
 					}
 				};
 				button.add(new SimpleAttributeModifier("value",el.getLabel()));

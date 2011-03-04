@@ -15,6 +15,7 @@ import org.apache.wicket.authorization.strategies.role.metadata.MetaDataRoleAuth
 import org.apache.wicket.request.target.coding.HybridUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.IndexedParamUrlCodingStrategy;
 import org.apache.wicket.request.target.coding.MixedParamUrlCodingStrategy;
+import org.apache.wicket.request.target.coding.QueryStringUrlCodingStrategy;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.yaml.snakeyaml.Yaml;
@@ -24,6 +25,7 @@ import ch.epfl.bbcf.gdv.html.AddSequencePage;
 import ch.epfl.bbcf.gdv.html.AdminPage;
 import ch.epfl.bbcf.gdv.html.AlternativeProjectPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
+import ch.epfl.bbcf.gdv.html.BrowserPage2;
 import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
@@ -49,7 +51,7 @@ public final class Configuration{
 //	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
-		String[] js = new String[21];
+		String[] js = new String[22];
 		js[0]=instance.jbrowse_javascript_url+"/js/gdv_link.js";
 		js[1]=instance.jbrowse_javascript_url+"/js/gdv_canvas.js";
 		js[2]=instance.jbrowse_javascript_url+"/js/Browser.js";
@@ -69,8 +71,9 @@ public final class Configuration{
 		js[16]=instance.jbrowse_javascript_url+"/js/GenomeView.js";
 		js[17]=instance.jbrowse_javascript_url+"/js/TrackSelection.js";
 		js[18]=instance.jbrowse_javascript_url+"/js/ZoneSelection.js";
-		js[19]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
-		js[20]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
+		js[19]=instance.jbrowse_javascript_url+"/js/GFeatMiner.js";
+		js[20]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
+		js[21]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
 		return js;
 	}
 	private static String[] buildJbrowseCSSFiles() {
@@ -136,7 +139,8 @@ public final class Configuration{
 		application.mount(new HybridUrlCodingStrategy("/import_file", ImportFilePage.class));
 		application.mount(new MixedParamUrlCodingStrategy("/preferences", PreferencesPage.class,new String[]{"project_id"}));
 		application.mount(new HybridUrlCodingStrategy("/tracks_status", TrackStatus.class));
-		application.mount(new MixedParamUrlCodingStrategy("/browser", BrowserPage.class,new String[] {"id"}));
+		application.mount(new QueryStringUrlCodingStrategy("/browser", BrowserPage.class));
+		application.mount(new QueryStringUrlCodingStrategy("/browser2", BrowserPage2.class));
 		//MOUNT WITH PARAMS
 		//		MixedParamUrlCodingStrategy confirmation = new MixedParamUrlCodingStrategy(
 		//				"confirm",ComfirmPage.class, new String[]{"confirm-user"});

@@ -142,17 +142,7 @@ public class TrackDAO extends DAO<Track>{
 		return jbTracks;
 	}
 
-	private Set<Track> getSetTracks(ResultSet resultSet) {
-		Set<Track> jbTracks = new HashSet<Track>();
-		try {
-			while (resultSet.next()) {
-				jbTracks.add(getTrack(resultSet));
-			}
-		} catch (SQLException e) {
-			logger.error(e);
-		}
-		return jbTracks;
-	}
+	
 	//	public List<Track> getJBTracksFromIds(List<Integer> ids) {
 	//		List<Track> annots = new ArrayList<Track>();
 	//		if(this.databaseConnected()){
@@ -519,34 +509,7 @@ public class TrackDAO extends DAO<Track>{
 		return null;
 	}
 
-	/**
-	 * get the tracks from a project id
-	 * @param projectId
-	 * @return
-	 */
-	public Set<Track> getCompletedTracksFromProjectId(int projectId) {
-		if(this.databaseConnected()){
-			this.startQuery();
-			try {
-				String query = "select distinct t1.* from tracks as t1 " +
-				"inner join projectToTrack as t2 on t1.id = t2.track_id " +
-				"where t2.project_id = ? and t1.status = ? and t1.name!= ? ;";
-				PreparedStatement statement = this.prepareStatement(query,
-						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				statement.setInt(1,projectId);
-				statement.setString(2,"completed");
-				statement.setString(3,"in process");
-				ResultSet resultSet = this.executeQuery(statement);
-				Set<Track> tracks = getSetTracks(resultSet);
-				this.endQuery(true);
-				return tracks;
-			} catch (SQLException e) {
-				logger.error("getTracksFromProjectId : "+e);
-				this.endQuery(false);
-			}
-		}
-		return null;
-	}
+
 
 
 
@@ -763,6 +726,91 @@ public class TrackDAO extends DAO<Track>{
 		return false;
 	}
 
+	/**
+	 * get the tracks from a project id
+	 * @param projectId
+	 * @return
+	 */
+	public Set<Track> getCompletedTracksFromProjectId(int projectId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select distinct t1.* from tracks as t1 " +
+				"inner join projectToTrack as t2 on t1.id = t2.track_id " +
+				"where t2.project_id = ? and t1.status = ? and t1.name!= ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,projectId);
+				statement.setString(2,"completed");
+				statement.setString(3,"in process");
+				ResultSet resultSet = this.executeQuery(statement);
+				Set<Track> tracks = getSetTracks(resultSet);
+				this.endQuery(true);
+				return tracks;
+			} catch (SQLException e) {
+				logger.error("getTracksFromProjectId : "+e);
+				this.endQuery(false);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * get the tracks from a project id, filter by name
+	 * @param projectId
+	 * @param tracks names
+	 * @return
+	 */
+	public Set<Track> getCompletedTracksFromProjectIdAndTrackNames(
+			int projectId, List<String> names) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select distinct t1.* from tracks as t1 " +
+				"inner join projectToTrack as t2 on t1.id = t2.track_id " +
+				"where t2.project_id = ? and t1.status = ? and t1.name!= ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,projectId);
+				statement.setString(2,"completed");
+				statement.setString(3,"in process");
+				ResultSet resultSet = this.executeQuery(statement);
+				Set<Track> tracks = getSetTracks(resultSet,names);
+				this.endQuery(true);
+				return tracks;
+			} catch (SQLException e) {
+				logger.error("getTracksFromProjectId : "+e);
+				this.endQuery(false);
+			}
+		}
+		return null;
+	}
+
+	private Set<Track> getSetTracks(ResultSet resultSet, List<String> names) {
+		Set<Track> jbTracks = new HashSet<Track>();
+		try {
+			while (resultSet.next()) {
+				Track t = getTrack(resultSet);
+				if(names.contains(t.getName())){
+					jbTracks.add(t);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return jbTracks;
+	}
+	private Set<Track> getSetTracks(ResultSet resultSet) {
+		Set<Track> jbTracks = new HashSet<Track>();
+		try {
+			while (resultSet.next()) {
+				jbTracks.add(getTrack(resultSet));
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return jbTracks;
+	}
 
 
 	

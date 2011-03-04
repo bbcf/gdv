@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -35,23 +37,23 @@ import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.utility.MenuElement;
 
 
-public class BrowserPage extends WebPage{
+public class BrowserPage2 extends WebPage{
 
-	public BrowserPage(PageParameters p) {
+	public BrowserPage2(PageParameters p) {
 		super(p);
-
 		int projectId = 0;
-		String tracksNames ="";
-		//getting params from url
 		for(Entry<String, String[]> entry : p.toRequestParameters().entrySet()){
+			Application.debug(" "+entry.getKey()+" "+entry.getValue()[0]);
 			if(entry.getKey().equalsIgnoreCase("id")){
 				projectId = Integer.parseInt(entry.getValue()[0]);
-			} else if(entry.getKey().equalsIgnoreCase("tn")){
-				tracksNames = entry.getValue()[0];
-			} 
+			}
 		}
-
-		//check authorization
+		
+		
+		
+		
+		//getting parameters
+	//	int projectId = p.getInt("id");
 		ProjectControl pc = new ProjectControl((UserSession)getSession());
 		final Project project = pc.getProject(projectId);
 		if(null==project || (null!=project && !pc.userAuthorized(project))){
@@ -87,31 +89,21 @@ public class BrowserPage extends WebPage{
 		}
 
 
-		//get tracks
+		//get trackInfo.js 
 		TrackControl tc = new TrackControl((UserSession)getSession());
-		Set<Track> tracks;
-		if(tracksNames.equalsIgnoreCase("")){
-			tracks = tc.getCompletedTracksFromProjectId(project.getId());
-		} else {
-			tracks = tc.getCompletedTracksFromProjectIdAndTrackNames(project.getId(),tracksNames.split(","));
-		}
+		Set<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
 		Set<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
 		tracks.addAll(adminTrack);
-
 		Set<Track> formattedTracks = getFormattedTracks(tc,tracks);
 		final String trackInfo = getTrackInfo(formattedTracks,tc,project.getSpecies().getName());
 		//Application.debug("get track Info :"+trackInfo);
 		//get names
-		if(tracksNames.equalsIgnoreCase("")){
-			tracksNames = getTrackNames(formattedTracks);
-		}
+		String names = getTrackNames(formattedTracks);
 		//get refseq.js
 		SequenceControl seqc = new SequenceControl((UserSession)getSession());
 		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());
-		final String refseq = JbrowsoRAccess.getRefseq(seq.getJbrowsoRId());
-
-
-
+		final String refseqs = JbrowsoRAccess.getRefseq(seq.getJbrowsoRId());
+		//String refseq = InternetConnection.sendGETConnection("http://ptbbpc1.epfl.ch/jbrowsor/jbrowse/data/67/data/refSeqs.js");
 		//
 		//adding final javascript
 		final String jsControl = " var b = new Browser({" +
@@ -124,16 +116,15 @@ public class BrowserPage extends WebPage{
 		"dataRoot: \""+Configuration.getJb_data_root()+"/"+"\",\n" +
 		"styleRoot: \""+"../../"+Configuration.getJbrowse_static_files_url()+"/"+"\",\n" +
 		"trackData: trackInfo,\n" +
-		"defaultTracks : "+tracksNames+"" +
+		"defaultTracks : "+names+"" +
 		"});" +
-		"b.showTracks("+tracksNames+");" +
-				"var gfm = new GFeatMiner();gfm.build();";
+		"b.showTracks("+names+");";
 
 		add(new AbstractBehavior() {
 			@Override
 			public void renderHead(IHeaderResponse response) {
 				super.renderHead(response);
-				response.renderJavascript(refseq,"refseq_"+project.getId());
+				response.renderJavascript(refseqs,"refseq_"+project.getId());
 				response.renderJavascript(trackInfo,"js_view_"+project.getId());
 				response.renderJavascript(jsControl,"js_control_"+project.getId());
 			}
@@ -155,10 +146,10 @@ public class BrowserPage extends WebPage{
 			}
 		});
 		add(new TabbedPanel("tabs", tabs));
-
+		
 		//building gFeatMenu
-		//add(new GFeatMinerMenu("gfeat_menu",tracks));
-
+		add(new GFeatMinerMenu("gfeat_menu",tracks));
+		
 
 
 
@@ -213,7 +204,28 @@ public class BrowserPage extends WebPage{
 		names=names.substring(0, names.length()-1);
 		names+="\"";
 		return names;
-		
+//		Set<String> nameSet = new HashSet<String>();
+//		for(Track t : tracks){
+//			String nameToAdd = protect(t.getName());
+//			if(!nameSet.contains(nameToAdd)){
+//				nameSet.add(nameToAdd);
+//			} else {
+//				int cpt = 0;
+//				String altName = nameToAdd;
+//				while(nameSet.contains(altName)){
+//					altName=nameToAdd+"_"+cpt;
+//					cpt++;
+//				}
+//				nameSet.add(altName);
+//			}
+//		}
+//		String names = "\"DNA,";
+//		for(String name : nameSet){
+//			names+=name+",";
+//		}
+//		names=names.substring(0, names.length()-1);
+//		names+="\"";
+//		return names;
 	}
 
 	/**
@@ -236,10 +248,10 @@ public class BrowserPage extends WebPage{
 			String parameters ="";
 			if(t.getParameters().equalsIgnoreCase("params") || t.getName().equalsIgnoreCase("in process")){
 				Application.debug("TRACK ID "+t.getId());
-
+				
 				String directory = tc.getFileFromTrackId(t.getId());
 				Application.debug("TRACK ID "+directory);
-
+				
 				String imageType = null;
 				if(t.getType().equalsIgnoreCase("quantitative")){
 					imageType="ImageTrack";

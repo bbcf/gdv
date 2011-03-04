@@ -8,7 +8,10 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.PageLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
@@ -17,6 +20,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.LoginControl;
 
 public class BasePage extends WebPage{
 
@@ -43,6 +47,31 @@ public class BasePage extends WebPage{
 		add(sybit);
 
 		add(new MenuPage("menu",Configuration.getNavigationLinks()));
+		Link log;
+		if(null!=user){
+			final WebPage thisPage = this;
+			log=new Link("log"){
+				@Override
+				public void onClick() {
+					LoginControl lc = new LoginControl((UserSession)getSession());
+					lc.logOut(thisPage,true);
+					setResponsePage(HomePage.class);
+				}
+				
+			};
+			log.add(new Label("logLabel","logout"));
+		} else {
+			
+			log=new Link("log"){
+				@Override
+				public void onClick() {
+					setResponsePage(LoginPage.class);
+				}
+				
+			};
+			log.add(new Label("logLabel","login"));
+		}
+		add(log);
 
 	}
 
