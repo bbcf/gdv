@@ -14,47 +14,41 @@ a{color:black}
 a:hover {color:#A9A9A9;}
 /* IMAGES */
 img{border-style:none;padding:0.1em;max-width:100%;max-height:100%;}
-
 /*LAYOUT*/
 div.clearer {clear: left; line-height: 0; height: 0;}
 #gdv_title
 {font-size:300%;text-align:right;line-height:190%;}
 #gdv_banner
-{padding:0.5em;height:5em;width:95%;min-width:100em;border-width:2em;border-color:#CCCCCC;border-style:outset;}
+{padding:0.5em;height:5em;width:85%;min-width:90em;margin-left:10em;border-width:2em;border-color:#CCCCCC;border-style:outset;}
 #gdv_banner img
 {float:left;height:100%;}
 #gdv_banner a:link a:visited a:hover a:active {text-decoration:none;}
 #gdv_column{position:relative;width:100%;min-width:100em;}
-#gdv_menu{left:0em;position:absolute;top:1em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
-#gfeat_menu{left:0em;position:relative;top:15em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;}
-.menu_entry{font-size:1.3em;letter-spacing:150%}
+/* #gfeat_menu{left:0em;position:relative;top:15em;width:10em;padding:0em;text-align:center;line-height:200%;border-width:0.5em;border-style:outset;border-color:#CCCCCC;} */
 #gdv_body{position:relative;margin-left:10em;padding:1em;margin-right:0.5em;}
-#gdv_body_browser{position:relative;top:-17em;margin-left:10em;padding:0.5em;margin-right:0em;}
+#gdv_body_browser{position:relative;top:0em;margin-left:10em;padding:0em;margin-right:0em;}
 #gdv_footer{margin-left:14em;margin-right:5em;padding:1em;line-height:200%;}
+
+/*LEFTPANE*/
+.lpfolded{border-color: transparent transparent SlateGrey transparent;border-style:solid;border-width:1.2em;position:absolute;left:0em;bottom:1em;width:0em;height:0;z-index:40;display:inline;}
+.lpunfolded{border-color: SlateGrey transparent transparent transparent;border-style:solid;border-width:1.2em;position:absolute;left:0em;bottom:6em;width:0em;height:0;z-index:40;}
+#dnd_exp{color:grey;font-size:125%;};
 /* TABBED PANEL */
 #tabpanel{float:left;width:100%;font-size:93%;line-height:normal;}
-#tabpanel ul{background-color:grey;margin:0;list-style:none;padding:1em 1em 0;position:fixed;bottom:1em;}
+#tabpanel ul{background-color:slategrey;margin:0;list-style:none;padding:0em;position:fixed;bottom:0em;}
 #tabpanel li{float:left;margin:0;padding:0;}
 #tabpanel a {display:block;padding:0.5em 1em 0.4em;text-decoration:none;}
-.selected {background-color:red;}
-/*gFeatMiner*/
-.gfeat_but{margin:1em};
-
+.selected {background-color:lightsteelblue;}
 /* TEXT */
 .gdv_text{padding:0 0 0 2em}
-
-
 /*PROJECTS*/
 #project_form{width:100%;}
 .cp{padding:0.5em;width:20em;float:left}
 .c_b{margin-top:0.3em;width:6em;height:1.5em;font-size:120%;}
-
 #pc{margin:2em;}
 .bh{width:98.5%;font-size:250%;font-weight:normal;background-color:#696969;padding:0.4em 0.4em 0.4em 0.6em;}
-
 .gdv_head{width:100%;font-size:120%;padding:0.4em 0.4em 0.4em 0.6em;background-color:#D4D4D4;height:1.5em;}
 .gdv_head img{height:1em;}
-/*.gdv_head input{width:5em;height:1.5em;}*/
 .dtv_desc{position:relative;margin:0em 7em 0em 0em;}
 .dtv_but{
     position:relative;
@@ -92,7 +86,24 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 .pt_n{background-color:#F5F5F5;}
 
 
+/*JBROWSE*/
+.gdv_up_track{ border-color: transparent transparent transparent SlateGrey ;
+  border-style:solid;
+  border-width:1.2em;
+  position:absolute;
+  left:-1.6em;
+  top:-0.2em;
+  width:0;
+  height:0;}
 
+.gdv_fold_track{ border-color: SlateGrey transparent transparent transparent;
+  border-style:solid;
+  border-width:1.2em;
+  position:absolute;
+  left:-3.1em;
+  top:0.4em;
+  width:0;
+  height:0;}
 
 /*GROUP LIST PAGE*/
 .sh1{width:98.5%;font-size:150%;font-weight:normal;background-color:#696969;padding:0.4em 0.4em 0.4em 0.6em;}
@@ -100,3 +111,13 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 
 /*SEARCH INPUT*/
 #suggest_field{background-color:LightGrey;position:fixed;right: 0em;padding:0.7em;top:2.5em;text-align:center;}
+
+/*GDV MENU & GFEATMINER*/
+#gdv_menu{left:0em;position:fixed;bottom:0em;top:0em;width:10em;height:100%;padding:0em;text-align:center;line-height:200%;border-width:0em 0.1em 0em 0em;border-style:outset;border-color:#CCCCCC;background-color:LightGrey;}
+.menu_entry{font-size:1.5em;letter-spacing:150%;padding:1em 0em 1em;margin:0em 0em 0.5em;background-color:LightSteelBlue;}
+.gdv_menu_item{margin:0.5em 0em 0.5em 0em;line-height:200%;}
+
+#gfm_form{bottom:0em;background-color:LightGrey;height:12em;margin-left:10em;position:fixed;width:100%;z-index:5;border-width:0em 0em 0em 0.2em;border-style:outset;border-color:#CCCCCC;}
+
+.gfm_radio{color:red;}
+

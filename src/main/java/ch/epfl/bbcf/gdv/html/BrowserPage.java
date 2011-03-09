@@ -127,6 +127,7 @@ public class BrowserPage extends WebPage{
 		"defaultTracks : "+tracksNames+"" +
 		"});" +
 		"b.showTracks("+tracksNames+");" +
+		//"b.showTracks();" +
 				"var gfm = new GFeatMiner();gfm.build();";
 
 		add(new AbstractBehavior() {

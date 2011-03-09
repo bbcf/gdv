@@ -72,6 +72,7 @@ public final class Configuration{
 		js[17]=instance.jbrowse_javascript_url+"/js/TrackSelection.js";
 		js[18]=instance.jbrowse_javascript_url+"/js/ZoneSelection.js";
 		js[19]=instance.jbrowse_javascript_url+"/js/GFeatMiner.js";
+		//js[20]="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js";
 		js[20]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
 		js[21]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
 		return js;
