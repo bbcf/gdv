@@ -86,7 +86,11 @@ public class GFFParser extends Parser implements GFFErrorHandler,GFFDocumentHand
 		}
 		handler.end();
 	}
-
+	/**
+	 * Process the line of a GFF
+	 * the attribute 'name' will be the tag displayed on the view
+	 * the attribute 'id' is used to group together the same features
+	 */
 	@Override
 	public void recordLine(GFFRecord record) {
 		String chr = record.getSeqName();
@@ -112,6 +116,15 @@ public class GFFParser extends Parser implements GFFErrorHandler,GFFDocumentHand
 				if(str.equalsIgnoreCase("id") || str.equalsIgnoreCase("gene_id")){
 					id=attributes.get(str).get(0);
 				} 
+				//TEST
+				if((name==null || name.equalsIgnoreCase(""))){
+					if(str.equalsIgnoreCase("note")){
+						name = attributes.get(str).get(1);
+						while(name.endsWith("\"")){//remove extra "
+							name = name.substring(0,name.length()-1);
+						}
+					}
+				}
 			}
 		}
 		float score = new Float(record.getScore());
