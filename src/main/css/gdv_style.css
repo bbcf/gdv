@@ -47,7 +47,7 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 .c_b{margin-top:0.3em;width:6em;height:1.5em;font-size:120%;}
 #pc{margin:2em;}
 .bh{width:98.5%;font-size:250%;font-weight:normal;background-color:#696969;padding:0.4em 0.4em 0.4em 0.6em;}
-.gdv_head{width:100%;font-size:120%;padding:0.4em 0.4em 0.4em 0.6em;background-color:#D4D4D4;height:1.5em;}
+.gdv_head{width:100%;font-size:120%;padding:0.4em 0.4em 0.4em 0.6em;background-color:#D4D4D4;height:3em;}
 .gdv_head img{height:1em;}
 .dtv_desc{position:relative;margin:0em 7em 0em 0em;}
 .dtv_but{
@@ -55,18 +55,21 @@ div.clearer {clear: left; line-height: 0; height: 0;}
     right:1em;
     margin:0em 7em 0em 0em;
 }
-.gdv_p1{position:absolute;margin:0em 7em 0em 0em;max-width:17em;overflow:hidden;}
-.gdv_p2{position:absolute;left:22em;margin:0em 7em 0em 0em;max-width:10em;overflow:hidden;}
-.gdv_p3{position:absolute;left:35em;margin:0em 7em 0em 0em;}
-.gdv_p4{position:absolute;left:54em;margin:0em 7em 0em 0em;}
-.gdv_p5{position:absolute;left:64em;margin:0em 7em 0em 0em;}
+.gdv_p1{position:absolute;margin:0em 7em 0em 0em;max-width:20em;overflow:hidden;}
+.gdv_p2{position:absolute;left:26em;margin:0em 7em 0em 0em;max-width:10em;overflow:hidden;}
+.gdv_p3{position:absolute;left:36em;margin:0em 7em 0em 0em;font-size:95%;}
+.gdv_p4{position:absolute;left:52em;margin:0em 7em 0em 0em;}
+.gdv_p5{position:absolute;left:60em;margin:0em 7em 0em 0em;}
+
+.gdv_p6{position:absolute;left:5em;margin:1em 7em 0em 0em;}
+.gdv_p7{position:absolute;left:7em;margin:1em 7em 0em 0em;font-size:80%;}
 /*BUTTONS*/
-.gdv_b_import{position:absolute;right:-5em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
-.gdv_b_viewit{position:absolute;right:1em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
-.gdv_b_share{position:absolute;right:7em;margin:0em 7em 0em 0em;width:5em;height:1.5em;}
-.gdv_b_deleteit{position:absolute;right:13em;margin:0em 7em 0em 0em;width:6em;height:1.5em;}
-.gdv_b_importinprofile{position:absolute;right:18em;margin:0em 7em 0em 0em;width:10em;height:1.5em;}
-.gdv_b_checkbox{position:absolute;right:13em;margin:0em 7em 0em 0em;}
+.gdv_b_import{position:absolute;right:0em;margin:0em 0em 0em 0em;width:5em;height:1.5em;font-size:70%;}
+.gdv_b_viewit{position:absolute;right:5.5em;margin:0em 0em 0em 0em;width:5em;height:1.5em;font-size:70%;}
+.gdv_b_share{position:absolute;right:11em;margin:0em 0em 0em 0em;width:5em;height:1.5em;font-size:70%;}
+.gdv_b_deleteit{position:absolute;right:16.5em;margin:0em 0em 0em 0em;width:5.5em;height:1.5em;font-size:70%;}
+.gdv_b_importinprofile{position:absolute;right:22em;margin:0em 0em 0em 0em;width:10em;height:1.5em;font-size:70%;}
+.gdv_b_checkbox{position:absolute;right:27.5em;margin:0em 0em 0em 0em;}
 
 .gdv_list{font-size:100%;width:101%;border:none;border-collapse:collapse;padding:0em 0em 0em 5em;}
 .gdv_list td{padding:1em 1em 1em 4em;}
@@ -124,3 +127,4 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 
 .gfm_radio{color:red;}
 
+.error{color:red;font-size:130%;}

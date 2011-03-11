@@ -29,9 +29,9 @@ public class BasePage extends WebPage{
 			add(CSSPackageResource.getHeaderContribution(cp));
 		}
 		Users user = ((UserSession)getSession()).getUser();
-		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
-			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
-		}
+//		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
+//			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
+//		}
 
 		Image gdv = new Image("gdv_logo");
 		gdv.add(new SimpleAttributeModifier("src",Configuration.getGdv_Images_url()+"/logo_gdv.jpg"));

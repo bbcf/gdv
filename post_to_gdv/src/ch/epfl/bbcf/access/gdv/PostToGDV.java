@@ -1,7 +1,5 @@
 package ch.epfl.bbcf.access.gdv;
 
-import java.io.Console;
-import java.io.IOException;
 import java.util.Map;
 
 
@@ -82,6 +80,8 @@ public class PostToGDV {
 						params.setSequenceId(args[i+1]);
 					} else if(cmd.equalsIgnoreCase(RequestParameters.NAME_PARAM)){
 						params.setName(args[i+1]);
+					} else if(cmd.equalsIgnoreCase(RequestParameters.PUBLIC_PARAM)){
+						params.setName(args[i+1]);
 					} else {
 						System.err.println("the parameter "+args[i]+" is not a parameter.");
 					}
@@ -146,6 +146,7 @@ public class PostToGDV {
 			System.out.println("\t "+writeList(entry.getValue()));
 		}
 		System.out.println("-----------\n-----------");
-
 	}
+	
+	
 }

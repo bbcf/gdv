@@ -3,6 +3,9 @@ package ch.epfl.bbcf.gdv.control.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.GroupDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
@@ -15,6 +18,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Species;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 
@@ -24,7 +28,7 @@ public class ProjectControl extends Control{
 		super(session);
 	}
 
-	
+
 
 	/**
 	 * get the number of tracks belonging to 
@@ -48,11 +52,11 @@ public class ProjectControl extends Control{
 	 * @param version
 	 * @param projectName
 	 */
-	public boolean createNewProject(SelectOption species, SelectOption version,
+	public boolean createNewProjectFromProjectPage(SelectOption species, SelectOption version,
 			String projectName) {
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		int seq_id = version.getKey();
-		int projectId = pdao.createNewProject(seq_id,projectName);
+		int projectId = pdao.createNewProject(seq_id,projectName,false);
 		if(projectId!=-1){
 			boolean created = pdao.linkToUser(projectId,session.getUserId());
 			if(created){
@@ -73,7 +77,7 @@ public class ProjectControl extends Control{
 	 */
 	public int createNewProject(int seq_id,String projectName,int userId){
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
-		int projectId = pdao.createNewProject(seq_id,projectName);
+		int projectId = pdao.createNewProject(seq_id,projectName,false);
 		if(projectId!=-1){
 			boolean created = pdao.linkToUser(projectId,userId);
 			if(created){
@@ -85,6 +89,37 @@ public class ProjectControl extends Control{
 		Application.error("project creation failed ", userId);
 		return -1;
 	}
+	/**
+	 * create a new project for an user
+	 * Should be used just for the creation of projects by post request
+	 * @param seq_id the seq id from genrep
+	 * @param projectName the project name
+	 * @param userId the user id
+	 * @param isPublic - create a public project
+	 * @return
+	 * @throws JSONException 
+	 */
+	public JSONObject createNewProject(int seq_id,String projectName,int userId,boolean isPublic) throws JSONException{
+		JSONObject json = new JSONObject();
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
+		int projectId = pdao.createNewProject(seq_id,projectName,isPublic);
+		if(projectId!=-1){
+			boolean created = pdao.linkToUser(projectId,userId);
+			if(created){
+				json.put("project_id",projectId);
+				if(isPublic){
+					this.setProjectPublic(projectId, isPublic);
+					String url = this.getPublicUrlFromProjectId(projectId);
+					json.put("public_url",url);
+				}
+				return json;
+			}
+
+		}
+		Application.error("project creation failed ", userId);
+		return json;
+	}
+
 	/**
 	 * get a project from its id and add the species to it
 	 * @param projectId
@@ -143,23 +178,23 @@ public class ProjectControl extends Control{
 	 * form it's cookie value
 	 * (create a copy of the project and
 	 * link it to the tracks and user)
-	 * @param value
+	 * @param projectId
 	 * @return
 	 */
-	public boolean importProject(String value) {
+	public boolean importProject(int projectId) {
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
 		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
-		Project oldProject = pdao.getProject(Integer.parseInt(value));
+		Project oldProject = pdao.getProject(projectId);
 		List<Track> tracks = tdao.getTracksFromProjectId(oldProject.getId());
 		List<Project> projects = pdao.getProjectsFromUser(session.getUserId());
-//		if(projects!=null){
-//			for (Project p : projects){
-//				if(p.getName().equalsIgnoreCase(oldProject.getName())){
-//					//return false;
-//				}
-//			}
-//		}
-		int newProjectId = pdao.createNewProject(oldProject.getSequenceId(), oldProject.getName());
+		//		if(projects!=null){
+		//			for (Project p : projects){
+		//				if(p.getName().equalsIgnoreCase(oldProject.getName())){
+		//					//return false;
+		//				}
+		//			}
+		//		}
+		int newProjectId = pdao.createNewProject(oldProject.getSequenceId(), oldProject.getName(),false);
 		if(null!=tracks){
 			for(Track t : tracks){
 				tdao.linkToProject(t.getId(),newProjectId);
@@ -199,6 +234,56 @@ public class ProjectControl extends Control{
 	public List<Project> getProjectsFromUser() {
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		return pdao.getProjectsFromUser(session.getUserId());
+	}
+
+
+
+	public String getPublicUrlFromProjectId(int id) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
+		String key = pdao.getPublicKeyFromProjectId(id);
+		String userKey = session.getUser().getKey();
+		String url = Configuration.getBrowserUrl()+"?id="+id+"&ukey="+userKey+"&pkey="+key;
+		return url;
+	}
+
+
+
+	public String setProjectPublic(int id, boolean b) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		pdao.setProjectPublic(id,b);
+		String key = pdao.getPublicKeyFromProjectId(id);
+		if(null==key){
+			key = pdao.generatePublicKey(id);
+		}
+		return key;
+	}
+
+
+
+	public boolean isProjectPublic(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		return pdao.isProjectPublic(projectId);
+	}
+
+
+
+	public String getPublicKeyFromProjectId(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		return pdao.getPublicKeyFromProjectId(projectId);
+	}
+
+
+
+	public String getUserKeyFromProjectId(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		return pdao.getUserKeyFromProjectId(projectId);
+	}
+
+
+
+	public boolean hasProject(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+		return pdao.userHasProject(session.getUserId(),projectId);
 	}
 
 

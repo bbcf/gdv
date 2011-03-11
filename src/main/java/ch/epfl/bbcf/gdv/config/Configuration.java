@@ -26,6 +26,7 @@ import ch.epfl.bbcf.gdv.html.AdminPage;
 import ch.epfl.bbcf.gdv.html.AlternativeProjectPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage2;
+import ch.epfl.bbcf.gdv.html.ErrorPage;
 import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
@@ -92,8 +93,7 @@ public final class Configuration{
 	public static final String URL_LINK_TEMPLATE = "\" onClick=\"javascript:showLinkPanel('{name}'); return false\";";
 
 	public final static Class[] admin_pages = {AddSequencePage.class,AdminPage.class,ImportUCSCPage.class};
-	public final static Class[] user_pages = {ImportFilePage.class,ProjectPage.class,
-		BrowserPage.class,PreferencesPage.class};
+	public final static Class[] user_pages = {ImportFilePage.class,ProjectPage.class,PreferencesPage.class};
 
 	public final static MenuElement[] navigation_links = {
 		new MenuElement(HomePage.class,"Home"),
@@ -127,6 +127,7 @@ public final class Configuration{
 	public static void addURLMounting(Application application) {
 		//SIMPLE MOUNT
 		application.mount(new HybridUrlCodingStrategy("/home", HomePage.class));
+		application.mount(new HybridUrlCodingStrategy("/error", ErrorPage.class));
 		application.mount(new HybridUrlCodingStrategy("/projects", ProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/login", LoginPage.class));
@@ -189,7 +190,7 @@ public final class Configuration{
 	das_dir,databases_link_dir,compute_scores_daemon,jbrowse_javascript_url,
 	transform_to_sqlite_daemon,project_url,gdv_version,images_url,
 	jbrowse_images_url,log_directory,jb_browser_root,jb_data_root,
-	psql_db,psql_user,psql_pwd;
+	psql_db,psql_user,psql_pwd,gdv_browser_page_url;
 	
 	private static String gdv_post_access;
 	private static List<String> gdv_types_access;
@@ -289,6 +290,7 @@ public final class Configuration{
 				instance.jbrowse_css_files = buildJbrowseCSSFiles();
 				instance.gdv_css_files = buidGDVCSSFiles();
 				instance.log_directory = metaInfPath+"/logs/";
+				instance.gdv_browser_page_url=instance.gdv_appli_proxy+"/browser";
 				return true;
 			}
 			Application.error("parameters not corrects");
@@ -516,5 +518,8 @@ public final class Configuration{
 	}
 	public static String getPsql_pwd() {
 		return instance.psql_pwd;
+	}
+	public static String getBrowserUrl(){
+		return instance.gdv_browser_page_url;
 	}
 }

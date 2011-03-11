@@ -24,12 +24,14 @@ public class RequestParameters {
 	OBFUSCATED_PARAM="obfuscated",
 	SEQUENCE_ID_PARAM="seq_id",
 	NAME_PARAM="name",
-	URL_PARAM="url";
+	URL_PARAM="url",
+	PUBLIC_PARAM="public";
 	
 	private static final Map<String,String[]> mapCommands = buildMapCommands();
 
 	private String url,projectId,
-	datatype,type,obfuscated,sequenceId,name;
+	datatype,type,obfuscated,
+	sequenceId,name,isPublic;
 	
 	private String mail,key,command;
 
@@ -45,13 +47,14 @@ public class RequestParameters {
 	private static Map<String,String[]> buildMapCommands() {
 		Map<String,String[]> map = new HashMap<String,String[]>();
 		String required[] = {MAIL_PARAM,KEY_PARAM,COMMAND_PARAM};
-		String newProject[] = {TYPE_PARAM,SEQUENCE_ID_PARAM,NAME_PARAM};
+		String newProject[] = {SEQUENCE_ID_PARAM,NAME_PARAM};
 		String groupProject[] = {OBFUSCATED_PARAM};
+		String publicProject[] = {PUBLIC_PARAM};
 		String addTrack[] = {URL_PARAM,PROJECT_ID_PARAM};
 		String addSqlite[] = {URL_PARAM,PROJECT_ID_PARAM,DATATYPE_PARAM};
 		map.put("Required for login",required);
 		map.put(NEW_PROJECT_COMMAND,newProject);
-		map.put(NEW_PROJECT_COMMAND+" for a group ",groupProject);
+		map.put(NEW_PROJECT_COMMAND+" public (optionnal)",publicProject);
 		map.put(ADD_TRACK_COMMAND,addTrack);
 		map.put(ADD_SQLITE_COMMAND,addSqlite);
 		return map;
@@ -175,6 +178,18 @@ public class RequestParameters {
 
 	public String getCommand() {
 		return command;
+	}
+
+
+
+	public void setIsPublic(String isPublic) {
+		this.isPublic = isPublic;
+	}
+
+
+
+	public String getIsPublic() {
+		return isPublic;
 	}
 
 

@@ -55,9 +55,16 @@ CREATE TABLE projects
 "id" SERIAL NOT NULL,
 "cur_seq_id" SERIAL NOT NULL,
 "name" VARCHAR(255) NOT NULL,
+"isPublic" boolean NOT NULL,
 PRIMARY KEY ("id")
 );
 
+CREATE TABLE publicProjects
+(
+"project_id" SERIAL NOT NULL,
+"public_key" varchar(255) NOT NULL,
+PRIMARY KEY ("project_id")
+);
 CREATE TABLE groupToProject
 (
 "group_id" SERIAL NOT NULL,
@@ -116,6 +123,8 @@ CREATE TABLE admin_tracks
 );
 
 ALTER TABLE admin_tracks ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
+
+ALTER TABLE publicProjects ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
 
 ALTER TABLE admin_tracks ADD FOREIGN KEY ("sequence_id") REFERENCES "sequences" ("id") on delete cascade;
 

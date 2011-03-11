@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
+import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -40,7 +41,16 @@ public abstract class Command {
 
 	}
 
-
+	protected void error(Exception e){
+		webResponse.getHttpServletResponse().setContentType("text/plain");
+		try {
+			webResponse.getHttpServletResponse().getOutputStream().print(e.getMessage());
+		} catch (IOException en) {
+			log.error(e);
+		}
+	}
+	
+	
 	protected void success(int id){
 		webResponse.getHttpServletResponse().setContentType("text/plain");
 		try {
@@ -50,7 +60,15 @@ public abstract class Command {
 		}
 		success();
 	}
-
+	protected void success(JSONObject json){
+		webResponse.getHttpServletResponse().setContentType("application/json");
+		try {
+			webResponse.getHttpServletResponse().getOutputStream().print(json.toString());
+		} catch (IOException e) {
+			log.error(e);
+		}
+		success();
+	}
 	protected void success(boolean result) {
 		webResponse.getHttpServletResponse().setContentType("text/plain");
 		try {

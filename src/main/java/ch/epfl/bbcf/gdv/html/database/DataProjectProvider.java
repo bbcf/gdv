@@ -52,9 +52,11 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 		for(Project project : projects){
 			ProjectWrapper wrapper = new ProjectWrapper(project);
 			Species species = controller.getSpeciesFromProjectId(project.getId());
+			// #species
 			wrapper.setSpeciesName(species.getName());
 			wrapper.setSpeciesId(species.getId());
 			wrapper.setSequences(controller.getSequencesFromSpeciesIdSO(species.getId()));
+			// #groups
 			List<Group> groups = controller.getGroupNameFromProjectId(project.getId(),user.getMail());
 			String groupNames = "";
 			for(Group group:groups){
@@ -67,9 +69,17 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 				wrapper.setAdmin(true);
 			}
 			wrapper.setGroupName(groupNames);
-			//->get tracks number
+			// #tracks number
 			int tn = controller.tracksNumberUnderProject(project.getId());
 			wrapper.setTracksNumber(tn);
+			
+			// #public url
+			if(project.isPublic()){
+				String url = controller.getPublicUrlFromProjectId(project.getId());
+				wrapper.setPublicUrl(url);
+			}
+			
+			// #adding wrapper
 			wrappers.add(wrapper);
 		}
 		return wrappers;

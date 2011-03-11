@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -39,34 +41,87 @@ public class BrowserPage extends WebPage{
 
 	public BrowserPage(PageParameters p) {
 		super(p);
-
-		int projectId = 0;
-		String tracksNames ="";
-		//getting params from url
+		int projectId = -1;	
+		String userKey = null;
+		String publicKey = null;
+		String err ="";
+		
+		
+		//get request parameters
 		for(Entry<String, String[]> entry : p.toRequestParameters().entrySet()){
 			if(entry.getKey().equalsIgnoreCase("id")){
-				projectId = Integer.parseInt(entry.getValue()[0]);
-			} else if(entry.getKey().equalsIgnoreCase("tn")){
-				tracksNames = entry.getValue()[0];
-			} 
+				try{
+					projectId = Integer.parseInt(entry.getValue()[0]);
+				} catch(NumberFormatException nfe){
+					err="project id (id) must be an Integer";
+					PageParameters params = new PageParameters();
+					params.put("err", err);
+					throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
+				}
+			} else if(entry.getKey().equalsIgnoreCase("ukey")){
+				userKey = entry.getValue()[0];
+			} else if(entry.getKey().equalsIgnoreCase("pkey")){
+				publicKey = entry.getValue()[0];
+			}
 		}
-
-		//check authorization
+		//check project id
+		if(projectId<0){
+			err="no project id (id) in the request";
+			PageParameters params = new PageParameters();
+			params.put("err", err);
+			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
+		}
+		
+		
 		ProjectControl pc = new ProjectControl((UserSession)getSession());
 		final Project project = pc.getProject(projectId);
-		if(null==project || (null!=project && !pc.userAuthorized(project))){
-			setResponsePage(HomePage.class);
+		if(null==project){
+			err="project id ("+projectId+") doesn't exist";
+			PageParameters params = new PageParameters();
+			params.put("err", err);
+			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
-
-		//change the display of the top menu if the user is logged as a group
-		Users user = ((UserSession)getSession()).getUser();
-		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
-			MenuElement[] els = {new MenuElement(AlternativeProjectPage.class, "Limited Profile"),
-					new MenuElement(AlternativeProjectPage.class, "Projects")};
-			add(new MenuPage("menu",Arrays.asList(els)));
-		} else {
+		boolean canView = false;//if the user can see the page
+		boolean isAdmin =false;//if the user provide uKey & pKey but he don't
+							   //need them because he own the page
+		UserSession session = (UserSession)getSession();
+		Users user = session.getUser();
+		
+		//it can be a public view
+		if(userKey!=null && publicKey!=null){
+			if(pc.isProjectPublic(projectId)){
+				String pKey = pc.getPublicKeyFromProjectId(projectId);
+				if(publicKey.equalsIgnoreCase(pKey)){
+					String uKey = pc.getUserKeyFromProjectId(projectId);
+					if(userKey.equalsIgnoreCase(uKey)){
+						canView = true;
+					} else {err="wrong uKey";};
+				}else {err="wrong pKey";};
+			} else {err="not a public project";};
+			//else the user must have the rights to view this 
+		} 	
+		if(user!=null && pc.userAuthorized(project)){
+			canView = true;
+			isAdmin=true;
+		} else {err="not authorized to browse this view";};
+		
+		if(!canView){
+			PageParameters params = new PageParameters();
+			params.put("err", err);
+			throw new RestartResponseAtInterceptPageException(ErrorPage.class);
+		}
+	
+		//change the display of the menu if
+		//it's public or admin
+		if(isAdmin){
 			add(new MenuPage("menu",Configuration.getNavigationLinks()));
+		} else {
+			MenuElement[] els = {new MenuElement(LoginPage.class, "import in my profile",true,projectId)};
+			add(new MenuPage("menu",Arrays.asList(els)));
 		}
+		
+		
+	
 
 
 		//adding speciesName on the view
@@ -89,12 +144,7 @@ public class BrowserPage extends WebPage{
 
 		//get tracks
 		TrackControl tc = new TrackControl((UserSession)getSession());
-		Set<Track> tracks;
-		if(tracksNames.equalsIgnoreCase("")){
-			tracks = tc.getCompletedTracksFromProjectId(project.getId());
-		} else {
-			tracks = tc.getCompletedTracksFromProjectIdAndTrackNames(project.getId(),tracksNames.split(","));
-		}
+		Set<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
 		Set<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
 		tracks.addAll(adminTrack);
 
@@ -102,9 +152,7 @@ public class BrowserPage extends WebPage{
 		final String trackInfo = getTrackInfo(formattedTracks,tc,project.getSpecies().getName());
 		//Application.debug("get track Info :"+trackInfo);
 		//get names
-		if(tracksNames.equalsIgnoreCase("")){
-			tracksNames = getTrackNames(formattedTracks);
-		}
+		String tracksNames = getTrackNames(formattedTracks);
 		//get refseq.js
 		SequenceControl seqc = new SequenceControl((UserSession)getSession());
 		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());

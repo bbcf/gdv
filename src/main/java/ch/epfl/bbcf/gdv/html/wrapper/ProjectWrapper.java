@@ -17,13 +17,19 @@ public class ProjectWrapper implements Serializable{
 	private boolean listOpen;//if the list of track is open or not on the view
 	private String groupName;
 	private boolean isAdmin;//if the user is the owner of the project, can delete it, etc...
-	
+	private String publicUrl;
 	
 	public ProjectWrapper(Project p){
 		this.project = p;
 		this.setListOpen(false);
 	}
 
+	public boolean isPublic(){
+		return this.project.isPublic();
+	}
+	public void setPublic(boolean b){
+		this.project.setPublic(b);
+	}
 	public int getId(){
 		return this.project.getId();
 	}
@@ -119,4 +125,11 @@ public class ProjectWrapper implements Serializable{
 		return isAdmin;
 	}
 
+	public void setPublicUrl(String publicUrl) {
+		this.publicUrl = publicUrl;
+	}
+
+	public String getPublicUrl() {
+		return publicUrl;
+	}
 }

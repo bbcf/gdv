@@ -11,11 +11,12 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.utility.RandomKey;
 
 public class ProjectDAO extends DAO<Project>{
 
 	private final static String tableName ="projects";
-	private final static String[] fields = {"id","cur_seq_id","name"};
+	private final static String[] fields = {"id","cur_seq_id","name","isPublic"};
 
 	public ProjectDAO(Connect connection) {
 		super(connection);
@@ -26,19 +27,21 @@ public class ProjectDAO extends DAO<Project>{
 	 * create a new project in the database
 	 * @param seq_id
 	 * @param projectName
+	 * @param isPublic 
 	 * @param userId
 	 * @return
 	 */
-	public int createNewProject(int seq_id, String projectName) {
+	public int createNewProject(int seq_id, String projectName, boolean isPublic) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
 				String query = "insert into projects values (" +
-				"default , ? , ? ) ; ";
+				"default , ? , ? ,?) ; ";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1,seq_id);
 				statement.setString(2,projectName);
+				statement.setBoolean(3, isPublic);
 				this.executeUpdate(statement);
 				query = "select currval('projects_id_seq') ; ";
 				statement = this.prepareStatement(query,
@@ -192,6 +195,11 @@ public class ProjectDAO extends DAO<Project>{
 		} catch (SQLException e) {
 			logger.error(e);
 		}
+		try {
+			project.setPublic(resultSet.getBoolean(fields[3]));
+		} catch (SQLException e) {
+			logger.error(e);
+		}
 		return project;
 	}
 
@@ -250,7 +258,7 @@ public class ProjectDAO extends DAO<Project>{
 				"inner join userToGroup as t3 on t2.group_id = t3.group_id " +
 				"where t3.user_mail = ? " +
 				"limit 1;";
-				
+
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1, viewId);
@@ -497,7 +505,7 @@ public class ProjectDAO extends DAO<Project>{
 			this.startQuery();
 			try {
 				String query = "update projects set name = ? " +
-						"where id = ? ;";
+				"where id = ? ;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setString(1,input);
@@ -513,11 +521,138 @@ public class ProjectDAO extends DAO<Project>{
 	}
 
 
+	public String getPublicKeyFromProjectId(int id) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select t1.public_key from publicProjects as t1 " +
+				"where t1.project_id = ?; ";
+				PreparedStatement statement;
+				statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,id);
+				ResultSet r = statement.executeQuery();
+				if(r.first()){
+					return r.getString(1);
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+		}
+		return null;
+	}
 
 
+	public void setProjectPublic(int id, boolean b) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "update projects set isPublic = ? " +
+				"where id = ? ;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setBoolean(1,b);
+				statement.setInt(2,id);
+				this.executeUpdate(statement);
+				this.endQuery(true);
+			} catch (SQLException e) {
+				logger.error("setProjectPublic : "+e);
+				this.endQuery(false);
+			}
+		}
+	}
 
 
+	public String generatePublicKey(int id) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "insert into publicProjects values (" +
+				"? ,? ) ; ";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,id);
+				RandomKey r = new RandomKey();
+				String key = r.getRandom();
+				statement.setString(2,key);
+				this.executeUpdate(statement);
+				return key;
+			} catch (SQLException e) {
+				logger.error("genratePublicKey "+e);
+			}
+		}
+		this.endQuery(false);
+		return null;
+	}
 
 
+	public boolean isProjectPublic(int projectId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select t1.ispublic from projects as t1 " +
+				"where t1.id = ?; ";
+				PreparedStatement statement;
+				statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,projectId);
+				ResultSet r = statement.executeQuery();
+				if(r.first()){
+					return r.getBoolean(1);
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+		}
+		return false;
+	}
 
+
+	public String getUserKeyFromProjectId(int projectId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select t1.key from users as t1 " +
+						"inner join usertoproject as t2 on t1.id = t2.user_id " +
+						"where t2.project_id = ? limit 1;";
+				PreparedStatement statement;
+				statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,projectId);
+				ResultSet r = statement.executeQuery();
+				if(r.first()){
+					return r.getString(1);
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+		}
+		return null;
+	}
+
+
+	public boolean userHasProject(int userId, int projectId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select 1 from usertoproject as t1 " +
+				"where t1.user_id = ? and t1.project_id = ? limit 1 ;";	
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1, userId);
+				statement.setInt(2, projectId);
+				ResultSet resultSet = this.executeQuery(statement);
+				if(resultSet.first()){
+					this.endQuery(true);
+					return true;
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+				this.endQuery(false);
+			}
+		}
+		this.endQuery(true);
+		return false;
+	}
 }
+

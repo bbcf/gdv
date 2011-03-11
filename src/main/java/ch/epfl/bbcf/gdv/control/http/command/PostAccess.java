@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import ch.epfl.authentication.TequilaAuthentication;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
@@ -122,16 +124,9 @@ public class PostAccess extends Command{
 
 	/**
 	 * create a new project in GDV database
-	 * can be a group project (from hts3cseq,....)
-	 * or a project for the user logged in (said as "normal")
-	 * 
-	 * parameters needed : 
-	 * 	- for normal project creation : type,seq_id,name
-	 *  - for group project : type,seq_id,name,obfuscated
-	 * @param user 
 	 */
 	private void createNewProject(Users user) {
-		checkParams(params.getType(),params.getSequenceId(),params.getName());
+		checkParams(params.getSequenceId(),params.getName());
 		int seqId = -1;
 		try{
 			seqId = Integer.parseInt(params.getSequenceId());
@@ -141,29 +136,39 @@ public class PostAccess extends Command{
 		if(seqId==-1){
 			throw new AbortWithHttpStatusException(400,true);
 		}
-		if(Configuration.getGdv_types_access().contains(params.getType())){
-			ProjectControl pc = new ProjectControl(session);
-			//normal project creation
-			if(params.getType().equalsIgnoreCase("normal")){
-				int projectId = pc.createNewProject(seqId,params.getName(),user.getId());
-				success(projectId);
-				//project creation for group
-			} else {
-				checkParams(params.getObfuscated());
-				UserControl uc = new UserControl(session);
-				if(!uc.sameMailExist(params.getObfuscated())){
-					int userId = uc.createNewUser(params.getObfuscated(),"","","","","",params.getType());
-					int projectId = pc.createNewProject(seqId,params.getName(),userId);
-					success(projectId);
-				} else {
-					Users u = uc.getuserByMail(params.getObfuscated());
-					session.signIn(u.getMail(), params.getType());
-					int projectId = pc.createNewProject(seqId,params.getName(),u.getId());
-					success(projectId);
-				}
-			}
-		} else {
+
+		ProjectControl pc = new ProjectControl(session);
+		boolean pub = false;
+		if(params.isPublic()!=null && (params.isPublic().equalsIgnoreCase("true") || params.isPublic().equalsIgnoreCase("1"))){
+			pub=true;
+		}
+		log.debug("pub : "+pub);
+
+		JSONObject json = null;
+		try {
+			json = pc.createNewProject(seqId,params.getName(),user.getId(),pub);
+			success(json);
+		} catch (JSONException e) {
+			Application.error(e);
+			error(e);
 			throw new AbortWithHttpStatusException(400,true);
 		}
+		
+		//project creation for group
+		//		} else {
+		//			checkParams(params.getObfuscated());
+		//			UserControl uc = new UserControl(session);
+		//			if(!uc.sameMailExist(params.getObfuscated())){
+		//				int userId = uc.createNewUser(params.getObfuscated(),"","","","","",params.getType());
+		//				int projectId = pc.createNewProject(seqId,params.getName(),userId);
+		//				success(projectId);
+		//			} else {
+		//				Users u = uc.getuserByMail(params.getObfuscated());
+		//				session.signIn(u.getMail(), params.getType());
+		//				int projectId = pc.createNewProject(seqId,params.getName(),u.getId());
+		//				success(projectId);
+		//			}
+		//		}
+
 	}
 }

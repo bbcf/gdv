@@ -56,10 +56,13 @@ public abstract class Command {
 		}
 		@Override
 		protected boolean doRequest(String id, RequestParameters params) {
-			if(PostToGDV.checkParams(params.getType(),params.getSequenceId(),params.getName())){
-				String body = "id="+id+"&"+RequestParameters.TYPE_PARAM+"="+params.getType()
+			if(PostToGDV.checkParams(params.getSequenceId(),params.getName())){
+				String body = "id="+id
 				+"&"+RequestParameters.SEQUENCE_ID_PARAM+"="+params.getSequenceId()
 				+"&"+RequestParameters.NAME_PARAM+"="+params.getName();
+				if(null!=params.getIsPublic()){
+					body+="&"+RequestParameters.PUBLIC_PARAM+"="+params.getIsPublic();
+				}
 				if(null!=params.getObfuscated()){
 					body+="&"+RequestParameters.OBFUSCATED_PARAM+"="+params.getObfuscated();
 				}

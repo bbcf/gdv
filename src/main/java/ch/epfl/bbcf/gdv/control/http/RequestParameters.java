@@ -21,6 +21,7 @@ public class RequestParameters {
 	private String obfuscated;
 	private String mail;
 	private String key;
+	private String isPublic;
 	
 	
 	public RequestParameters(Map<String, String[]> map) {
@@ -75,6 +76,9 @@ public class RequestParameters {
 			} catch (NullPointerException e){};
 			try{
 				this.mail = map.get("mail")[0];
+			} catch (NullPointerException e){};
+			try{
+				this.isPublic = map.get("public")[0];
 			} catch (NullPointerException e){};
 		}
 	}
@@ -311,6 +315,16 @@ public class RequestParameters {
 
 	public String getKey() {
 		return key;
+	}
+
+
+	public void setPublic(String isPublic) {
+		this.isPublic = isPublic;
+	}
+
+
+	public String isPublic() {
+		return isPublic;
 	}
 
 }

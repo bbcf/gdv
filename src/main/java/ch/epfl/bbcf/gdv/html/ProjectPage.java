@@ -15,6 +15,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -76,10 +77,16 @@ public class ProjectPage extends BasePage{
 		Cookie cook = ((WebRequest)getRequestCycle().getRequest()).getCookie("PROJECT_ID");
 		if(null!=cook){
 			ProjectControl pc = new ProjectControl((UserSession)getSession());
-			if(pc.importProject(cook.getValue())){
-				cook.setMaxAge(0);
-				((WebResponse)getRequestCycle().getResponse()).addCookie(cook);
-			}
+			try{
+				int projectId = Integer.parseInt(cook.getValue());
+				if(!pc.hasProject(projectId)){
+					if(pc.importProject(projectId)){
+						cook.setMaxAge(0);
+						((WebResponse)getRequestCycle().getResponse()).addCookie(cook);
+					}
+				}
+			} catch(NumberFormatException nfe){};
+
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +141,7 @@ public class ProjectPage extends BasePage{
 				checker.checkCreateNewProject(species,version,project_name);
 				if(checker.isFormSubmitable()){
 					ProjectControl pc = new ProjectControl((UserSession)getSession());
-					if(pc.createNewProject(species,version,project_name)){
+					if(pc.createNewProjectFromProjectPage(species,version,project_name)){
 						setResponsePage(new ProjectPage(new PageParameters()));
 					}
 					else {
@@ -196,6 +203,7 @@ public class ProjectPage extends BasePage{
 				track_number.add(new SimpleAttributeModifier("title","track number"));
 				track_number.setOutputMarkupId(true);
 				item.add(track_number);
+				//### import
 				AjaxButton importBut = new AjaxButton("import_but"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
 						importModal.setParams(
@@ -203,6 +211,51 @@ public class ProjectPage extends BasePage{
 						importModal.show(target);
 					}
 				};
+				//### public
+				final Label pubLabel = new Label("pubLabel",new Model<String>());
+				AjaxCheckBox cb = new AjaxCheckBox("pubCheck"){
+					@Override
+					protected void onUpdate(AjaxRequestTarget arg0) {
+					}
+				};
+				cb.setOutputMarkupPlaceholderTag(true);
+				pubLabel.setOutputMarkupPlaceholderTag(true);
+
+				if(projectWrapper.isAdmin()){
+					if(projectWrapper.isPublic()){
+						pubLabel.setDefaultModelObject("public link : "+projectWrapper.getPublicUrl());
+					} else {
+						pubLabel.setDefaultModelObject("make it public");
+					}
+
+					cb = new AjaxCheckBox("pubCheck",new Model(projectWrapper.isPublic())) {
+						@Override
+						protected void onUpdate(AjaxRequestTarget target) {
+							ProjectControl pc = new ProjectControl((UserSession)getSession());
+							if(projectWrapper.isPublic()){
+								projectWrapper.setPublic(false);
+								pc.setProjectPublic(projectWrapper.getId(),false);
+								pubLabel.setDefaultModelObject("make it public");
+							} else {
+								pc.setProjectPublic(projectWrapper.getId(),true);
+								projectWrapper.setPublic(true);
+								String purl = pc.getPublicUrlFromProjectId(projectWrapper.getId());
+								projectWrapper.setPublicUrl(purl);
+								pubLabel.setDefaultModelObject("link : "+purl);
+							}
+							target.addComponent(pubLabel);
+						}
+					};
+
+
+				} else {
+					pubLabel.setVisible(false);
+					cb.setVisible(false);
+				}
+				item.add(cb);
+				item.add(pubLabel);
+
+
 				importBut.add(new SimpleAttributeModifier("title","import a new track"));
 				item.add(importBut);
 				//### view it
@@ -217,19 +270,31 @@ public class ProjectPage extends BasePage{
 				viewBut.add(new SimpleAttributeModifier("title","jump to visualization"));
 				item.add(viewBut);
 				//### share it
-				AjaxButton shareBut = new AjaxButton("share_but"){
-					public void onSubmit(AjaxRequestTarget target, Form<?> form){
-						GroupControl gc = new GroupControl((UserSession)getSession());
-						if(!gc.checkIfGroupsForUser()){
-							PageParameters params 	= new PageParameters();
-							params.put("project_id", projectWrapper.getId());	
-							setResponsePage(PreferencesPage.class,params);
-						} else {
-							groupModal.setProject(projectWrapper);
-							groupModal.show(target);
+				AjaxButton shareBut;
+				if(projectWrapper.isAdmin()){
+					shareBut = new AjaxButton("share_but"){
+						public void onSubmit(AjaxRequestTarget target, Form<?> form){
+							GroupControl gc = new GroupControl((UserSession)getSession());
+							if(!gc.checkIfGroupsForUser()){
+								PageParameters params 	= new PageParameters();
+								params.put("project_id", projectWrapper.getId());	
+								setResponsePage(PreferencesPage.class,params);
+							} else {
+								groupModal.setProject(projectWrapper);
+								groupModal.show(target);
+							}
 						}
-					}
-				};
+					};
+				} else {
+					shareBut = new AjaxButton("share_but"){
+						@Override
+						protected void onSubmit(AjaxRequestTarget arg0,
+								Form<?> arg1) {
+						}
+					};
+					shareBut.setOutputMarkupPlaceholderTag(true);
+					shareBut.setVisible(false);
+				}
 				shareBut.add(new SimpleAttributeModifier("title","share project with a group"));
 				item.add(shareBut);
 				//### delete it

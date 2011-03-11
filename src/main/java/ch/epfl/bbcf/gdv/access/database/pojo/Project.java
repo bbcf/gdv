@@ -8,6 +8,7 @@ public class Project implements Serializable	{
 	private int curSequenceId;
 	private Species species;
 	private String name;
+	private boolean isPublic;
 
 	
 	public Project(int id) {
@@ -58,4 +59,11 @@ public class Project implements Serializable	{
 	public Species getSpecies() {
 		return species;
 	}
+	public void setPublic(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
+	public boolean isPublic() {
+		return isPublic;
+	}
+	
 }
