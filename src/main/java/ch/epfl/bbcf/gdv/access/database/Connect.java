@@ -60,18 +60,6 @@ public class Connect implements Connection{
 	 */
 	private static boolean isConnected;
 
-	/**
-	 * debug level : 
-	 * 0: no display
-	 * 1: display failed and not forced queries
-	 * 2: display all failed queries
-	 * 3: display slow and failed queries
-	 * 4: display slow queries
-	 * 5: display all queries
-	 */
-	private int         debugLevel;
-
-
 
 
 
@@ -108,6 +96,7 @@ public class Connect implements Connection{
 	//	}
 
 	public static Connect getConnection() {
+		Application.debug("getConnection");
 		String driver = DRIVER;
 		String	url = URL;
 		String user = Configuration.getPsql_user();
@@ -116,6 +105,7 @@ public class Connect implements Connection{
 		return Connect.getConnection(null,driver,url,user,passwd,base);
 	}
 	public static Connect getConnection(UserSession session){
+		Application.debug("getConnection "+session.getId()+"  "+session.getUserId());
 		String driver = DRIVER;
 		String	url = URL;
 		String user = Configuration.getPsql_user();
@@ -131,35 +121,36 @@ public class Connect implements Connection{
 		if(null==databasePool){
 			synchronized(Connect.class){
 				databasePool = new HashMap<String, Connect>();
+				Application.debug(" new database pool "+databasePool);
 			}
 		}
-		if(null==session){
-			identifier = "admin";
+		if(null==session || session.getId()==null){
+			identifier = "noLogged";
 		}
 		else {
 			identifier = session.getId();
-		}
-		//	Application.debug("get connection with id : "+identifier);
-		if(null!=session){
-			//Application.debug(Connect.class+" get database connection : "+identifier);
+			Application.debug("id "+identifier);
 		}
 		Connect connection  = 
 			Connect.databasePool.get(identifier);
-
+		
 		String key = user + base;
 		if (connection != null) {
 			instance = connection;
+			Application.debug("connection!=null "+instance);
 		} else {
 			synchronized(Connect.class){
 				instance = new Connect(session,driver,url,user,passwd,base);
+				Application.debug("XXXXXXXXXXXX   new connection "+instance);
 			}
 			Connect.databasePool.put(identifier, instance);
+			Application.debug("database pool "+instance);
 		}
 		return instance;
 	}
 
 	public static void removeConnection(UserSession userSession) {
-		Application.debug("REMOVING CONNECTION "+userSession.getUserId());
+		Application.debug("REMOVING CONNECTION "+userSession.getId());
 		if(Connect.databasePool.containsKey(userSession.getId())){
 			Connect conn = Connect.databasePool.get(userSession.getId());
 			try {

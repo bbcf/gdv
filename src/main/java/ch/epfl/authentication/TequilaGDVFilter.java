@@ -1,7 +1,6 @@
 	package ch.epfl.authentication;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -13,13 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.wicket.protocol.http.WebResponse;
 
 import ch.epfl.bbcf.gdv.config.Configuration;
-import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.tequila.client.model.ClientConfig;
 import ch.epfl.tequila.client.model.TequilaPrincipal;
-import ch.epfl.tequila.client.service.TequilaService;
 import ch.epfl.tequila.client.system.TequilaFilter;
 
 

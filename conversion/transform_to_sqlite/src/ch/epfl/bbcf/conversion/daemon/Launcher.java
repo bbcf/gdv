@@ -214,7 +214,7 @@ public class Launcher extends Thread{
 			} catch (IOException e) {
 				logger.error(e);
 			}
-		} catch (SQLException e2) {
+		} catch (SQLException e2) {	
 			try {
 				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),e2.getMessage(),"parsing", trackId,filePath);
 			} catch (IOException e) {

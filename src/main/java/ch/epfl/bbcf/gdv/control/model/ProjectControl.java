@@ -1,5 +1,6 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 
-public class ProjectControl extends Control{
+public class ProjectControl extends Control implements Serializable{
 
 	public ProjectControl(UserSession session) {
 		super(session);

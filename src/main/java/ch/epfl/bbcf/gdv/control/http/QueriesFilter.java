@@ -56,6 +56,7 @@ public class QueriesFilter implements Filter{
 						out.write(result);
 					}
 				}
+				out.close();
 			}	
 		} catch (Exception e){
 			log.debug(e);

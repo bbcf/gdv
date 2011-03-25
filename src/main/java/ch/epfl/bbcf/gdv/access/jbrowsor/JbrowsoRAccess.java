@@ -62,12 +62,12 @@ public abstract class JbrowsoRAccess {
 	
 
 	//->GENOMES
-	public static int createGenome(String version,String taxId,String speciesName,String chrList,String url) {
+	public static int createGenome(String version,int taxId,String speciesName,String chrList,String url) {
 		int genomeId = -1;
 		try {
 			String body =
 				"genome[name]=" + URLEncoder.encode(version, "UTF-8") +
-				"&genome[tax_id]=" + URLEncoder.encode(taxId, "UTF-8") +
+				"&genome[tax_id]=" + taxId +
 				"&genome[species]=" + URLEncoder.encode(speciesName, "UTF-8") +
 				"&genome[url]=" + URLEncoder.encode(url, "UTF-8") +
 				"&genome[chr_list]=" + URLEncoder.encode(chrList, "UTF-8") +

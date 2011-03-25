@@ -140,8 +140,6 @@ public class BrowserPage extends WebPage{
 		for(String cp : Configuration.getJavascriptFiles()){
 			add(JavascriptPackageResource.getHeaderContribution(cp));
 		}
-
-
 		//get tracks
 		TrackControl tc = new TrackControl((UserSession)getSession());
 		Set<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
@@ -174,7 +172,7 @@ public class BrowserPage extends WebPage{
 		"trackData: trackInfo,\n" +
 		"defaultTracks : "+tracksNames+"" +
 		"});" +
-		"b.showTracks("+tracksNames+");" +
+		"b.showTracks();" +
 		//"b.showTracks();" +
 				"var gfm = new GFeatMiner();gfm.build();";
 

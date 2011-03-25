@@ -6,7 +6,6 @@ import java.io.IOException;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.model.InputControl.Extension;
 import ch.epfl.bbcf.gdv.control.model.InputControl.ZipExtension;
-import ch.epfl.bbcf.transform.GTF2GFF;
 
 public class FileTypeGuesser {
 

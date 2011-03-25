@@ -16,9 +16,6 @@ import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
-import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
-import ch.epfl.bbcf.gdv.access.generep.GeneRepAccess;
-import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
@@ -66,7 +63,7 @@ public class DataTrackProvider extends SortableDataProvider<TrackWrapper>{
 	public Iterator<? extends TrackWrapper> iterator(int first, int count) {
 		SortParam sp = getSort();
 		Comparator comp;
-		 if (sp.getProperty().equalsIgnoreCase("track_name")){
+		if (sp.getProperty().equalsIgnoreCase("track_name")){
 			comp = new TrackWrapper.SortByTrackName();
 		} else if (sp.getProperty().equalsIgnoreCase("date")){
 			comp = new TrackWrapper.SortByDate();
@@ -81,14 +78,14 @@ public class DataTrackProvider extends SortableDataProvider<TrackWrapper>{
 		return tracks.iterator();
 	}
 
-	public IModel<TrackWrapper> model(final TrackWrapper object) {
-		return new LoadableDetachableModel<TrackWrapper>(){
-			@Override
-			protected TrackWrapper load() {
-				return object;
-			}
-		};
-	}
+	//	public IModel<TrackWrapper> model(final TrackWrapper object) {
+	//		return new LoadableDetachableModel<TrackWrapper>(){
+	//			@Override
+	//			protected TrackWrapper load() {
+	//				return object;
+	//			}
+	//		};
+	//	}
 
 	public int size() {
 		return tracks.size();
@@ -97,6 +94,18 @@ public class DataTrackProvider extends SortableDataProvider<TrackWrapper>{
 	public void detach() {
 		List<Track> t = tc.getTracksFromProjectId(project.getId()); 
 		tracks = getTrackWrappers(t);
+	}
+
+
+	@Override
+	public IModel<TrackWrapper> model(final TrackWrapper object) {
+		return new LoadableDetachableModel<TrackWrapper>(){
+			@Override
+			protected TrackWrapper load() {
+				return object;
+			}
+
+		};
 	}
 
 }

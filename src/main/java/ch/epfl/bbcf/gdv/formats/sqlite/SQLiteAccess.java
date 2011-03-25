@@ -529,11 +529,11 @@ public class SQLiteAccess {
 	 * try to find coordinates (start,end) of a gene by it's name
 	 * @param chr - the chromosome
 	 * @param name - the gene name
-	 * @param db - the database
+	 * @param tracks - the tracks, commas separated
 	 * @return a list of coordinates (start,end,start,end,start,end,....)
 	 * @throws SQLException
 	 */
-	public List<Integer> searchForGeneNameOnChromosome(String db,String chr,String name) throws SQLException {
+	public List<Integer> searchForGeneNameOnChromosome(String tracks,String chr,String name) throws SQLException {
 		List<Integer> result = new ArrayList<Integer>();
 		String query = "SELECT start,end FROM \""+chr+"\" where name = ?; ";
 		PreparedStatement prep = this.conn.prepareStatement(query);
@@ -550,7 +550,7 @@ public class SQLiteAccess {
 	/**
 	 * trying to find names that match more or less the
 	 * input of the user (limited to 10 entries)
-	 * @param db - the database
+	 * @param tracks - the tracks,commas separated
 	 * @param chr - the chromosome
 	 * @param name - the string to match
 	 * @param log 
@@ -558,7 +558,7 @@ public class SQLiteAccess {
 	 * @throws SQLException 
 	 */
 	public Map<String, List<Integer>> suggestGeneNamesAndPositionsForChromosome(
-			String db, String chr, String name) throws SQLException {
+			String tracks, String chr, String name) throws SQLException {
 		Map<String, List<Integer>> result = new HashMap<String, List<Integer>>();
 		String query = "SELECT name,start,end FROM \""+chr+"\" where name like ? limit 10; ";
 		PreparedStatement prep = this.conn.prepareStatement(query);

@@ -26,14 +26,14 @@ public class DataDASProvider implements IDataProvider<String>{
 		return types.iterator();
 	}
 
-	public IModel<String> model(final String object) {
-		return new LoadableDetachableModel<String>(){
-			@Override
-			protected String load() {
-				return object;
-			}
-		};
-	}
+//	public IModel<String> model(final String object) {
+//		return new LoadableDetachableModel<String>(){
+//			@Override
+//			protected String load() {
+//				return object;
+//			}
+//		};
+//	}
 
 	public int size() {
 		return types.size();
@@ -41,5 +41,11 @@ public class DataDASProvider implements IDataProvider<String>{
 
 	public void detach() {
 		
+	}
+
+	@Override
+	public IModel<String> model(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

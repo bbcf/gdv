@@ -26,9 +26,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
-import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
-import ch.epfl.bbcf.gdv.access.generep.ChromosomeAccess;
-import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
+import ch.epfl.bbcf.access.genrep.pojo.Chromosome;
+import ch.epfl.bbcf.gdv.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
@@ -62,7 +61,7 @@ public class ImportUCSCPage extends BasePage{
 
 
 		//->Species
-		SelectOption[] spOptions = SpeciesAccess.getOrganismsSelectOpt();
+		SelectOption[] spOptions = GenrepWrapper.getOrganismsSO();
 		IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
 		ddcSpecies = new DropDownChoice<SelectOption>("species",new Model(),Arrays.asList(spOptions),choiceRenderer){
 			protected boolean wantOnSelectionChangedNotifications() {
@@ -86,7 +85,7 @@ public class ImportUCSCPage extends BasePage{
 					return new ArrayList<SelectOption>();
 				}
 				else {
-					List<SelectOption> allAssemblies = Arrays.asList(AssembliesAccess.getNRAssembliesBySpeciesIdSelectOpt(speciesId));
+					List<SelectOption> allAssemblies = Arrays.asList(GenrepWrapper.getNRAssembliesByOrganismIdSO(speciesId));
 					List<SelectOption> addedAssemblies = new ArrayList<SelectOption>();
 					SequenceControl gC = new SequenceControl((UserSession)getSession());
 					for (SelectOption so : allAssemblies){
@@ -148,7 +147,7 @@ public class ImportUCSCPage extends BasePage{
 							public void onClick(AjaxRequestTarget target) {
 								Application.debug("click on : "+item.getModelObject());
 								form.info("fetching data for "+item.getModelObject());
-								List<String> chrList = ChromosomeAccess.getChromosomesListByAssemblyId(assemblyId);
+								List<Chromosome> chrList = GenrepWrapper.getChromosomesByNRassemblyId(assemblyId);
 								//GET THE DAS SOURCE
 								DAS.getAnnotations((UserSession)getSession(),"http://genome.ucsc.edu/cgi-bin/das/"+assemblyName,chrList,item.getModelObject(),assemblyId,form);
 

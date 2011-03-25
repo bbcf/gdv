@@ -44,7 +44,8 @@ public class UserSession extends AuthenticatedWebSession{
 	public UserSession(Request request) {
 		super(request);
 	}	  
-
+	
+	
 
 	/**
 	 * basic method for authentification
@@ -106,6 +107,7 @@ public class UserSession extends AuthenticatedWebSession{
 
 
 	public void finalize() {
+		Application.warn("FINALIZE "+this);
 		Connect.removeConnection(this);
 		Application.removeLogger(this.getUserId());
 	}

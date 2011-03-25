@@ -23,7 +23,6 @@ import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl.InputType;
-import ch.epfl.bbcf.gdv.formats.json.JSONProcessor;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteProcessor;
 import ch.epfl.bbcf.gdv.utility.ProcessLauncher;

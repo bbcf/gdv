@@ -13,12 +13,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import ch.epfl.bbcf.access.genrep.pojo.Chromosome;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
-import ch.epfl.bbcf.gdv.formats.json.JSONProcessor;
 import ch.epfl.bbcf.gdv.utility.ProcessLauncher;
 import ch.epfl.bbcf.gdv.utility.ProcessLauncherError;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
@@ -28,14 +28,14 @@ public class AnnotationFetcher extends Thread{
 
 	private XMLReader xmlReader;
 	private String mapmaster;
-	private List<String> chrList;
+	private List<Chromosome> chrList;
 	private String type;
 	private int assemblyId;
 	private UserSession session;
 	private static Logger log  = Logs.initDASLogger();
 
 	public AnnotationFetcher(UserSession session,XMLReader xmlreader, String mapmaster,
-			List<String> chrList, String type, int assemblyId) {
+			List<Chromosome> chrList, String type, int assemblyId) {
 		this.xmlReader = xmlreader;
 		this.mapmaster = mapmaster;
 		this.chrList = chrList;
@@ -54,14 +54,14 @@ public class AnnotationFetcher extends Thread{
 			Application.debug("file already parsed "+gffFile);
 			return;
 		}
-		for(String segment : chrList){
+		for(Chromosome chr : chrList){
 			InputStream input = FileManagement.getInputStreamFromURL(
-					mapmaster+"/features?segment="+segment+";type="+type);
+					mapmaster+"/features?segment="+chr.getChr_name()+";type="+type);
 			if(null==input){
 				log.info("no result in fetching data from "+mapmaster);
 				return;
 			}
-			log.info("fetching data from : "+mapmaster+"/features?segment="+segment+";type="+type);
+			log.info("fetching data from : "+mapmaster+"/features?segment="+chr.getChr_name()+";type="+type);
 			DAS_Feature_Handler handler = new DAS_Feature_Handler();
 			xmlReader.setContentHandler(handler);
 			xmlReader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
@@ -76,7 +76,7 @@ public class AnnotationFetcher extends Thread{
 			}	
 			List<Map<String,String>> features = handler.get_features();
 			String toWrite="";
-			String startLine = segment+"\tUCSC\t"+type;
+			String startLine = chr.getChr_name()+"\tUCSC\t"+type;
 			for(Map<String,String> map : features){
 				String toAdd = DAS.convertmapToGFFline(map);
 				toWrite+=startLine+toAdd+"\n";

@@ -28,8 +28,6 @@ import org.apache.wicket.util.value.ValueMap;
 
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
-import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
-import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.InputControl.InputType;

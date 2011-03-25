@@ -26,8 +26,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
-import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
-import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
+import ch.epfl.bbcf.gdv.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
@@ -49,7 +48,7 @@ public class AdminPage extends BasePage{
 	private int speciesId = -1;
 	private int assemblyId = -1;
 	private FeedbackPanel feedback;
-	SelectOption[] spOptions = SpeciesAccess.getOrganismsSelectOpt();
+	SelectOption[] spOptions = GenrepWrapper.getOrganismsSO();
 	IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
 	private Form form;
 

@@ -23,8 +23,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.portlet.PortletRequestContext;
 
-import ch.epfl.bbcf.gdv.access.generep.AssembliesAccess;
-import ch.epfl.bbcf.gdv.access.generep.SpeciesAccess;
+import ch.epfl.bbcf.gdv.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -40,7 +39,7 @@ public class AddSequencePage extends BasePage{
 	private int speciesId = -1;
 	private int assemblyId = -1;
 	private FeedbackPanel feedback;
-	SelectOption[] spOptions = SpeciesAccess.getOrganismsSelectOpt();
+	SelectOption[] spOptions = GenrepWrapper.getOrganismsSO();
 
 	public AddSequencePage(final PageParameters p) {
 		super(p);
@@ -90,7 +89,7 @@ public class AddSequencePage extends BasePage{
 					return new ArrayList<SelectOption>();
 				}
 				else {
-					List<SelectOption> allAssemblies = Arrays.asList(AssembliesAccess.getNRAssembliesBySpeciesIdSelectOpt(speciesId));
+					List<SelectOption> allAssemblies = Arrays.asList(GenrepWrapper.getNRAssembliesByOrganismIdSO(speciesId));
 					List<SelectOption> nonAddedAssemblies = new ArrayList<SelectOption>();
 					SequenceControl sc = new SequenceControl((UserSession)getSession());
 					Application.debug("seq control");
