@@ -54,7 +54,7 @@ public class NamesFilter implements Filter{
 			response.setContentType("application/json");
 			JSONObject json_result = new JSONObject();
 			for (String track : tracks){
-				JSONObject json_median = new JSONObject();
+				JSONObject json_chrs = new JSONObject();
 				try {
 					SQLiteAccess access = new SQLiteAccess(Configuration.getFilesDir()+"/"+track);
 					// ##search for exact match
@@ -64,27 +64,27 @@ public class NamesFilter implements Filter{
 						if(positions.size()>0){
 							Collections.sort(positions);
 							JSONArray array = new JSONArray(positions);
-							json_median.put("perfect", array);
+							//							json_track.put("perfect", array);
 						} 
 						// ##search for suggest names
 					} else if(params.getId().equalsIgnoreCase("search_name")){
-						JSONArray suggest_json = new JSONArray();
-						JSONObject pos_json = new JSONObject();
-						Map<String,List<Integer>> suggests = access.suggestGeneNamesAndPositionsForChromosome(
-								params.getTracks(),params.getChr(), params.getName());
-						log.debug("size of result "+suggests.size());
-						for(Map.Entry<String,List<Integer>> entry : suggests.entrySet()){
-							String key = entry.getKey();
-							List<Integer> list = entry.getValue();
-							Collections.sort(list);
-							JSONArray array_json = new JSONArray(list);
-							suggest_json.put(key);
-							pos_json.put(key, array_json);
+						Map<String,Integer> chrs = access.getChromosomesAndLength();
+
+						for(String chr : chrs.keySet()){
+							Map<String,List<Integer>> suggests = access.suggestGeneNamesAndPositionsForChromosome(
+									params.getTracks(),chr, params.getName());
+							JSONObject json_suggests = new JSONObject();
+							for(Map.Entry<String,List<Integer>> entry : suggests.entrySet()){
+								String key = entry.getKey();
+								List<Integer> list = entry.getValue();
+								Collections.sort(list);
+								JSONArray json_positions = new JSONArray(list);
+								json_suggests.put(key,json_positions);
+							}
+							json_chrs.put(chr, json_suggests);
 						}
-						json_median.put("suggest",suggest_json);
-						json_median.put("pos", pos_json);
 					}
-					json_result.put(track, json_median);
+					json_result.put(track, json_chrs);
 					access.close();
 				} catch (SQLException e) {
 					StackTraceElement[] els = e.getStackTrace();
@@ -99,7 +99,7 @@ public class NamesFilter implements Filter{
 						log.error(el.getFileName()+":"+el.getClassName()+"."+el.getMethodName()+"."+el.getLineNumber());
 					}
 				}
-				
+
 			}
 			out.write(json_result.toString());
 		}

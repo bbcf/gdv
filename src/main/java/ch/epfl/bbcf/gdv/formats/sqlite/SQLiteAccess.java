@@ -202,6 +202,23 @@ public class SQLiteAccess {
 		}
 		return result;
 	}
+	public Map<String, Integer> getChromosomesAndLength() {
+		Map<String,Integer> result = new HashMap<String,Integer>();
+		try {
+			Statement stat = this.conn.createStatement();
+			String query = "SELECT * FROM chrNames;";
+			ResultSet rs = getResultSet(stat, query);
+			while (rs.next()) {
+				result.put(rs.getString("name"),
+						rs.getInt("length"));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			Application.error(e);
+		}
+		return result;
+	}
+
 	public static String getStringAttribute(String database, String key) {
 		String result = null;
 		Connection conn;
@@ -508,6 +525,7 @@ public class SQLiteAccess {
 	private Connection getConnection(String database) {
 		try {
 			Class.forName("org.sqlite.JDBC").newInstance();
+			org.sqlite.JDBC j = new org.sqlite.JDBC();
 			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+database);
 			return conn;
 		} catch (InstantiationException e) {
@@ -518,6 +536,9 @@ public class SQLiteAccess {
 			Application.error(e);
 		} catch (SQLException e) {
 			Application.error(e);
+		} catch (NullPointerException e) {
+			Application.error(e);
+			return getConnection(database);
 		}
 		return null;
 	}
@@ -549,7 +570,7 @@ public class SQLiteAccess {
 	}
 	/**
 	 * trying to find names that match more or less the
-	 * input of the user (limited to 10 entries)
+	 * input of the user (limited to 2 entries)
 	 * @param tracks - the tracks,commas separated
 	 * @param chr - the chromosome
 	 * @param name - the string to match
@@ -560,7 +581,7 @@ public class SQLiteAccess {
 	public Map<String, List<Integer>> suggestGeneNamesAndPositionsForChromosome(
 			String tracks, String chr, String name) throws SQLException {
 		Map<String, List<Integer>> result = new HashMap<String, List<Integer>>();
-		String query = "SELECT name,start,end FROM \""+chr+"\" where name like ? limit 10; ";
+		String query = "SELECT name,start,end FROM \""+chr+"\" where name like ? limit 2; ";
 		PreparedStatement prep = this.conn.prepareStatement(query);
 		prep.setString(1,"%"+name+"%");
 		prep.execute();
@@ -582,6 +603,8 @@ public class SQLiteAccess {
 		r.close();
 		return result;
 	}
+
+
 
 
 }
