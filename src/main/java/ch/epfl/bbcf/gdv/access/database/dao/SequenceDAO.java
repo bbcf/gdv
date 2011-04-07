@@ -147,7 +147,6 @@ public class SequenceDAO extends DAO<Sequence>{
 	 * @return
 	 */
 	public List<Sequence> getSequencesFromSpeciesId(int speciesId) {
-		List<Sequence> seqs = null;
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
@@ -156,14 +155,15 @@ public class SequenceDAO extends DAO<Sequence>{
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1, speciesId);
 				ResultSet r = this.executeQuery(statement);
-				seqs = getSequences(r);
+				List<Sequence> seqs = getSequences(r);
 				this.endQuery(true);
+				return seqs;
 			} catch (SQLException e) {
 				logger.error(e);
 				this.endQuery(false);
 			}
 		}
-		return seqs;
+		return null;
 	}
 
 }

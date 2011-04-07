@@ -5,46 +5,71 @@
 <body>
 <wicket:extend>
  
-<h1>Description</h1>
 <p>
-GDV is a fast and easy to use genome browser. The main goal is to provide a tool for biologist and bioanalysts who want to VISUALIZE and ANALYSE their data in an interactive and responding way.
-<br/>In order do such job, GDV will preprocess each inputs and build a view with. Then the view provided is accessible at any time.
+  GDV stands for Genome Data Viewer. It’s goal is to provide biologists and bio-analysts a fast, browsable and editable view of their data along the genome. Once achieved, the user will be able to launch different statistics modules on his data and thus prepare all the mining process of the analysis.
+GDV is a web application, and will never be downloaded, but will be accessible at any time, directly from a web-browser. So, an user can access his data everywhere, and also share it with other people which make it interesting if the user collaborate with other entities that are not in the same site or even in the same countries.
+<br/>
 
-<h1>How to use</h1>
-<p>Go to <wicket:link><a href="ProjectPage.html">Projects Page</a></wicket:link> and create a new one by selecting the assembly
-to work on.
-</p>
-<p> Import your data. GDV will process it. Then you will be able
-    to come back at any time to browse your data.
+<h1>Create a project</h1>
+<p>Go to <wicket:link><a href="ProjectPage.html">Projects</a></wicket:link> page and create a new one by selecting the species and assembly you are interested in.
 </p>
 
-<h1>Technologies</h1>
-<li>written in <a href="http://www.oracle.com/technetwork/java/index.html">JAVA</a> .</li><br/>
-<li> built with <a href="http://wicket.apache.org/">Apache wicket</a>.</li><br/>
-<li> served by <a href="http://tomcat.apache.org/">Apache Tomcat</a>.</li><br/>
-<li> viewer in Javascript from <a href="http://jbrowse.org/">JBrowse</a> engine.</li><br/>
-<li> database in <a href="http://www.postgresql.org/">postgresql</a>.</li>
+<h1>Import data</h1>
 <p>
+  For each project, you can import your data. Simply provide a link where 
+  your file can be accessed or upload it via the browser.<br/>
+  Supported format are : GFF, GTF, WIG (wiggle & bedgraph), BED
+</p>
 
-<h1>Features provided</h1>
-<li>based on the last web-features <a href="http://www.w3.org/TR/html5/">HTML5</a>.</li><br/>
-<li>user management (group in a near future).</li><br/>
-<li>secure login (see <a href="http://tequila.epfl.ch/">TEQUILA</a>).</li><br/>
-<li>tracks management (saving files after user navigation).</li><br/>
-<li>different input formats accepted (GFF, WIG, Bedgraph,BED) in different ways (form URL or file upload).</li><br/>
-<li>planning to add BAM & SAM support.</li><br/>
-<li>creation of projects and tracks from programmatic access (pipelines) - restricted feature, ask for collaboration-</li>
+<h1>Share</h1>
+ <p>
+   You have two possibilities of sharing a project :
+   <ul>
+     <li>
+       Make it public : your project will be accessible by everyone via an obfuscated URL.<br/>
+       Every user will be able to COPY your project.
+     </li>
+     <li>
+       Share it with groups : create a group and add the email of the people you want to collaborate with.<br/>
+       Every colaborator will be able to PARTICIPATE to your project.
+     </li>
+   </ul>
 
+</p>
 
-<h1>Architecture</h1>
+ <h1>Mine your data</h1>
 <p>
-GDV is composed by 3 modules:<br/>
-<li>JBrowsoR, built on top of JBrowse, is a job manager that interacts with JBrowse.</li><br/>
-<li>GeneRep  stores information about the genomes and assemblies for GDV.</li><br/>
-<li>GFeatMiner is a statistical and data mining module that will be integrated to GDV.</li><br/>
-GDV has to communicate with those modules and provide a user friendly interface.<br/><br/>
-More documentation on <a href="http://bbcf.epfl.ch/view/BBCF/GDV">BBCFRessources</a>.
-</p> 
+  A statistic and a manipulation module will be soon integrated to GDV. You will be able to mine your data (e.g : base coverage, scores, overlap,complement...)
+ </p>
+
+
+<!-- <h1>Technologies</h1> -->
+<!-- <li>written in <a href="http://www.oracle.com/technetwork/java/index.html">JAVA</a> .</li><br/> -->
+<!-- <li> built with <a href="http://wicket.apache.org/">Apache wicket</a>.</li><br/> -->
+<!-- <li> served by <a href="http://tomcat.apache.org/">Apache Tomcat</a>.</li><br/> -->
+<!-- <li> viewer in Javascript from <a href="http://jbrowse.org/">JBrowse</a> engine.</li><br/> -->
+<!-- <li> database in <a href="http://www.postgresql.org/">postgresql</a>.</li> -->
+<!-- <p> -->
+
+<!-- <h1>Features provided</h1> -->
+<!-- <li>based on the last web-features <a href="http://www.w3.org/TR/html5/">HTML5</a>.</li><br/> -->
+<!-- <li>user management (group in a near future).</li><br/> -->
+<!-- <li>secure login (see <a href="http://tequila.epfl.ch/">TEQUILA</a>).</li><br/> -->
+<!-- <li>tracks management (saving files after user navigation).</li><br/> -->
+<!-- <li>different input formats accepted (GFF, WIG, Bedgraph,BED) in different ways (form URL or file upload).</li><br/> -->
+<!-- <li>planning to add BAM & SAM support.</li><br/> -->
+<!-- <li>creation of projects and tracks from programmatic access (pipelines) - restricted feature, ask for collaboration-</li> -->
+
+
+<!-- <h1>Architecture</h1> -->
+<!-- <p> -->
+<!-- GDV is composed by 3 modules:<br/> -->
+<!-- <li>JBrowsoR, built on top of JBrowse, is a job manager that interacts with JBrowse.</li><br/> -->
+<!-- <li>GeneRep  stores information about the genomes and assemblies for GDV.</li><br/> -->
+<!-- <li>GFeatMiner is a statistical and data mining module that will be integrated to GDV.</li><br/> -->
+<!-- GDV has to communicate with those modules and provide a user friendly interface.<br/><br/> -->
+<!-- More documentation on <a href="http://bbcf.epfl.ch/view/BBCF/GDV">BBCFRessources</a>. -->
+<!-- </p>  -->
   </wicket:extend>
 </body>
 </html>

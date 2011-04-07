@@ -44,17 +44,17 @@ public class PreferencesPage extends BasePage{
 		////LOGOUT///////////////////////
 		////////////////////////////////
 		final WebPage thisPage = this;
-		final Form logout_form = new Form("logout_form");
-		Button logoutBut = new Button("logout"){
-			public void onSubmit(){
-				LoginControl lc = new LoginControl((UserSession)getSession());
-				lc.logOut(thisPage,true);
-				setResponsePage(HomePage.class);
-			}
-		};
-		logoutBut.add(new SimpleAttributeModifier("title","logout from GDV"));
-		logout_form.add(logoutBut);
-		add(logout_form);
+//		final Form logout_form = new Form("logout_form");
+//		Button logoutBut = new Button("logout"){
+//			public void onSubmit(){
+//				LoginControl lc = new LoginControl((UserSession)getSession());
+//				lc.logOut(thisPage,true);
+//				setResponsePage(HomePage.class);
+//			}
+//		};
+//		logoutBut.add(new SimpleAttributeModifier("title","logout from GDV"));
+//		logout_form.add(logoutBut);
+//		add(logout_form);
 
 
 
@@ -193,7 +193,7 @@ public class PreferencesPage extends BasePage{
 			}
 		};
 		
-		///////////////////BELONG
+		///////////////////MEMBER
 		DataGroupProvider dgp2 = new DataGroupProvider((UserSession)getSession(),DataGroupProvider.BELONG);
 		DataView<GroupWrapper> group_data2 = new DataView<GroupWrapper>("group_data2",dgp2) {
 			@Override

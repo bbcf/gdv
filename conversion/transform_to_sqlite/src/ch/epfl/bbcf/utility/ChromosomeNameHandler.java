@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import ch.epfl.bbcf.access.GenRepAccess;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.conversion.daemon.Launcher;
 
@@ -62,6 +63,10 @@ public class ChromosomeNameHandler {
 	 */
 	private static String getAlternativeNames(String assemblyId, String chr) {
 		//logger.debug("get alt name for :"+chr);
+	//	GenRepAccess access = new GenRepAccess();
+		
+		
+		
 		Connection conn = getConnection(assemblyId);
 		if(null!=conn){
 			try {

@@ -310,9 +310,11 @@ public class InputControl extends Control{
 					//PARSER DOJSON
 				} else if(datatype.equalsIgnoreCase("quantitative")){
 					//Application.debug("write job "+trackId);
-					SQLiteAccess.writeNewJobCalculScores(
+					SQLiteAccess access = new SQLiteAccess(Configuration.getCompute_scores_daemon());
+					access.writeNewJobCalculScores(
 							Integer.toString(trackId),database,Configuration.getFilesDir(),
 							database,Configuration.getTracks_dir(),"0","nomail");
+					access.close();
 				}
 				//TrackControl.linkToProject(trackId,projectId);
 				//TrackControl.updateTrackFields(trackId,name,datatype,TrackControl.STATUS_FINISHED);

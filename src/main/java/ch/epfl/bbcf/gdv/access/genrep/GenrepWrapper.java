@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.codehaus.jackson.type.TypeReference;
 
-import com.sun.tools.example.debug.bdi.MethodNotFoundException;
 
 
 import ch.epfl.bbcf.access.genrep.Constants;
@@ -14,6 +13,7 @@ import ch.epfl.bbcf.access.genrep.GenRepAccess;
 import ch.epfl.bbcf.access.genrep.Constants.FORMAT;
 import ch.epfl.bbcf.access.genrep.Constants.KEY;
 import ch.epfl.bbcf.access.genrep.Constants.METHOD;
+import ch.epfl.bbcf.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.access.genrep.pojo.Assembly;
 import ch.epfl.bbcf.access.genrep.pojo.Chromosome;
 import ch.epfl.bbcf.access.genrep.pojo.Genome;

@@ -174,7 +174,7 @@ public class BrowserPage extends WebPage{
 		"});" +
 		"b.showTracks();" +
 		//"b.showTracks();" +
-				"var gfm = new GFeatMiner();gfm.build();";
+				"initGDV_browser();";
 
 		add(new AbstractBehavior() {
 			@Override
@@ -187,21 +187,21 @@ public class BrowserPage extends WebPage{
 		}); 
 
 		//adding tabbedPanel
-		List<ITab> tabs = new ArrayList<ITab>();
-		tabs.add(new AbstractTab(new Model("view")){
-			@Override
-			public Panel getPanel(String id) {
-				return new BrowserPanel(id);
-			}
-		});
-
-		tabs.add(new AbstractTab(new Model("gMiner")){
-			@Override
-			public Panel getPanel(String id) {
-				return new GFeatMinerPanel(id);
-			}
-		});
-		add(new TabbedPanel("tabs", tabs));
+//		List<ITab> tabs = new ArrayList<ITab>();
+//		tabs.add(new AbstractTab(new Model("view")){
+//			@Override
+//			public Panel getPanel(String id) {
+//				return new BrowserPanel(id);
+//			}
+//		});
+//
+//		tabs.add(new AbstractTab(new Model("gMiner")){
+//			@Override
+//			public Panel getPanel(String id) {
+//				return new GFeatMinerPanel(id);
+//			}
+//		});
+//		add(new TabbedPanel("tabs", tabs));
 
 		//building gFeatMenu
 		//add(new GFeatMinerMenu("gfeat_menu",tracks));

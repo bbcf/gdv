@@ -52,6 +52,7 @@ import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.database.DataProjectProvider;
 import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
 import ch.epfl.bbcf.gdv.html.utility.BrowserPageBuilder;
+import ch.epfl.bbcf.gdv.html.utility.ConfigureModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 import ch.epfl.bbcf.gdv.html.utility.GroupModalWindow;
@@ -69,7 +70,8 @@ public class ProjectPage extends BasePage{
 	private DataView<ProjectWrapper> projectData;
 	private CustModalWindow importModal;
 	private GroupModalWindow groupModal;
-
+	private ConfigureModalWindow configureModal;
+	
 	private final static IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
 
 	public ProjectPage(PageParameters p) {
@@ -211,49 +213,49 @@ public class ProjectPage extends BasePage{
 						importModal.show(target);
 					}
 				};
-				//### public
-				final Label pubLabel = new Label("pubLabel",new Model<String>());
-				AjaxCheckBox cb = new AjaxCheckBox("pubCheck"){
-					@Override
-					protected void onUpdate(AjaxRequestTarget arg0) {
-					}
-				};
-				cb.setOutputMarkupPlaceholderTag(true);
-				pubLabel.setOutputMarkupPlaceholderTag(true);
-
-				if(projectWrapper.isAdmin()){
-					if(projectWrapper.isPublic()){
-						pubLabel.setDefaultModelObject("public link : "+projectWrapper.getPublicUrl());
-					} else {
-						pubLabel.setDefaultModelObject("make it public");
-					}
-
-					cb = new AjaxCheckBox("pubCheck",new Model(projectWrapper.isPublic())) {
-						@Override
-						protected void onUpdate(AjaxRequestTarget target) {
-							ProjectControl pc = new ProjectControl((UserSession)getSession());
-							if(projectWrapper.isPublic()){
-								projectWrapper.setPublic(false);
-								pc.setProjectPublic(projectWrapper.getId(),false);
-								pubLabel.setDefaultModelObject("make it public");
-							} else {
-								pc.setProjectPublic(projectWrapper.getId(),true);
-								projectWrapper.setPublic(true);
-								String purl = pc.getPublicUrlFromProjectId(projectWrapper.getId());
-								projectWrapper.setPublicUrl(purl);
-								pubLabel.setDefaultModelObject("link : "+purl);
-							}
-							target.addComponent(pubLabel);
-						}
-					};
-
-
-				} else {
-					pubLabel.setVisible(false);
-					cb.setVisible(false);
-				}
-				item.add(cb);
-				item.add(pubLabel);
+//				//### public
+//				final Label pubLabel = new Label("pubLabel",new Model<String>());
+//				AjaxCheckBox cb = new AjaxCheckBox("pubCheck"){
+//					@Override
+//					protected void onUpdate(AjaxRequestTarget arg0) {
+//					}
+//				};
+//				cb.setOutputMarkupPlaceholderTag(true);
+//				pubLabel.setOutputMarkupPlaceholderTag(true);
+//
+//				if(projectWrapper.isAdmin()){
+//					if(projectWrapper.isPublic()){
+//						pubLabel.setDefaultModelObject("public link : "+projectWrapper.getPublicUrl());
+//					} else {
+//						pubLabel.setDefaultModelObject("make it public");
+//					}
+//
+//					cb = new AjaxCheckBox("pubCheck",new Model(projectWrapper.isPublic())) {
+//						@Override
+//						protected void onUpdate(AjaxRequestTarget target) {
+//							ProjectControl pc = new ProjectControl((UserSession)getSession());
+//							if(projectWrapper.isPublic()){
+//								projectWrapper.setPublic(false);
+//								pc.setProjectPublic(projectWrapper.getId(),false);
+//								pubLabel.setDefaultModelObject("make it public");
+//							} else {
+//								pc.setProjectPublic(projectWrapper.getId(),true);
+//								projectWrapper.setPublic(true);
+//								String purl = pc.getPublicUrlFromProjectId(projectWrapper.getId());
+//								projectWrapper.setPublicUrl(purl);
+//								pubLabel.setDefaultModelObject("link : "+purl);
+//							}
+//							target.addComponent(pubLabel);
+//						}
+//					};
+//
+//
+//				} else {
+//					pubLabel.setVisible(false);
+//					cb.setVisible(false);
+//				}
+//				item.add(cb);
+//				item.add(pubLabel);
 
 
 				importBut.add(new SimpleAttributeModifier("title","import a new track"));
@@ -274,15 +276,8 @@ public class ProjectPage extends BasePage{
 				if(projectWrapper.isAdmin()){
 					shareBut = new AjaxButton("share_but"){
 						public void onSubmit(AjaxRequestTarget target, Form<?> form){
-							GroupControl gc = new GroupControl((UserSession)getSession());
-							if(!gc.checkIfGroupsForUser()){
-								PageParameters params 	= new PageParameters();
-								params.put("project_id", projectWrapper.getId());	
-								setResponsePage(PreferencesPage.class,params);
-							} else {
 								groupModal.setProject(projectWrapper);
 								groupModal.show(target);
-							}
 						}
 					};
 				} else {
@@ -298,8 +293,8 @@ public class ProjectPage extends BasePage{
 				shareBut.add(new SimpleAttributeModifier("title","share project with a group"));
 				item.add(shareBut);
 				//### delete it
+				//### configure it
 				AjaxButton del;
-
 				if(projectWrapper.isAdmin()){
 					del = new AjaxButton("delete_but"){
 						public void onSubmit(AjaxRequestTarget target, Form<?> form){
@@ -319,7 +314,6 @@ public class ProjectPage extends BasePage{
 				}
 				del.add(new SimpleAttributeModifier("title","delete the project"));
 				item.add(del);
-
 
 
 
@@ -447,13 +441,23 @@ public class ProjectPage extends BasePage{
 								TrackControl tc = new TrackControl((UserSession)getSession());
 								tc.removeTrackFromUser(track.getTrackInstance());
 								dtp.detach();
-								//target.addComponent(trackContainer);
 							}
 						};
-						//						link.add(new SimpleAttributeModifier("onclick", "return confirm('are you sure you want to delete this track ?');"));
-						//						link.setOutputMarkupPlaceholderTag(true);
 						link.add(new SimpleAttributeModifier("title","delete track"));
 						item.add(link);
+						
+						
+						//### configure
+						final AjaxLink conflink = new AjaxLink("configure"){
+							@Override
+							public void onClick(AjaxRequestTarget target) {
+								configureModal.setTrack(track);
+								configureModal.show(target);
+							}
+						};
+						conflink.add(new SimpleAttributeModifier("title","configure track"));
+						item.add(conflink);
+						
 					}
 
 					private String getStatus(TrackWrapper track, Image image,
@@ -500,6 +504,9 @@ public class ProjectPage extends BasePage{
 
 		//MODAL PANEL IMPORT FILE
 		importModal = new CustModalWindow("modal_import"); 
+		importModal.setInitialWidth(800);
+		importModal.setInitialHeight(700);
+		importModal.setCssClassName(ModalWindow.CSS_CLASS_GRAY);
 		add(importModal);
 		importModal.setPageCreator(new ModalWindow.PageCreator(){
 			public Page createPage() {
@@ -514,17 +521,45 @@ public class ProjectPage extends BasePage{
 
 		//MODAL PANEL SHARE
 		groupModal = new GroupModalWindow("modal_group");
+		groupModal.setInitialWidth(800);
+		groupModal.setInitialHeight(700);
+		groupModal.setCssClassName(ModalWindow.CSS_CLASS_GRAY);
 		add(groupModal);
 		groupModal.setPageCreator(new ModalWindow.PageCreator() {
 			public Page createPage() {
 				return new GroupListPage(ProjectPage.this,groupModal);
 			}
 		});
-		importModal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+		groupModal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
 			public void onClose(AjaxRequestTarget target) {
 				setResponsePage(ProjectPage.class);
 			}
 		});
+		
+		
+		
+		
+		//MODAL PANEL CONFIGURE
+		configureModal = new ConfigureModalWindow("modal_configure"); 
+		configureModal.setInitialWidth(800);
+		configureModal.setInitialHeight(700);
+		configureModal.setCssClassName(ModalWindow.CSS_CLASS_GRAY);
+		add(configureModal);
+		configureModal.setPageCreator(new ModalWindow.PageCreator(){
+			public Page createPage() {
+				return new ConfigureTrackPage(ProjectPage.this,configureModal);
+			}
+		});
+		configureModal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
+			public void onClose(AjaxRequestTarget target) {
+				setResponsePage(ProjectPage.class);
+			}
+		});
+		
+		
 	}
 
+		
+	
+	
 }

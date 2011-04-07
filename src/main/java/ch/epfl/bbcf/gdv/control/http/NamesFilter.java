@@ -40,6 +40,8 @@ public class NamesFilter implements Filter{
 	}
 
 	private void doGet(ServletRequest request, ServletResponse response) {
+		log.debug("do get");
+			
 		PrintWriter out = null;
 		Params params = null;
 		try{
@@ -49,6 +51,7 @@ public class NamesFilter implements Filter{
 		} catch (IOException e1) {
 			log.error(e1);
 		}
+		log.debug("receive : "+params.toString());
 		if(out!=null && params.getId()!=null && params.getTracks()!=null && params.getName()!=null && params.getChr()!=null){
 			String[]tracks = params.getTracks().split(",");
 			response.setContentType("application/json");
@@ -101,6 +104,7 @@ public class NamesFilter implements Filter{
 				}
 
 			}
+			log.debug("result : "+json_result.toString());
 			out.write(json_result.toString());
 		}
 	}
@@ -150,6 +154,9 @@ public class NamesFilter implements Filter{
 		}
 		public String getTracks() {
 			return tracks;
+		}
+		public String toString(){
+			return "id = "+id+", name = "+name+" ,chr = "+chr+" ,tracks = "+tracks;
 		}
 
 	}

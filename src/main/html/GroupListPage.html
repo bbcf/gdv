@@ -2,13 +2,25 @@
 <head>
  <title>Genome Data Viewer</title>
 </head>
-<body>
-    <div class="sh1" wicket:id="project_info"/><br/>
-    <div class="sh1" wicket:id="project_info2"/><br/>
-    <div class="sh1" wicket:id="project_info3"/><br/>
-    <form wicket:id="form">
-      <div wicket:id="group">
-	<input type="checkbox" wicket:id="groupselector">check/uncheck all</input><br/>
+<body class="modalbd">
+    <h1><span class="sh1" wicket:id="project_info"/></h1>
+    <p>Project : <span class="sh1" wicket:id="project_info2"/></p>
+    
+    
+   <ul>
+     <li><h4><span class="sh1" wicket:id="header_public"/></h4>
+
+    <div>
+      <input type="checkbox" wicket:id="pubCheck"/>
+      <span wicket:id="pubLabel"/>
+    </div>
+     </li>
+     
+     <li><h4><span class="sh1" wicket:id="header_group"/></h4>
+     <form wicket:id="form">
+      <input wicket:id="addGroup" type="submit" value="create group"/>
+       <div wicket:id="group">
+	<input type="checkbox" wicket:id="groupselector">check/uncheck all</input>
 	<div class="sh2" wicket:id="title1"/>
 	<table class="gdv_list">
 	  <tr wicket:id="group_data">
@@ -16,6 +28,7 @@
 	    <td><input class="gdv_b_deleteit" type="checkbox" wicket:id="checkbox"/></td>
 	  </tr>
 	</table>
+	<br/>
 	<div class="sh2" wicket:id="title2"/>
 	<table class="gdv_list">
 	  <tr wicket:id="group_data2">
@@ -25,7 +38,10 @@
 	</table>
       </div>
       <br/><br/>
+   
       <input type="submit" wicket:id="submit" value="submit"/>
     </form>
-  </body>
+     </li>
+   </ul>
+</body>
 </html>

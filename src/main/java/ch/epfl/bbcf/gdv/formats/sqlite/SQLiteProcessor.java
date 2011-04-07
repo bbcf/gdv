@@ -10,6 +10,7 @@ import java.util.Map;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.control.model.InputControl.Extension;
 import ch.epfl.bbcf.gdv.control.model.SpeciesControl;
 
@@ -58,8 +59,10 @@ public class SQLiteProcessor implements Runnable{
 			mail = "nomail";
 		}
 		String nrAssembly = SpeciesControl.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
-		SQLiteAccess.writeNewJobTransform(
+		SQLiteAccess access = new SQLiteAccess(Configuration.getTransform_to_sqlite_daemon());
+		access.writeNewJobTransform(
 				file.getAbsolutePath(), trackId, tmpDir, extension, mail, nrAssembly, user.getId());
+		access.close();
 	}
 
 //	public static Map<String, String> getJSONDescriptor(String database,

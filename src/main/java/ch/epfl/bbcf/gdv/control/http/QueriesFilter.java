@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
 
@@ -40,18 +41,21 @@ public class QueriesFilter implements Filter{
 			} catch (IOException e1) {
 				log.error(e1);
 			}
-			log.debug("guetting request");
+			
+			//log.debug("guetting request");
 			if(out!=null && params.getId()!=null){
+				//log.debug("!=null");
 				if(params.getId().equalsIgnoreCase("db_scores")){
+					//log.debug("db_scores");
 					if(params.getImgs()!=null && params.getDb()!=null){
+						//log.debug("imgs");
 						String[]idList = params.getImgs().split(",");
 						String result=params.getDb();
-						result+=SQLiteAccess.getScoresForDatabaseByIdList(params.getDb(),idList);
-						log.debug(result);
-//						for(String id:idList){
-//							result+="$"+id+"="+SQLiteAccess.getScoresForDatabase(params.getDb(),id);
-//							Application.debug(result);
-//						}
+						SQLiteAccess access = new SQLiteAccess(Configuration.getTracks_dir()+"/"+params.getDb());
+						//log.debug("result "+result);
+						result+=access.getScoresForDatabaseByIdList(idList);
+						access.close();
+						//log.debug(result);
 						response.setContentType("text/plain");
 						out.write(result);
 					}

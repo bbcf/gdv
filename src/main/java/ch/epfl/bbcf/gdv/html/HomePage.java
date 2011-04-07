@@ -23,6 +23,7 @@ public class HomePage extends BasePage{
 			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
 		}
 		Application.debug("Home page", ((UserSession)getSession()).getUserId());
+		Application.debug("HP : "+((UserSession)getSession()).getId());
 	}
 
 }

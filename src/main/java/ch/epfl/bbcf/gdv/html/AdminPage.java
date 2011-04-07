@@ -27,12 +27,10 @@ import org.apache.wicket.model.Model;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.genrep.GenrepWrapper;
-import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.database.DataAdminTrackProvider;
-import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
 import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;

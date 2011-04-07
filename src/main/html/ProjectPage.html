@@ -11,7 +11,7 @@
 	<div class="cp">project name :  <input wicket:id="project_name"/></div>
 	<div class="cp">species : <select wicket:id="species"/></div>
 	<div class="cp">version : <select wicket:id="version"/></div>
-	<input class="c_b" type="submit" wicket:id="create_but" value="Create it"/>
+	<input class="c_b" type="submit" wicket:id="create_but" value="Create"/>
 	<div id="fd_p"><span wicket:id="feedback"/></div>  
       </div>
     </form>
@@ -32,12 +32,12 @@
 	      <span class="gdv_p5" wicket:id="tracks_number"/>
 	    </div>
 	    <div class="sep">
-	      <input class="gdv_p6" type="checkbox" wicket:id="pubCheck"/>
-	      <span class="gdv_p7" wicket:id="pubLabel"/>
+	    <!--   <input class="gdv_p6" type="checkbox" wicket:id="pubCheck"/> -->
+<!-- 	      <span class="gdv_p7" wicket:id="pubLabel"/> -->
 	      <input class="gdv_b_import" type="submit" wicket:id="import_but" value="Import"/>
-	      <input class="gdv_b_viewit" type="submit" wicket:id="view_but" value="View it"/>
+	      <input class="gdv_b_viewit" type="submit" wicket:id="view_but" value="View"/>
 	      <input class="gdv_b_share" type="submit" wicket:id="share_but" value="Share"/>
-	      <input class="gdv_b_deleteit" type="submit" wicket:id="delete_but" value="Delete it"/>
+	      <input class="gdv_b_deleteit" type="submit" wicket:id="delete_but" value="Delete"/>
 	    </div>
 	  </div>
 	  <!-- tracks -->
@@ -47,6 +47,7 @@
 		<td> <span wicket:id="track_label"/></td>
 		<td wicket:id="track_date"></td>
 		<td><span wicket:id="status"></span><img wicket:id="status_loader"/></td>
+		<td><a href="#" wicket:id="configure">configure</a></td>
 		<td><a href="#" wicket:id="delete">delete</a></td>
 	      </tr>
 	    </table>
@@ -58,7 +59,7 @@
     <!-- MODAL WINDOW -->
     <div wicket:id="modal_import"></div>
     <div wicket:id="modal_group"></div>
-    
+    <div wicket:id="modal_configure"></div>
   </wicket:extend>
 </body>
 </html>

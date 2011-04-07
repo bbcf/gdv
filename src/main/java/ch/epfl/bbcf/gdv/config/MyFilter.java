@@ -7,11 +7,15 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.WicketFilter;
+
+import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 
 
 public class MyFilter extends WicketFilter{
@@ -22,8 +26,13 @@ public class MyFilter extends WicketFilter{
 	public boolean doGet(javax.servlet.http.HttpServletRequest servletRequest, 
 			javax.servlet.http.HttpServletResponse servletResponse) 
 	throws ServletException,IOException{
-	//	Application.debug("doGet"+servletRequest.getRequestURI());
-		return super.doGet(servletRequest, servletResponse);
+		//	Application.debug("doGet"+servletRequest.getRequestURI());
+		boolean doget =  super.doGet(servletRequest, servletResponse);
+		if (!servletResponse.isCommitted()){
+			HttpSession s = servletRequest.getSession(true);
+			Connect.removeConnection(s.getId());
+		}
+		return doget;
 	}
 
 	protected  WebApplication	getWebApplication() {
@@ -33,12 +42,12 @@ public class MyFilter extends WicketFilter{
 	public void	init(javax.servlet.FilterConfig filterConfig) throws ServletException{
 		super.init(filterConfig);
 	}
-	
-	
-	
-	
+
+
+
+
 	public void destroy(){
-	
+
 		Application.info("destroying JDBC drivers");
 		Enumeration<Driver> drivers = DriverManager.getDrivers();
 		while(drivers.hasMoreElements()){

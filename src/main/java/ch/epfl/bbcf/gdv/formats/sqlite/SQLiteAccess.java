@@ -8,83 +8,84 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
-import ch.epfl.bbcf.gdv.access.sqlite.pojo.ChromosomeFeature;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 
 public class SQLiteAccess {
 
-	////////////////////////////
-	////// FILE DIRECTORY //////
-	////////////////////////////
-	/**
-	 * get a sqlite connection on the file directory in gdv
-	 * @param database
-	 * @return
-	 */
-	public static Connection getConnectionOnFileDirectory(String database){
-		try {
-			Class.forName("org.sqlite.JDBC").newInstance();
-			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getFilesDir()+"/"+database);
-			return conn;
-		} catch (InstantiationException e) {
-			Application.error(e);
-		} catch (IllegalAccessException e) {
-			Application.error(e);
-		} catch (ClassNotFoundException e) {
-			Application.error(e);
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return null;
-	}
 
-	public static Connection getConnectionOnCalculatedSQLite(String database){
-		try {
-			Class.forName("org.sqlite.JDBC").newInstance();
-			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getTracks_dir()+"/"+database);
-			return conn;
-		} catch (InstantiationException e) {
-			Application.error(e);
-		} catch (IllegalAccessException e) {
-			Application.error(e);
-		} catch (ClassNotFoundException e) {
-			Application.error(e);
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return null;
-	}
+//
+//	
+//	////////////////////////////
+//	////// FILE DIRECTORY //////
+//	////////////////////////////
+//	/**
+//	 * get a sqlite connection on the file directory in gdv
+//	 * @param database
+//	 * @return
+//	 */
+//	public static Connection getConnectionOnFileDirectory(String database){
+//		try {
+//			Class.forName("org.sqlite.JDBC").newInstance();
+//			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getFilesDir()+"/"+database);
+//			return conn;
+//		} catch (InstantiationException e) {
+//			Application.error(e);
+//		} catch (IllegalAccessException e) {
+//			Application.error(e);
+//		} catch (ClassNotFoundException e) {
+//			Application.error(e);
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return null;
+//	}
+
+//	public static Connection getConnectionOnCalculatedSQLite(String database){
+//		try {
+//			Class.forName("org.sqlite.JDBC").newInstance();
+//			Application.debug("connection on : "+Configuration.getTracks_dir()+"/"+database);
+//			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getTracks_dir()+"/"+database);
+//			Application.debug(conn);
+//			return conn;
+//		} catch (InstantiationException e) {
+//			Application.error(e);
+//		} catch (IllegalAccessException e) {
+//			Application.error(e);
+//		} catch (ClassNotFoundException e) {
+//			Application.error(e);
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return null;
+//	}
 
 	public static ResultSet getResultSet(Statement stat,String query) throws SQLException{
 		return stat.executeQuery(query);
 	}
 
 
-	public static Float getMaxScoreForChr(String database, String chr) {
-		try{
-			Connection conn = getConnectionOnFileDirectory(database);
-			Statement stat = conn.createStatement();
-			String query = "SELECT max(score) FROM "+chr+";";
-			ResultSet rs = getResultSet(stat, query);
-			Float f = null;
-			while (rs.next()) {
-				f= rs.getFloat(1);
-			}
-			rs.close();
-			return f;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+//	public static Float getMaxScoreForChr(String database, String chr) {
+//		try{
+//			Connection conn = getConnectionOnFileDirectory(database);
+//			Statement stat = conn.createStatement();
+//			String query = "SELECT max(score) FROM "+chr+";";
+//			ResultSet rs = getResultSet(stat, query);
+//			Float f = null;
+//			while (rs.next()) {
+//				f= rs.getFloat(1);
+//			}
+//			rs.close();
+//			return f;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 	/**
 	 * get the maximum length of a chromosome
 	 * in the database specified
@@ -92,116 +93,116 @@ public class SQLiteAccess {
 	 * @param database
 	 * @return
 	 */
-	public static int getMaxLengthForChromosome(String chr,String database) {
-		int f = 0;
-		try{
-			Connection conn = getConnectionOnFileDirectory(database);
-			Statement stat = conn.createStatement();
-			String query = "SELECT max(end) FROM "+chr+";";
-			ResultSet rs = getResultSet(stat, query);
-			while (rs.next()) {
-				f= rs.getInt(1);
-			}
-			rs.close();
-			return f;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return f;
-	}
-	public static ChromosomeFeature getScoresForChromosome(String database,String chrName){
-		try{
-			Connection conn = getConnectionOnFileDirectory(database);
-			Statement stat = conn.createStatement();
-			String query ="select * from "+chrName+";";
-			ResultSet rs = getResultSet(stat, query);
-			ChromosomeFeature feat = new ChromosomeFeature();
-			while (rs.next()) {
-				feat.addStart(rs.getInt("start"));
-				feat.addScore(rs.getFloat("score"));
-				feat.addStop(rs.getInt("end"));
-			}
-			rs.close();
-			conn.close();
-			return feat;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+//	public static int getMaxLengthForChromosome(String chr,String database) {
+//		int f = 0;
+//		try{
+//			Connection conn = getConnectionOnFileDirectory(database);
+//			Statement stat = conn.createStatement();
+//			String query = "SELECT max(end) FROM "+chr+";";
+//			ResultSet rs = getResultSet(stat, query);
+//			while (rs.next()) {
+//				f= rs.getInt(1);
+//			}
+//			rs.close();
+//			return f;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return f;
+//	}
+//	public static ChromosomeFeature getScoresForChromosome(String database,String chrName){
+//		try{
+//			Connection conn = getConnectionOnFileDirectory(database);
+//			Statement stat = conn.createStatement();
+//			String query ="select * from "+chrName+";";
+//			ResultSet rs = getResultSet(stat, query);
+//			ChromosomeFeature feat = new ChromosomeFeature();
+//			while (rs.next()) {
+//				feat.addStart(rs.getInt("start"));
+//				feat.addScore(rs.getFloat("score"));
+//				feat.addStop(rs.getInt("end"));
+//			}
+//			rs.close();
+//			conn.close();
+//			return feat;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
 
+//
+//	/**
+//	 * get the all the chromosomes names in a sqlite database
+//	 * @param dbName
+//	 * @return
+//	 */
+//	public static List<String> getChromosomesNames(String dbName) {
+//		List<String> chrNames = new ArrayList<String>();
+//		Connection conn;
+//		try {
+//			conn = getConnectionOnFileDirectory(dbName);
+//			Statement stat = conn.createStatement();
+//			String query = "SELECT name FROM sqlite_master where type='table'and name!='attributes';";
+//			ResultSet rs = getResultSet(stat, query);
+//			while (rs.next()) {
+//				chrNames.add(rs.getString(1));
+//			}
+//			rs.close();
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return chrNames;
+//	}
 
-	/**
-	 * get the all the chromosomes names in a sqlite database
-	 * @param dbName
-	 * @return
-	 */
-	public static List<String> getChromosomesNames(String dbName) {
-		List<String> chrNames = new ArrayList<String>();
-		Connection conn;
-		try {
-			conn = getConnectionOnFileDirectory(dbName);
-			Statement stat = conn.createStatement();
-			String query = "SELECT name FROM sqlite_master where type='table'and name!='attributes';";
-			ResultSet rs = getResultSet(stat, query);
-			while (rs.next()) {
-				chrNames.add(rs.getString(1));
-			}
-			rs.close();
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return chrNames;
-	}
-
-
-	/**
-	 * get the all the chromosomes names in a sqlite database
-	 * @param dbName
-	 * @return
-	 */
-	public static List<String> getChromosomesNames(Connection conn) {
-		List<String> chrNames = new ArrayList<String>();
-		try {
-			Statement stat = conn.createStatement();
-			String query = "SELECT name FROM sqlite_master where type='table'and name!='attributes';";
-			ResultSet rs = getResultSet(stat, query);
-			while (rs.next()) {
-				chrNames.add(rs.getString(1));
-			}
-			rs.close();
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return chrNames;
-	}
-
-
-
+//
+//	/**
+//	 * get the all the chromosomes names in a sqlite database
+//	 * @param dbName
+//	 * @return
+//	 */
+//	public static List<String> getChromosomesNames(Connection conn) {
+//		List<String> chrNames = new ArrayList<String>();
+//		try {
+//			Statement stat = conn.createStatement();
+//			String query = "SELECT name FROM sqlite_master where type='table'and name!='attributes';";
+//			ResultSet rs = getResultSet(stat, query);
+//			while (rs.next()) {
+//				chrNames.add(rs.getString(1));
+//			}
+//			rs.close();
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return chrNames;
+//	}
 
 
 
 
 
 
-	public static Map<String, Integer> getChromosomesAndLength(String dbName) {
-		Map<String,Integer> result = new HashMap<String,Integer>();
-		Connection conn;
-		try {
-			conn = getConnectionOnFileDirectory(dbName);
-			Statement stat = conn.createStatement();
-			String query = "SELECT * FROM chrNames;";
-			ResultSet rs = getResultSet(stat, query);
-			while (rs.next()) {
-				result.put(rs.getString("name"),
-						rs.getInt("length"));
-			}
-			rs.close();
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return result;
-	}
+
+
+//
+//	public static Map<String, Integer> getChromosomesAndLength(String dbName) {
+//		Map<String,Integer> result = new HashMap<String,Integer>();
+//		Connection conn;
+//		try {
+//			conn = getConnectionOnFileDirectory(dbName);
+//			Statement stat = conn.createStatement();
+//			String query = "SELECT * FROM chrNames;";
+//			ResultSet rs = getResultSet(stat, query);
+//			while (rs.next()) {
+//				result.put(rs.getString("name"),
+//						rs.getInt("length"));
+//			}
+//			rs.close();
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return result;
+//	}
 	public Map<String, Integer> getChromosomesAndLength() {
 		Map<String,Integer> result = new HashMap<String,Integer>();
 		try {
@@ -219,26 +220,26 @@ public class SQLiteAccess {
 		return result;
 	}
 
-	public static String getStringAttribute(String database, String key) {
-		String result = null;
-		Connection conn;
-		try {
-			conn = getConnectionOnFileDirectory(database);
-			Statement stat = conn.createStatement();
-			String query = "select * from attributes where key = ? ;";
-			PreparedStatement prep = conn.prepareStatement(query);
-			prep.setString(1, key);
-			prep.execute();
-			ResultSet rs = prep.getResultSet();//getResultSet(stat, prep);
-			while (rs.next()) {
-				result = rs.getString("value");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return result;
-	}
+//	public static String getStringAttribute(String database, String key) {
+//		String result = null;
+//		Connection conn;
+//		try {
+//			conn = getConnectionOnFileDirectory(database);
+//			Statement stat = conn.createStatement();
+//			String query = "select * from attributes where key = ? ;";
+//			PreparedStatement prep = conn.prepareStatement(query);
+//			prep.setString(1, key);
+//			prep.execute();
+//			ResultSet rs = prep.getResultSet();//getResultSet(stat, prep);
+//			while (rs.next()) {
+//				result = rs.getString("value");
+//			}
+//			rs.close();
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return result;
+//	}
 
 	public static boolean 	dbAlreadyCreated(String database) {
 		File test = new File(Configuration.getFilesDir()+"/"+database);
@@ -255,52 +256,50 @@ public class SQLiteAccess {
 	////// DAEMON //////
 	///////////////////
 
-	private static Connection calculatingScoreConnection;
-	/**
-	 * get a sqlite connection on the daemon directory in gdv
-	 * @return
-	 */
-	private static Connection getConnectionOnCalculatingScoresDaemonDirectory(){
-		if(null==calculatingScoreConnection){
-			try {
-				Class.forName("org.sqlite.JDBC").newInstance();
-				calculatingScoreConnection = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getCompute_scores_daemon());
-			} catch (InstantiationException e) {
-				Application.error(e);
-			} catch (IllegalAccessException e) {
-				Application.error(e);
-			} catch (ClassNotFoundException e) {
-				Application.error(e);
-			} catch (SQLException e) {
-				Application.error(e);
-			}
-		}
-		return calculatingScoreConnection;
-	}
-	private static Connection transformSQLiteConnection;
-	private static Connection getConnectionOnTransformToSQLiteDaemonDirectory() {
-		try {
-			Class.forName("org.sqlite.JDBC").newInstance();
-			transformSQLiteConnection = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getTransform_to_sqlite_daemon());
-		} catch (InstantiationException e) {
-			Application.error(e);
-		} catch (IllegalAccessException e) {
-			Application.error(e);
-		} catch (ClassNotFoundException e) {
-			Application.error(e);
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return transformSQLiteConnection;
-	}
+//	private static Connection calculatingScoreConnection;
+//	/**
+//	 * get a sqlite connection on the daemon directory in gdv
+//	 * @return
+//	 */
+//	private static Connection getConnectionOnCalculatingScoresDaemonDirectory(){
+//		if(null==calculatingScoreConnection){
+//			try {
+//				Class.forName("org.sqlite.JDBC").newInstance();
+//				calculatingScoreConnection = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getCompute_scores_daemon());
+//			} catch (InstantiationException e) {
+//				Application.error(e);
+//			} catch (IllegalAccessException e) {
+//				Application.error(e);
+//			} catch (ClassNotFoundException e) {
+//				Application.error(e);
+//			} catch (SQLException e) {
+//				Application.error(e);
+//			}
+//		}
+//		return calculatingScoreConnection;
+//	}
+//	private static Connection transformSQLiteConnection;
+//	private static Connection getConnectionOnTransformToSQLiteDaemonDirectory() {
+//		try {
+//			Class.forName("org.sqlite.JDBC").newInstance();
+//			transformSQLiteConnection = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getTransform_to_sqlite_daemon());
+//		} catch (InstantiationException e) {
+//			Application.error(e);
+//		} catch (IllegalAccessException e) {
+//			Application.error(e);
+//		} catch (ClassNotFoundException e) {
+//			Application.error(e);
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return transformSQLiteConnection;
+//	}
 
 
-	public static void writeNewJobCalculScores(String trackId, String indb,
+	public void writeNewJobCalculScores(String trackId, String indb,
 			String inPath, String outdb, String outPath,
 			String fast, String usermail) {
-		Connection conn;
 		try {
-			conn = getConnectionOnCalculatingScoresDaemonDirectory();
 			PreparedStatement stat = conn.prepareStatement("insert into jobs values (?,?,?,?,?,?,?); ");
 			stat.setString(1,trackId);
 			stat.setString(2,indb);
@@ -322,13 +321,11 @@ public class SQLiteAccess {
 
 
 
-	public static void writeNewJobTransform(String filePath,int trackId, String tmpDir,
+	public void writeNewJobTransform(String filePath,int trackId, String tmpDir,
 			String extension,String mail, String nrAssemblyId,int userId) {
 		Application.info("write new sqlite job : file("+filePath+"),trackId("+trackId+"),tmpDir("+tmpDir+"),mail("+mail+")," +
 				"nrAssembly("+nrAssemblyId+"),userId("+userId+")");
-		Connection conn;
 		try {
-			conn = getConnectionOnTransformToSQLiteDaemonDirectory();
 			PreparedStatement stat = conn.prepareStatement("insert into jobs values (?,?,?,?,?,?); ");
 			stat.setString(1, filePath);
 			stat.setInt(2, trackId);
@@ -353,23 +350,23 @@ public class SQLiteAccess {
 
 
 
-	//-> yeast
-	private static Connection getConnectionOnYeast() {
-		try {
-			Class.forName("org.sqlite.JDBC").newInstance();
-			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getDatabases_link_dir()+"/sgd_names.db");
-			return conn;
-		} catch (InstantiationException e) {
-			Application.error(e);
-		} catch (IllegalAccessException e) {
-			Application.error(e);
-		} catch (ClassNotFoundException e) {
-			Application.error(e);
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return null;
-	}
+//	//-> yeast
+//	private static Connection getConnectionOnYeast() {
+//		try {
+//			Class.forName("org.sqlite.JDBC").newInstance();
+//			Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+Configuration.getDatabases_link_dir()+"/sgd_names.db");
+//			return conn;
+//		} catch (InstantiationException e) {
+//			Application.error(e);
+//		} catch (IllegalAccessException e) {
+//			Application.error(e);
+//		} catch (ClassNotFoundException e) {
+//			Application.error(e);
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return null;
+//	}
 
 
 	//	public static String getSynonyms(String name) {
@@ -396,26 +393,26 @@ public class SQLiteAccess {
 
 
 
-	public static Map<String,String> getYeastHash() {
-		Application.debug("get map of : yeast");
-		Connection conn;
-		try {
-			Map<String,String> map = new HashMap<String, String>();
-			conn = getConnectionOnYeast();
-			Statement stat = conn.createStatement();
-			stat.execute("select * from names");
-			ResultSet rs = stat.getResultSet();
-			while (rs.next()) {
-				map.put(rs.getString(1), rs.getString(2));
-			}
-			rs.close();
-			return map;
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return null;
-
-	}
+//	public static Map<String,String> getYeastHash() {
+//		Application.debug("get map of : yeast");
+//		Connection conn;
+//		try {
+//			Map<String,String> map = new HashMap<String, String>();
+//			conn = getConnectionOnYeast();
+//			Statement stat = conn.createStatement();
+//			stat.execute("select * from names");
+//			ResultSet rs = stat.getResultSet();
+//			while (rs.next()) {
+//				map.put(rs.getString(1), rs.getString(2));
+//			}
+//			rs.close();
+//			return map;
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return null;
+//
+//	}
 
 	/**
 	 * get the scores for the html canvas 
@@ -448,12 +445,9 @@ public class SQLiteAccess {
 	//
 	//	}
 
-	public static String getScoresForDatabaseByIdList(String db, String[] idList) {
-		//result+="$"+id+"="+SQLiteAccess.getScoresForDatabase(params.getDb(),id);
+	public String getScoresForDatabaseByIdList(String[] idList) {
 		String result = "";
-		Connection conn;
 		try {
-			conn = getConnectionOnCalculatedSQLite(db);
 			PreparedStatement stat = conn.prepareStatement("select pos,score from sc where number= ? order by pos asc");
 			for(String img:idList){
 				boolean isData = false;
@@ -483,30 +477,30 @@ public class SQLiteAccess {
 
 
 
-	public static ResultSet getValuesForChromosome(
-			Connection conn, String chr) {
-		try {
-			PreparedStatement prep = conn.prepareStatement("select * from "+chr+" ;");
-			return prep.executeQuery();
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return null;
-	}
+//	public static ResultSet getValuesForChromosome(
+//			Connection conn, String chr) {
+//		try {
+//			PreparedStatement prep = conn.prepareStatement("select * from "+chr+" ;");
+//			return prep.executeQuery();
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return null;
+//	}
 
-	public static int getFeatureCountForChromosome(Connection conn, String chr) {
-		try {
-			PreparedStatement prep = conn.prepareStatement("select count(*) from "+chr+" ;");
-			ResultSet r = prep.executeQuery();
-			if(r.next()){
-				return r.getInt(1);	
-			}
-
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-		return 0;
-	}
+//	public static int getFeatureCountForChromosome(Connection conn, String chr) {
+//		try {
+//			PreparedStatement prep = conn.prepareStatement("select count(*) from "+chr+" ;");
+//			ResultSet r = prep.executeQuery();
+//			if(r.next()){
+//				return r.getInt(1);	
+//			}
+//
+//		} catch (SQLException e) {
+//			Application.error(e);
+//		}
+//		return 0;
+//	}
 
 
 	////////////////////////

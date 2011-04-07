@@ -4,13 +4,8 @@
 </head>
 <body>
   <wicket:extend>
-    <!-- LOGOUT -->
-    <form  wicket:id="logout_form">
-      <input class="c_b" type="submit" wicket:id="logout" value="Logout"/>
-    </form>
-    <!-- USER KEY -->
-    <div class="bh"  wicket:id="user_key_label"></div>
-    <br/><div class="sh"  wicket:id="user_key"></div><br/>
+
+   
     <!-- CREATE GROUP -->
     <div class="bh"  wicket:id="create_header"></div>
     <form  wicket:id="form">
@@ -48,8 +43,17 @@
       </div>
     </form>
     
+
+     <!-- USER KEY -->
+    <div class="bh"  wicket:id="user_key_label"></div>
+    <br/><div class="sh"  wicket:id="user_key"></div><br/>
+    <p>This is the key you need to access GDV via the 
+      <a href="https://github.com/bbcf/gdv/tree/master/post_to_gdv">POST API</a>
+    </p>
+
     <div wicket:id="modal_add_user"></div>
-    
+   
+ 
   </wicket:extend>
 </body>
 </html>

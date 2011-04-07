@@ -53,8 +53,8 @@ public final class Configuration{
 
 	private static String[] buildJSFile() {
 		String[] js = new String[22];
-		js[0]=instance.jbrowse_javascript_url+"/js/gdv_link.js";
-		js[1]=instance.jbrowse_javascript_url+"/js/gdv_canvas.js";
+		js[0]=instance.jbrowse_javascript_url+"/js/gdv.js";
+		js[1]=instance.jbrowse_javascript_url+"/js/Canvas.js";
 		js[2]=instance.jbrowse_javascript_url+"/js/Browser.js";
 		js[3]=instance.jbrowse_javascript_url+"/js/Track.js";
 		js[4]=instance.jbrowse_javascript_url+"/js/LinkPanel.js";
@@ -90,6 +90,8 @@ public final class Configuration{
 		css[0]=instance.gdv_public_url+"/css/gdv_style.css";
 		return css;
 	}
+	
+	
 	public static final String URL_LINK_TEMPLATE = "\" onClick=\"javascript:showLinkPanel('{name}'); return false\";";
 
 	public final static Class[] admin_pages = {AddSequencePage.class,AdminPage.class,ImportUCSCPage.class};
