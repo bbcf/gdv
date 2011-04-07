@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="conversion">
+<project basedir="." default="jar" name="conversion">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
+    <property name="lib.dir" value="lib"/>
     <path id="conversion.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/bbcf_parser.jar"/>
@@ -17,8 +18,24 @@
 	<pathelement location="lib/sam-1.38.jar"/>
 	<pathelement location="lib/sqlite-jdbc-3.7.2.jar"/>
     </path>
+
+    <!-- download dependencies -->
+    <target name="dl" depends="init">
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/sqlite-jdbc-3.7.2.jar" dest="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/bbcf_parser.jar" dest="${lib.dir}/bbcf_parser.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/json.jar" dest="${lib.dir}/json.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/biojava.jar" dest="${lib.dir}/biojava.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/bytecode.jar" dest="${lib.dir}/bytecode.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/snakeyaml-1.7rc1.jar" dest="${lib.dir}/snakeyaml-1.7rc1.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/bbcf_access.jar" dest="${lib.dir}/bbcf_access.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/bbcf_sqlite.jar" dest="${lib.dir}/bbcf_sqlite.jar"/>
+    <get src="http://salt.epfl.ch/BED/Yohan/javalib/sam-1.38.jar" dest="${lib.dir}/sam-1.38.jar"/>
+  </target>
+     
     <target name="init">
         <mkdir dir="bin"/>
+	<mkdir dir="lib"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
                 <exclude name="**/*.launch"/>
@@ -28,11 +45,12 @@
     </target>
     <target name="clean">
         <delete dir="bin"/>
+	<delete dir="lib"/>
 	<delete file="transform_to_sqlite.jar"/>
     </target>
     <target depends="clean" name="cleanall"/>
    
-    <target depends="init" name="compile">
+    <target depends="init,dl" name="compile">
       <echo message="${ant.project.name}: ${ant.file}"/>
       <javac includeantruntime="true" debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
         <src path="src"/>
