@@ -32,7 +32,8 @@ It’s goal is to provide biologists and bio-analysts a fast, browsable and editab
 
 (more information on these files can be found on the *.example files)
 
-4) run the script of first installation
+4) run the script of first installation 
+	(you must have edit the files at step 3)
 	
 	$./build_scripts/first_install.sh $GDV_HOME $INSTALL_PATH (see notes)
 

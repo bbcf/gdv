@@ -1,4 +1,10 @@
 #/bin/sh
+function isok {
+    if [ $1 != 0 ]; then
+	echo "must exit due to error"
+	exit $1
+    fi
+}
 
 CUR=$PWD
 if [ -z $1 ]; then
@@ -37,7 +43,8 @@ echo "password : ***** "
 
 echo "### BUILD DATABASE ###"
 createdb $GDV_DB
+isok $?
 psql $GDV_DB < $SQL_DB
-
+isok $?
 echo "DONE"
-echo "WARNING : DATABASE NOT PROTECTED FOR THE MOMENT"
+echo "WARNING : DATABASE NOT PROTECTED"
