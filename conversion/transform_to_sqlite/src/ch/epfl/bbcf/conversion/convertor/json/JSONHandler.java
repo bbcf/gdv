@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.exception.JSONConversionException;
-import ch.epfl.bbcf.sqlite.SQLiteAccess;
 
 
 /**

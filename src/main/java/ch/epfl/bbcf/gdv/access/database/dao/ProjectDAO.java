@@ -313,10 +313,14 @@ public class ProjectDAO extends DAO<Project>{
 				"inner join usertoProject as t2 on t1.id = t2.project_id " +
 				"where t2.user_id = ? " +
 				"union " +
-				"select t3.* from projects as t3 " +
-				"inner join grouptoproject as t4 on t3.id = t4.project_id " +
-				"inner join userToGroup as t5 on t4.group_id = t5.group_id " +
-				"where t5.user_mail = ?  ;";	
+				"select * from projects as t1 " +
+				"inner join grouptoproject as t2 on t1.id=t2.project_id " +
+				"inner join groups as t3 on t3.id = t2.group_id " +
+				"where t3.owner = ? "; 
+//				"select t3.* from projects as t3 " +
+//				"inner join grouptoproject as t4 on t3.id = t4.project_id " +
+//				"inner join userToGroup as t5 on t4.group_id = t5.group_id " +
+//				"where t5.user_mail = ?  ;";	
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1, user.getId());

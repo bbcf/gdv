@@ -7,12 +7,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
+import ch.epfl.bbcf.bbcfutils.parser.Handler;
+import ch.epfl.bbcf.bbcfutils.parser.feature.Feature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.Track;
 import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.exception.JSONConversionException;
 import ch.epfl.bbcf.conversion.feature.JSONFeature;
-import ch.epfl.bbcf.feature.Feature;
-import ch.epfl.bbcf.feature.Track;
-import ch.epfl.bbcf.parser.Handler;
 import ch.epfl.bbcf.utility.ChromosomeNameHandler;
 
 public class Convertor implements Handler{
@@ -139,7 +139,7 @@ public class Convertor implements Handler{
 		}
 		if(doJSON){
 			try {
-				JSONFeature feat = new JSONFeature(feature);
+				JSONFeature feat= new JSONFeature(feature);
 				json_handler.newFeature(feat);
 			} catch (JSONException e) {
 				logger.error(e);

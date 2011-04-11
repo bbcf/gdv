@@ -11,10 +11,9 @@ import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.access.GenRepAccess;
+import ch.epfl.bbcf.bbcfutils.access.genrep.GenRepAccess;
+import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.conf.Configuration;
-import ch.epfl.bbcf.sqlite.SQLiteAccess;
-
 
 
 
@@ -34,15 +33,15 @@ public class Daemon {
 		if(Configuration.init()){
 			if(initialization()){
 				logger.info("transform to sqlite daemon started");
-				try {
-					if(!GenRepAccess.testConnection()){
-						logger.error("no connection on Jbrowsor or genrep");
-						shutdownHook();
-					}
-				} catch (IOException e) {
-					logger.error(e.getMessage()+" - no connection on Jbrowsor or genrep");
-					shutdownHook();
-				}
+//				try {
+//					if(!GenRepAccess.testConnection()){
+//						logger.error("no connection on Jbrowsor or genrep");
+//						shutdownHook();
+//					}
+//				} catch (IOException e) {
+//					logger.error(e.getMessage()+" - no connection on Jbrowsor or genrep");
+//					shutdownHook();
+//				}
 
 
 				Thread runtimeHookThread = new Thread() {
