@@ -25,6 +25,8 @@ WARNING : ensure that you have ANT and MAVEN installed (see DEPENDENCIES section
 
 ($GDV_HOME must be the full path where gdv project is located . It's the path where you cloned the project.)
 
+NOTE : this script is just an helper, you must ensure that every step is ok. especially the last one, to build the database.
+
 5) make the war archive to deploy it on TOMCAT
 
 	$./build_scripts/archive_gdv.sh $GDV_HOME

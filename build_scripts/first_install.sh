@@ -27,6 +27,7 @@ echo "##################################"
 echo "### WRITING CONFIGURATION FILE ###"
 echo "##################################"
 echo""
+cd $GDV_HOME/build_scripts
 ant build
 mv gdv.yaml $GDV_HOME/src/main/webapp/META-INF/gdv.yaml
 isok $?
@@ -65,7 +66,7 @@ git clone git://github.com/bbcf/jbrowse.git
 cd jbrowse
 isok $?
 #switch on the right branch
-git checkout gdv
+git checkout origin/gdv -b gdv
 isok $?
 #copy static files
 cp -r css $INSTALL_PATH/$PUBLIC_DIR/$JBROWSE_DIR
@@ -92,13 +93,7 @@ cp -r conversion/compute_sqlite_scores $INSTALL_PATH
 cp -r conversion/transform_to_sqlite $INSTALL_PATH
 isok $?
 
-#install db
-echo "###########################"
-echo "### INSTALLING DATABASE ###"
-echo "###########################"
-echo""
-sh build_scripts/install_database.sh $GDV_HOME
-isok $?
+
 #install project
 echo "#########################"
 echo "### ARCHIVING PROJECT ###"
@@ -118,6 +113,14 @@ echo "mvn clean package" >> build_scripts/archive_project.sh
 echo "cd \$CUR" >> build_scripts/archive_project.sh
 isok $?
 
+
+#install db
+echo "###########################"
+echo "### INSTALLING DATABASE ###"
+echo "###########################"
+echo""
+sh build_scripts/install_database.sh $GDV_HOME
+isok $?
 
 echo "############"
 echo "### DONE ###"
