@@ -11,20 +11,40 @@ if [ -z $1 ]; then
     exit 1
 fi
 GDV_HOME=$1
-if [ -z $2 ]; then
-    echo 'INSTALL_PATH path is missing : provide the full path where you want to install GDV directories'
+
+BUILD_FILE=$GDV_HOME/build_scripts/gdv.properties
+
+INSTALL_PATH=`awk 'BEGIN { RS = "\n" }; 
+{if($1 == "gdv.working.directory") print $3;}' $BUILD_FILE`
+echo $INSTALL_PATH
+
+if [ -z $INSTALL_PATH ]; then
+    echo '$BUILD_FILE not well configurated : missing gdv.working.directory param'
     exit 1
 fi
-INSTALL_PATH=$2
-INSTALL_PATH=$2
 
-mkdir $INSTALL_PATH
-cd $INSTALL_PATH
+echo "##################################"
+echo "### WRITING CONFIGURATION FILE ###"
+echo "##################################"
+echo""
+ant build
+mv gdv.yaml $GDV_HOME/src/main/webapp/META-INF/gdv.yaml
 isok $?
+mv web.xml $GDV_HOME/src/main/webapp/WEB-INF/web.xml
+isok $?
+mv pom.xml $GDV_HOME/pom.xml
+isok $?
+
+
 echo "#####################"
 echo "### BUILDING TREE ###"
 echo "#####################"
 echo ""
+
+mkdir $INSTALL_PATH
+cd $INSTALL_PATH
+isok $?
+
 #building directories
 PUBLIC_DIR="public"
 JBROWSE_DIR="jbrowse"
@@ -55,6 +75,10 @@ cp -r img  $INSTALL_PATH/$PUBLIC_DIR/$JBROWSE_DIR
 cp -r $GDV_HOME/src/main/img $PUBLIC_DIR
 cp -r $GDV_HOME/src/main/css $PUBLIC_DIR
 isok $?
+
+
+
+
 
 echo "#########################"
 echo "### INSTALLING DAMONS ###"
