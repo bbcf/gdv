@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.wicket.Session;
+
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;

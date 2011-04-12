@@ -1,5 +1,7 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import org.apache.wicket.Session;
+
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
 import ch.epfl.bbcf.gdv.config.UserSession;

@@ -6,7 +6,6 @@ import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
@@ -22,9 +21,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
-import org.apache.wicket.Request;
 import org.apache.wicket.Session;
+
 
 
 
@@ -42,6 +42,10 @@ public class Connect implements Connection{
 
 	public static final String DRIVER = "org.postgresql.Driver";
 	public static final String	URL = "jdbc:postgresql://127.0.0.1/"+Configuration.getPsql_db();
+
+	private static final int connectionPoolSize = 20;
+	private static String[] connectionPool;
+	private static int connectionPoolIndex = -1;
 	/**
 	 * The next serial number to be assigned
 	 */
@@ -56,25 +60,24 @@ public class Connect implements Connection{
 	private Connection connection;
 	private UserSession session;
 
-	private  Connect(UserSession session,String driver, String url, String user, String passwd, String base){
+	private  Connect(Session session,String driver, String url, String user, String passwd, String base){
 		try {
 			Class.forName(driver).newInstance();
 		}catch (ClassNotFoundException e){
-			Application.error("Error loading JDBC driver: " + e, session.getUserId());
+			Application.error("Error loading JDBC driver: " + e);
 			return;
 		} catch (InstantiationException e) {
-			Application.error("Error loading JDBC driver: " + e, session.getUserId());
+			Application.error("Error loading JDBC driver: " + e);
 		} catch (IllegalAccessException e) {
-			Application.error("Error loading JDBC driver: " + e, session.getUserId());
+			Application.error("Error loading JDBC driver: " + e);
 		}
 		try {
 			connection = DriverManager.getConnection(url, user, passwd);
 			this.setConnected(true);
 		} catch (SQLException e) {
-			Application.error("Error getting the connection " + e, session.getUserId());
+			Application.error("Error getting the connection " + e);
 			return;
 		}
-		this.setSession(session);
 	}	
 
 	//	public void finalize(){
@@ -85,7 +88,6 @@ public class Connect implements Connection{
 	//	}
 
 	public static Connect getConnection() {
-		Application.debug("getConnection");
 		String driver = DRIVER;
 		String	url = URL;
 		String user = Configuration.getPsql_user();
@@ -93,8 +95,16 @@ public class Connect implements Connection{
 		String base = Configuration.getPsql_db();
 		return Connect.getConnection(null,driver,url,user,passwd,base);
 	}
+	
+//	public static Connect getConnection(String toto) {
+//		String driver = DRIVER;
+//		String	url = URL;
+//		String user = Configuration.getPsql_user();
+//		String passwd = Configuration.getPsql_pwd();
+//		String base = Configuration.getPsql_db();
+//		return Connect.getConnection(nukl,driver,url,user,passwd,base);
+//	}
 	public static Connect getConnection(UserSession session){
-		Application.debug("getConnection "+session.getId()+"  "+session.getUserId());
 		String driver = DRIVER;
 		String	url = URL;
 		String user = Configuration.getPsql_user();
@@ -104,75 +114,82 @@ public class Connect implements Connection{
 
 	}
 
-	private static Connect getConnection(UserSession session,String driver, String url,
+	private static Connect getConnection(Session session,String driver, String url,
 			String user, String passwd, String base) {
 		String identifier = null;
 		if(null==databasePool){
 			synchronized(Connect.class){
 				databasePool = new HashMap<String, Connect>();
-				Application.debug(" new database pool "+databasePool);
 			}
 		}
+		if(null==connectionPool){
+			synchronized(Connect.class){
+				connectionPool = new String[connectionPoolSize];
+			}
+		}
+		if(-1==connectionPoolIndex){
+			synchronized(Connect.class){
+				connectionPoolIndex = 0;
+			}
+		}
+
 		if(null==session || session.getId()==null){
-			identifier = "noLogged";
+			identifier = UUID.randomUUID().toString();
+			addConnectionToPool(identifier);
 		}
 		else {
 			identifier = session.getId();
-			Application.debug("id "+identifier);
 		}
 		Connect connection  = 
 			Connect.databasePool.get(identifier);
-		
+
 		String key = user + base;
 		if (connection != null) {
 			instance = connection;
-			Application.debug("connection!=null "+instance);
 		} else {
 			synchronized(Connect.class){
 				instance = new Connect(session,driver,url,user,passwd,base);
-				Application.debug("XXXXXXXXXXXX   new connection "+instance);
 			}
 			Connect.databasePool.put(identifier, instance);
-			Application.debug("database pool "+instance);
 		}
 		return instance;
 	}
 
-	
+
+	private static void addConnectionToPool(String identifier) {
+		if(connectionPoolIndex>=connectionPoolSize){
+			connectionPoolIndex=0;
+		} 
+		String oldId = connectionPool[connectionPoolIndex];
+		if(null!=oldId){
+			removeConnection(oldId);
+		}
+		connectionPool[connectionPoolIndex]=identifier;
+		connectionPoolIndex++;
+	}
+
 	public static void removeConnection(String sessionId) {
-		Application.debug("REMOVING CONNECTION "+sessionId);
 		if(Connect.databasePool.containsKey(sessionId)){
 			Connect conn = Connect.databasePool.get(sessionId);
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				Application.error(e);
+				Application.error("removeConnection "+e);
 			}
 			Connect.databasePool.remove(sessionId);
-			Application.debug("removing connection : "+sessionId);
 		}
 
 	}
-	
+
 	public static void removeConnection(UserSession userSession) {
-		Application.debug("REMOVING CONNECTION "+userSession.getId());
 		if(Connect.databasePool.containsKey(userSession.getId())){
 			Connect conn = Connect.databasePool.get(userSession.getId());
 			try {
 				conn.close();
 			} catch (SQLException e) {
-				Application.error(e);
+				Application.error("removeConnection "+e);
 			}
 			Connect.databasePool.remove(userSession.getId());
-			Application.debug("removing connection : "+userSession.getId());
-			//			if(Connect.databasePool.isEmpty()){
-			//				try {
-			//					Driver d = DriverManager.getDriver(URL);
-			//					DriverManager.deregisterDriver(d);
-			//				} catch (SQLException e) {
-			//					Application.error(e);
-			//				}
-			//			}
 		}
 
 	}
@@ -187,7 +204,7 @@ public class Connect implements Connection{
 						conn.close();
 					}
 				} catch (SQLException e) {
-					Application.error(e);
+					Application.error("removeAllConnection "+e);
 				}
 			}
 			Connect.databasePool = new HashMap<String, Connect>();
@@ -365,18 +382,15 @@ public class Connect implements Connection{
 	 * @throws SQLException
 	 */
 	public void executeUpdate(PreparedStatement statement) throws SQLException {
-		//Application.debug(statement.toString());
 		connection.setAutoCommit(false);
 		statement.executeUpdate();
-		//Application.debug(statement.getUpdateCount());
 		if((statement.getUpdateCount()!=-1)){
 			connection.commit();
-			connection.setAutoCommit(true);
+			connection.setAutoCommit(false);
 		}
 		else {
 			connection.rollback();
-			connection.setAutoCommit(true);
-			Application.error("ROLLBACK");
+			connection.setAutoCommit(false);
 		}
 	}
 
@@ -472,7 +486,7 @@ public class Connect implements Connection{
 		try {
 			this.setAutoCommit(false);
 		} catch (SQLException e) {
-			Application.error(e, session.getUserId());
+			Application.error("startTransaction "+e);
 		}
 	}
 
@@ -485,7 +499,7 @@ public class Connect implements Connection{
 				this.rollback();
 			}
 		} catch (SQLException e) {
-			Application.error(e, session.getUserId());
+			Application.error("endTransaction "+e);
 		}
 	}
 
@@ -504,6 +518,8 @@ public class Connect implements Connection{
 	}
 
 	
+
+
 
 
 

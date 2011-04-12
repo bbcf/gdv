@@ -441,6 +441,8 @@ public class ProjectPage extends BasePage{
 								TrackControl tc = new TrackControl((UserSession)getSession());
 								tc.removeTrackFromUser(track.getTrackInstance());
 								dtp.detach();
+								target.addComponent(trackContainer);
+								
 							}
 						};
 						link.add(new SimpleAttributeModifier("title","delete track"));

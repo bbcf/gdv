@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.zip.ZipException;
 
+import org.apache.wicket.Request;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;

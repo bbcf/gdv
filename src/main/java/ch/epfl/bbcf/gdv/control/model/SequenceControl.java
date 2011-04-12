@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.json.JSONArray;
 import org.json.JSONException;

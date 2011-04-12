@@ -313,18 +313,20 @@ public class ProjectDAO extends DAO<Project>{
 				"inner join usertoProject as t2 on t1.id = t2.project_id " +
 				"where t2.user_id = ? " +
 				"union " +
-				"select * from projects as t1 " +
-				"inner join grouptoproject as t2 on t1.id=t2.project_id " +
-				"inner join groups as t3 on t3.id = t2.group_id " +
-				"where t3.owner = ? "; 
-//				"select t3.* from projects as t3 " +
-//				"inner join grouptoproject as t4 on t3.id = t4.project_id " +
-//				"inner join userToGroup as t5 on t4.group_id = t5.group_id " +
-//				"where t5.user_mail = ?  ;";	
+				"select t3.* from projects as t3 " +
+				"inner join grouptoproject as t4 on t3.id=t4.project_id " +
+				"inner join groups as t5 on t5.id = t4.group_id " +
+				"where t5.owner = ? "+
+				"union "+
+				"select t6.* from projects as t6 " +
+				"inner join grouptoproject as t7 on t6.id = t7.project_id " +
+				"inner join userToGroup as t8 on t7.group_id = t8.group_id " +
+				"where t8.user_mail = ?  ;";	
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1, user.getId());
-				statement.setString(2, user.getMail());
+				statement.setInt(2, user.getId());
+				statement.setString(3, user.getMail());
 				ResultSet resultSet = this.executeQuery(statement);
 				projects = getProjects(resultSet);
 				this.endQuery(true);
