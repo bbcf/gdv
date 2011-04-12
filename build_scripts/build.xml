@@ -221,7 +221,7 @@ psql_pwd : ${psql.pwd}
 	<dependency>
 	  <groupId>postgresql</groupId>
 	  <artifactId>postgresql</artifactId>
-	  <version>7.4.1</version>
+	  <version>9.0-801.jdbc4</version>
 	  <scope>compile</scope>
 	</dependency>
         
