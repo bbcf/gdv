@@ -3,7 +3,8 @@ package ch.epfl.bbcf.conversion.feature;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.bbcf.parser.feature.Feature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.Feature;
+
 
 
 public class GFFFeature implements Feature{

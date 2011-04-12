@@ -345,14 +345,14 @@ psql_pwd : ${psql.pwd}
 
 
 
-	<!-- genrep -->
+	<!-- bbcfutils -->
 	<!-- run 
-	mvn install:install-file -DgroupId=ch.epfl -DartifactId=genrepaccess -Dversion=1 -Dpackaging=jar -Dfile=resources/genrepaccess.jar 
+	mvn install:install-file -DgroupId=ch.epfl -DartifactId=bbcfutils -Dversion=1 -Dpackaging=jar -Dfile=resources/bbcfutils.jar 
 	  to compile
 	  -->
 	<dependency>
           <groupId>ch.epfl</groupId>
-          <artifactId>genrepaccess</artifactId>
+          <artifactId>bbcfutils</artifactId>
           <version>1</version>
           <scope>compile</scope>
         </dependency>

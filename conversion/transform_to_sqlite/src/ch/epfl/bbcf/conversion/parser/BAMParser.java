@@ -7,12 +7,12 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import ch.epfl.bbcf.bbcfutils.parser.Handler;
+import ch.epfl.bbcf.bbcfutils.parser.Parser;
+import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
+import ch.epfl.bbcf.bbcfutils.parser.feature.BAMFeature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.Track;
 import ch.epfl.bbcf.conversion.daemon.Launcher;
-import ch.epfl.bbcf.exception.ParsingException;
-import ch.epfl.bbcf.feature.BAMFeature;
-import ch.epfl.bbcf.feature.Track;
-import ch.epfl.bbcf.parser.Handler;
-import ch.epfl.bbcf.parser.Parser;
 
 import net.sf.samtools.SAMFileHeader;
 import net.sf.samtools.SAMFileReader;

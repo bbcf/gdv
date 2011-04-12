@@ -1,8 +1,9 @@
 package ch.epfl.bbcf.conversion.feature;
 
-import ch.epfl.bbcf.feature.BAMFeature;
-import ch.epfl.bbcf.feature.BEDFeature;
-import ch.epfl.bbcf.feature.Feature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.BAMFeature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.BEDFeature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.Feature;
+
 
 
 public class JSONFeature {

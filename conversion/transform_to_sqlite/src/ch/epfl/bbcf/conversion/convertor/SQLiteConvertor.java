@@ -9,16 +9,17 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
-import ch.epfl.bbcf.access.GenRepAccess;
+import ch.epfl.bbcf.bbcfutils.access.genrep.GenRepAccess;
+import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Chromosome;
+import ch.epfl.bbcf.bbcfutils.parser.feature.BAMFeature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.BEDFeature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.Feature;
+import ch.epfl.bbcf.bbcfutils.parser.feature.Track;
+import ch.epfl.bbcf.bbcfutils.parser.feature.WIGFeature;
+import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.convertor.Convertor.FileExtension;
 import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.feature.GFFFeature;
-import ch.epfl.bbcf.feature.BAMFeature;
-import ch.epfl.bbcf.feature.BEDFeature;
-import ch.epfl.bbcf.feature.Feature;
-import ch.epfl.bbcf.feature.Track;
-import ch.epfl.bbcf.feature.WIGFeature;
-import ch.epfl.bbcf.sqlite.SQLiteAccess;
 
 /**
  * convenient class which will parse a file
@@ -32,16 +33,19 @@ public class SQLiteConvertor{
 	private Track track;
 	private FileExtension extension;
 	private String assemblyId;
+	private Convertor convertor;
 
-	public SQLiteConvertor(String inputPath, FileExtension extension,String assemblyId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public SQLiteConvertor(Convertor parent,String inputPath, FileExtension extension,String assemblyId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		handler = SQLiteAccess.getConnectionWithDatabase(inputPath);
 		this.extension = extension;
 		this.assemblyId = assemblyId;
+		this.setConvertor(parent);
 	}
-	public SQLiteConvertor(String inputPath, FileExtension extension, int limitQueriesSize,String assemblyId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+	public SQLiteConvertor(Convertor parent,String inputPath, FileExtension extension, int limitQueriesSize,String assemblyId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		handler = SQLiteAccess.getConnectionWithDatabase(inputPath,limitQueriesSize);
 		this.extension = extension;
 		this.assemblyId = assemblyId;
+		this.setConvertor(parent);
 	}
 
 
@@ -66,7 +70,6 @@ public class SQLiteConvertor{
 
 
 	public void newFeature(Feature feature) throws SQLException {
-		
 		switch(extension){
 		case WIG:
 			WIGFeature wig_feat = (WIGFeature)feature;
@@ -113,37 +116,44 @@ public class SQLiteConvertor{
 	}
 
 	public void end() throws SQLException {
+
 		handler.commit();
 		List<String> chrNames = handler.getChromosomesNames();
-		GenRepAccess ga = null;
-		try {
-			ga = new GenRepAccess(assemblyId);
-		} catch (JSONException e) {
-			for (StackTraceElement el : e.getStackTrace()){
-				log.error(el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
-			}
-			log.error(e);
-		} catch (IOException e) {
-			for (StackTraceElement el : e.getStackTrace()){
-				log.error("--"+el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
-			}
-			log.error(e);
-		}
+		List<Chromosome> chromosomes = getConvertor().getChromosomes();
+		//GenRepAccess ga = null;
+		//		try {
+		//			ga = new GenRepAccess(assemblyId);
+		//		} catch (JSONException e) {
+		//			for (StackTraceElement el : e.getStackTrace()){
+		//				log.error(el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
+		//			}
+		//			log.error(e);
+		//		} catch (IOException e) {
+		//			for (StackTraceElement el : e.getStackTrace()){
+		//				log.error("--"+el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
+		//			}
+		//			log.error(e);
+		//		}
 		Map<String,Integer> map = new HashMap<String, Integer>();
 		for(String chr : chrNames){
 			int length = 0;
-			try {
-				if(null!=ga){
-					length = ga.getChrLength(chr);
-				} else {
-					log.error("no connection to Genrep");
+			//try {
+			for(Chromosome chromosome : chromosomes){
+				if(chromosome.getName().equalsIgnoreCase(chr)){
+					length=chromosome.getLength();
 				}
-			} catch (JSONException e) {
-				for (StackTraceElement el : e.getStackTrace()){
-					log.error("++"+el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
-				}
-				log.error(e);
 			}
+			//				if(null!=ga){
+			//					length = ga.getChrLength(chr);
+			//				} else {
+			//					log.error("no connection to Genrep");
+			//				}
+			//			} catch (JSONException e) {
+			//				for (StackTraceElement el : e.getStackTrace()){
+			//					log.error("++"+el.getLineNumber()+" "+el.getMethodName()+" "+el.getClassName());
+			//				}
+			//				log.error(e);
+			//}
 			if(length!=0){
 				map.put(chr,length);
 			}
@@ -171,5 +181,11 @@ public class SQLiteConvertor{
 	}
 	public Track getTrack() {
 		return track;
+	}
+	public void setConvertor(Convertor convertor) {
+		this.convertor = convertor;
+	}
+	public Convertor getConvertor() {
+		return convertor;
 	}
 }

@@ -18,14 +18,14 @@ import org.biojava.bio.program.gff.IgnoreRecordException;
 import org.biojava.bio.seq.StrandedFeature.Strand;
 import org.biojava.utils.ParserException;
 
+import ch.epfl.bbcf.bbcfutils.parser.Handler;
+import ch.epfl.bbcf.bbcfutils.parser.Parser;
+import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
 import ch.epfl.bbcf.conversion.convertor.Convertor;
 import ch.epfl.bbcf.conversion.convertor.JBrowseConvertor;
 import ch.epfl.bbcf.conversion.convertor.json.GFFCreator;
 import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.feature.GFFFeature;
-import ch.epfl.bbcf.exception.ParsingException;
-import ch.epfl.bbcf.parser.Handler;
-import ch.epfl.bbcf.parser.Parser;
 
 
 /**

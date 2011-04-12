@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import ch.epfl.bbcf.bbcfutils.parser.feature.Track;
 import ch.epfl.bbcf.conversion.convertor.Convertor.FileExtension;
 import ch.epfl.bbcf.conversion.convertor.json.BAMCreator;
 import ch.epfl.bbcf.conversion.convertor.json.BasicCreator;
@@ -21,7 +22,6 @@ import ch.epfl.bbcf.conversion.convertor.json.NCList;
 import ch.epfl.bbcf.conversion.daemon.Launcher;
 import ch.epfl.bbcf.conversion.exception.JSONConversionException;
 import ch.epfl.bbcf.conversion.feature.JSONFeature;
-import ch.epfl.bbcf.feature.Track;
 
 public class JBrowseConvertor {
 

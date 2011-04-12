@@ -15,6 +15,14 @@ import org.json.JSONException;
 
 import ch.epfl.bbcf.bbcfutils.access.gdv.RemoteAccess;
 import ch.epfl.bbcf.bbcfutils.access.genrep.GenRepAccess;
+import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
+import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Assembly;
+import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Chromosome;
+import ch.epfl.bbcf.bbcfutils.parser.BEDParser;
+import ch.epfl.bbcf.bbcfutils.parser.Parser;
+import ch.epfl.bbcf.bbcfutils.parser.Parser.Processing;
+import ch.epfl.bbcf.bbcfutils.parser.WIGParser;
+import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.conversion.conf.Configuration.Extension;
 import ch.epfl.bbcf.conversion.convertor.Convertor;
@@ -22,6 +30,7 @@ import ch.epfl.bbcf.conversion.convertor.Convertor.FileExtension;
 import ch.epfl.bbcf.conversion.exception.JSONConversionException;
 import ch.epfl.bbcf.conversion.parser.BAMParser;
 import ch.epfl.bbcf.conversion.parser.GFFParser;
+import ch.epfl.bbcf.utility.GAccess;
 import ch.epfl.bbcf.utility.ProcessLauncher;
 import ch.epfl.bbcf.utility.ProcessLauncherError;
 import ch.epfl.bbcf.utility.file.FileManagement;
@@ -128,16 +137,17 @@ public class Launcher extends Thread{
 			return;
 		}
 		//////////   GET LIST OF CHR TO PROCESS   //////////
-		List<String> chrList = new ArrayList<String>();
+		List<Chromosome> chromosomes=null;
 		try {
-			chrList = GenRepAccess.getChromosomesListByAssemblyId(nrAssemblyId);
-		} catch (JSONException e2) {
-			logger.error(e2);
+			Assembly assembly = GAccess.getAssemblyFromNrAssemblyId(nrAssemblyId);
+			chromosomes  = assembly.getChromosomes();
 		} catch (IOException e2) {
 			logger.error(e2);
+		} catch (MethodNotFoundException e) {
+			logger.error(e);
 		}
-		logger.debug(this.getId()+" chrlist from generep : "+chrList.toString());
-		if(chrList.isEmpty()){
+		
+		if(null==chromosomes){
 			try {
 				RemoteAccess.sendChromosomeErrorMessage(Configuration.getFeedbackUrl(),"chromosome list is empty","chrlist",trackId,nrAssemblyId);
 			} catch (IOException e) {
@@ -185,8 +195,7 @@ public class Launcher extends Thread{
 			break;
 		}
 
-
-		convertor.setParameters(nrAssemblyId,chrList);
+		convertor.setParameters(nrAssemblyId,chromosomes);
 
 		try {
 			//do sqlite

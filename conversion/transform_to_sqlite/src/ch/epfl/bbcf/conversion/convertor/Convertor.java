@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
+import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Chromosome;
 import ch.epfl.bbcf.bbcfutils.parser.Handler;
 import ch.epfl.bbcf.bbcfutils.parser.feature.Feature;
 import ch.epfl.bbcf.bbcfutils.parser.feature.Track;
@@ -38,7 +39,7 @@ public class Convertor implements Handler{
 	 */
 	private String fileName;
 
-	private List<String> chromosomeNameList;
+	private List<Chromosome> chromosomes;
 
 	ChromosomeNameHandler nameHandler;
 
@@ -73,7 +74,7 @@ public class Convertor implements Handler{
 	 */
 	public void doSqlite(String outputDirectoryPath,String outputdbName,int limitQueriesSize) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		this.doSqlite = true;
-		this.sqlite_handler = new SQLiteConvertor(outputDirectoryPath+"/"+outputdbName+".db",extension,limitQueriesSize,nrAssemblyId);
+		this.sqlite_handler = new SQLiteConvertor(this,outputDirectoryPath+"/"+outputdbName+".db",extension,limitQueriesSize,nrAssemblyId);
 	}
 	/**
 	 * call this method if you want to enable
@@ -87,7 +88,7 @@ public class Convertor implements Handler{
 	 */
 	public void doSqlite(String outputDirectoryPath,String outputFileName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 		this.doSqlite = true;
-		this.sqlite_handler = new SQLiteConvertor(outputDirectoryPath+"/"+outputFileName,extension,nrAssemblyId);
+		this.sqlite_handler = new SQLiteConvertor(this,outputDirectoryPath+"/"+outputFileName,extension,nrAssemblyId);
 	}
 
 	public boolean isDoSqlite() {
@@ -123,12 +124,21 @@ public class Convertor implements Handler{
 	@Override
 	public void newFeature(Feature feature) {
 		String chr = feature.getChromosome();
-		if(!chromosomeNameList.contains(chr)){
+		boolean contains = false;
+		for(Chromosome chromosome : chromosomes){
+			if(chromosome.getName().equalsIgnoreCase(chr)){
+				contains=true;
+			}
+		}
+		if(!contains){
 			chr = nameHandler.getChromosomeAltName(nrAssemblyId,chr);
 		}
-		if(null==chr){
-			return;
-		}
+//		if(!chromosomes.contains(chr)){
+//			chr = nameHandler.getChromosomeAltName(nrAssemblyId,chr);
+//		}
+//		if(null==chr){
+//			return;
+//		}
 		feature.setChromosome(chr);
 		if(doSqlite){
 			try {
@@ -214,9 +224,12 @@ public class Convertor implements Handler{
 	 * @param nrAssemblyId - nrAssembly id form Genrep
 	 * @param chrList - the chromosome listw
 	 */
-	public void setParameters(String nrAssemblyId, List<String> chrList) {
+	public void setParameters(String nrAssemblyId, List<Chromosome> chrList) {
 		this.nrAssemblyId = nrAssemblyId;
-		this.chromosomeNameList = chrList;
+		this.chromosomes = chrList;
 	}
 
+	public List<Chromosome> getChromosomes(){
+		return this.chromosomes;
+	}
 }

@@ -107,23 +107,24 @@ public class InputControl extends Control{
 
 
 	private Map<String, File> uploadFile(String url, FileUpload fileUpload, int userId) {
-		Map<String, File> tmpDir = new HashMap<String, File>();
 		if(null==url || url.equalsIgnoreCase("")){
-			tmpDir = FileManagement.uploadFileFromUploadField(fileUpload,userId);
+			Map<String, File> tmpDir = FileManagement.uploadFileFromUploadField(fileUpload,userId);
 			if(tmpDir.isEmpty()){
 				Application.error("-InputControl - fileUpload not uploaded : "+fileUpload.getClientFileName(),userId);
 			}
+			return tmpDir;
 		}
 		else {
-			tmpDir = FileManagement.uploadFileFromURL(url,userId);
+			Map<String, File> tmpDir  = FileManagement.uploadFileFromURL(url,userId);
 			if(tmpDir!=null){
 				if(tmpDir.isEmpty()){
 					Application.error("-InputControl - file from url not uploaded : "+url,userId);
 				}
+				return tmpDir;
 			}
 		}
 		Application.debug("end upload",userId);
-		return tmpDir;
+		return null;
 	}
 
 
@@ -195,6 +196,11 @@ public class InputControl extends Control{
 			//Application.debug("upload "+trackId);
 			Application.debug("upload file",user.getId());
 			Map<String, File> tmpDir  = uploadFile(url,fileUpload,user.getId());
+			if(null==tmpDir){
+				String err = "failed to process inputs : file  not uploaded ";
+				TrackControl.updateTrack(trackId, err);
+				return;
+			}
 			//Application.debug("uploaded "+trackId);
 			Application.debug("upload file : done",user.getId());
 			Iterator<String> it = tmpDir.keySet().iterator();
@@ -275,7 +281,7 @@ public class InputControl extends Control{
 					TrackControl.updateTrack(trackId, "not valid file");
 				} catch (ExtensionNotRecognizedException e) {
 					Application.error(e);
-					TrackControl.updateTrack(trackId, "not valid extension, must be part of ");
+					TrackControl.updateTrack(trackId, "not valid extension");
 				} catch (ProcessLauncherError e) {
 					TrackControl.updateTrack(trackId, "the server encountered an error");
 					return ;

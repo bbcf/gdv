@@ -33,7 +33,6 @@ import org.xml.sax.XMLReader;
 import org.apache.log4j.Logger;
 import org.apache.wicket.markup.html.form.Form;
 
-import ch.epfl.bbcf.access.genrep.pojo.Chromosome;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
@@ -153,7 +152,7 @@ public class DAS {
 
 
 	public static void getAnnotations(UserSession session,String mapmaster, 
-			List<Chromosome> chrList, String type,int assemblyId, Form form) {
+			List<ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Chromosome> chrList, String type,int assemblyId, Form form) {
 		XMLReader xmlreader = null;
 		try {
 			xmlreader = initializeXMLReader();

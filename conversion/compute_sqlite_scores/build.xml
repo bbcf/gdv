@@ -7,7 +7,7 @@
     <property name="lib.dir" value="lib"/>
     <path id="conversion.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/bbcf_access.jar"/>
+        <pathelement location="lib/bbcfutils.jar"/>
         <pathelement location="lib/dsn.jar"/>
         <pathelement location="lib/imap.jar"/>
         <pathelement location="lib/mailapi.jar"/>
@@ -20,15 +20,15 @@
 
 
     <target name="dl" depends="init"> 
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/bbcf_access.jar" dest="${lib.dir}/bbcf_access.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/dsn.jar" dest="${lib.dir}/dsn.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/imap.jar" dest="${lib.dir}/imap.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/mailapi.jar" dest="${lib.dir}/mailapi.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/snakeyaml-1.7rc1.jar" dest="${lib.dir}/snakeyaml-1.7rc1.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/pop3.jar" dest="${lib.dir}/pop3.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/smtp.jar" dest="${lib.dir}/smtp.jar"/>
-      <get src="http://salt.epfl.ch/BED/Yohan/javalib/sqlite-jdbc-3.7.2.jar" dest="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
+      <get src="http://salt.epfl.ch/javalib/bbcfutils.jar" dest="${lib.dir}/bbcfutils.jar"/>
+      <get src="http://salt.epfl.ch/javalib/dsn.jar" dest="${lib.dir}/dsn.jar"/>
+      <get src="http://salt.epfl.ch/javalib/imap.jar" dest="${lib.dir}/imap.jar"/>
+      <get src="http://salt.epfl.ch/javalib/mailapi.jar" dest="${lib.dir}/mailapi.jar"/>
+      <get src="http://salt.epfl.ch/javalib/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
+      <get src="http://salt.epfl.ch/javalib/snakeyaml-1.7rc1.jar" dest="${lib.dir}/snakeyaml-1.7rc1.jar"/>
+      <get src="http://salt.epfl.ch/javalib/pop3.jar" dest="${lib.dir}/pop3.jar"/>
+      <get src="http://salt.epfl.ch/javalib/smtp.jar" dest="${lib.dir}/smtp.jar"/>
+      <get src="http://salt.epfl.ch/javalib/sqlite-jdbc-3.7.2.jar" dest="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
     </target>
     
     
