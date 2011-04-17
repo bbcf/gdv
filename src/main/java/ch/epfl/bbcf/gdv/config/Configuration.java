@@ -30,7 +30,6 @@ import ch.epfl.bbcf.gdv.html.ErrorPage;
 import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
-import ch.epfl.bbcf.gdv.html.ImportUCSCPage;
 import ch.epfl.bbcf.gdv.html.LoginPage;
 import ch.epfl.bbcf.gdv.html.MagicPasswordPage;
 import ch.epfl.bbcf.gdv.html.PostPage;
@@ -94,7 +93,7 @@ public final class Configuration{
 	
 	public static final String URL_LINK_TEMPLATE = "\" onClick=\"javascript:showLinkPanel('{name}'); return false\";";
 
-	public final static Class[] admin_pages = {AddSequencePage.class,AdminPage.class,ImportUCSCPage.class};
+	public final static Class[] admin_pages = {AddSequencePage.class,AdminPage.class};
 	public final static Class[] user_pages = {ImportFilePage.class,ProjectPage.class,PreferencesPage.class};
 
 	public final static MenuElement[] navigation_links = {
@@ -133,7 +132,6 @@ public final class Configuration{
 		application.mount(new HybridUrlCodingStrategy("/projects", ProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/login", LoginPage.class));
-		application.mount(new HybridUrlCodingStrategy("/import_UCSC", ImportUCSCPage.class));
 		application.mount(new HybridUrlCodingStrategy("/admin", AdminPage.class));
 		application.mount(new HybridUrlCodingStrategy("/post", PostPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/log", MagicPasswordPage.class));

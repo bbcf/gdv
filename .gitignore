@@ -10,7 +10,3 @@
 *.swp
 ._*
 *.class
-
-/pom.xml
-/pom.xml.*
-!/pom.xml.example

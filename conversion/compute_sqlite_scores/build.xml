@@ -20,15 +20,15 @@
 
 
     <target name="dl" depends="init"> 
-      <get src="http://salt.epfl.ch/javalib/bbcfutils.jar" dest="${lib.dir}/bbcfutils.jar"/>
-      <get src="http://salt.epfl.ch/javalib/dsn.jar" dest="${lib.dir}/dsn.jar"/>
-      <get src="http://salt.epfl.ch/javalib/imap.jar" dest="${lib.dir}/imap.jar"/>
-      <get src="http://salt.epfl.ch/javalib/mailapi.jar" dest="${lib.dir}/mailapi.jar"/>
-      <get src="http://salt.epfl.ch/javalib/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
-      <get src="http://salt.epfl.ch/javalib/snakeyaml-1.7rc1.jar" dest="${lib.dir}/snakeyaml-1.7rc1.jar"/>
-      <get src="http://salt.epfl.ch/javalib/pop3.jar" dest="${lib.dir}/pop3.jar"/>
-      <get src="http://salt.epfl.ch/javalib/smtp.jar" dest="${lib.dir}/smtp.jar"/>
-      <get src="http://salt.epfl.ch/javalib/sqlite-jdbc-3.7.2.jar" dest="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/bbcfutils.jar" dest="${lib.dir}/bbcfutils.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/dsn.jar" dest="${lib.dir}/dsn.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/imap.jar" dest="${lib.dir}/imap.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/mailapi.jar" dest="${lib.dir}/mailapi.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/snakeyaml-1.7rc1.jar" dest="${lib.dir}/snakeyaml-1.7rc1.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/pop3.jar" dest="${lib.dir}/pop3.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/smtp.jar" dest="${lib.dir}/smtp.jar"/>
+      <get src="http://salt.epfl.ch/java/javalib/sqlite-jdbc-3.7.2.jar" dest="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
     </target>
     
     

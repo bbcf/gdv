@@ -17,7 +17,6 @@ import ch.epfl.bbcf.gdv.access.database.dao.DAO;
 import ch.epfl.bbcf.gdv.access.gfeatminer.GFeatMinerAccess;
 import ch.epfl.bbcf.gdv.control.http.NamesFilter;
 import ch.epfl.bbcf.gdv.control.http.QueriesFilter;
-import ch.epfl.bbcf.gdv.formats.das.DAS;
 import ch.epfl.bbcf.gdv.html.PostPage;
 
 public class Logs {
@@ -43,20 +42,20 @@ public class Logs {
 		return out;
 	}
 
-	public static Logger initDASLogger() {
-		Logger out = Logger.getLogger(DAS.class.getName());
-		out.setAdditivity(false);
-		out.setLevel(debugLevel);
-		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
-		RollingFileAppender appender = null;
-		try {
-			appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/das.log",true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		out.addAppender(appender);
-		return out;
-	}
+//	public static Logger initDASLogger() {
+//		Logger out = Logger.getLogger(DAS.class.getName());
+//		out.setAdditivity(false);
+//		out.setLevel(debugLevel);
+//		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
+//		RollingFileAppender appender = null;
+//		try {
+//			appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/das.log",true);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		out.addAppender(appender);
+//		return out;
+//	}
 
 	public static Logger initSQLLogger() {
 		Logger out = Logger.getLogger(DAO.class.getName());
