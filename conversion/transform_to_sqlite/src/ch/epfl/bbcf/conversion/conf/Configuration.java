@@ -55,6 +55,7 @@ public class Configuration {
 		}
 		if(null!=input){
 			Yaml yaml = new Yaml();
+			@SuppressWarnings("unchecked")
 			Map<String, String> data = (Map<String, String>)yaml.load(input);
 			for(Map.Entry<String, String> entry : data.entrySet()){
 				if(entry.getKey().equalsIgnoreCase("sqlite_output_directory")){

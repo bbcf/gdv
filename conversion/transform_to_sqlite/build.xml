@@ -7,27 +7,17 @@
     <property name="lib.dir" value="lib"/>
     <path id="conversion.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/bbcfutils.jar"/>
-        <pathelement location="lib/json.jar"/>
-        <pathelement location="lib/biojava.jar"/>
-        <pathelement location="lib/bytecode.jar"/>
+        <pathelement location="lib/bbcfutils-1.0.jar"/>
         <pathelement location="lib/log4j-1.2.16.jar"/>
-        <pathelement location="lib/snakeyaml-1.7rc1.jar"/>
-        <pathelement location="lib/sam-1.38.jar"/>
-	<pathelement location="lib/sqlite-jdbc-3.7.2.jar"/>
+        <pathelement location="lib/snakeyaml-1.7.jar"/>
     </path>
 
     <!-- download dependencies -->
     <target name="dl" depends="init">
-    <get src="http://salt.epfl.ch/javalib/sqlite-jdbc-3.7.2.jar" dest="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
-    <get src="http://salt.epfl.ch/javalib/bbcfutils.jar" dest="${lib.dir}/bbcfutils.jar"/>
-    <get src="http://salt.epfl.ch/javalib/json.jar" dest="${lib.dir}/json.jar"/>
-    <get src="http://salt.epfl.ch/javalib/biojava.jar" dest="${lib.dir}/biojava.jar"/>
-    <get src="http://salt.epfl.ch/javalib/bytecode.jar" dest="${lib.dir}/bytecode.jar"/>
-    <get src="http://salt.epfl.ch/javalib/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
-    <get src="http://salt.epfl.ch/javalib/snakeyaml-1.7rc1.jar" dest="${lib.dir}/snakeyaml-1.7rc1.jar"/>
-    <get src="http://salt.epfl.ch/javalib/sam-1.38.jar" dest="${lib.dir}/sam-1.38.jar"/>
-  </target>
+    <get src="http://ptbbpc1.epfl.ch/maven/ch/epfl/bbcf/bbcfutils/1.0/bbcfutils-1.0.jar" dest="${lib.dir}/bbcfutils-1.0.jar"/>
+    <get src="http://repo1.maven.org/maven2/log4j/log4j/1.2.16/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
+    <get src="http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.7/snakeyaml-1.7.jar" dest="${lib.dir}/snakeyaml-1.7.jar"/>
+    </target>
      
     <target name="init">
         <mkdir dir="bin"/>

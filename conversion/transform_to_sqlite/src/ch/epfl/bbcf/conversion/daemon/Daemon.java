@@ -1,7 +1,6 @@
 package ch.epfl.bbcf.conversion.daemon;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,8 +10,7 @@ import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.bbcfutils.access.genrep.GenRepAccess;
-import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
+import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteConstruct;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 
 
@@ -73,7 +71,7 @@ public class Daemon {
 		logger.info("initializations of database");
 		jobs.delete();
 		try {
-			if(!SQLiteAccess.initJobsDatabase(jobs)){
+			if(!SQLiteConstruct.initJobsDatabase(jobs)){
 				logger.error("couldn't create database "+jobs.getAbsolutePath());
 				return false;
 			}
