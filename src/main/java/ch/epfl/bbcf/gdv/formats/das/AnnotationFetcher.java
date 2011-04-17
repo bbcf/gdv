@@ -19,8 +19,6 @@ import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
-import ch.epfl.bbcf.gdv.utility.ProcessLauncher;
-import ch.epfl.bbcf.gdv.utility.ProcessLauncherError;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 import ch.epfl.bbcf.gdv.utility.thread.ManagerService;
 
@@ -92,17 +90,17 @@ public class AnnotationFetcher extends Thread{
 
 		Application.debug("add qualitative input",session.getUserId());
 		String md5;
-		try {
-			md5 = ProcessLauncher.getFileMD5(gffFile);
-
-			InputControl ic = new InputControl(session);
-			//ic.createNewAdminInput(md5,assemblyId,gffFile.getName(),gffFile);
-//			JSONProcessor processor = new JSONProcessor(-1,gffFile,md5,null,"gff",session.getUser(),assemblyId,true,true);
-//			Future task = ManagerService.submitPricipalProcess(processor);
-		} catch (ProcessLauncherError e) {
-			log.error("das not processed "+e);
-		}
-		//futures.add(task);
+//		try {
+//			md5 = ProcessLauncher.getFileMD5(gffFile);
+//
+//			InputControl ic = new InputControl(session);
+//			//ic.createNewAdminInput(md5,assemblyId,gffFile.getName(),gffFile);
+////			JSONProcessor processor = new JSONProcessor(-1,gffFile,md5,null,"gff",session.getUser(),assemblyId,true,true);
+////			Future task = ManagerService.submitPricipalProcess(processor);
+//		} catch (ProcessLauncherError e) {
+//			log.error("das not processed "+e);
+//		}
+//		//futures.add(task);
 		//InputToJBrowsORControl process = new InputToJBrowsORControl(session,"gff",gffFile,null,"qualitative",null,assemblyId,true,true);
 		//SQLiteAccessManager.execute(process);
 

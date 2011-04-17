@@ -14,6 +14,7 @@ import org.apache.wicket.Request;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 
+import ch.epfl.bbcf.bbcfutils.Utility;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
@@ -27,8 +28,6 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl.InputType;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteProcessor;
-import ch.epfl.bbcf.gdv.utility.ProcessLauncher;
-import ch.epfl.bbcf.gdv.utility.ProcessLauncherError;
 import ch.epfl.bbcf.gdv.utility.file.Decompressor;
 import ch.epfl.bbcf.gdv.utility.file.ExtensionNotRecognizedException;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
@@ -234,7 +233,7 @@ public class InputControl extends Control{
 					List<Future> futures = new ArrayList<Future>();
 					for(File file:files){
 						TrackControl.updateTrack(trackId, TrackControl.STATUS_MD5);
-						String md5 = ProcessLauncher.getFileMD5(file);
+						String md5 = Utility.getFileMd5(file);
 						TrackControl.updateTrack(trackId, TrackControl.STATUS_FILETYPE);
 						String filetype = FileTypeGuesser.guessFileType(file);
 						TrackControl.updateTrack(trackId, TrackControl.STATUS_EXTENSION);
@@ -282,10 +281,7 @@ public class InputControl extends Control{
 				} catch (ExtensionNotRecognizedException e) {
 					Application.error(e);
 					TrackControl.updateTrack(trackId, "not valid extension");
-				} catch (ProcessLauncherError e) {
-					TrackControl.updateTrack(trackId, "the server encountered an error");
-					return ;
-				}	
+				} 
 
 
 
