@@ -14,12 +14,12 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.Constants.KEY;
 import ch.epfl.bbcf.bbcfutils.access.genrep.Constants.METHOD;
 import ch.epfl.bbcf.bbcfutils.access.genrep.GenRepAccess;
 import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Assembly;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Chromosome;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Genome;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.GenrepObject;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.NR_Assembly;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Organism;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Genome;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.GenrepObject;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.NR_Assembly;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Organism;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 

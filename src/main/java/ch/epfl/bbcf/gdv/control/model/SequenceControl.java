@@ -10,9 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Chromosome;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.NR_Assembly;
-import ch.epfl.bbcf.bbcfutils.access.genrep.pojo.Organism;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.NR_Assembly;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Organism;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.SequenceDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
