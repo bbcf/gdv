@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.access.InternetConnection;
+import ch.epfl.bbcf.bbcfutils.access.InternetConnection;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.conversion.sqltree.ScoreTree;
 import ch.epfl.bbcf.utility.ConnectionStore;
@@ -44,7 +44,7 @@ public class Launcher extends Thread{
 	public void run(){
 		logger.debug("process tasks");
 		try {
-			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),"id=track_status&track_id="+trackId+"&mess=computing");
+			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),"id=track_status&track_id="+trackId+"&mess=computing", InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e1) {
 			logger.error(e1);
 		}
@@ -79,7 +79,7 @@ public class Launcher extends Thread{
 			}
 		}
 		try {
-			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),"id=track_status&track_id="+trackId+"&mess=completed");
+			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),"id=track_status&track_id="+trackId+"&mess=completed", InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
 			logger.error(e);
 		}

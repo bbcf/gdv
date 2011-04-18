@@ -59,6 +59,7 @@ public class Application extends AuthenticatedWebApplication
 		ServletContext ctx = this.getServletContext();
 		String curDir = System.getProperty("user.dir");
 		String ctxPath = ctx.getContextPath();
+		//FIXME curDir depens on where you launch TOMCAT => should know tomcat path
 		String metaInf = curDir+"/../webapps"+ctxPath+"/META-INF";
 		File confFile = new File(metaInf+"/gdv.yaml");
 		if(!confFile.exists()){

@@ -17,7 +17,7 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.access.InternetConnection;
+import ch.epfl.bbcf.bbcfutils.access.InternetConnection;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.conversion.daemon.ManagerService;
 import ch.epfl.bbcf.utility.ConnectionStore;
@@ -63,7 +63,7 @@ public class ScoreTree extends Thread {
 			logger.error(e);
 		}
 		try {
-			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),body);
+			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
 			logger.error(e);
 		}
