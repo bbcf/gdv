@@ -5,7 +5,23 @@
 GDV is a Genome browser developed at the Bioinformatics & Biostatistics Core Facility, EPFL, Lausanne, Switzerland.
 It's goal is to provide biologists and bio-analysts a fast, browsable and editable view of their data along the genome. Once achieved, the user will be able to launch different statistics modules on his data and thus prepare all the mining process of the analysis.
 
-### INSTALL ###
+
+### RUN THE PROJECT ###
+
+REQUIREMENTS : 
+	- JAVA 1.6 to run the project.
+ 	- TOMCAT to deploy the project (tested with version 6.0 & 7.0)
+	- PostgreSQL to build the database
+	- the latest WAR archive of the GDV project can be found here : http://salt.epfl.ch/java/gdv-archive/current/gdv.war
+	- you need git installed
+
+1) clone project : $git clone git://github.com/bbcf/gdv.git
+2) build tree : $sh gdv/build_tree.sh <absolute path to gdv> <install path>
+3) install database : 
+
+
+
+### INSTALL AND COMPILE ON YOUR OWN###
 1) look at the dependencies
 
 2) clone the project :
@@ -52,5 +68,4 @@ You must use it for compiling the GDV project. If it's not your default JDK, you
 
 - GDV use ANT for some dependencies : http://ant.apache.org/
 
-- local dependencies can be installed via the script GDV_HOME/build_scripts/install_local_ressources.sh (note that it will be automatically run on the first installation)
 - GDV can be deployed on TOMCAT : http://tomcat.apache.org/

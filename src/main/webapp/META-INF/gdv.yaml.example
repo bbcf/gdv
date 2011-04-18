@@ -1,45 +1,56 @@
 ### GDV CONFIGURATION FILE
-### email yohan.jarosz{-@-}epfl.ch for more information 
+### email yohan.jarosz{-@-}epfl.ch for more information
 
-################GDV
-#server where gdv war archive is on
-gdv_tomcat_server : http://yourserver.com
+################GDV PROD
 
-#proxy to access application
-gdv_proxy_url : http://yourproxy.com
+# Server of the application.
+# Currently where tomcat is deployed.
+gdv_tomcat_server : http://myserver.com
 
-#working directory on the filesystem
-gdv_working_directory : /data/GDV
+# Proxy to access application.
+# If not, put the same url as 'gdv_tomcat_server'.
+gdv_proxy_url : http://myproxy.org
 
-#url where to fecth static ressources (gdv_proxy_url+gdv_public_url)
-gdv_public_url : /data/public/ressources
+# Working directory on the filesystem.
+# The absolute install path.
+gdv_working_directory : /myApplications/gdv
 
-#complete path to the classes of wicket on the filesystem (needed for linking to HTML markup ?? should place it in META-INF ??)
-wicket_main_folder : /apps/apache-tomcat-{myVersion}/webapps/gdv-{version}/WEB-INF/classes/
+# Url where to fecth static ressources.
+# This path has to match	the 'public'
+# directory in GDV tree.
+# It means that	if you access the url
+# http://myserver.com/public, it will fetch the
+# ressources under the public directory	of GDV
+gdv_public_url : /public
 
-#will match the path in the url to the application
+# Complete path to the classes of wicket on the filesystem (not sure if needed anymore)
+wicket_main_folder : /local_home/java/apache-tomcat-7.0.8/webapps/gdv-1.2/WEB-INF/classes/
+
+# Will match the path in the url to the application
+# http://myserver.com/gdv
 gdv_version : gdv
 
-#gdv password to enable post access
-##an id to filter post request 
-gdv_post_access : gdv_post_request
+# GDV password to enable post access
+gdv_post_access : gdv_post
 
-#list of access types for POST request(commas separated in [])
-gdv_types_access : [normal,myproject1,myPipeline1,...]
+# List of access types (commas separated in [])
+gdv_types_access : [normal,hts3cseq,htschipseq]
 
 ################ JBROWSE
-#JBrowse browserRoot (access to tracks)
-jb_browser_root : ../../tracks_dir/
+# JBrowse browserRoot. The same	as gdv_public_url,
+# but the directory is tracks. It's written in the
+# javascript so	you should put ../../<match>.
+jb_browser_root : ../../tracks/
 
-#JBrowse dataRoot (access to data)
-jb_data_root : ../../tracks_dir/
+# JBrowse dataRoot (same)
+jb_data_root : ../../tracks/
 
 ################ PGSQL
-#name of the database
-psql_db : mydb_gdv
+# Name of the database
+psql_db : gdv_prod
 
-#name of the user
-psql_user : gdvuser
+# Name of the user
+psql_user : myUser
 
-#password
-psql_pwd : 123456789
+# Password
+psql_pwd : b9yf8s04XQ
