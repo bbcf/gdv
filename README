@@ -12,7 +12,7 @@ REQUIREMENTS :
 	- JAVA 1.6 to run the project.
  	- TOMCAT to deploy the project (tested with version 6.0 & 7.0)
 	- PostgreSQL to build the database
-	- the latest WAR archive of the GDV project can be found here : http://salt.epfl.ch/java/gdv-archive/current/gdv.war
+	- the latest WAR archive of the GDV project can be found here : http://salt.epfl.ch/java/gdv-archive/current/gdv.tgz
 	- you need git installed
 
 1) clone project : $git clone git://github.com/bbcf/gdv.git
@@ -26,8 +26,15 @@ REQUIREMENTS :
 7) Untar it : $tar -xvzf gdv.tgz
 8) Edit configuration file under <GDV_HOME>/META-INF/gdv.yaml
 9) put the directory GDV in TOMCAT webapps directory : you should be able to 
-see GDV home page at this point
-10) Now, you need to install two java daemons that will process your files
+see GDV home page at this point (http://localhost:8080/gdv by default)
+10) Now, you need to install two java daemons that will process your files :
+	$cd GDV_HOME/conversion
+	$cp -r * <install path>/.
+    You should now have two more directories (transform_to_sqlite & compute_sqlite_scores) under GDV_HOME
+11) Now for each one, go to the directories and run 
+	$ant
+12) you can now start each daemon ($sh start.sh : start them in their directories)
+
 
 ### INSTALL AND COMPILE ON YOUR OWN###
 1) look at the dependencies
