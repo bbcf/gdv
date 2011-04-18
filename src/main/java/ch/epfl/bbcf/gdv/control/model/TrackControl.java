@@ -237,8 +237,8 @@ public class TrackControl extends Control{
 	 * @param trackId
 	 * @return
 	 */
-	public Track getTrackById(int trackId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+	public static Track getTrackById(int trackId) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection());
 		return tdao.getTrackById(trackId);
 	}
 

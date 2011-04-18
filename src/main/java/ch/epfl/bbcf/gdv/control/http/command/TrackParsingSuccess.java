@@ -1,5 +1,7 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
+import java.io.PrintWriter;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
@@ -15,13 +17,12 @@ import ch.epfl.bbcf.gdv.mail.Sender;
 
 public class TrackParsingSuccess extends Command{
 
-	private static Logger log = Logs.initPOSTLogger(TrackParsingSuccess.class.getName());
-	
-	public TrackParsingSuccess(UserSession session, RequestParameters params,
-			WebResponse webResponse) {
-		super(session, params, webResponse);
+	public TrackParsingSuccess(RequestParameters params, PrintWriter out) {
+		super(params, out);
 	}
 
+	private static Logger log = Logs.initPostLogger(TrackParsingSuccess.class.getName());
+	
 	@Override
 	public void doRequest() {
 		checkParams(params.getType(),params.getDb(),params.getUsermail());

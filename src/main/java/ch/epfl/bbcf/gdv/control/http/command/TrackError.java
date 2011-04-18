@@ -1,6 +1,7 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.List;
 
 import org.apache.wicket.protocol.http.IRequestLogger;
@@ -22,15 +23,12 @@ import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class TrackError extends Command{
 
-	public TrackError(UserSession session, RequestParameters params,
-			WebResponse webResponse) {
-		super(session, params, webResponse);
+	
+
+public TrackError(RequestParameters params, PrintWriter out) {
+		super(params, out);
 	}
 
-//	@Override
-//	protected void initLog() {
-//		log = Logs.initLogger(TrackError.class.getName());
-//	}
 
 	@Override
 	public void doRequest() {
@@ -45,21 +43,8 @@ public class TrackError extends Command{
 		} else if(params.getType().equalsIgnoreCase("chrList")){
 			TrackControl.updateTrack(trackId,"server error ("+params.getMessage()+")");
 		}
-		//don't delete the track, just the input
-		//let the user delete the track
-		
-//		Application.error("deleting track : "+trackId);
-		TrackControl tc = new TrackControl(session);
-//		try {
-//			Thread.sleep(30000);
-//		} catch (InterruptedException e) {
-//			Application.error(e);
-//		}
-		
-		//TrackControl.deleteTrack(trackId);
-		Track track = tc.getTrackById(trackId);
-		InputControl ic = new InputControl(session);
-		ic.removeInput(track.getInput());
+		Track track = TrackControl.getTrackById(trackId);
+		InputControl.removeInput(track.getInput());
 		FileManagement.deleteDirectory(
 				new File(
 						Configuration.getFilesDir()+"/"+track.getName()));

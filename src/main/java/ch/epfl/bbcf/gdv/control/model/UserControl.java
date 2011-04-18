@@ -69,8 +69,8 @@ public class UserControl extends Control{
 		return u.getKey().equalsIgnoreCase(key);
 	}
 
-	public Users getuserByMailAndPass(String mail, String pass) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+	public static Users getuserByMailAndPass(String mail, String pass) {
+		UsersDAO dao = new UsersDAO(Connect.getConnection());
 		return dao.getUserByEmailAndPass(mail,pass);
 	}
 

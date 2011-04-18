@@ -1,6 +1,8 @@
 package ch.epfl.bbcf.gdv.control.http;
 
 
+import java.io.PrintWriter;
+
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
@@ -14,19 +16,16 @@ import ch.epfl.bbcf.gdv.control.http.command.PostAccess;
 import ch.epfl.bbcf.gdv.control.http.command.TrackError;
 import ch.epfl.bbcf.gdv.control.http.command.TrackParsingSuccess;
 import ch.epfl.bbcf.gdv.control.http.command.TrackStatus;
-import ch.epfl.bbcf.gdv.html.PostPage;
 
 public class FrontController {
 
-	private static Logger log = Logs.initPOSTLogger(FrontController.class.getName());
-	private RequestParameters params;
-	private UserSession session;
-	private WebResponse webResponse;
+	private static Logger log = Logs.initPostLogger(FrontController.class.getName());
+	protected RequestParameters params;
+	protected PrintWriter out;
 
-	public FrontController(RequestParameters params,UserSession session, WebResponse webResponse){
-		this.session = session;
+	public FrontController(RequestParameters params,PrintWriter out){
 		this.params = params;
-		this.webResponse = webResponse;
+		this.out = out;
 	}
 
 	public void doRequest() {
@@ -34,16 +33,16 @@ public class FrontController {
 			Command command = null;
 			//CHANGE STATUS OF A TRACK
 			if(params.getId().equalsIgnoreCase("track_status")){
-				command = new TrackStatus(session,params,webResponse);
+				command = new TrackStatus(params,out);
 				//ERROR IN TRACK PROCESSING
 			} else if(params.getId().equalsIgnoreCase("track_error")){
-				command = new TrackError(session,params,webResponse);
+				command = new TrackError(params,out);
 				//TRANSFORM TO SQLITE SUCCED
 			} else if(params.getId().equalsIgnoreCase("track_parsing_success")){
-				command = new TrackParsingSuccess(session, params, webResponse);
+				command = new TrackParsingSuccess(params,out);
 				//POST ACCESS TO GDV
 			} else if(params.getId().equalsIgnoreCase(Configuration.getGdv_post_access())){
-				command = new PostAccess(session, params, webResponse);
+				command = new PostAccess(params,out);
 			}
 			if(null!=command){
 				command.doRequest();

@@ -32,7 +32,6 @@ import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
 import ch.epfl.bbcf.gdv.html.LoginPage;
 import ch.epfl.bbcf.gdv.html.MagicPasswordPage;
-import ch.epfl.bbcf.gdv.html.PostPage;
 import ch.epfl.bbcf.gdv.html.ProjectPage;
 import ch.epfl.bbcf.gdv.html.TrackStatus;
 import ch.epfl.bbcf.gdv.html.utility.MenuElement;
@@ -133,7 +132,6 @@ public final class Configuration{
 		application.mount(new HybridUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/login", LoginPage.class));
 		application.mount(new HybridUrlCodingStrategy("/admin", AdminPage.class));
-		application.mount(new HybridUrlCodingStrategy("/post", PostPage.class));
 		application.mount(new IndexedParamUrlCodingStrategy("/log", MagicPasswordPage.class));
 		HybridUrlCodingStrategy addSequence = new HybridUrlCodingStrategy(
 				"/add_sequence",AddSequencePage.class);
@@ -316,6 +314,7 @@ public final class Configuration{
 
 
 
+	@SuppressWarnings("unchecked")
 	public static boolean initMail() {
 		Application.info("reading mail conf file");
 		InputStream input = null;

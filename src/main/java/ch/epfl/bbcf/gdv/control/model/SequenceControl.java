@@ -142,8 +142,7 @@ public class SequenceControl extends Control{
 						//TODO
 						if(null!=nr_assembly.getGtf_file_ftp() || !nr_assembly.getGtf_file_ftp().equalsIgnoreCase("")){
 							String gftUrl = GenrepWrapper.getGtfUrlByNrAssemBly(nr_assembly.getId());
-							InputControl ic = new InputControl(session);
-							boolean result = ic.processInputs(
+							boolean result = InputControl.processInputs(session.getUser(),
 									-1,gftUrl,null,seqId,spId,false,true,
 									new ArrayList<Group>(),InputType.NEW_FILE,null,"Ensembl");
 						} else {

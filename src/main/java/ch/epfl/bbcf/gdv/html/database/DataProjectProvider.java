@@ -72,7 +72,7 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 			
 			// #public url
 			if(project.isPublic()){
-				String url = controller.getPublicUrlFromProjectId(project.getId());
+				String url = ProjectControl.getPublicUrlFromProjectId(session.getUser(),project.getId());
 				wrapper.setPublicUrl(url);
 			}
 			

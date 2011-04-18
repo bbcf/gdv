@@ -506,6 +506,7 @@ public class SQLiteAccess {
 	////////////////////////
 	private Connection conn;
 	public SQLiteAccess(String database){
+		Application.debug("CONNECTION ON : "+database);
 		this.conn = getConnection(database);
 	}
 

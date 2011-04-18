@@ -140,36 +140,42 @@ public class Launcher extends Thread{
 			return;
 		}
 		String database = md5+".db";
-		logger.debug(this.getId()+" start of convertion to SQLite :  "+filePath+" to "+Configuration.getSqliteOutput());
+		logger.debug(this.getId()+" start of convertion to SQLite :  "+filePath+" to "+Configuration.getSqliteOutput()+"/"+database);
 
 		boolean wellParsed = false;
 		String error ="";
 		//SQLite
 		if(doSQLite){
+			Exception ex = null;
 			try {
 				ConvertToSQLite convertor = new ConvertToSQLite(filePath, ext,nrAssemblyId);
 				wellParsed = convertor.convert(Configuration.getSqliteOutput());
 			} catch (IOException e1) {
 				logger.error(e1);
-				error+=e1;
+				ex=e1;
 			} catch (ParsingException e1) {
 				logger.error(e1);
-				error+=e1;
+				ex=e1;
 			} catch (InstantiationException e1) {
 				logger.error(e1);
-				error+=e1;
+				ex=e1;
 			} catch (IllegalAccessException e1) {
 				logger.error(e1);
-				error+=e1;
+				ex=e1;
 			} catch (ClassNotFoundException e1) {
 				logger.error(e1);
-				error+=e1;
+				ex=e1;
 			} catch (SQLException e1) {
 				logger.error(e1);
-				error+=e1;
+				ex=e1;
 			} catch (MethodNotFoundException e1) {
 				logger.error(e1);
-				error+=e1;
+				ex=e1;
+			}
+			if(null!=ex){
+				for(StackTraceElement el : ex.getStackTrace()){
+					logger.error(el.getClassName()+"."+el.getClassName()+"."+el.getMethodName()+" at line "+el.getLineNumber());
+				}
 			}
 		}
 

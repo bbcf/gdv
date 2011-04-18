@@ -68,15 +68,15 @@ public class GroupListPage extends WebPage{
 		AjaxCheckBox cb = new AjaxCheckBox("pubCheck",new Model(project.isPublic())) {
 			@Override
 			protected void onUpdate(AjaxRequestTarget target) {
-				ProjectControl pc = new ProjectControl((UserSession)getSession());
 				if(project.isPublic()){
 					project.setPublic(false);
-					pc.setProjectPublic(project.getId(),false);
+					ProjectControl.setProjectPublic(project.getId(),false);
 					pubLabel.setDefaultModelObject("make it public");
 				} else {
-					pc.setProjectPublic(project.getId(),true);
+					ProjectControl.setProjectPublic(project.getId(),true);
 					project.setPublic(true);
-					String purl = pc.getPublicUrlFromProjectId(project.getId());
+					String purl = ProjectControl.getPublicUrlFromProjectId(
+							((UserSession)getSession()).getUser(),project.getId());
 					project.setPublicUrl(purl);
 					pubLabel.setDefaultModelObject("public link : "+purl);
 				}

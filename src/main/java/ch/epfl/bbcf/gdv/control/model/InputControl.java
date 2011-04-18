@@ -58,7 +58,7 @@ public class InputControl extends Control{
 	 * @param datatype - the datataype (qualitative or quantitative)
 	 * @param name - the name to give to the track
 	 */
-	public boolean processInputs(int projectId, String url, 
+	public static boolean processInputs(Users user,int projectId, String url, 
 			FileUpload fileUpload, int sequenceId,int speciesId,boolean sendMail, boolean admin,
 			List<Group> groups,InputType type, String datatype,String name) {
 		int trackId =  -1;
@@ -67,15 +67,15 @@ public class InputControl extends Control{
 		} else {
 			trackId = createTmpTrack(projectId,TrackControl.STATUS_UPLOADING);
 		}
-		Application.info("processing input - InputControl - for project : "+projectId, session.getUserId());
-		Uploader up = new Uploader(projectId,trackId,session.getUser(),url,
+		Application.info("processing input - InputControl - for project : "+projectId, user.getId());
+		Uploader up = new Uploader(projectId,trackId,user,url,
 				fileUpload,sequenceId,speciesId,sendMail,admin,type,datatype,name);
 		if(trackId!=-1){
 			Application.debug("trackId = "+trackId);
 			up.start();
 			return true;
 		}
-		Application.error("not uploading create tmp track failed : "+projectId, session.getUserId());
+		Application.error("not uploading create tmp track failed : "+projectId,  user.getId());
 		return false;
 	}
 
@@ -84,7 +84,7 @@ public class InputControl extends Control{
 	 * @param status
 	 * @return
 	 */
-	private int createAdminTrack(String status) {
+	private static int createAdminTrack(String status) {
 		return TrackControl.createTmpTrack(status);
 	}
 
@@ -94,7 +94,7 @@ public class InputControl extends Control{
 	 * @param status
 	 * @return
 	 */
-	private int createTmpTrack(int projectId, String status) {
+	private static int createTmpTrack(int projectId, String status) {
 		int trackId = TrackControl.createTmpTrack(status);
 		//if(TrackControl.linkToUser(trackId, userId)){
 		if(TrackControl.linkToProject(trackId, projectId)){
@@ -105,7 +105,7 @@ public class InputControl extends Control{
 	}
 
 
-	private Map<String, File> uploadFile(String url, FileUpload fileUpload, int userId) {
+	private static Map<String, File> uploadFile(String url, FileUpload fileUpload, int userId) {
 		if(null==url || url.equalsIgnoreCase("")){
 			Map<String, File> tmpDir = FileManagement.uploadFileFromUploadField(fileUpload,userId);
 			if(tmpDir.isEmpty()){
@@ -146,7 +146,7 @@ public class InputControl extends Control{
 		return inputId;
 	}
 
-	private class Uploader extends Thread{
+	private static class Uploader extends Thread{
 
 		private int projectId;
 		private String url;
@@ -335,8 +335,8 @@ public class InputControl extends Control{
 	 * remove an input from the db
 	 * @param input - the name of the input (generally the md5)
 	 */
-	public void removeInput(String input) {
-		InputDAO idao = new InputDAO(Connect.getConnection(session));
+	public static void removeInput(String input) {
+		InputDAO idao = new InputDAO(Connect.getConnection());
 		idao.remove(input);
 	}
 

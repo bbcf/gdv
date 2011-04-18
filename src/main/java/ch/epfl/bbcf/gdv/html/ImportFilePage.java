@@ -63,8 +63,7 @@ public class ImportFilePage extends WebPage{
 				FormChecker checker = new FormChecker(form_,(UserSession)getSession());
 				checker.checkImportFile(spId,url,uploadField);
 				if(checker.isFormSubmitable()){
-					InputControl ic = new InputControl((UserSession)getSession());
-					boolean result = ic.processInputs(
+					boolean result = InputControl.processInputs(((UserSession)getSession()).getUser(),
 							projectId,url,uploadField.getFileUpload(),sequenceId,spId,sendMail,admin,
 							new ArrayList<Group>(),InputType.NEW_FILE,null,null);
 					importModal.close(target);

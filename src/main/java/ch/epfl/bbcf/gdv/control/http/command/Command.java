@@ -1,6 +1,7 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.config.Logs;
@@ -17,16 +19,13 @@ import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 
 public abstract class Command {
 
-	protected UserSession session;
 	protected RequestParameters params;
-	protected WebResponse webResponse;
+	protected PrintWriter out;
+	protected static Logger log = Logs.initPostLogger(Command.class.getName());
 
-	protected static Logger log = Logs.initPOSTLogger(Command.class.getName());
-
-	public Command(UserSession session, RequestParameters params, WebResponse webResponse) {
-		this.session = session;
+	public Command(RequestParameters params,PrintWriter out) {
 		this.params = params;
-		this.webResponse = webResponse;
+		this.out=out;
 	}
 
 	//protected abstract void initLog();
@@ -41,56 +40,27 @@ public abstract class Command {
 
 	}
 
-	protected void error(Exception e){
-		webResponse.getHttpServletResponse().setContentType("text/plain");
-		try {
-			webResponse.getHttpServletResponse().getOutputStream().print(e.getMessage());
-		} catch (IOException en) {
-			log.error(e);
-		}
-	}
-	
-	
-	protected void success(int id){
-		webResponse.getHttpServletResponse().setContentType("text/plain");
-		try {
-			webResponse.getHttpServletResponse().getOutputStream().print(id);
-		} catch (IOException e) {
-			log.error(e);
-		}
-		success();
-	}
-	protected void success(JSONObject json){
-		webResponse.getHttpServletResponse().setContentType("application/json");
-		try {
-			webResponse.getHttpServletResponse().getOutputStream().print(json.toString());
-		} catch (IOException e) {
-			log.error(e);
-		}
-		success();
-	}
-	protected void success(boolean result) {
-		webResponse.getHttpServletResponse().setContentType("text/plain");
-		try {
-			webResponse.getHttpServletResponse().getOutputStream().print(result);
-		} catch (IOException e) {
-			log.error(e);
-		}
-		success();
-	}
-
-	protected void success(){
-		webResponse.getHttpServletResponse().setStatus(HttpServletResponse.SC_OK) ;
-	}
 	protected void failed(String message){
-		webResponse.getHttpServletResponse().setContentType("text/plain");
-		try {
-			webResponse.getHttpServletResponse().getOutputStream().print(message);
-		} catch (IOException e) {
-			log.error(e);
+		out.write(message);
+		out.close();
+	}
+
+	protected void success(final JSONObject json) {
+		out.write(json.toString());
+		out.close();
+	}
+	protected void success(boolean b) {
+		if(b){
+			out.write("true");
+		} else {
+			out.write("false");
 		}
-		success();
+		out.close();
 	}
 
 
+	protected void error(JSONException e) {
+		out.write(e.getMessage());
+		out.close();
+	}
 }

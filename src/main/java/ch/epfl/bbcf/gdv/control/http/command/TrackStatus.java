@@ -1,5 +1,7 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
+import java.io.PrintWriter;
+
 import org.apache.wicket.protocol.http.WebResponse;
 
 import ch.epfl.bbcf.gdv.config.Logs;
@@ -9,15 +11,16 @@ import ch.epfl.bbcf.gdv.control.model.TrackControl;
 
 public class TrackStatus extends Command{
 
-	public TrackStatus(UserSession session, RequestParameters params,
-			WebResponse webResponse) {
-		super(session, params, webResponse);
-	}
+	
 
 //	@Override
 //	protected void initLog() {
 //		log = Logs.initLogger(TrackStatus.class.getName());
 //	}
+
+	public TrackStatus(RequestParameters params, PrintWriter out) {
+		super(params, out);
+	}
 
 	@Override
 	public void doRequest() {

@@ -17,7 +17,6 @@ import ch.epfl.bbcf.gdv.access.database.dao.DAO;
 import ch.epfl.bbcf.gdv.access.gfeatminer.GFeatMinerAccess;
 import ch.epfl.bbcf.gdv.control.http.NamesFilter;
 import ch.epfl.bbcf.gdv.control.http.QueriesFilter;
-import ch.epfl.bbcf.gdv.html.PostPage;
 
 public class Logs {
 
@@ -89,16 +88,17 @@ public class Logs {
 		return out;
 	}
 
-	public static Logger initPOSTLogger(String name){
+	public static Logger initPostLogger(String name){
 		Logger out = Logger.getLogger(name);
 		out.setAdditivity(false);
 		out.setLevel(debugLevel);
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			if(out.getAppender(name)==null){
+			if(out.getAppender(name) != null){
+				appender = (RollingFileAppender) out.getAppender(name);
+			} else {
 				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/post.log",true);
-				appender.setName(name);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -290,8 +290,8 @@ public class Logs {
 		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
 		RollingFileAppender appender = null;
 		try {
-			if(out.getAppender(QueriesFilter.class.getName()) != null){
-				appender = (RollingFileAppender) out.getAppender(QueriesFilter.class.getName());
+			if(out.getAppender(NamesFilter.class.getName()) != null){
+				appender = (RollingFileAppender) out.getAppender(NamesFilter.class.getName());
 			} else {
 				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/names_queries.log",true);
 			}

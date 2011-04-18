@@ -19,6 +19,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Species;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -101,7 +102,7 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 * @throws JSONException 
 	 */
-	public JSONObject createNewProject(int seq_id,String projectName,int userId,boolean isPublic) throws JSONException{
+	public static JSONObject createNewProject(Users user,int seq_id,String projectName,int userId,boolean isPublic) throws JSONException{
 		JSONObject json = new JSONObject();
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		int projectId = pdao.createNewProject(seq_id,projectName,isPublic);
@@ -110,8 +111,8 @@ public class ProjectControl extends Control implements Serializable{
 			if(created){
 				json.put("project_id",projectId);
 				if(isPublic){
-					this.setProjectPublic(projectId, isPublic);
-					String url = this.getPublicUrlFromProjectId(projectId);
+					setProjectPublic(projectId, isPublic);
+					String url = getPublicUrlFromProjectId(user,projectId);
 					json.put("public_url",url);
 				}
 				return json;
@@ -127,13 +128,13 @@ public class ProjectControl extends Control implements Serializable{
 	 * @param projectId
 	 * @return
 	 */
-	public Project getProject(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+	public static Project getProject(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		Project p = pdao.getProject(projectId);
 		if(null==p){
 			return null;
 		}
-		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection(session));
+		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection());
 		p.setSpecies(spDAO.getSpeciesFromProjectId(projectId));
 		return p;
 	}
@@ -240,18 +241,18 @@ public class ProjectControl extends Control implements Serializable{
 
 
 
-	public String getPublicUrlFromProjectId(int id) {
+	public static String getPublicUrlFromProjectId(Users user,int id) {
 		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		String key = pdao.getPublicKeyFromProjectId(id);
-		String userKey = session.getUser().getKey();
+		String userKey = user.getKey();
 		String url = Configuration.getBrowserUrl()+"?id="+id+"&ukey="+userKey+"&pkey="+key;
 		return url;
 	}
 
 
 
-	public String setProjectPublic(int id, boolean b) {
-		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+	public static String setProjectPublic(int id, boolean b) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		pdao.setProjectPublic(id,b);
 		String key = pdao.getPublicKeyFromProjectId(id);
 		if(null==key){

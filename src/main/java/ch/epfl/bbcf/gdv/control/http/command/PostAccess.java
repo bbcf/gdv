@@ -2,6 +2,7 @@ package ch.epfl.bbcf.gdv.control.http.command;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -29,30 +30,27 @@ import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class PostAccess extends Command{
 
+	public PostAccess(RequestParameters params, PrintWriter out) {
+		super(params, out);
+	}
+
+
 	private static final String NEW_PROJECT = "new_project"; 
 	private static final String ADD_TRACK = "add_track";
 	private static final String ADD_SQLITE_FILE = "add_sqlite"; 
 	private static final String REQUEST_LOGIN = "request_login"; 
 
 
-	public PostAccess(UserSession session, RequestParameters params,
-			WebResponse webResponse) {
-		super(session, params, webResponse);
-	}
 
 	@Override
 	public void doRequest() {
 		Application.debug("do request ");
 		//SIGN IN
 		checkParams(params.getMail(),params.getKey(),params.getCommand());
-		UserControl uc = new UserControl(session);
-		Users user = uc.getuserByMailAndPass(params.getMail(),params.getKey());
+		Users user = UserControl.getuserByMailAndPass(params.getMail(),params.getKey());
 		if(null==user){
-			failed("problem with your key and password - it can be a server error");
+			failed("problem with your key and password - check if they are valid");
 		}
-		session.signIn(params.getMail(), "tequila");
-		//Application.debug("signed in");
-		//PROCESSES
 		if(params.getCommand().equalsIgnoreCase(NEW_PROJECT)){
 			createNewProject(user);
 		}else if(params.getCommand().equalsIgnoreCase(ADD_TRACK)){
@@ -81,6 +79,8 @@ public class PostAccess extends Command{
 
 	}
 
+	
+
 	/**
 	 * Add a track already processed to sqlite
 	 * to an existing project
@@ -92,11 +92,9 @@ public class PostAccess extends Command{
 	private void addSqliteTrack(Users user) {
 		checkParams(params.getUrl(),params.getProjectId(),params.getDatatype());
 		int projectId = Integer.parseInt(params.getProjectId());
-		ProjectControl pc = new ProjectControl(session);
-		Project p = pc.getProject(projectId);
-		InputControl ic = new InputControl(session);
+		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
-		boolean result = ic.processInputs(projectId, params.getUrl(), null,-1, p.getSequenceId(), false, false, 
+		boolean result = InputControl.processInputs(user,projectId, params.getUrl(), null,-1, p.getSequenceId(), false, false, 
 				new ArrayList<Group>(),InputType.NEW_SQLITE,params.getDatatype(),name);
 		success(result);
 	}
@@ -112,11 +110,9 @@ public class PostAccess extends Command{
 	private void addTrack(Users user) {
 		checkParams(params.getUrl(),params.getProjectId());
 		int projectId = Integer.parseInt(params.getProjectId());
-		ProjectControl pc = new ProjectControl(session);
-		Project p = pc.getProject(projectId);
-		InputControl ic = new InputControl(session);
+		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
-		boolean result = ic.processInputs(projectId,params.getUrl(),null,-1,p.getSpecies().getId(),false,false,
+		boolean result = InputControl.processInputs(user,projectId,params.getUrl(),null,-1,p.getSpecies().getId(),false,false,
 				new ArrayList<Group>(),InputType.NEW_FILE,null,name);
 		success(result);
 	}
@@ -137,7 +133,6 @@ public class PostAccess extends Command{
 			throw new AbortWithHttpStatusException(400,true);
 		}
 
-		ProjectControl pc = new ProjectControl(session);
 		boolean pub = false;
 		if(params.isPublic()!=null && (params.isPublic().equalsIgnoreCase("true") || params.isPublic().equalsIgnoreCase("1"))){
 			pub=true;
@@ -146,7 +141,7 @@ public class PostAccess extends Command{
 
 		JSONObject json = null;
 		try {
-			json = pc.createNewProject(seqId,params.getName(),user.getId(),pub);
+			json = ProjectControl.createNewProject(user,seqId,params.getName(),user.getId(),pub);
 			success(json);
 		} catch (JSONException e) {
 			Application.error(e);
@@ -171,4 +166,7 @@ public class PostAccess extends Command{
 		//		}
 
 	}
+
+
+	
 }
