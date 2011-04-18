@@ -7,14 +7,14 @@
     <property name="lib.dir" value="lib"/>
     <path id="conversion.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/bbcfutils-1.0.jar"/>
+        <pathelement location="lib/bbcfutils-1.0.1.jar"/>
         <pathelement location="lib/log4j-1.2.16.jar"/>
         <pathelement location="lib/snakeyaml-1.7.jar"/>
     </path>
 
     <!-- download dependencies -->
     <target name="dl" depends="init">
-    <get src="http://salt.epfl.ch/java/maven/ch/epfl/bbcf/bbcfutils/1.0/bbcfutils-1.0.jar" dest="${lib.dir}/bbcfutils-1.0.jar"/>
+    <get src="http://salt.epfl.ch/java/maven/ch/epfl/bbcf/bbcfutils/1.0.1/bbcfutils-1.0.1.jar" dest="${lib.dir}/bbcfutils-1.0.1.jar"/>
     <get src="http://repo1.maven.org/maven2/log4j/log4j/1.2.16/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
     <get src="http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.7/snakeyaml-1.7.jar" dest="${lib.dir}/snakeyaml-1.7.jar"/>
     </target>

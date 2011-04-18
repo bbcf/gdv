@@ -16,10 +16,18 @@ REQUIREMENTS :
 	- you need git installed
 
 1) clone project : $git clone git://github.com/bbcf/gdv.git
-2) build tree : $sh gdv/build_tree.sh <absolute path to gdv> <install path>
-3) install database : 
-
-
+2) $cd <GDV_HOME>
+2) build tree : $sh <GDV_HOME>/build_tree.sh <absolute path to gdv> <install path>
+3) install database : 	$createdb <mydb>
+			$psql <mydb> <GDV_HOME>/src/main/sql/browser.sql
+4) Download Tomcat : http://http://tomcat.apache.org/
+5) Start it : $<TOMCAT_HOME>/bin/startup.sh
+6) Download GDV : http://salt.epfl.ch/java/gdv-archive/current/gdv.tgz
+7) Untar it : $tar -xvzf gdv.tgz
+8) Edit configuration file under <GDV_HOME>/META-INF/gdv.yaml
+9) put the directory GDV in TOMCAT webapps directory : you should be able to 
+see GDV home page at this point
+10) Now, you need to install two java daemons that will process your files
 
 ### INSTALL AND COMPILE ON YOUR OWN###
 1) look at the dependencies
