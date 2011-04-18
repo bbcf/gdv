@@ -7,7 +7,7 @@
     <property name="lib.dir" value="lib"/>
     <path id="conversion.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/bbcfutils.jar"/>
+        <pathelement location="lib/bbcfutils-1.0.1.jar"/>
         <pathelement location="lib/dsn.jar"/>
         <pathelement location="lib/imap.jar"/>
         <pathelement location="lib/mailapi.jar"/>
@@ -20,8 +20,8 @@
 
 
     <target name="dl" depends="init"> 
-      <get src="http://salt.epfl.ch/java/javalib/bbcfutils.jar" dest="${lib.dir}/bbcfutils.jar"/>
-      <get src="http://salt.epfl.ch/java/javalib/dsn.jar" dest="${lib.dir}/dsn.jar"/>
+       <get src="http://salt.epfl.ch/java/maven/ch/epfl/bbcf/bbcfutils/1.0.1/bbcfutils-1.0.1.jar" dest="${lib.dir}/bbcfutils-1.0.1.jar"/>
+       <get src="http://salt.epfl.ch/java/javalib/dsn.jar" dest="${lib.dir}/dsn.jar"/>
       <get src="http://salt.epfl.ch/java/javalib/imap.jar" dest="${lib.dir}/imap.jar"/>
       <get src="http://salt.epfl.ch/java/javalib/mailapi.jar" dest="${lib.dir}/mailapi.jar"/>
       <get src="http://salt.epfl.ch/java/javalib/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
