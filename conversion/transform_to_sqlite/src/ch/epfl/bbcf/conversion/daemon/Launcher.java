@@ -189,19 +189,7 @@ public class Launcher extends Thread{
 
 
 		//JSON 
-		if(doJSON){
-			try {
-				SQLiteAccess.getConnectionWithDatabase(Configuration.getJbrowseOutput()+"/"+database);
-			} catch (InstantiationException e1) {
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				e1.printStackTrace();
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-				logger.error(e1.getErrorCode());
-			}
+		if(false){
 			
 			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getJbrowseOutput()+"/"+database);
 			ConvertToJSON convertor = new ConvertToJSON(Configuration.getSqliteOutput()+"/"+database);
