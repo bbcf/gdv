@@ -189,7 +189,7 @@ public class Launcher extends Thread{
 
 
 		//JSON 
-		if(false){
+		if(doJSON){
 			
 			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getJbrowseOutput()+"/"+database);
 			ConvertToJSON convertor = new ConvertToJSON(Configuration.getSqliteOutput()+"/"+database);
