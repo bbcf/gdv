@@ -17,6 +17,7 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.conversion.json.ConvertToJSON;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite.Extension;
+import ch.epfl.bbcf.bbcfutils.exception.ExtensionNotRecognisedException;
 import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.utility.file.FileManagement;
@@ -171,6 +172,9 @@ public class Launcher extends Thread{
 			} catch (MethodNotFoundException e1) {
 				logger.error(e1);
 				ex=e1;
+			} catch (ExtensionNotRecognisedException e) {
+				logger.error(e);
+				ex=e;
 			}
 			if(null!=ex){
 				for(StackTraceElement el : ex.getStackTrace()){
