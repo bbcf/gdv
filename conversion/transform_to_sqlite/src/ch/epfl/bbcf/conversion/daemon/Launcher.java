@@ -149,7 +149,6 @@ public class Launcher extends Thread{
 			Exception ex = null;
 			try {
 				ConvertToSQLite convertor = new ConvertToSQLite(filePath, ext,nrAssemblyId);
-				logger.debug("Configuration.getSqliteOutput() "+Configuration.getSqliteOutput());
 				wellParsed = convertor.convert(Configuration.getSqliteOutput()+"/"+database,type);
 			} catch (IOException e1) {
 				logger.error(e1);
@@ -186,12 +185,13 @@ public class Launcher extends Thread{
 
 		//JSON 
 		if(doJSON){
+			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getSqliteOutput()+"/"+database);
 			ConvertToJSON convertor = new ConvertToJSON(database);
 			/**
 			 * String outputPath,String dbName,String ressourceUrl,String trackName
 			 */
 			try {
-				wellParsed = convertor.convert(Configuration.getSqliteOutput(),database,Configuration.getRessourceURL(),file.getName());
+				wellParsed = convertor.convert(Configuration.getJbrowseOutput(),database,Configuration.getRessourceURL(),file.getName());
 			} catch (InstantiationException e) {
 				logger.error(e);
 				error+=e;
