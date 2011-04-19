@@ -108,21 +108,21 @@ public class Launcher extends Thread{
 			type="quantitative";
 		} else if(extension.equalsIgnoreCase("bedgraph")){
 			ext = Extension.BEDGRAPH;
-			doSQLite = false;
+			doSQLite = true;
 			type="quantitative";
 		}else if(extension.equalsIgnoreCase("bed")){
 			ext = Extension.BED;
-			doSQLite = false;
+			doSQLite = true;
 			type="qualitative";
 			doJSON=true;
 		}else if(extension.equalsIgnoreCase("gff")){
 			ext = Extension.GFF;
-			doSQLite = false;
+			doSQLite = true;
 			type="qualitative";
 			doJSON=true;
 		}else if(extension.equalsIgnoreCase("gtf")){
 			ext = Extension.GFF;
-			doSQLite = false;
+			doSQLite = true;
 			doJSON=true;
 			type="qualitative";
 		}else if(extension.equalsIgnoreCase("db")){
