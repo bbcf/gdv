@@ -66,7 +66,7 @@ public class BrowserPage extends WebPage{
 		}
 		//check project id
 		if(projectId<0){
-			err="no project id (id) in the request";
+			err="no project id (id) in the request, you must log in";
 			PageParameters params = new PageParameters();
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));

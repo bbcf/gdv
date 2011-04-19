@@ -176,7 +176,7 @@ public class SequenceControl extends Control{
 			//			id = chromosome.get(ChromosomeAccess.CHR_ID);
 			//			locus = chromosome.get(ChromosomeAccess.CHR_LOCUS);
 			//			version = chromosome.get(ChromosomeAccess.CHR_VERSION);
-			chr.put(chromosome.getId()+"_"+chromosome.getRefseq_locus()+"."+chromosome.getRefseq_version(), chromosome.getChr_name());
+			chr.put(chromosome.getId()+"_"+chromosome.getRefseq_locus()+"."+chromosome.getRefseq_version(), chromosome.getName());
 		} catch (JSONException e) {
 			Application.error(e, session.getUserId());
 		}
