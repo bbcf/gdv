@@ -149,7 +149,8 @@ public class Launcher extends Thread{
 			Exception ex = null;
 			try {
 				ConvertToSQLite convertor = new ConvertToSQLite(filePath, ext,nrAssemblyId);
-				wellParsed = convertor.convert(Configuration.getSqliteOutput());
+				logger.debug("Configuration.getSqliteOutput() "+Configuration.getSqliteOutput());
+				wellParsed = convertor.convert(Configuration.getSqliteOutput()+"/"+database,type);
 			} catch (IOException e1) {
 				logger.error(e1);
 				ex=e1;
