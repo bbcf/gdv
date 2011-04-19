@@ -203,8 +203,8 @@ public class Launcher extends Thread{
 				logger.error(e1.getErrorCode());
 			}
 			
-			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getSqliteOutput()+"/"+database);
-			ConvertToJSON convertor = new ConvertToJSON(database);
+			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getJbrowseOutput()+"/"+database);
+			ConvertToJSON convertor = new ConvertToJSON(Configuration.getSqliteOutput()+"/"+database);
 			/**
 			 * String outputPath,String dbName,String ressourceUrl,String trackName
 			 */
