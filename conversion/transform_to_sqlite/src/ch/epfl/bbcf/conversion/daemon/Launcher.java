@@ -19,6 +19,7 @@ import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite.Extension;
 import ch.epfl.bbcf.bbcfutils.exception.ExtensionNotRecognisedException;
 import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
+import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.utility.file.FileManagement;
 
@@ -184,11 +185,24 @@ public class Launcher extends Thread{
 		}
 
 
-
+		
 
 
 		//JSON 
 		if(doJSON){
+			try {
+				SQLiteAccess.getConnectionWithDatabase(Configuration.getJbrowseOutput()+"/"+database);
+			} catch (InstantiationException e1) {
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				logger.error(e1.getErrorCode());
+			}
+			
 			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getSqliteOutput()+"/"+database);
 			ConvertToJSON convertor = new ConvertToJSON(database);
 			/**
@@ -198,21 +212,27 @@ public class Launcher extends Thread{
 				wellParsed = convertor.convert(Configuration.getJbrowseOutput(),database,Configuration.getRessourceURL(),file.getName());
 			} catch (InstantiationException e) {
 				logger.error(e);
+				wellParsed=false;
 				error+=e;
 			} catch (IllegalAccessException e) {
 				logger.error(e);
+				wellParsed=false;
 				error+=e;
 			} catch (ClassNotFoundException e) {
 				logger.error(e);
+				wellParsed=false;
 				error+=e;
 			} catch (SQLException e) {
 				logger.error(e);
+				wellParsed=false;
 				error+=e;
 			} catch (JSONException e) {
 				logger.error(e);
+				wellParsed=false;
 				error+=e;
 			} catch (IOException e) {
 				logger.error(e);
+				wellParsed=false;
 				error+=e;
 			}
 		}
