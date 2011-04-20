@@ -106,20 +106,24 @@ public class Launcher extends Thread{
 		String type = "";
 		if(extension.equalsIgnoreCase("wig")){
 			doSQLite = true;
+			doJSON = true;
 			ext = Extension.WIG;
 			type="quantitative";
 		} else if(extension.equalsIgnoreCase("bedgraph")){
 			ext = Extension.BEDGRAPH;
+			doJSON = true;
 			doSQLite = true;
 			type="quantitative";
 		}else if(extension.equalsIgnoreCase("bed")){
 			ext = Extension.BED;
 			doSQLite = true;
+			doJSON = true;
 			type="qualitative";
 			doJSON=true;
 		}else if(extension.equalsIgnoreCase("gff")){
 			ext = Extension.GFF;
 			doSQLite = true;
+			doJSON = true;
 			type="qualitative";
 			doJSON=true;
 		}else if(extension.equalsIgnoreCase("gtf")){
