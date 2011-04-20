@@ -39,7 +39,7 @@ public class QueriesFilter implements Filter{
 			try {
 				out = response.getWriter();
 			} catch (IOException e1) {
-				log.error(e1);
+				log.error("no reponse to give "+e1);
 			}
 			
 			//log.debug("guetting request");

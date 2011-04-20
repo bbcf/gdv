@@ -129,7 +129,8 @@ public class BrowserPage extends WebPage{
 		//String [] tmp = sc.getSpeciesNameAndAssemblyNameFromAssemblyId(project.getSpeciesId());
 		//String species = tmp[0];
 		add(new Label("species",project.getSpecies().getName()));
-
+		add(new Label("nrAssemblyId",Integer.toString(project.getSequenceId())));
+		
 		//adding static javascript and css
 		for(String cp : Configuration.getGDVCSSFiles()){
 			add(CSSPackageResource.getHeaderContribution(cp));
