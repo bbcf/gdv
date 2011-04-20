@@ -146,7 +146,7 @@ public class Launcher extends Thread{
 			return;
 		}
 		String database = md5+".db";
-		logger.debug(this.getId()+" start of convertion to SQLite :  "+filePath+" to "+Configuration.getSqliteOutput()+"/"+database);
+		logger.info(this.getId()+" start of convertion to SQLite :  "+filePath+" to "+Configuration.getSqliteOutput()+"/"+database);
 
 		boolean wellParsed = false;
 		String error ="";
@@ -162,21 +162,6 @@ public class Launcher extends Thread{
 			} catch (ParsingException e1) {
 				logger.error(e1);
 				ex=e1;
-			} catch (InstantiationException e1) {
-				logger.error(e1);
-				ex=e1;
-			} catch (IllegalAccessException e1) {
-				logger.error(e1);
-				ex=e1;
-			} catch (ClassNotFoundException e1) {
-				logger.error(e1);
-				ex=e1;
-			} catch (SQLException e1) {
-				logger.error(e1);
-				ex=e1;
-			} catch (MethodNotFoundException e1) {
-				logger.error(e1);
-				ex=e1;
 			} catch (ExtensionNotRecognisedException e) {
 				logger.error(e);
 				ex=e;
@@ -187,14 +172,9 @@ public class Launcher extends Thread{
 				}
 			}
 		}
-
-
-		
-
-
+		logger.info("end sqlite conversion");
 		//JSON 
 		if(doJSON){
-			
 			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getJbrowseOutput()+"/"+database);
 			ConvertToJSON convertor = new ConvertToJSON(Configuration.getSqliteOutput()+"/"+database, type);
 			/**
@@ -202,36 +182,13 @@ public class Launcher extends Thread{
 			 */
 			try {
 				wellParsed = convertor.convert(Configuration.getJbrowseOutput(),database,Configuration.getRessourceURL(),file.getName());
-			} catch (InstantiationException e) {
+			} catch (ParsingException e) {
 				logger.error(e);
 				wellParsed=false;
-				error+=e;
-			} catch (IllegalAccessException e) {
-				logger.error(e);
-				wellParsed=false;
-				error+=e;
-			} catch (ClassNotFoundException e) {
-				logger.error(e);
-				wellParsed=false;
-				error+=e;
-			} catch (SQLException e) {
-				logger.error(e);
-				wellParsed=false;
-				error+=e;
-			} catch (JSONException e) {
-				logger.error(e);
-				wellParsed=false;
-				error+=e;
-			} catch (IOException e) {
-				logger.error(e);
-				wellParsed=false;
-				error+=e;
+				error+=e.getMessage();
 			}
 		}
-
-
-
-
+		logger.info("end JSON conversion");
 		//////////   FEEDBACK   //////////
 		if(wellParsed){
 			logger.debug(this.getId()+"well parsed");
