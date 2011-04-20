@@ -43,7 +43,7 @@ public class SQLIteManager {
 		try{
 			Connection conn = getConnection(md5);
 			Statement stat = conn.createStatement();
-			String query = "SELECT max(score) FROM "+chr+";";
+			String query = "SELECT max(score) FROM "+protect(chr)+";";
 			ResultSet rs = getResultSet(stat, query);
 			Float f = null;
 			while (rs.next()) {
@@ -64,7 +64,7 @@ public class SQLIteManager {
 		try{
 			Connection conn = getConnection(md5);
 			Statement stat = conn.createStatement();
-			String query = "SELECT max(end) FROM "+chr+";";
+			String query = "SELECT max(end) FROM "+protect(chr)+";";
 			ResultSet rs = getResultSet(stat, query);
 			while (rs.next()) {
 				f= rs.getInt(1);
@@ -83,7 +83,7 @@ public class SQLIteManager {
 		try{
 			Connection conn = getConnection(md5);
 			Statement stat = conn.createStatement();
-			String query ="select * from "+chrName+";";
+			String query ="select * from "+protect(chrName)+";";
 			ResultSet rs = getResultSet(stat, query);
 			//ChromosomeFeature feat = new ChromosomeFeature();
 			File file = new File(Configuration.getTmpDirectory()+"/"+UUID.randomUUID().toString()+".rset");
@@ -301,7 +301,9 @@ public class SQLIteManager {
 
 
 
-
+	protected static String protect(String str){
+		return "\""+str+"\"";
+	}
 
 
 
