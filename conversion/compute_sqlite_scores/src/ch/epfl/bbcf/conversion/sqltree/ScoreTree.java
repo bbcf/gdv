@@ -101,7 +101,6 @@ public class ScoreTree extends Thread {
 			}else {
 				logger.error("sss length !=3 !!!!!");
 			}
-
 		}
 
 		reader.close();
@@ -109,29 +108,29 @@ public class ScoreTree extends Thread {
 
 		leaf.endWriting();
 		FileManagement.delete(feat);
-		boolean fail = true;
-		int cpt = 0;
-		float[]minMax = null;
-		while(fail){
-			try {
-				Thread.sleep(1000);
-				minMax = SQLIteManager.getMinMaxScoreForChr(outdbPath+"/"+outdbDirectory+"/"+chrName+"_1.db");
-				fail = false;
-			} catch(SQLException e) {
-				logger.error(e);
-				cpt++;
-				if(cpt>5){
-					fail = false;
-				}
-			} catch (InterruptedException e) {
-				logger.error(e);
-			}
-		}
-		if(null!=minMax){
-			buildJSON(minMax,outdbPath,outdbDirectory,zooms,chrName);
-		} else {
-			logger.error("cannot get min/max for chromosome : "+chrName);
-		}
+//		boolean fail = true;
+//		int cpt = 0;
+//		float[]minMax = null;
+//		while(fail){
+//			try {
+//				Thread.sleep(1000);
+//				minMax = SQLIteManager.getMinMaxScoreForChr(outdbPath+"/"+outdbDirectory+"/"+chrName+"_1.db");
+//				fail = false;
+//			} catch(SQLException e) {
+//				logger.error(e);
+//				cpt++;
+//				if(cpt>5){
+//					fail = false;
+//				}
+//			} catch (InterruptedException e) {
+//				logger.error(e);
+//			}
+//		}
+//		if(null!=minMax){
+//			buildJSON(minMax,outdbPath,outdbDirectory,zooms,chrName);
+//		} else {
+//			logger.error("cannot get min/max for chromosome : "+chrName);
+//		}
 		long end = System.currentTimeMillis();
 		long time = (end-s)/1000;
 		logger.info(this.getId()+" time elapsed : "+time+"  sec. for "+chrName);

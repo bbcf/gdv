@@ -377,7 +377,7 @@ public class ProjectPage extends BasePage{
 						};
 						if(track.getName().equalsIgnoreCase("in process")){
 							editableTrackName.setOutputMarkupId(true);
-							final AbstractAjaxTimerBehavior behaviour = new AjaxSelfUpdatingTimerBehavior(Duration.seconds(1)){
+							final AbstractAjaxTimerBehavior behaviour = new AjaxSelfUpdatingTimerBehavior(Duration.seconds(3)){
 								@Override 
 								protected void onPostProcessTarget(AjaxRequestTarget target) { 
 									editableTrackName.setDefaultModelObject(getLabel(track.getId(),editableTrackName,this));
