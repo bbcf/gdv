@@ -1,0 +1,42 @@
+This docuement describes how to use gFeatMiner as a web service. This can be usefull if GDV wants to send requests to an instance of gFeatMiner and recieve answers.
+
+In our scenario, GDV will be running on machine A and will ask for services provided by gMiner running on machine B.
+
+Step 1
+======
+
+On machine B, install gMiner:
+
+    you@B$ sudo pip install gMiner
+
+On machine B, run the gm_server.py script provided with this file:
+
+    you@B$ python gm_server.py
+
+You need to leave this terminal open or detatch the process, otherwise the server dies.
+
+Step 2
+======
+
+Before sending a request to gMiner on machine B you need to be ready to catch the answer on machine A. You start listening on some port of your choice using, for instance, the client_get.py script. Open a terminal on machine A and type this:
+
+    you@A$ python client_get.py
+
+You need to leave this terminal open or detach the process, otherwise the reception server dies.
+
+Step 3
+======
+
+Send a request to gMiner on machine B from machine A. The following script should be run on machine A:
+
+    you@A$ python client_send.py
+
+Step 4
+======
+
+If no errors have been produced you should be able to read the answer of gMiner in the terminal you opened at step 2.
+
+Notes
+=====
+
+You may have to adapt the address and ports. As is, the scripts are configured to send and recieve on localhost on ports 7520 and 9999.
