@@ -302,6 +302,25 @@ public class Logs {
 		return out;
 	}
 
+	public static Logger initLogger(String loggerName, Class clazz) {
+		Logger out = Logger.getLogger(clazz.getName());
+		out.setAdditivity(false);
+		out.setLevel(debugLevel);
+		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
+		RollingFileAppender appender = null;
+		try {
+			if(out.getAppender(clazz.getName()) != null){
+				appender = (RollingFileAppender) out.getAppender(clazz.getName());
+			} else {
+				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/"+loggerName,true);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		out.addAppender(appender);
+		return out;
+	}
+
 
 
 
