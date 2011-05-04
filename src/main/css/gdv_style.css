@@ -123,8 +123,9 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 .menu_entry{font-size:1.5em;letter-spacing:150%;padding:1em 0em 1em;margin:0em 0em 0.5em;background-color:LightSteelBlue;}
 .gdv_menu_item{margin:0.5em 0em 0.5em 0em;line-height:200%;}
 
-#gfm_form{bottom:0em;background-color:LightGrey;height:12em;margin-left:10em;position:fixed;width:100%;z-index:5;border-width:0em 0em 0em 0.2em;border-style:outset;border-color:#CCCCCC;}
-
+#gfm_form{bottom:0em;background-color:LightGrey;height:12em;margin-left:10em;position:fixed;width:100%;z-index:60;border-width:0em 0em 0em 0.2em;border-style:outset;border-color:#CCCCCC;}
+#gm_form_title{font-size:140%;font-weight:bold;padding:1em;};
 .gfm_radio{color:red;}
-
+.gm_cb{float:left;padding:1em;font-size:120%;}
+.gm_ta{padding:1em;float:left;font-size:120%;}
 .error{color:red;font-size:130%;}
