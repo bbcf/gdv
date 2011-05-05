@@ -78,7 +78,7 @@ public class Logs {
 		RollingFileAppender appender = null;
 		try {
 			if(out.getAppender(GFeatMinerAccess.class.getName())==null){
-				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/gFeatMiner.log",true);
+				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/gFFeatMiner.log",true);
 				appender.setName(GFeatMinerAccess.class.getName());
 			}
 		} catch (IOException e) {
@@ -315,7 +315,7 @@ public class Logs {
 				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/"+loggerName,true);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Application.error(e);
 		}
 		out.addAppender(appender);
 		return out;

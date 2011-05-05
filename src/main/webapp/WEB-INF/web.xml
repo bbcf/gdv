@@ -72,6 +72,19 @@
     <filter-name>LINKAccess</filter-name>
     <url-pattern>/link/*</url-pattern>
   </filter-mapping>
+
+
+<!-- LINK ACCESS -->
+
+<filter>
+  <filter-name>GFMAccess</filter-name>
+  <filter-class>ch.epfl.bbcf.gdv.control.http.GFeatMinerFilter</filter-class>
+</filter>
+
+  <filter-mapping>
+    <filter-name>GFMAccess</filter-name>
+    <url-pattern>/GFeatMiner/*</url-pattern>
+  </filter-mapping>
 <!-- GDV -->
 
 

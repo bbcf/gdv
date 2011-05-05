@@ -12,29 +12,41 @@ if [ -z $1 ]; then
 fi
 GDV_HOME=$1
 
-BUILD_FILE=$GDV_HOME/build_scripts/gdv.properties
+BUILD_FILE=$GDV_HOME/src/main/webapp/META-INF/gdv.yaml
 
+#grab INSTALL PATH
 INSTALL_PATH=`awk 'BEGIN { RS = "\n" }; 
 {if($1 == "gdv.working.directory") print $3;}' $BUILD_FILE`
-echo $INSTALL_PATH
+echo "GDV will install on $INSTALL_PATH"
 
 if [ -z $INSTALL_PATH ]; then
-    echo '$BUILD_FILE not well configurated : missing gdv.working.directory param'
+    echo '$BUILD_FILE not well configurated : missing gdv_working_directory param'
     exit 1
 fi
 
-echo "##################################"
-echo "### WRITING CONFIGURATION FILE ###"
-echo "##################################"
-echo""
-cd $GDV_HOME/build_scripts
-ant build
-mv gdv.yaml $GDV_HOME/src/main/webapp/META-INF/gdv.yaml
-isok $?
-mv web.xml $GDV_HOME/src/main/webapp/WEB-INF/web.xml
-isok $?
-mv pom.xml $GDV_HOME/pom.xml
-isok $?
+
+#grab proxy url
+
+PROXY_URL=`awk 'BEGIN { RS = "\n" }; 
+{if($1 == "gdv_proxy_url") print $3;}' $BUILD_FILE`
+
+if [ -z $PROXY_URL ]; then
+    echo '$PROXY_URL not well configurated : missing gdv_proxy_url param'
+    exit 1
+fi
+
+# echo "##################################"
+# echo "### WRITING CONFIGURATION FILE ###"
+# echo "##################################"
+# echo""
+# cd $GDV_HOME/build_scripts
+# ant build
+# mv gdv.yaml $GDV_HOME/src/main/webapp/META-INF/gdv.yaml
+# isok $?
+# mv web.xml $GDV_HOME/src/main/webapp/WEB-INF/web.xml
+# isok $?
+# mv pom.xml $GDV_HOME/pom.xml
+# isok $?
 
 
 echo "#####################"
@@ -77,8 +89,9 @@ cp -r $GDV_HOME/src/main/img $PUBLIC_DIR
 cp -r $GDV_HOME/src/main/css $PUBLIC_DIR
 isok $?
 
-
-
+#cleaning
+cd ..
+rm -r jbrowse
 
 
 echo "#########################"
@@ -87,7 +100,7 @@ echo "#########################"
 echo""
 #instal daemons
 cd $GDV_HOME
-sh build_scripts/install_daemons.sh $GDV_HOME $FILE_DIR $TRACK_DIR
+sh build_scripts/install_daemons.sh $GDV_HOME $FILE_DIR $TRACK_DIR $PROXY_URL
 isok $?
 cp -r conversion/compute_sqlite_scores $INSTALL_PATH
 cp -r conversion/transform_to_sqlite $INSTALL_PATH

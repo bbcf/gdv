@@ -6,11 +6,16 @@ if [ -z $1 ]; then
     exit 1
 fi
 if [ -z $2 ]; then
-    echo 'FILE_DIR path is missing : provide the full path to the tmp dir of GDV project'
+    echo 'FILE_DIR path is missing : provide the full path to the files dir of GDV project'
     exit 1
 fi
 if [ -z $3 ]; then
-    echo 'TRACK_DIR path is missing : provide the full path to the tmp dir of GDV project'
+    echo 'TRACK_DIR path is missing : provide the full path to the track dir of GDV project'
+    exit 1
+fi
+
+if [ -z $4 ]; then
+    echo 'proxy url is missing : provide the url to access GDV project'
     exit 1
 fi
 
@@ -18,9 +23,10 @@ fi
 GDV_HOME=$1
 FILE_DIR=$2
 TRACK_DIR=$3
+PROXY_URL=$4
 COMP_HOME=$GDV_HOME/conversion/compute_sqlite_scores
 TRANS_HOME=$GDV_HOME/conversion/transform_to_sqlite
-POST_URL="http://svitsrv25.epfl.ch/gdv/post"
+POST_URL=PROXY_URL"/post"
 
 #install transform
 echo "### INSTALL TRANSFORM TO SQLITE ###"

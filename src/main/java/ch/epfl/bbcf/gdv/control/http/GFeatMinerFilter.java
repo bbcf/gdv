@@ -17,6 +17,8 @@ import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 
 import ch.epfl.bbcf.bbcfutils.access.InternetConnection;
+import ch.epfl.bbcf.gdv.config.Application;
+import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 
 
@@ -27,7 +29,6 @@ public class GFeatMinerFilter implements Filter{
 	private static final String GFEATMINER_VERSION="1.0.0";
 	private static final String FROM_BROWSER_INTERFACE="1";
 	private static final String FROM_GFM="2";
-	private static final String GFM_SERVER="http://svitsrv25.epfl.ch/gMiner";
 
 	private static Logger log = Logs.initLogger("gFeatMiner.log",GFeatMinerFilter.class);
 
@@ -43,7 +44,7 @@ public class GFeatMinerFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain filter) throws IOException, ServletException {
-		String post = "RemoteAccess :  ";
+		String post = "GFeatMinerFilter :  ";
 		Map<String, String[]> map = request.getParameterMap();
 		for (Entry<String, String[]> entry : map.entrySet()){
 			post+="- "+entry.getKey();
@@ -52,12 +53,13 @@ public class GFeatMinerFilter implements Filter{
 			}
 		}
 		log.debug(post);
+		Application.debug(post);
 		doGet(request,response);
 
 	}
 
 	private void doGet(ServletRequest request, ServletResponse response) {
-		
+
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
@@ -67,32 +69,34 @@ public class GFeatMinerFilter implements Filter{
 		if(out!=null){
 			Map<String, String[]> map = request.getParameterMap();
 			Params params = new Params(map);
-			
+
 			if(params.getFrom()!=null){
 				if(params.getFrom().equalsIgnoreCase(FROM_BROWSER_INTERFACE)){
 					Map<String,String> gfmMap = getMapFromParams(map);
 					//TODO update database with new job
 					int jobId = 1;
+					//get the path of the files
+					changeFilePath(gfmMap);
 					addGFMRequestedParameters(gfmMap,jobId);
 					sendMapToGFMserver(gfmMap);
-					
-					
-					
+
+
+
 				} else if(params.getFrom().equalsIgnoreCase(FROM_GFM)){
 					//TODO handle request and update database
-					
-					
-					
-					
-					
+
+
+
+
+
 				} else {
 					out.write("wrong param : from :"+params.getFrom());
 					throw new AbortWithHttpStatusException(400, true);
 				}
-				
-				
-				
-				
+
+
+
+
 			} else {
 				out.write("missing param : 'from'");
 				throw new AbortWithHttpStatusException(400, true);
@@ -101,6 +105,14 @@ public class GFeatMinerFilter implements Filter{
 		out.close();
 	}
 
+	/**
+	 * get the path of the files selected in the browser view
+	 * @param gfmMap
+	 */
+	private void changeFilePath(Map<String, String> gfmMap) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * Send the request to GFeatMiner
 	 * @param gfmMap
@@ -111,8 +123,12 @@ public class GFeatMinerFilter implements Filter{
 			body+=entry.getKey()+"="+entry.getValue()+"&";
 		}
 		body=body.substring(0, body.length()-1);
+		log.debug("sendMapToGFMserver :");
+		log.debug(body);
+		Application.debug("sendMapToGFMserver :");
+		Application.debug(body);
 		try {
-			InternetConnection.sendPOSTConnection(GFM_SERVER, body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
+			InternetConnection.sendPOSTConnection(Configuration.getGdvTomcatServ()+"/GFMserver", body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
 			log.error(e);
 		}
@@ -135,7 +151,7 @@ public class GFeatMinerFilter implements Filter{
 		}
 		return newMap;
 	}
-	
+
 	/**
 	 * add some parameters to send to GFM server
 	 * @param gfmMap
@@ -143,8 +159,9 @@ public class GFeatMinerFilter implements Filter{
 	 */
 	private static void addGFMRequestedParameters(Map<String, String> gfmMap, int jobId) {
 		gfmMap.put("version", GFEATMINER_VERSION);
+		gfmMap.put("callback_url", Configuration.getGdv_appli_proxy()+"/GFeatMiner");
 		gfmMap.put("job_id", Integer.toString(jobId));
-		
+
 	}
 
 
