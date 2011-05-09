@@ -6,7 +6,7 @@ class CherryRoot(object):
     exposed = True
     def POST(self, **kwargs):
         print "Answer:", kwargs
-        print "Result:", json.loads(kwargs['result'])
+        #print "Result:", json.loads(kwargs['result'])
 
 # Prepare to recieve the response #
 cherrypy.server.socket_port = 9999

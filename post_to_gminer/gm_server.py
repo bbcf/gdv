@@ -29,6 +29,10 @@ import gMiner
 # Specific variables #
 from gMiner.constants import gm_project_name, gm_project_version
 
+# Job list #
+global jobs
+jobs = []
+
 ###########################################################################
 class gmServer(object):
     def __init__(self, port=7522):
@@ -56,13 +60,14 @@ class CherryRoot(object):
 #-------------------------------------------------------------------------#
 def pre_process(**kwargs):
     # Create a job # 
-    global job
-    job = kwargs
+    global jobs
+    jobs.append(kwargs)
     # Return result #
     return 'Job added to queue'
 
 def post_process(**kwargs):
-    global job
+    global jobs
+    job = jobs.pop(0)
     try:
         # Format the input #
         request = json.loads(job['form'])
@@ -75,7 +80,6 @@ def post_process(**kwargs):
         # For the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
     except Exception as err:
-        with open('/tmp/errorinfo.html','w') as f: f.write(cgitb.html(sys.exc_info()))
         print "The job raised an error: ", str(err)
         try: result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
         except DeprecationWarning: pass
