@@ -78,9 +78,14 @@ def post_process(**kwargs):
         if request.has_key('tracks'):
             request.update(parse_tracks(request['tracks']))
             request.pop('tracks')
-        # Run the request # 
+        # Unicode filtering #
+        request = dict([(k.encode('ascii'),v) for k,v in request.items()])
+        # To remove in production version # 
         print "Request:", request
-        files = gMiner.run(**dict([(k.encode('ascii'),v) for k,v in request.items()]))
+        # Run the request # 
+        files = gMiner.run(**request)
+        # To remove in production version # 
+        print cgitb.text(sys.exc_info()) 
         # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
     except Exception as err:
