@@ -78,8 +78,9 @@ def post_process(**kwargs):
         if request.has_key('tracks'):
             request.update(parse_tracks(request['tracks']))
             request.pop('tracks')
-        # Run the request #
-        files = gMiner.run(**request)
+        # Run the request # 
+        print "Request:", request
+        files = gMiner.run(**dict([(k.encode('ascii'),v) for k,v in request.items()]))
         # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
     except Exception as err:
