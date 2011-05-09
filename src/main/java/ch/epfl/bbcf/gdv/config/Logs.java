@@ -14,7 +14,6 @@ import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
 import ch.epfl.bbcf.gdv.access.database.dao.DAO;
-import ch.epfl.bbcf.gdv.access.gfeatminer.GFeatMinerAccess;
 import ch.epfl.bbcf.gdv.control.http.NamesFilter;
 import ch.epfl.bbcf.gdv.control.http.QueriesFilter;
 
@@ -70,23 +69,23 @@ public class Logs {
 		out.addAppender(appender);
 		return out;
 	}
-	public static Logger initGFeatMinerLogger() {
-		Logger out = Logger.getLogger(GFeatMinerAccess.class.getName());
-		out.setAdditivity(false);
-		out.setLevel(debugLevel);
-		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
-		RollingFileAppender appender = null;
-		try {
-			if(out.getAppender(GFeatMinerAccess.class.getName())==null){
-				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/gFFeatMiner.log",true);
-				appender.setName(GFeatMinerAccess.class.getName());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		out.addAppender(appender);
-		return out;
-	}
+//	public static Logger initGFeatMinerLogger() {
+//		Logger out = Logger.getLogger(GFeatMinerAccess.class.getName());
+//		out.setAdditivity(false);
+//		out.setLevel(debugLevel);
+//		PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m%n");
+//		RollingFileAppender appender = null;
+//		try {
+//			if(out.getAppender(GFeatMinerAccess.class.getName())==null){
+//				appender = new RollingFileAppender(layout,Configuration.getLog_dir()+"/gFFeatMiner.log",true);
+//				appender.setName(GFeatMinerAccess.class.getName());
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		out.addAppender(appender);
+//		return out;
+//	}
 
 	public static Logger initPostLogger(String name){
 		Logger out = Logger.getLogger(name);

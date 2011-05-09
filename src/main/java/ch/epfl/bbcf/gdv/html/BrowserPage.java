@@ -1,6 +1,7 @@
 package ch.epfl.bbcf.gdv.html;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,7 +23,14 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import ch.epfl.bbcf.bbcfutils.access.genrep.GenrepWrapper;
+import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
@@ -76,7 +84,7 @@ public class BrowserPage extends WebPage{
 		ProjectControl pc = new ProjectControl((UserSession)getSession());
 		final Project project = pc.getProject(projectId);
 		if(null==project){
-			err="project id ("+projectId+") doesn't exist";
+			err="project id ("+projectId+") doesn't exist or you must login before";
 			PageParameters params = new PageParameters();
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
@@ -130,6 +138,7 @@ public class BrowserPage extends WebPage{
 		//String species = tmp[0];
 		add(new Label("species",project.getSpecies().getName()));
 		add(new Label("nrAssemblyId",Integer.toString(project.getSequenceId())));
+		add(new Label("gdv_project_id",Integer.toString(project.getId())));
 		
 		//adding static javascript and css
 		for(String cp : Configuration.getGDVCSSFiles()){
@@ -153,9 +162,9 @@ public class BrowserPage extends WebPage{
 		//get names
 		String tracksNames = getTrackNames(formattedTracks);
 		//get refseq.js
-		SequenceControl seqc = new SequenceControl((UserSession)getSession());
-		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());
-		final String refseq = JbrowsoRAccess.getRefseq(seq.getJbrowsoRId());
+//		SequenceControl seqc = new SequenceControl((UserSession)getSession());
+//		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());
+		final String refseq = buildRefseq(project.getSequenceId());//JbrowsoRAccess.getRefseq(seq.getJbrowsoRId());
 
 
 
@@ -215,6 +224,43 @@ public class BrowserPage extends WebPage{
 
 
 
+	}
+	/**
+	 * build the refseq needed for the view
+	 * @param jbrowsoRId
+	 * @return
+	 */
+	private String buildRefseq(int seq_id) {
+		String refSeq="refSeqs = ";
+		JSONArray array = null;
+		try {
+			Assembly ass = GenrepWrapper.getAssemblyFromNrAssemblyId(seq_id);
+			List<Chromosome> chromosomes = ass.getChromosomes();
+			array = new JSONArray();
+			for(Chromosome chromosome : chromosomes){
+				JSONObject json = new JSONObject();
+				json.put("length", chromosome.getLength());
+				json.put("name", chromosome.getName());
+				json.put("seqDir", "SEQDIR/");
+				//TODO generate the chunk of fasta sequences
+				json.put("start",0);
+				json.put("end", chromosome.getLength());
+				json.put("seqChunkSize",20000);
+				
+				array.put(json);
+			}
+			refSeq+= array.toString();
+		} catch (MethodNotFoundException e) {
+			Application.error(e);
+		} catch (IOException e) {
+			Application.error(e);
+		} catch (JSONException e) {
+			Application.error(e);
+		}
+		if(null==array){
+			refSeq+="[]";
+		}
+		return refSeq;
 	}
 	/**
 	 * If two track names are the same, jBrowse will bug
