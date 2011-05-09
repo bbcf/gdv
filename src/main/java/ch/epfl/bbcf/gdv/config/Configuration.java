@@ -25,7 +25,6 @@ import ch.epfl.bbcf.gdv.html.AddSequencePage;
 import ch.epfl.bbcf.gdv.html.AdminPage;
 import ch.epfl.bbcf.gdv.html.AlternativeProjectPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
-import ch.epfl.bbcf.gdv.html.BrowserPage2;
 import ch.epfl.bbcf.gdv.html.ErrorPage;
 import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
@@ -35,8 +34,6 @@ import ch.epfl.bbcf.gdv.html.MagicPasswordPage;
 import ch.epfl.bbcf.gdv.html.ProjectPage;
 import ch.epfl.bbcf.gdv.html.TrackStatus;
 import ch.epfl.bbcf.gdv.html.utility.MenuElement;
-import ch.epfl.bbcf.gdv.model.gfeatminer.GFeatMinerElement;
-import ch.epfl.bbcf.gdv.model.gfeatminer.GFeatMinerParameters;
 /**
  * Class called in the init() method of the Application class. It contains all about nice URL, 
  * resources folders, and authorizations
@@ -105,15 +102,15 @@ public final class Configuration{
 		return Arrays.asList(navigation_links);
 	}
 	
-	public final static GFeatMinerElement[] gFeatMinerElements={
-		new GFeatMinerElement("Statistics",GFeatMinerParameters.getGFeatMinerParameters()),
-		new GFeatMinerElement("Operations",null),
-		new GFeatMinerElement("Motifs",null),
-		new GFeatMinerElement("Diagnostics",null)
-	};
-	public static List<GFeatMinerElement> getGFeatMinerElements() {
-		return Arrays.asList(gFeatMinerElements);
-	}
+//	public final static GFeatMinerElement[] gFeatMinerElements={
+//		new GFeatMinerElement("Statistics",GFeatMinerParameters.getGFeatMinerParameters()),
+//		new GFeatMinerElement("Operations",null),
+//		new GFeatMinerElement("Motifs",null),
+//		new GFeatMinerElement("Diagnostics",null)
+//	};
+//	public static List<GFeatMinerElement> getGFeatMinerElements() {
+//		return Arrays.asList(gFeatMinerElements);
+//	}
 
 
 	public static void addRessourcesLocations(IResourceSettings resourceSettings){
@@ -140,7 +137,7 @@ public final class Configuration{
 		application.mount(new MixedParamUrlCodingStrategy("/preferences", PreferencesPage.class,new String[]{"project_id"}));
 		application.mount(new HybridUrlCodingStrategy("/tracks_status", TrackStatus.class));
 		application.mount(new QueryStringUrlCodingStrategy("/browser", BrowserPage.class));
-		application.mount(new QueryStringUrlCodingStrategy("/browser2", BrowserPage2.class));
+		//application.mount(new QueryStringUrlCodingStrategy("/browser2", BrowserPage2.class));
 		//MOUNT WITH PARAMS
 		//		MixedParamUrlCodingStrategy confirmation = new MixedParamUrlCodingStrategy(
 		//				"confirm",ComfirmPage.class, new String[]{"confirm-user"});
@@ -188,7 +185,7 @@ public final class Configuration{
 	das_dir,databases_link_dir,compute_scores_daemon,jbrowse_javascript_url,
 	transform_to_sqlite_daemon,project_url,gdv_version,images_url,
 	jbrowse_images_url,log_directory,jb_browser_root,jb_data_root,
-	psql_db,psql_user,psql_pwd,gdv_browser_page_url;
+	psql_db,psql_user,psql_pwd,gdv_browser_page_url,gFeatMinerDirectory;
 	
 	private static String gdv_post_access;
 	private static List<String> gdv_types_access;
@@ -289,6 +286,7 @@ public final class Configuration{
 				instance.gdv_css_files = buidGDVCSSFiles();
 				instance.log_directory = metaInfPath+"/logs/";
 				instance.gdv_browser_page_url=instance.gdv_appli_proxy+"/browser";
+				instance.gFeatMinerDirectory=instance.gdv_working_directory+"/gFeatMiner";
 				return true;
 			}
 			Application.error("parameters not corrects");
@@ -520,5 +518,11 @@ public final class Configuration{
 	}
 	public static String getBrowserUrl(){
 		return instance.gdv_browser_page_url;
+	}
+	public static void setgFeatMinerDirectory(String gFeatMinerDirectory) {
+		instance.gFeatMinerDirectory = gFeatMinerDirectory;
+	}
+	public static String getgFeatMinerDirectory() {
+		return instance.gFeatMinerDirectory;
 	}
 }
