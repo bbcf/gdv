@@ -21,7 +21,7 @@ If an error is found, the answer could be:
 """
 
 # General modules #
-import cherrypy, httplib2, urllib, json, sys, cgitb
+import cherrypy, httplib2, urllib, json, sys, cgitb, warnings
 
 # Other modules #
 import gMiner
@@ -74,15 +74,19 @@ def post_process(**kwargs):
         if request.has_key('compare_parents' ): request['compare_parents' ] = bool         (request['compare_parents' ])
         if request.has_key('per_chromosome'  ): request['per_chromosome'  ] = bool         (request['per_chromosome'  ])
         if request.has_key('selected_regions'): request['selected_regions'] = parse_regions(request['selected_regions'])
-        if request.has_key('tracks'          ): request.update(               parse_tracks (request['tracks'          ]))
+        # Special parameters #
+        if request.has_key('tracks'):
+            request.update(parse_tracks(request['tracks']))
+            request.pop('tracks')
         # Run the request #
         files = gMiner.run(**request)
         # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
     except Exception as err:
         print "The job raised an error: ", str(err)
-        try: result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
-        except DeprecationWarning: pass
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
     finally:
         connection = httplib2.Http()
         body       = urllib.urlencode({'from': job['from'],'job_id': job['job_id'], 'result': json.dumps(result)})
