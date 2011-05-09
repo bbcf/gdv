@@ -3,28 +3,31 @@
 Script: gm_server
 =================
 
-Implementation a web server around the functinoality of gFeatMiner. 
+Implementation of a web server around the functionality of gFeatMiner. 
 
-The servers listens for requests. Formats them. Sends them off to the gMiner library. Formats the result obtained and sends that off in a HTTP POST to an URL specified in the original request. This can be usefull if GDV wants to send requests to an instance of gm_server and recieve answers.
+The servers listens for requests. When it gets one, it formats them. Then, sends the request off to the gMiner library. Formats the result obtained and sends that off in a HTTP POST to an URL specified in the original request. This can be useful if GDV wants to send requests to an instance of gm_server and receive answers.
 
 A typical request arriving to the server would be:
 
-{'form':'''{"compare_parents":["compare_parents"],"per_chromosome":[],"selected_regions":"M:7455 .. 7720;M:8315 .. 8792","tracks":"{1:{'name':'Rip genes','path':'/tpm/asddasd.sql'},2:{'name':'rp genes','path':'/tmp/adsd.sql}}"}''','callback_url':'http://svitsrv25.epfl.ch/gdv_dev/GFeatMiner','from':'1','job_id':'1'}
+{'form':'''{"operation_type":"desc_stat","characteristic":"number_of_features","compare_parents":[],"per_chromosome":["per_chromosome"],"selected_regions":"chr1:0 .. 10000000;chr2:0 .. 10000000","tracks":{"1":{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},"2":{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}},"output_location":"/tmp/"}''','callback_url':'http://svitsrv25.epfl.ch/gdv_dev/GFeatMiner','from':'1','job_id':'1'}
 
 A typical answer from the server would be:
 
-{'from':1,'job_id':'1','results':{'files':['/tmp/asd.sql','/tmp/qq.sql'],'type':'sql'}}
+{'from':1,'job_id':'1','result':'''{"files":[{"path":"/tmp/asd.sql","type":"sql"},{"path":"/tmp/qq.png","type":"png"}]}'''}
 
+If an error is found, the answer could be:
+
+{'from':1,'job_id':'1','result':'''{"type":"error","msg":"Text about error","html":"<html>Displayable version for user</html>"'''}
 """
 
 # General modules #
-import cherrypy, httplib2, urllib, json
+import cherrypy, httplib2, urllib, json, sys, cgitb
 
 # Other modules #
 import gMiner
 
 # Specific variables #
-from gMiner.gm_constants import gm_project_name, gm_project_version
+from gMiner.constants import gm_project_name, gm_project_version
 
 ###########################################################################
 class gmServer(object):
@@ -42,41 +45,55 @@ class gmServer(object):
         cherrypy.tools.post_process = cherrypy.Tool('on_end_request', post_process)
         # Start Server #
         cherrypy.quickstart(CherryRoot(), config={'/':
-            {'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+            {'request.dispatch':      cherrypy.dispatch.MethodDispatcher(),
              'tools.post_process.on': True}})
 
 class CherryRoot(object):
     exposed = True
-    def GET(self, **kwargs):
-        return pre_process(**kwargs)
-    def POST(self, **kwargs):
-        return pre_process(**kwargs)
+    def GET(self, **kwargs):  return pre_process(**kwargs)
+    def POST(self, **kwargs): return pre_process(**kwargs)
 
+#-------------------------------------------------------------------------#
 def pre_process(**kwargs):
     # Create a job # 
     global job
     job = kwargs
+    # Return result #
     return 'Job added to queue'
 
-#-------------------------------------------------------------------------#
 def post_process(**kwargs):
-    # Format the request #
     global job
-    request = {}
-    # Run the request #
     try:
-        result = gMiner.run(request)
+        # Format the input #
+        request = json.loads(job['form'])
+        if request.has_key('compare_parents' ): request['compare_parents' ] = bool         (request['compare_parents' ])
+        if request.has_key('per_chromosome'  ): request['per_chromosome'  ] = bool         (request['per_chromosome'  ])
+        if request.has_key('selected_regions'): request['selected_regions'] = parse_regions(request['selected_regions'])
+        if request.has_key('tracks'          ): request.update(               parse_tracks (request['tracks'          ]))
+        # Run the request #
+        files = gMiner.run(**request)
+        # For the output #
+        result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
     except Exception as err:
-        answer = str(err)
-    else:
-        type = result[0].split('.')[-1]
-        answer = {'files': result, 'type': type}
-    # Make an HTTP POST #
-    connection = httplib2.Http()
-    body = urllib.urlencode({'from': job['from'],'job_id': job['job_id'], 'result': answer})
-    headers = {'content-type': 'application/x-www-form-urlencoded'}
-    address = job['callback_url']
-    response, content = connection.request(address, "POST", body=body, headers=headers)
+        with open('/tmp/errorinfo.html','w') as f: f.write(cgitb.html(sys.exc_info()))
+        print "The job raised an error: ", str(err)
+        try: result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
+        except DeprecationWarning: pass
+    finally:
+        connection = httplib2.Http()
+        body       = urllib.urlencode({'from': job['from'],'job_id': job['job_id'], 'result': json.dumps(result)})
+        headers    = {'content-type': 'application/x-www-form-urlencoded'}
+        address    = job['callback_url']
+        response, content = connection.request(address, "POST", body=body, headers=headers)
+
+#-------------------------------------------------------------------------#
+def parse_tracks(input):
+    output      = dict([('track' + str(k),v['path'])                          for k,v in input.items()])
+    output.update(dict([('track' + str(k) + '_name', v.get('name', 'Unamed')) for k,v in input.items()]))
+    return output
+
+def parse_regions(input):
+    return ';'.join([':'.join([x.split(':')[0], x.split(':')[1].split(' .. ')[0], x.split(':')[1].split(' .. ')[1]]) for x in input.split(';')])
 
 ###########################################################################
 if __name__ == '__main__': gmServer().serve()
