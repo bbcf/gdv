@@ -77,7 +77,7 @@ def post_process(**kwargs):
         if request.has_key('tracks'          ): request.update(               parse_tracks (request['tracks'          ]))
         # Run the request #
         files = gMiner.run(**request)
-        # For the output #
+        # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
     except Exception as err:
         print "The job raised an error: ", str(err)
