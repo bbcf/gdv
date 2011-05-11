@@ -23,7 +23,7 @@ gdv_tomcat_server : http://localhost:8080
 gdv_proxy_url : http://localhost:8080
 
 
-# Installation path of gdv
+# Installation path of gdv (absolute)
 
 gdv_working_directory : $GDV_HOME
 

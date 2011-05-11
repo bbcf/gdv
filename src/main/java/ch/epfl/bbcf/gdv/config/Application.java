@@ -52,7 +52,7 @@ public class Application extends AuthenticatedWebApplication
 		ServletContext ctx = this.getServletContext();
 		String catalina_home = System.getenv("CATALINA_HOME");
 		String ctxPath = ctx.getContextPath();
-		
+
 		String metaInf = catalina_home+"/webapps"+ctxPath+"/META-INF";
 		File confFile = new File(metaInf+"/gdv.yaml");
 		if(!confFile.exists()){
