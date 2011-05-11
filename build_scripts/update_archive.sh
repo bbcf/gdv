@@ -80,9 +80,9 @@ echo "######################                        ARCHIVE TREE                
 echo "#############################################################################################################"
 
 #archive tree
-cd $GDV_HOME
-tar -czf $TMP_DIR/$VERSION/gdv.tgz $TMP_DIR/$VERSION/gdv
-rm -r $GDV_HOME/$VERSION/gdv
+cd $GDV_HOME/$TMP_DIR/$VERSION
+tar -czf gdv.tgz gdv
+rm -r $GDV_HOME/$TMP_DIR/$VERSION/gdv
 echo "done ... "
 
 
