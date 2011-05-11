@@ -46,7 +46,9 @@ mvn clean package
 mv target/gdv-$VERSION.war target/gdv.war
 chmod 777 target/gdv.war
 cp target/gdv.war $TMP_DIR/$VERSION/gdv/bin/.
-
+cd $TMP_DIR/$VERSION/gdv/bin
+jar xvf gdv.war
+cd ../../../..
 cp build_scripts/start_gdv.sh $TMP_DIR/$VERSION/gdv/bin/.
 cp build_scripts/stop_gdv.sh $TMP_DIR/$VERSION/gdv/bin/.
 
