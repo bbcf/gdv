@@ -58,11 +58,16 @@ public class SQLiteProcessor implements Runnable{
 		if(!sendMail){
 			mail = "nomail";
 		}
-		String nrAssembly = SpeciesControl.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
+		int nrAssembly = SpeciesControl.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
 		SQLiteAccess access = new SQLiteAccess(Configuration.getTransform_to_sqlite_daemon());
 		access.writeNewJobTransform(
-				file.getAbsolutePath(), trackId, tmpDir, extension, mail, nrAssembly, user.getId());
+				file.getAbsolutePath(), trackId, tmpDir, extension, mail, nrAssembly, user.getId(),
+				Configuration.getFilesDir(),Configuration.getTracks_dir(),Configuration.getJb_data_root());
 		access.close();
+		
+		
+		
+		
 	}
 
 //	public static Map<String, String> getJSONDescriptor(String database,

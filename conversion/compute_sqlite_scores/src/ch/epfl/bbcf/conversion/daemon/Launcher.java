@@ -21,53 +21,44 @@ public class Launcher extends Thread{
 
 	private static final Logger logger = Configuration.initLogger(Launcher.class.getName());
 	public final static int[]zooms = ScoreTree.zooms;
-	private String trackId;
-	private String indb;
-	private String inpath;
-	private String outdb;
-	private String outpath;
-	private int rapidity;
-	private String mail;
+	private Job job;
+	
 
-	public void process(String trackId,String indb, String inpath, String outdb,
-			String outpath,int rapidity, String mail) {
-		this.trackId = trackId;
-		this.indb=indb;
-		this.inpath = inpath;
-		this.outdb=outdb;
-		this.outpath = outpath;
-		this.rapidity = rapidity;
-		this.mail = mail;
+	public void process(Job job) {
+		this.job=job;
 		ManagerService.processJob(this);
 	}
 
 	public void run(){
 		logger.debug("process tasks");
 		try {
-			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),"id=track_status&track_id="+trackId+"&mess=computing", InternetConnection.MIME_TYPE_FORM_APPLICATION);
+			InternetConnection.sendPOSTConnection(job.getFeedbackUrl(),
+					"id=track_status&track_id="+job.getTrackId()+"&mess=computing", 
+					InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e1) {
 			logger.error(e1);
 		}
 		List<Future> tasks = new ArrayList<Future>();
 
-		Map<String, Integer>chrs = SQLIteManager.getChromosomesAndLength(inpath+"/"+indb);
+		Map<String, Integer>chrs = 
+			SQLIteManager.getChromosomesAndLength(job.getInPath()+"/"+job.getIndb());
 		//create directories
-		buildDirectories(outdb,outpath);
+		buildDirectories(job.getOutdb(),job.getOutPath());
 		//iterate on each chromosomes
 		Iterator<String> it = chrs.keySet().iterator();
 
 		int nb = chrs.size();
 		int percentage = 100/nb;
 
-		String body = "id=track_status&track_id="+trackId+"&mess="+percentage;
+		String body = "id=track_status&track_id="+job.getTrackId()+"&mess="+percentage;
 		while(it.hasNext()){
 			String chr = it.next();
 			int length = chrs.get(chr);
 			//create the new database
-			ConnectionStore connectionStore = SQLIteManager.createNewDatabase(outdb,outpath,chr,zooms);
+			ConnectionStore connectionStore = SQLIteManager.createNewDatabase(job.getOutdb(),job.getOutPath(),chr,zooms);
 			//launch processes
-			ScoreTree scores = new ScoreTree(indb,inpath,outdb,outpath,length,chr,connectionStore,body);
-			Future task = ManagerService.executeScores(scores,rapidity);
+			ScoreTree scores = new ScoreTree(job.getTmpDir(),job.getFeedbackUrl(),job.getIndb(),job.getInPath(),job.getOutdb(),job.getOutPath(),length,chr,connectionStore,body);
+			Future task = ManagerService.executeScores(scores,job.getRapidity());
 			tasks.add(task);
 		}
 		logger.debug("task launched. Waiting for end.....");
@@ -79,12 +70,17 @@ public class Launcher extends Thread{
 			}
 		}
 		try {
-			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),"id=track_status&track_id="+trackId+"&mess=completed", InternetConnection.MIME_TYPE_FORM_APPLICATION);
+			InternetConnection.sendPOSTConnection(
+					job.getFeedbackUrl(),"id=track_status&track_id="+job.getTrackId()
+					+"&mess=completed", InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
 			logger.error(e);
 		}
-		if(!mail.equalsIgnoreCase("nomail")){
-			Sender.sendMessage(" File processed ","Your file has been processed by GDV you can now browse your projects.", false, mail);
+		if(!job.getMail().equalsIgnoreCase("nomail")){
+			Sender.sendMessage(
+					" File processed ",
+					"Your file has been processed by GDV you can now browse your projects.", 
+					false, job.getMail());
 		}
 		ManagerService.endJob();
 	}
@@ -116,4 +112,5 @@ public class Launcher extends Thread{
 
 	public void notify(boolean done) {
 	}
+
 }

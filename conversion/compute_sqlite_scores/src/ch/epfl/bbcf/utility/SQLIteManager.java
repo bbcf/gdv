@@ -79,14 +79,14 @@ public class SQLIteManager {
 		}
 		return f;
 	}
-	public static File getScoresForChromosome(String md5,String chrName){
+	public static File getScoresForChromosome(String tmpDir,String md5,String chrName){
 		try{
 			Connection conn = getConnection(md5);
 			Statement stat = conn.createStatement();
 			String query ="select * from "+protect(chrName)+";";
 			ResultSet rs = getResultSet(stat, query);
 			//ChromosomeFeature feat = new ChromosomeFeature();
-			File file = new File(Configuration.getTmpDirectory()+"/"+UUID.randomUUID().toString()+".rset");
+			File file = new File(tmpDir+"/"+UUID.randomUUID().toString()+".rset");
 			FileManagement fm = new FileManagement(file);
 			//logger.debug("writing on file : "+file.getAbsolutePath());
 			while (rs.next()) {

@@ -82,7 +82,10 @@ D) Git
 4) GDV application must know where Tomcat is installed :
        $ export CATALINA_HOME=<path where tomcat is installed> (previously called $CATALINA_HOME itself)
 
-5) Put gdv.war under Tomcat webapps directory :
+5) GDV daemons (other process that will start along GDV application) need to know where GDV is installed
+       $ export GDV_HOME=<path where GDV is installed> (previously called $GDV_HOME itsefl)
+
+6) Put gdv.war under Tomcat webapps directory :
        $ mv $GDV_HOME/gdv/bin/gdv.war $CATALINA_HOME/webapps/.
    - If you are still with the 'default' installation of Tomcat, GDV would start
      automatically.

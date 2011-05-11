@@ -230,7 +230,7 @@ public class SpeciesDAO extends DAO<Species>{
 	 * @param speciesId
 	 * @return
 	 */
-	public String getNrAssemblyBySpeciesIdForBuildingChrList(int speciesId) {
+	public int getNrAssemblyBySpeciesIdForBuildingChrList(int speciesId) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
@@ -240,9 +240,9 @@ public class SpeciesDAO extends DAO<Species>{
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1, speciesId);
 				ResultSet resultSet = this.executeQuery(statement);
-				String result="";
+				int result=-1;
 				if(resultSet.first()){
-					result = Integer.toString(resultSet.getInt(1));
+					result = resultSet.getInt(1);
 				}
 				this.endQuery(true);
 				return result;
@@ -251,7 +251,7 @@ public class SpeciesDAO extends DAO<Species>{
 				this.endQuery(false);
 			}
 		}
-		return null;
+		return -1;
 	}
 
 

@@ -26,7 +26,7 @@ public class SpeciesControl extends Control{
 	 * @param speciesId
 	 * @return
 	 */
-	public static String getNrAssemblyBySpeciesIdForBuildingChrList(int speciesId) {
+	public static int getNrAssemblyBySpeciesIdForBuildingChrList(int speciesId) {
 		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection());
 		return spDAO.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
 	}

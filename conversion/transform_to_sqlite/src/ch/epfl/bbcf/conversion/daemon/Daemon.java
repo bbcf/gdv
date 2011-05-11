@@ -22,7 +22,6 @@ import ch.epfl.bbcf.conversion.conf.Configuration;
 public class Daemon {
 
 
-	private static final int ARGS_LENGTH = 6;
 	private static final int shutdownTime = 2;
 	public static final Logger logger = Launcher.initLogger(Daemon.class.getName());
 
@@ -31,17 +30,6 @@ public class Daemon {
 		if(Configuration.init()){
 			if(initialization()){
 				logger.info("transform to sqlite daemon started");
-//				try {
-//					if(!GenRepAccess.testConnection()){
-//						logger.error("no connection on Jbrowsor or genrep");
-//						shutdownHook();
-//					}
-//				} catch (IOException e) {
-//					logger.error(e.getMessage()+" - no connection on Jbrowsor or genrep");
-//					shutdownHook();
-//				}
-
-
 				Thread runtimeHookThread = new Thread() {
 					public void run() {
 						shutdownHook(); 
@@ -71,7 +59,7 @@ public class Daemon {
 		logger.info("initializations of database");
 		jobs.delete();
 		try {
-			if(!SQLiteConstruct.initJobsDatabase(jobs)){
+			if(!Configuration.initJobsDatabase(jobs)){
 				logger.error("couldn't create database "+jobs.getAbsolutePath());
 				return false;
 			}
@@ -110,26 +98,11 @@ public class Daemon {
 	public static void doJob(){
 		boolean doJob = true;
 		try {
-			String args[] = getjob();
-			if(args.length!=ARGS_LENGTH){
-				doJob=false;
-				logger.error("bad args length: "+args.length+" provided (need "+ARGS_LENGTH+")");
-			}
-			for(String str:args){
-				if(null==str){
-					doJob = false;
-				}
-			}
-
-
-
-			if(doJob){
-				logger.debug("executing : file("+args[0]+"),trackId("+args[1]+"),tmpdir("+args[2]+"),extension("+args[3]+")," +
-						"mail("+args[4]+"),nrassemblyid("+args[5]+")");
+			Job job = getjob();
+				logger.debug("executing : "+job.toString());
 				Launcher l = new Launcher();
-				l.process(args[0],args[1],args[2],args[3],args[4],args[5]);
+				l.process(job);
 
-			}
 		} catch (ClassNotFoundException e) {
 			logger.debug("class not found:"+e.getMessage());
 		} catch (SQLException e) {
@@ -158,8 +131,8 @@ public class Daemon {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public static String[] getjob() throws ClassNotFoundException, SQLException{
-		String[] args = new String[ARGS_LENGTH];
+	public static Job getjob() throws ClassNotFoundException, SQLException{
+		Job job = new Job();
 		Connection conn = getConnection();
 		//getting first job
 		String query = "select * from jobs limit 1;";
@@ -167,24 +140,29 @@ public class Daemon {
 		prep.execute();
 		ResultSet rs = prep.getResultSet();
 		while (rs.next()) {
-			args[0] = rs.getString("file");
-			args[1] = rs.getString("trackid");
-			args[2] = rs.getString("tmpdir");
-			args[3] = rs.getString("extension");
-			args[4] = rs.getString("mail");
-			args[5] = rs.getString("nrassemblyid");
+			job.setFile(rs.getString("file"));
+			job.setTrackId(rs.getInt("trackid"));
+			job.setTmpdir(rs.getString("tmpdir"));
+			job.setExtension(rs.getString("extension"));
+			job.setMail(rs.getString("mail"));
+			job.setNrAssemblyId(rs.getInt("nrassemblyid"));
+			job.setFeedbackUrl(rs.getString("mail"));
+			job.setOutputDirectory(rs.getString("outdir"));
+			job.setJbrowseOutputDirectory(rs.getString("jbrowse_outdir"));
+			job.setJbrowseRessourcesUrl(rs.getString("jbrowse_ressource_url"));
+			
 		}
 		rs.close();
 		//delete from list
 		prep = conn.prepareStatement("" +
 				"delete from jobs " +
-				"where file = '" +args[0]+ "' " +
-				"and trackid = '"+args[1]+ "' " +
-				"and extension = '"+args[3]+ "' " +
-				"and mail = '"+args[4]+ "'; ");
+				"where file = '" +job.getFile()+ "' " +
+				"and trackid = '"+job.getTrackId()+ "' " +
+				"and extension = '"+job.getExtension()+ "' " +
+				"and mail = '"+job.getMail()+ "'; ");
 		prep.executeUpdate();
 		conn.close();
-		return args;
+		return job;
 	}
 
 }

@@ -61,16 +61,11 @@ public class Launcher extends Thread{
 	 * the parh of the file to parse
 	 */
 	private String filePath;
+	private Job job;
 
 
-	public void process(String filePath,String trackId,String tmpdir,
-			String extension,String mail,String nrAssemblyId) {
-		this.filePath = filePath;
-		this.trackId = trackId;
-		this.tmpdir=tmpdir;
-		this.mail = mail;
-		this.extension = extension;
-		this.nrAssemblyId = Integer.parseInt(nrAssemblyId);
+	public void process(Job job) {
+		this.job = job;
 		ManagerService.submitSQLiteProcess(this);
 	}
 
@@ -91,7 +86,8 @@ public class Launcher extends Thread{
 		}
 		if(null==md5){
 			try {
-				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),"cannot get md5","md5",trackId, filePath);
+				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
+						"cannot get md5","md5",trackId, filePath);
 			} catch (IOException e) {
 				logger.error(e);
 			}
@@ -139,14 +135,16 @@ public class Launcher extends Thread{
 			type="qualitative";
 		}else {
 			try {
-				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),"extension not recognized : "+ext,"ext",trackId, filePath);
+				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
+						"extension not recognized : "+ext,"ext",trackId, filePath);
 			} catch (IOException e) {
 				logger.error(e);
 			}
 			return;
 		}
 		String database = md5+".db";
-		logger.info(this.getId()+" start of convertion to SQLite :  "+filePath+" to "+Configuration.getSqliteOutput()+"/"+database);
+		logger.info(this.getId()+" start of convertion to SQLite :  "+filePath+" to "
+				+job.getOutputDirectory()+"/"+database);
 
 		boolean wellParsed = false;
 		String error ="";
@@ -155,7 +153,7 @@ public class Launcher extends Thread{
 			Exception ex = null;
 			try {
 				ConvertToSQLite convertor = new ConvertToSQLite(filePath, ext,nrAssemblyId);
-				wellParsed = convertor.convert(Configuration.getSqliteOutput()+"/"+database,type);
+				wellParsed = convertor.convert(job.getOutputDirectory()+"/"+database,type);
 			} catch (IOException e1) {
 				logger.error(e1);
 				ex=e1;
@@ -175,13 +173,15 @@ public class Launcher extends Thread{
 		logger.info("end sqlite conversion");
 		//JSON 
 		if(doJSON){
-			logger.debug(this.getId()+" start of convertion to JSON :  "+database+" to "+Configuration.getJbrowseOutput()+"/"+database);
-			ConvertToJSON convertor = new ConvertToJSON(Configuration.getSqliteOutput()+"/"+database, type);
+			logger.debug(this.getId()+" start of convertion to JSON :  " +
+					""+database+" to "+job.getJbrowseOutputDirectory()+"/"+database);
+			ConvertToJSON convertor = new ConvertToJSON(job.getOutputDirectory()+"/"+database, type);
 			/**
 			 * String outputPath,String dbName,String ressourceUrl,String trackName
 			 */
 			try {
-				wellParsed = convertor.convert(Configuration.getJbrowseOutput(),database,Configuration.getRessourceURL(),file.getName());
+				wellParsed = convertor.convert(job.getJbrowseOutputDirectory(),
+						database,job.getJbrowseRessourcesUrl(),file.getName());
 			} catch (ParsingException e) {
 				logger.error(e);
 				wellParsed=false;
@@ -193,7 +193,7 @@ public class Launcher extends Thread{
 		if(wellParsed){
 			logger.debug(this.getId()+"well parsed");
 			try {
-				RemoteAccess.sendTrackSucceed(Configuration.getFeedbackUrl(),trackId,database,mail,type);
+				RemoteAccess.sendTrackSucceed(job.getFeedbackUrl(),trackId,database,mail,type);
 			} catch (IOException e) {
 				logger.error(e);
 			}
@@ -206,7 +206,8 @@ public class Launcher extends Thread{
 			}
 		} else {
 			try {
-				RemoteAccess.sendTrackErrorMessage(Configuration.getFeedbackUrl(),"parsing error "+error,"parsing", trackId,filePath);
+				RemoteAccess.sendTrackErrorMessage(
+						job.getFeedbackUrl(),"parsing error "+error,"parsing", trackId,filePath);
 				return;
 			} catch (IOException e) {
 				logger.error(e);

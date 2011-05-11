@@ -38,9 +38,11 @@ public class ScoreTree extends Thread {
 	private int imageNumber;
 	private int chrLength;
 	private String chrName;
+	private String feedbackUrl;
 	private ConnectionStore connectionStore;
 
 	private String body;
+	private String tmpDir;
 
 
 
@@ -63,7 +65,7 @@ public class ScoreTree extends Thread {
 			logger.error(e);
 		}
 		try {
-			InternetConnection.sendPOSTConnection(Configuration.getFeedbackUrl(),body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
+			InternetConnection.sendPOSTConnection(feedbackUrl,body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
 			logger.error(e);
 		}
@@ -77,7 +79,7 @@ public class ScoreTree extends Thread {
 	private void process() throws NumberFormatException, IOException {
 		//logger.info(this.getId()+" process for "+chrName);
 		long s = System.currentTimeMillis();
-		File feat = SQLIteManager.getScoresForChromosome(dbPath+"/"+dbName,chrName);
+		File feat = SQLIteManager.getScoresForChromosome(tmpDir,dbPath+"/"+dbName,chrName);
 		BufferedReader reader = null;
 		FileReader fr = null;
 		try {
@@ -210,7 +212,7 @@ public class ScoreTree extends Thread {
 	 */
 
 
-	public ScoreTree(String dbName, String dbPath, String outdbName,String outdbPath,
+	public ScoreTree(String tmpDir,String feedbackUrl,String dbName, String dbPath, String outdbName,String outdbPath,
 			int chrLength,String chrName, ConnectionStore connectionStore, String body){
 		this.dbName=dbName;
 		this.dbPath=dbPath;
@@ -220,6 +222,8 @@ public class ScoreTree extends Thread {
 		this.chrName = chrName;
 		this.connectionStore = connectionStore;
 		this.body = body;
+		this.feedbackUrl=feedbackUrl;
+		this.tmpDir = tmpDir;
 	}
 
 
