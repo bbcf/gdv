@@ -122,6 +122,26 @@ CREATE TABLE admin_tracks
 "sequence_id" INTEGER
 );
 
+CREATE TABLE gfeatminerjob
+(
+"id" SERIAL NOT NULL,
+"project_id" INTEGER,
+"status" INTEGER,
+"result" VARCHAR(255)
+);
+
+CREATE TABLE statuses
+(
+"id" INTEGER NOT NULL,
+"status" TEXT NOT NULL,
+PRIMARY KEY ("id")
+);
+
+
+ALTER TABLE gfeatminerjob ADD FOREIGN KEY ("status") REFERENCES "statuses" ("id") on delete cascade;
+
+ALTER TABLE gfeatminerjob ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
+
 ALTER TABLE admin_tracks ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
 
 ALTER TABLE publicProjects ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
@@ -163,3 +183,11 @@ ALTER TABLE inputToTrack ADD FOREIGN KEY ("input_id") REFERENCES "input" ("id") 
 ALTER TABLE inputToTrack ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
 
 ALTER TABLE inputToTrack ADD UNIQUE ("input_id","track_id");
+
+
+
+
+
+INSERT into statuses values(0,'ERROR');
+INSERT into statuses values(1,'SUCCES');
+INSERT into statuses values(2,'RUNNING');

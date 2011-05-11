@@ -36,6 +36,7 @@ public class GFeatMinerFilter implements Filter{
 
 	private static final String FROM_BROWSER_INTERFACE="1";
 	private static final String FROM_GFM="2";
+	private static final String FROM_BROWSER_CHECK_JOB="3";
 
 	private static Logger log = Logs.initLogger("gFeatMiner.log",GFeatMinerFilter.class);
 
@@ -85,11 +86,16 @@ public class GFeatMinerFilter implements Filter{
 							Integer.parseInt(params.getProjectId()));
 					JSONObject form = changeFilePath(params);
 					if(form!=null){
-						gfmMap.put("form",form.toString());
+						try {
+							gfmMap.put("form",URLEncoder.encode(form.toString(),"UTF-8"));
+						} catch (UnsupportedEncodingException e) {
+							Application.error(e);
+						}
 						GFeatMinerAccess.addGFMRequestedParameters(gfmMap,jobId);
 						GFeatMinerAccess.sendToGFeatMiner(gfmMap);
+						out.write("{job_id:'"+jobId+"'}");
 					}
-
+					
 
 
 					//HANDLE RESPONSE FROM GFM server
@@ -107,14 +113,13 @@ public class GFeatMinerFilter implements Filter{
 					}
 
 
+				} else if(params.getFrom().equalsIgnoreCase(FROM_BROWSER_CHECK_JOB)){
+					int status = GFeatMinerControl.checkJob(Integer.parseInt(params.getJobId()));
+					out.write("{status:\'"+status+"\'}");
 				} else {
 					out.write("wrong param : from :"+params.getFrom());
 					throw new AbortWithHttpStatusException(400, true);
 				}
-
-
-
-
 			} else {
 				out.write("missing param : 'from'");
 				throw new AbortWithHttpStatusException(400, true);

@@ -2,6 +2,7 @@
 /resources/
 /scripts/
 /target/
+/tmp_build/
 .DS_Store
 /.settings
 .project

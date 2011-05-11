@@ -134,6 +134,36 @@ public class GFeatMinerJobDAO extends DAO<GFeatMinerJob>{
 			}
 		}
 	}
+
+
+	/**
+	 * get the status of a job
+	 * @param jobId - the job id
+	 * @return
+	 */
+	public int getStatus(int jobId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select status from gfeatminerjob " +
+						"where id = ? limit 1;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1, jobId);
+				ResultSet r = this.executeQuery(statement);
+				int status = -1;
+				if(r.first()){
+					status = r.getInt(1);
+				}
+				this.endQuery(true);
+				return status;
+			} catch (SQLException e) {
+				logger.error("updateJob : "+e);
+				this.endQuery(false);
+			}
+		}
+		return -1;
+	}
 	
 	
 	

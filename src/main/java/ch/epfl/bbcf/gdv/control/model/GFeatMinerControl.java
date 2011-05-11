@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.GFeatMinerJobDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Status;
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 
@@ -44,5 +45,15 @@ public class GFeatMinerControl extends Control{
 	public static void updateJob(int jobId,int status,String result) {
 		GFeatMinerJobDAO dao = new GFeatMinerJobDAO(Connect.getConnection());
 		dao.updateJob(jobId,status,result);
+	}
+
+	/**
+	 * get the status of a job
+	 * @param jobId - the job id
+	 * @return the status (ch.epfl.bbcf.gdv.access.database.pojo.Status)
+	 */
+	public static int checkJob(int jobId) {
+		GFeatMinerJobDAO dao = new GFeatMinerJobDAO(Connect.getConnection());
+		return dao.getStatus(jobId);
 	}
 }

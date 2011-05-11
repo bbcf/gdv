@@ -32,6 +32,7 @@ public class GFeatMinerAccess {
 			Application.debug("sendMapToGFMserver :");
 			Application.debug(body);
 			try {
+				Application.debug("POST TO :"+getGFMUrl());
 				InternetConnection.sendPOSTConnection(
 						getGFMUrl(), body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
 			} catch (IOException e) {
@@ -52,7 +53,7 @@ public class GFeatMinerAccess {
 	 * @return
 	 */
 	public static final String getGFMFilterUrl(){
-		return Configuration.getGdvTomcatServ()+"/GFeatMiner";
+		return Configuration.getGdv_appli_proxy()+"/GFeatMiner";
 	}
 	
 	/**
@@ -64,6 +65,7 @@ public class GFeatMinerAccess {
 		try {
 			parameters.put("callback_url", URLEncoder.encode(getGFMFilterUrl(),"UTF-8"));
 			parameters.put("job_id", URLEncoder.encode(Integer.toString(jobId),"UTF-8"));
+			parameters.put("from","2");
 			parameters.put("output_location", URLEncoder.encode(Configuration.getgFeatMinerDirectory()+"/"+jobId,"UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			Application.error(e);
