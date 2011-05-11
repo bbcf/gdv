@@ -58,7 +58,7 @@ public class UserSession extends AuthenticatedWebSession{
 	public final boolean authenticate(final String email, final String type){
 		Session.set(this);
 		if (user == 0){
-			if(type.equalsIgnoreCase("tequila") || Configuration.getGdv_types_access().contains(type)){
+			if(type.equalsIgnoreCase("tequila")){
 				UsersDAO dao = new UsersDAO(Connect.getConnection(this));
 				if(dao.emailExist(email)){
 					Users person = dao.getUserByEmail(email);

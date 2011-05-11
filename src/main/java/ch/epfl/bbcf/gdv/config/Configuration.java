@@ -30,7 +30,6 @@ import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
 import ch.epfl.bbcf.gdv.html.LoginPage;
-import ch.epfl.bbcf.gdv.html.MagicPasswordPage;
 import ch.epfl.bbcf.gdv.html.ProjectPage;
 import ch.epfl.bbcf.gdv.html.TrackStatus;
 import ch.epfl.bbcf.gdv.html.utility.MenuElement;
@@ -129,7 +128,7 @@ public final class Configuration{
 		application.mount(new HybridUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/login", LoginPage.class));
 		application.mount(new HybridUrlCodingStrategy("/admin", AdminPage.class));
-		application.mount(new IndexedParamUrlCodingStrategy("/log", MagicPasswordPage.class));
+		//application.mount(new IndexedParamUrlCodingStrategy("/log", MagicPasswordPage.class));
 		HybridUrlCodingStrategy addSequence = new HybridUrlCodingStrategy(
 				"/add_sequence",AddSequencePage.class);
 		application.mount(addSequence);
@@ -179,7 +178,6 @@ public final class Configuration{
 	private static String gdv_public_url;
 	private static String wicket_main_folder;
 
-
 	private static String gdv_appli_proxy,files_dir,tmp_dir,log_dir,
 	tracks_dir,public_dir,jbrowse_static_files_url,jbrowse_css_url,
 	das_dir,databases_link_dir,compute_scores_daemon,jbrowse_javascript_url,
@@ -188,7 +186,7 @@ public final class Configuration{
 	psql_db,psql_user,psql_pwd,gdv_browser_page_url,gFeatMinerDirectory;
 	
 	private static String gdv_post_access;
-	private static List<String> gdv_types_access;
+	//private static List<String> gdv_types_access;
 
 	private static String[] javascript_files;
 	private static String[] jbrowse_css_files;
@@ -201,19 +199,19 @@ public final class Configuration{
 	private static String mail_passwd;
 
 
-	public static boolean init(String metaInfPath,File confFile) {
+	public static boolean init(String catalina_home,String metaInf, File confFile) {
 		if(instance==null){
 			synchronized(Configuration.class){
 				instance = new Configuration();
 			}
 		}
 		if(instance!=null){
-			return readConfigurationFile(metaInfPath,confFile);
+			return readConfigurationFile(catalina_home,metaInf,confFile);
 		} 
 		return false;
 	}
 
-	private static boolean readConfigurationFile(String metaInfPath, File confFile) {
+	private static boolean readConfigurationFile(String catalina_home,String metaInfPath, File confFile) {
 		Application.info("reading conf file");
 		InputStream input = null;
 		try {
@@ -234,14 +232,14 @@ public final class Configuration{
 					instance.gdv_working_directory = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_public_url")){
 					instance.gdv_public_url = (String)entry.getValue();
-				} else if(entry.getKey().equalsIgnoreCase("wicket_main_folder")){
-					instance.wicket_main_folder = (String)entry.getValue();
+//				} else if(entry.getKey().equalsIgnoreCase("wicket_main_folder")){
+//					instance.wicket_main_folder = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_version")){
 					instance.gdv_version = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_post_access")){
 					instance.gdv_post_access = (String)entry.getValue();
-				} else if(entry.getKey().equalsIgnoreCase("gdv_types_access")){
-					instance.gdv_types_access = (List<String>)entry.getValue();
+//				} else if(entry.getKey().equalsIgnoreCase("gdv_types_access")){
+//					instance.gdv_types_access = (List<String>)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("jb_browser_root")){
 					instance.jb_browser_root = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("jb_data_root")){
@@ -260,9 +258,10 @@ public final class Configuration{
 					null!=instance.gdv_proxy_url &&
 					null!=instance.gdv_working_directory &&
 					null!=instance.gdv_public_url &&
-					null!=instance.wicket_main_folder && 
+//					null!=instance.wicket_main_folder && 
 					null!=instance.gdv_version){
 				Application.info("init parameters");
+				instance.wicket_main_folder=catalina_home+"/webapps/"+instance.gdv_version+"/WEB-INF/classes";
 				instance.gdv_appli_proxy=instance.gdv_proxy_url+"/"+instance.gdv_version;
 				instance.files_dir=instance.gdv_working_directory+"/files";
 				instance.tmp_dir=instance.gdv_working_directory+"/files/tmp";
@@ -462,9 +461,9 @@ public final class Configuration{
 	public static String getGdvPublicUrl(){
 		return instance.gdv_public_url;
 	}
-	public static String getWicketMainFolder(){
-		return instance.wicket_main_folder;
-	}
+//	public static String getWicketMainFolder(){
+//		return instance.wicket_main_folder;
+//	}
 	public static String getFilesDir(){
 		return instance.files_dir;
 	}
@@ -486,9 +485,9 @@ public final class Configuration{
 	public static String getGdv_post_access() {
 		return instance.gdv_post_access;
 	}
-	public static List<String> getGdv_types_access() {
-		return instance.gdv_types_access;
-	}
+//	public static List<String> getGdv_types_access() {
+//		return instance.gdv_types_access;
+//	}
 	public static String getGdv_Images_url(){
 		return instance.images_url;
 	}
@@ -524,5 +523,9 @@ public final class Configuration{
 	}
 	public static String getgFeatMinerDirectory() {
 		return instance.gFeatMinerDirectory;
+	}
+
+	public static String getWicketMainFolder() {
+		return instance.wicket_main_folder;
 	}
 }

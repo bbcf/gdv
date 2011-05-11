@@ -15,12 +15,12 @@ public class LoginControl extends Control{
 		super(session);
 	}
 
-	public boolean logAlternativeUser(String type, String key) {
-		if(Configuration.getGdv_types_access().contains(type)){
-			return session.authenticate(key,type);
-		}
-		return false;
-	}
+//	public boolean logAlternativeUser(String type, String key) {
+//		if(Configuration.getGdv_types_access().contains(type)){
+//			return session.authenticate(key,type);
+//		}
+//		return false;
+//	}
 
 	public void logOut(WebPage page, boolean finishSession) {
 		removeCookie(page);

@@ -18,10 +18,10 @@ public class HomePage extends BasePage{
 	public HomePage(PageParameters p) {
 		super(p);
 		Users user = ((UserSession)getSession()).getUser();
-		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
-			LoginControl lc = new LoginControl((UserSession)getSession());
-			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
-		}
+//		if(null!=user && Configuration.getGdv_types_access().contains(user.getType())){
+//			LoginControl lc = new LoginControl((UserSession)getSession());
+//			redirectToInterceptPage(new AlternativeProjectPage(new PageParameters()));
+//		}
 		Application.debug("Home page", ((UserSession)getSession()).getUserId());
 		Application.debug("HP : "+((UserSession)getSession()).getId());
 	}

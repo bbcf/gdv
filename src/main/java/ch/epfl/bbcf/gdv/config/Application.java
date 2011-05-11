@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
@@ -18,14 +16,9 @@ import org.apache.wicket.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebSession;
-import org.apache.wicket.settings.IApplicationSettings;
-import org.apache.wicket.settings.ISessionSettings;
-import org.apache.wicket.spring.test.ApplicationContextMock;
 
 import ch.epfl.bbcf.gdv.access.database.Connect;
-import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.utility.FileResource;
-import ch.epfl.bbcf.gdv.html.BasePage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.LoginPage;
 import ch.epfl.bbcf.gdv.utility.thread.ManagerService;
@@ -57,17 +50,17 @@ public class Application extends AuthenticatedWebApplication
 	protected void init() {
 		super.init();
 		ServletContext ctx = this.getServletContext();
-		String curDir = System.getProperty("user.dir");
+		String catalina_home = System.getenv("CATALINA_HOME");
 		String ctxPath = ctx.getContextPath();
-		//FIXME curDir depens on where you launch TOMCAT => should know tomcat path
-		String metaInf = curDir+"/../webapps"+ctxPath+"/META-INF";
+		
+		String metaInf = catalina_home+"/webapps"+ctxPath+"/META-INF";
 		File confFile = new File(metaInf+"/gdv.yaml");
 		if(!confFile.exists()){
 			fatal("configuration file not exist - APPLICATION WILL NOT WORK");
 		}
 		
 		theLogger = Logs.init(metaInf);
-		if(!Configuration.init(metaInf,confFile)){
+		if(!Configuration.init(catalina_home,metaInf,confFile)){
 			fatal("configuration not initialized properly - APPLICATION WILL NOT WORK");
 		}
 		Configuration.addRessourcesLocations(getResourceSettings());
