@@ -1,0 +1,112 @@
+################################################################
+######################## REQUIREMENT ###########################
+################################################################
+A) Java Development Kit 1.6
+
+   You need JDK 1.6 to run the application.
+   1) Download it at http://www.oracle.com/technetwork/java/javase/downloads/index.html
+   
+   2) Follow this instructions : http://www.oracle.com/technetwork/java/javase/index-137561.html
+   
+   3) Perhaps you will need to update your JAVA_HOME. You can do it with the following command :
+      	      $ export JAVA_HOME=/<path where you installed the jdk> 
+
+
+B) Apache Tomcat
+   
+   You need Apache Tomcat to deploy the application.
+   1) Download it at http://tomcat.apache.org/ (the latest version)
+      (select the Core zip or tgz)
+   
+   2) Uncompress it and put it somewhere like /srv.
+      So you should have something like /srv/apache-tomcat-<version>
+      This path will be called $CATALINA_HOME
+
+   3) You could start it with the command :
+      	  $ sh $CATALINA_HOME/bin/startup.sh 
+      
+   4) At this point you should see something on your browser at http://localhost:8080/ .
+      
+      If not, perhaps you have already somethind running on port 8080.
+      You can change it in $CATALINA_HOME/conf/server.xml .
+      Search for the line  <Connector port="8080" protocol="HTTP/1.1"
+      and change here the port to another.
+      If it's still not working I'm redirecting you to 
+      the official documentation od Apache Tomcat.
+
+C) PostgreSQL
+   
+   GDV use PostgreSQL as it's database system.
+   1) Download it at : http://www.postgresql.org/download/
+
+   2) Install it by following the steps that you could find at http://wiki.postgresql.org/wiki/Detailed_installation_guides
+
+   3) At this step you should be able to run (with correct user):
+      	 $ createdb db_test
+      	 $ psql db_test
+      	 db_test=> \q 
+      	 $ dropdb db_test
+      If not, you could have missed something : back to point 2)
+
+
+D) Git
+
+   You need git for the installations steps of GDV.
+   1) Download and Install it with your package manager 
+      You should see this great tutorial if you don't know how to do it :
+      http://progit.org/book/ch1-4.html
+      (note that on OSX you could also use homebrew to install it : http://mxcl.github.com/homebrew/)
+
+################################################################
+####################### INSTALLATION ###########################
+################################################################
+
+
+1) Download the latest gdv archive at http://salt.epfl.ch/java/gdv-archive/current/gdv.tgz
+   Untar it :
+   	 $ tar -xvzf gdv.tgz
+   And the directory created, we will call it $GDV_HOME
+
+2) Edit the file under $GDV_HOME/gdv/bin/gdv/META-INF/gdv.yaml
+   This file doesn't exist but you have gdv.yaml.example under the same
+   directory. Just remove the .example & edit it.
+   
+   This file should be correctly edited in order to GDV to be functionnal.
+   See the section "GDV CONFIGURATION" below.
+   	
+
+3) Archive  gdv.war :
+   	   $ cd $GDV_HOME/bin
+	   $ jar cvf gdv.war .
+
+4) GDV application must know where Tomcat is installed :
+       $ export CATALINA_HOME=<path where tomcat is installed> (previously called $CATALINA_HOME itself)
+
+5) Put gdv.war under Tomcat webapps directory :
+       $ mv $GDV_HOME/gdv/bin/gdv.war $CATALINA_HOME/webapps/.
+   - If you are still with the 'default' installation of Tomcat, GDV would start
+     automatically.
+
+   - Either you could launch the application with the web manager of tomcat : 
+    edit the file $CATALINA_HOME/conf/tomcat-users.xml
+    and enter the following lines :
+   
+    <role rolename="manager-gui"/>
+    <user username="tomcat" password="tomcat" roles="manager-gui"/>	
+
+    (this lines refer to apache Tomcat 7, for other versions, see the documentation : http://tomcat.apache.org/)
+    (you can of course change the password & username)
+
+    You should be able to access the manager here : http://localhost:8080/manager/html 
+
+
+6) Access gdv to http://localhost:8080/gdv
+
+
+
+################################################################
+##################### GDV CONFIGURATION ########################
+################################################################
+
+- how to configure httpd
+- how to configure tomcat/apache
