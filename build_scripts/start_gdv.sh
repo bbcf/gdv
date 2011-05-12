@@ -16,10 +16,10 @@ GDV_HOME=$1
 CAT_HOME=$2
 
 cd $GDV_HOME/compute_sqlite_scores/
-sh start.sh
+sh start.sh $GDV_HOME
 
 cd $GDV_HOME/transform_to_sqlite/
-sh start.sh
+sh start.sh $GDV_HOME
 
 cd $GDV_HOME
 cp bin/gdv.war $CAT_HOME/webapps/.

@@ -4,11 +4,15 @@
 A) Java Development Kit 1.6
 
    You need JDK 1.6 to run the application.
-   1) Download it at http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+   1) Look with :
+      	   $ java -version
+
+   2) Download at http://www.oracle.com/technetwork/java/javase/downloads/index.html
    
-   2) Follow this instructions : http://www.oracle.com/technetwork/java/javase/index-137561.html
+   3) Follow this instructions : http://www.oracle.com/technetwork/java/javase/index-137561.html
    
-   3) Perhaps you will need to update your JAVA_HOME. You can do it with the following command :
+   4) Perhaps you will need to update your JAVA_HOME. You can do it with the following command :
       	      $ export JAVA_HOME=/<path where you installed the jdk> 
 
 
@@ -36,7 +40,7 @@ B) Apache Tomcat
 
 C) PostgreSQL
    
-   GDV use PostgreSQL as it's database system.
+   GDV uses PostgreSQL as its database system.
    1) Download it at : http://www.postgresql.org/download/
 
    2) Install it by following the steps that you could find at http://wiki.postgresql.org/wiki/Detailed_installation_guides
@@ -86,7 +90,7 @@ D) Git
        $ export GDV_HOME=<path where GDV is installed> (previously called $GDV_HOME itsefl)
 
 6) For points 5 & 6, you should put them in your .bash_rc or .profile then source it.
-   
+       $ source .bash_rc 
 
 7) Put gdv.war under Tomcat webapps directory :
        $ mv $GDV_HOME/bin/gdv.war $CATALINA_HOME/webapps/.

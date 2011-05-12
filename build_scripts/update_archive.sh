@@ -68,6 +68,7 @@ ls
 cp compute_to_sqlite.jar $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.
 cp start.sh $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.
 cp stop.sh $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.
+cp -r lib $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.
 
 echo "#############################################################################################################"
 echo "######################                        BUILD DAEMON  2                     ###########################"
@@ -78,6 +79,7 @@ ant jar
 cp transform_to_sqlite.jar $GDV_HOME/$TMP_DIR/$VERSION/gdv/transform_to_sqlite/.
 cp start.sh $GDV_HOME/$TMP_DIR/$VERSION/gdv/transform_to_sqlite/.
 cp stop.sh $GDV_HOME/$TMP_DIR/$VERSION/gdv/transform_to_sqlite/.
+cp -r lib $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.
 
 echo "#############################################################################################################"
 echo "######################                        ARCHIVE TREE                        ###########################"

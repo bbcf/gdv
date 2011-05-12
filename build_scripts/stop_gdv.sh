@@ -1,5 +1,4 @@
 #/bin/sh
-
 if [ -z $1]; then
     echo 'GDV_HOME path is missing : provide the full path to the HOME dir of GDV project'
     exit 1
@@ -16,10 +15,10 @@ GDV_HOME=$1
 CAT_HOME=$2
 
 cd $GDV_HOME/compute_sqlite_scores/
-sh stop.sh
+sh stop.sh $GDV_HOME
 
 cd $GDV_HOME/transform_to_sqlite/
-sh stop.sh
+sh stop.sh $GDV_HOME
 
 rm $CAT_HOME/webapps/gdv.war
 
