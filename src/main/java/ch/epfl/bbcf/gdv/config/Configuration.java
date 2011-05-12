@@ -117,6 +117,7 @@ public final class Configuration{
 		resourceSettings.addResourceFolder("/html/");
 		resourceSettings.addResourceFolder(Configuration.getWicketMainFolder()+"/html/");
 		resourceSettings.setResourceStreamLocator(new ch.epfl.bbcf.gdv.config.utility.RessourceLocator());
+		System.out.println("WICKET :"+Configuration.getWicketMainFolder()+"/html/");
 	}
 
 

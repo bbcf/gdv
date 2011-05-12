@@ -14,13 +14,13 @@
 # Server URL of the application.
 # (where tomcat point to)
 
-gdv_tomcat_server : http://localhost:8080
+gdv_tomcat_server : http://localhost
 
 
 # Proxy to access application.
 # If not, put the same url as 'gdv_tomcat_server'.
 
-gdv_proxy_url : http://localhost:8080
+gdv_proxy_url : http://localhost
 
 
 # Installation path of gdv (absolute)
@@ -30,7 +30,7 @@ gdv_working_directory : $GDV_HOME
 
 # Will match the path in the url to the application
 
-gdv_version : localhost:8080/gdv
+gdv_version : gdv
 
 
 
@@ -51,7 +51,7 @@ psql_user : postgres
 
 # Password
 
-psql_pwd : postgrespasswd
+psql_pwd : postgres_passwd
 
 
 

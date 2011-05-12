@@ -32,6 +32,7 @@ echo "##########################################################################
 
 #build tree
 sh $GDV_HOME/build_scripts/build_tree.sh $GDV_HOME $GDV_HOME/$TMP_DIR/$VERSION
+mkdir $TMP_DIR/$VERSION/gdv/sql
 
 echo "#############################################################################################################"
 echo "######################                          BUILD WAR                         ###########################"
@@ -51,6 +52,7 @@ jar xvf gdv.war
 cd ../../../..
 cp build_scripts/start_gdv.sh $TMP_DIR/$VERSION/gdv/bin/.
 cp build_scripts/stop_gdv.sh $TMP_DIR/$VERSION/gdv/bin/.
+cp src/main/sql/browser.sql $TMP_DIR/$VERSION/gdv/sql/.
 
 echo "#############################################################################################################"
 echo "######################                       BUILD DAEMON  1                      ###########################"

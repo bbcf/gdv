@@ -85,7 +85,10 @@ D) Git
 5) GDV daemons (other process that will start along GDV application) need to know where GDV is installed
        $ export GDV_HOME=<path where GDV is installed> (previously called $GDV_HOME itsefl)
 
-6) Put gdv.war under Tomcat webapps directory :
+6) For points 5 & 6, you should put them in your .bash_rc or .profile then source it.
+   
+
+7) Put gdv.war under Tomcat webapps directory :
        $ mv $GDV_HOME/bin/gdv.war $CATALINA_HOME/webapps/.
    - If you are still with the 'default' installation of Tomcat, GDV would start
      automatically.
@@ -105,11 +108,90 @@ D) Git
 
 6) Access gdv to http://localhost:8080/gdv
 
-
+7) Read GDV CONFIGURATION PART cause things should not work correctly ....
 
 ################################################################
 ##################### GDV CONFIGURATION ########################
 ################################################################
 
-- how to configure httpd
-- how to configure tomcat/apache
+####################  PostgreSQL
+
+You need to create a database. The file is $GDV_HOME/sql/browser.sql.
+
+    $ createdb gdv
+    $ psql gdv < browser.sql
+
+####################  WEB SERVER
+
+
+Apache is better than Tomcat to serve static files see 
+http://wiki.apache.org/tomcat/FAQ/Connectors#Q3 if you want to know more
+
+So statics files are served by apache in GDV. This is why you have to 
+tell Appache to fetch ressources from 'public' and 'tracks' directories
+($GDV_HOME/public & $GDV_HOME/tracks).
+
+
+A) Apache configuration :
+   Theres a lot aof differents configurations possible, and I will just give hints on how
+   to do. For more detailled instructions, you should refer at the official documentation
+   that you could find at http://httpd.apache.org/.
+
+   
+   1) Find your httpd (apache2) configuration directory :
+      It should be under /etc/httpd/conf.d/ (Linux distrib) or /etc/apache2/ (OSX)
+
+
+   2) Write a new file named gdv.conf and enter the following lines :
+
+      	    Alias /public/ $GDV_HOME/public/
+	    <Location /public/>
+	    </Location>
+	    <Location /public/stuff>
+	              Options +Indexes
+  	    </Location>
+
+
+	    Alias /tracks/ $GDV_HOME/tracks/
+	    <Location /tracks/>
+	    </Location>
+	    <Location /tracks/stuff>
+            	      Options +Indexes
+	    </Location>
+
+
+	    Replace $GDV_HOME by the absolute path of GDV home directory.
+     	 
+   3) Put it in conf.d/ directory.
+      If you don't have it. Create it and the add the following line to your httpd.conf file :
+ 
+		Include <path to httpd configuration directory>/conf.d/*.conf
+
+      
+
+   4) In order to get rid of the port number in the url (e.g : transform http://localhost:8080/gdv to http://localhost/gdv )
+      You need to write this following lines in gdv.conf :
+      
+      ProxyPass /gdv http://localhost:8080/gdv
+      ProxyPassReverse /gdv http://localhost:8080/gdv
+   
+   5) You could restart yout httpd service with : 
+      $ sudo /sbin/service httpd reload (Linux distrib)
+      	or
+      $ sudo apachectl restart (OSX)
+       
+       It should do the trick.       
+       If not perhaps you need to give permissions to read the 'public' & 'tracks' directories.
+       On OSX you should see here : http://support.apple.com/kb/TA25038
+
+B) Advenced configuration :
+   This part is if you want tu use load balancing & custom workers with Tomcat.
+   As Apache, I advice you to read official documentation at http://tomcat.apache.org/ .
+   
+   - get mod_jk
+   - workers.properties file
+   - JKmount & Unmount in httpd.conf
+   - server.xml in Tomcat conf directory
+   - remove ProxyPass :8080 
+
+  
