@@ -20,7 +20,7 @@ HOME_PROJECT=$GDV_HOME
 mkdir $HOME_PROJECT/'build'
 cd $HOME_PROJECT/build
 wget 'http://salt.epfl.ch/java/gdv-archive/current/gdv.tgz'
-tar -xvzf gdv.tgz 
+tar -xzf gdv.tgz 
 
 #copy 1st daemon
 cp -r $HOME_PROJECT/build/gdv/compute_sqlite_scores $HOME_PROJECT/compute_sqlite_scores
@@ -33,6 +33,6 @@ mv $HOME_PROJECT/build/gdv/bin/gdv.war $CATALINA_HOME/webapps/gdv.war
 cd $HOME_PROJECT
 rm -rf build/
 
-cd CUR
+cd $CUR
 
 exit 0
