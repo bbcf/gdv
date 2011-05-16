@@ -1,11 +1,11 @@
 #/bin/sh
 
-if [ -z $1]; then
+if [ -z $1 ]; then
     echo 'GDV_HOME path is missing : provide the full path to the HOME dir of GDV project'
     exit 1
 fi
 
-if [ -z $2]; then
+if [ -z $2 ]; then
     echo 'CATALINA_HOME path is missing : provide the full path to the HOME of TOMCAT'
     exit 1
 fi
