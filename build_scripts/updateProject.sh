@@ -29,6 +29,10 @@ cp -r $HOME_PROJECT/build/gdv/transform_to_sqlite $HOME_PROJECT/transform_to_sql
 #copy WAR archive (change here to the actual version you wanna use : mv ...... ..../webapps/gdv_dev.war)
 mv $HOME_PROJECT/build/gdv/bin/gdv.war $CATALINA_HOME/webapps/gdv.war
 
+#copy .scripts
+rm -rf $HOME_PROJECT/.scripts
+mkdir $HOME_PROJECT/.scripts
+cp -r $HOME_PROJECT/build/gdv/.scripts/*.sh $HOME_PROJECT/.scripts
 
 cd $HOME_PROJECT
 rm -rf build/
