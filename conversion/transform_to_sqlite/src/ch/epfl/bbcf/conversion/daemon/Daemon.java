@@ -27,7 +27,10 @@ public class Daemon {
 
 
 	public static void main (String[] args) {
-		if(Configuration.init()){
+		if(args.length<1){
+			System.err.println("no args : the first args must be how you call the PARAMETER GDV_HOME");
+		}
+		if(Configuration.init(args[0])){
 			if(initialization()){
 				logger.info("transform to sqlite daemon started");
 				Thread runtimeHookThread = new Thread() {

@@ -26,7 +26,10 @@ public class Daemon {
 
 	/*DAEMON METHODS*/
 	public static void main (String[] args) {
-		if(Configuration.init()){
+		if(args.length<1){
+			System.err.println("no args : the first args must be how you call the PARAMETER GDV_HOME");
+		}
+		if(Configuration.init(args[0])){
 			if(initialization()){
 				Thread runtimeHookThread = new Thread() {
 					public void run() {

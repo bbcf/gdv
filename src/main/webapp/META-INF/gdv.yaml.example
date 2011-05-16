@@ -71,10 +71,11 @@ gdv_public_url : /public
 gdv_post_access : gdv_post
 
 
-# JBrowse browserRoot. The same	as gdv_public_url,
+# JBrowse browserRoot. The same	as gdv_public_url
 
 jb_browser_root : ../../tracks/
 
 # JBrowse dataRoot (same)
 
 jb_data_root : ../../tracks/
+

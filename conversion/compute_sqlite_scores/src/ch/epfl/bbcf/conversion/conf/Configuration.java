@@ -35,15 +35,16 @@ public class Configuration {
 	private static Configuration instance;
 
 	private String workingDir;
+	private static String gdvHome;
 
-	public static boolean init() {
-		String gdv_home = System.getenv("GDV_HOME");
+	public static boolean init(String gdvHome) {
+		gdvHome = System.getenv(gdvHome);
 		if(instance==null){
 			synchronized(Configuration.class){
 				instance = new Configuration();
 			}
 		}
-		instance.workingDir = gdv_home+"/"+RELATIVE_PATH;
+		instance.workingDir = gdvHome+"/"+RELATIVE_PATH;
 		return instance!=null;
 	}
 
@@ -52,7 +53,7 @@ public class Configuration {
 		return instance.workingDir;
 	}
 	public static String getLogger(){
-		return System.getenv("GDV_HOME")+"/"+RELATIVE_PATH+"/"+LOG_FILE;
+		return gdvHome+"/"+RELATIVE_PATH+"/"+LOG_FILE;
 	}
 
 	public static Logger initLogger(String name) {
@@ -95,7 +96,7 @@ public class Configuration {
 				"feedback_url text,"+
 				"tmp_dir text,"+
 				"rapidity integer," + //0 : for small files , 1 for big
-				"mail text);");  // the mail to feedback (nomail if no feedback)
+		"mail text);");  // the mail to feedback (nomail if no feedback)
 
 	}
 

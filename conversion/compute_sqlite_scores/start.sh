@@ -5,13 +5,14 @@ if [ -z $1 ]; then
 fi
 
 GDV_HOME=$1
+PARAM_GDV=$2
 APP_PATH=$GDV_HOME/compute_sqlite_scores
 
 
 if [ -f $APP_PATH/ActiveDaemonPID.pid ];then
 echo "Daemon already in progress"
 else
-java -jar $APP_PATH/compute_to_sqlite.jar &
+java -jar $APP_PATH/compute_to_sqlite.jar $PARAM_GDV &
 pid=$!
 echo ${pid} > $APP_PATH/ActiveDaemonPID.pid
 fi

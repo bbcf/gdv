@@ -6,12 +6,13 @@ if [ -z $1 ]; then
 fi
 
 GDV_HOME=$1
+PARAM_GDV=$2
 APP_PATH=$GDV_HOME/transform_to_sqlite
 
 if [ -f $APP_PATH/ActiveDaemonPID.pid ];then
 echo "Daemon already in progress"
 else
-java -Xmx2048m -jar $APP_PATH/transform_to_sqlite.jar &
+java -Xmx2048m -jar $APP_PATH/transform_to_sqlite.jar $PARAM_GDV &
 pid=$!
 echo ${pid} > $APP_PATH/ActiveDaemonPID.pid
 fi

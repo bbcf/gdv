@@ -28,14 +28,16 @@ public class Configuration {
 	public static final String DAEMON_FILE = "/ActiveDaemonPID.pid";
 	public static final String JOBS_FILE = "/jobs.db";
 	public static final String LOG_FILE = "/sqlite.log";
+	private static String gdvHome;
 
-	public static boolean init() {
+	public static boolean init(String gdv_home) {
 		if(instance==null){
 			synchronized(Configuration.class){
 				instance = new Configuration();
 			}
 		}
-		instance.workingDir = System.getenv("GDV_HOME")+"/"+RELATIVE_PATH;
+		gdvHome = System.getenv(gdv_home);
+		instance.workingDir = gdvHome+"/"+RELATIVE_PATH;
 		return instance!=null;
 	}
 
@@ -44,7 +46,7 @@ public class Configuration {
 		return instance.workingDir+JOBS_FILE;
 	}
 	public static String getLogger(){
-		return  System.getenv("GDV_HOME")+"/"+RELATIVE_PATH+"/"+LOG_FILE;
+		return  gdvHome+"/"+RELATIVE_PATH+"/"+LOG_FILE;
 	}
 	
 	public static boolean initJobsDatabase(File jobs) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{

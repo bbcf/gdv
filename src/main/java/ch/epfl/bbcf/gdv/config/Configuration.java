@@ -42,8 +42,6 @@ import ch.epfl.bbcf.gdv.html.utility.MenuElement;
  */
 public final class Configuration{
 
-//	public final static String LOG_DIRECTORY = "/data/gdv_dev/log/";
-//	public final static String CONF_FILE = "/data/gdv_dev/conf/gdv.yaml";
 
 	private static String[] buildJSFile() {
 		String[] js = new String[22];
@@ -101,23 +99,12 @@ public final class Configuration{
 		return Arrays.asList(navigation_links);
 	}
 	
-//	public final static GFeatMinerElement[] gFeatMinerElements={
-//		new GFeatMinerElement("Statistics",GFeatMinerParameters.getGFeatMinerParameters()),
-//		new GFeatMinerElement("Operations",null),
-//		new GFeatMinerElement("Motifs",null),
-//		new GFeatMinerElement("Diagnostics",null)
-//	};
-//	public static List<GFeatMinerElement> getGFeatMinerElements() {
-//		return Arrays.asList(gFeatMinerElements);
-//	}
-
-
 	public static void addRessourcesLocations(IResourceSettings resourceSettings){
 		resourceSettings.addResourceFolder("conf/");
 		resourceSettings.addResourceFolder("/html/");
 		resourceSettings.addResourceFolder(Configuration.getWicketMainFolder()+"/html/");
 		resourceSettings.setResourceStreamLocator(new ch.epfl.bbcf.gdv.config.utility.RessourceLocator());
-		System.out.println("WICKET :"+Configuration.getWicketMainFolder()+"/html/");
+		System.out.println("FOUND WICKET :"+Configuration.getWicketMainFolder()+"/html/");
 	}
 
 

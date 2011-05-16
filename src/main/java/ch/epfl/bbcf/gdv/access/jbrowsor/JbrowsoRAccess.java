@@ -14,7 +14,8 @@ import ch.epfl.bbcf.gdv.config.Configuration;
 
 public abstract class JbrowsoRAccess {
 	
-	public final static String SERV = "http://ptbbpc1.epfl.ch/jbrowsor/";
+	//public final static String SERV = "http://ptbbpc1.epfl.ch/jbrowsor/";
+	public final static String SERV ="http://bbcftools.vital-it.ch/jbrowsor/";
 	public final static String SERV_JS = "/";
 	
 	public final static String NEW_GENOME = SERV+"genomes";

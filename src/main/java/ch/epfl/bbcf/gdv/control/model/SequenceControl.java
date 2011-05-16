@@ -139,10 +139,11 @@ public class SequenceControl extends Control{
 					int seqId = sdao.createSequence(nr_assembly.getId(),jbId,"generep",version,spId);
 					//create an admin track
 					if(seqId!=-1){
-						//TODO
+						Application.debug("sequence id : "+seqId);
+						Application.debug("nr_assembly "+nr_assembly);
 						if(null!=nr_assembly.getGtf_file_ftp() || !nr_assembly.getGtf_file_ftp().equalsIgnoreCase("")){
 							String gftUrl = GenrepWrapper.getGtfUrlByNrAssemBly(nr_assembly.getId());
-							boolean result = InputControl.processInputs(session.getUser(),
+							return InputControl.processInputs(session.getUser(),
 									-1,gftUrl,null,seqId,spId,false,true,
 									new ArrayList<Group>(),InputType.NEW_FILE,null,"Ensembl");
 						} else {

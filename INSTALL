@@ -8,6 +8,8 @@ A) Java Development Kit 1.6
    1) Look with :
       	   $ java -version
 
+      Pay attention that you need the JDK (different from the JRE).
+
    2) Download at http://www.oracle.com/technetwork/java/javase/downloads/index.html
    
    3) Follow this instructions : http://www.oracle.com/technetwork/java/javase/index-137561.html
@@ -197,5 +199,5 @@ B) Advenced configuration :
    - JKmount & Unmount in httpd.conf
    - server.xml in Tomcat conf directory
    - remove ProxyPass :8080 
-
+   - unlimit -H for the daemons that will handle large files
   
