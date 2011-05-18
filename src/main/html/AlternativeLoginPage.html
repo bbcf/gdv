@@ -1,0 +1,26 @@
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" >
+<head>
+ <title>Genome Data Viewer</title>
+</head>
+<body>
+<wicket:extend>
+  <div class="bh"  wicket:id="login_header"></div>
+  <form wicket:id="form">
+    <div><span wicket:id="log"/><input wicket:id="login"/></div>
+    <div><span wicket:id="pw"/><input wicket:id="pwd" type="password"/></div><br/>
+    <input type="submit"/>
+  </form>
+
+  <div class="bh"  wicket:id="create_header"></div>
+  <form wicket:id="form2">
+    <div><span wicket:id="ml"/><input wicket:id="mail"/></div><br/>
+    <div><span wicket:id="pw2"/><input wicket:id="password" type="password"/></div><br/>
+    <div><span wicket:id="pw3"/><input wicket:id="password2" type="password"/></div><br/><br/>
+    <input type="submit"/><br/>
+    <div wicket:id="feedback"/>
+  </form>
+
+
+</wicket:extend>
+</body>
+</html>

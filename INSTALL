@@ -21,7 +21,7 @@ A) Java Development Kit 1.6
 B) Apache Tomcat
    
    You need Apache Tomcat to deploy the application.
-   1) Download it at http://tomcat.apache.org/ (the latest version)
+   1) Download it at http://tomcat.apache.org/ (the latest version - works with apache 6 or above -)
       (select the Core zip or tgz)
    
    2) Uncompress it and put it somewhere like /srv.
@@ -57,7 +57,7 @@ C) PostgreSQL
 
 D) Git
 
-   You need git for the installations steps of GDV.
+   You need git for the upgrade steps of GDV.
    1) Download and Install it with your package manager 
       You should see this great tutorial if you don't know how to do it :
       http://progit.org/book/ch1-4.html
@@ -78,9 +78,9 @@ D) Git
    directory. Just remove the .example & edit it.
    
    This file should be correctly edited in order to GDV to be functionnal.
-   See the section "GDV CONFIGURATION" below.
+   WHen editing the file, more information is provided.
+   See the section "GDV CONFIGURATION" below. 
    	
-
 3) Archive  gdv.war :
    	   $ cd $GDV_HOME/bin
 	   $ jar cvf gdv.war .
@@ -126,6 +126,18 @@ You need to create a database. The file is $GDV_HOME/sql/browser.sql.
 
     $ createdb gdv
     $ psql gdv < browser.sql
+
+####################  JAVASCRIPT
+
+You need to edit by hand the file called gdv.js. It's located
+under $GDV_HOME/public/jbrowse/javascript/js/gdv.js
+
+At the top of the script, you will find this 2 variable called _GDV_PROXY & _GDV_URL.
+You must change it & put the same as you put with gdv.yaml.
+                                                                                                                                                                                  
+var _GDV_PROXY="http://localhost/"; (-> put gdv_proxy_url)
+var _GDV_URL=_GDV_PROXY+"gdv"; (-> put gdv_version)
+
 
 ####################  WEB SERVER
 
