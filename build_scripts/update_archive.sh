@@ -60,7 +60,7 @@ cd ../../../..
 cp build_scripts/startDaemons.sh $TMP_DIR/$VERSION/gdv/bin/.
 cp build_scripts/stopDaemons.sh $TMP_DIR/$VERSION/gdv/bin/.
 cp build_scripts/updateProject.sh $TMP_DIR/$VERSION/gdv/bin/.
-cp build_script/hook.sh $TMP_DIR/$VERSION/gdv/bin/.
+cp build_scripts/hook.sh $TMP_DIR/$VERSION/gdv/bin/.
 
 cp build_scripts/ $TMP_DIR/$VERSION/gdv/bin/.
 cp src/main/sql/browser.sql $TMP_DIR/$VERSION/gdv/sql/.

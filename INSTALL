@@ -208,14 +208,16 @@ A) Apache configuration :
 
 
 => You should be able to start gdv with the script under $GDV_HOME/bin directory
-   $ sh $GDV_HOME/start_gdv.sh
+   $ sh $GDV_HOME/startDaemons.sh
    
-   (it will start two daemons that are needed & copy the war archive to Tomcat)   
+   (it will start two daemons that are needed)   
 
-=> You can update the project with the script (same directory) updateProject.sh
-
-   Don't forget to stop the daemons before (stop_gdv.sh).
-
+=> To update the project :
+      - stop the daemons : stopDaemons.sh
+      - run the update script : updateProject.sh
+      - start the daemons : startDaemons.sh
+       
+      
 
 B) Advanced configuration :
    This part is if you want tu use load balancing & custom workers with Tomcat.
