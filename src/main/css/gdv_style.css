@@ -108,8 +108,8 @@ div.clearer {clear: left; line-height: 0; height: 0;}
   width:0;
   height:0;}
 
-.zplus{color:blue;font-size:250%;position:absolute;text-align:center;top:0.5em;right:0;}
-.zmoins{bottom:0.5em;color:blue;font-size:400%;position:absolute;right:0;}
+.zplus{color:blue;font-size:300%;position:absolute;text-align:center;top:0em;right:-0.2em;}
+.zmoins{bottom:0em;color:blue;font-size:420%;position:absolute;right:-0.1em;}
 .zs{height:inherit;position:fixed;right: 0;width:2em;cursor: pointer;z-index:20;};
 /*GROUP LIST PAGE*/
 .sh1{width:98.5%;font-size:150%;font-weight:normal;background-color:#696969;padding:0.4em 0.4em 0.4em 0.6em;}
