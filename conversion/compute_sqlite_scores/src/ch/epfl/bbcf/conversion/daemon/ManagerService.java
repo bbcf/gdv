@@ -14,7 +14,6 @@ public class ManagerService {
 
 	
 	
-	public static final Logger logger = Configuration.initLogger(ManagerService.class.getName());
 	
 	
 	private static ExecutorService principal_instance;
@@ -84,14 +83,14 @@ public class ManagerService {
 	
 	
 	public static void shutdown(){
-		logger.info("shutdown managers");
+		Configuration.getLoggerInstance().info("shutdown managers");
 		shutdown(getInstance(FAST));
 		shutdown(getInstance(SLOW));
 		shutdown(getPrincipalInstance());
 	}
 	
 	public static void destruct(){
-		logger.info("destruct managers");
+		Configuration.getLoggerInstance().info("destruct managers");
 		destruct(getInstance(FAST));
 		destruct(getInstance(SLOW));
 		destruct(getPrincipalInstance());

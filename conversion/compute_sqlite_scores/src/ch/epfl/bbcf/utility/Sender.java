@@ -1,8 +1,6 @@
 package ch.epfl.bbcf.utility;
 
-import java.io.File;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Address;
@@ -16,22 +14,20 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.conversion.daemon.ManagerService;
+import ch.epfl.bbcf.conversion.conf.Configuration;
 
 
 public class Sender {
 
 private static final String ADMIN_ADRESS = "yohan.jarosz@epfl.ch";
-public static final Logger logger = ManagerService.logger;
 
 	public static MimeMessage setSubject(MimeMessage msg,String subject){
 		String str = "[GDV]"+subject;
 		try {
 			msg.setSubject(str);
 		} catch (MessagingException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return msg;
 	}
@@ -55,7 +51,7 @@ public static final Logger logger = ManagerService.logger;
 			msg.setRecipients(Message.RecipientType.TO,mail);	
 			return msg;
 		} catch (MessagingException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 			return null;
 		}
 	}
@@ -64,7 +60,7 @@ public static final Logger logger = ManagerService.logger;
 
 
 	private static boolean sendMessage(Session mailSession, MimeMessage msg, String mail, boolean toAdmin) {
-		logger.debug("sending message to "+mail);
+		Configuration.getLoggerInstance().debug("sending message to "+mail);
 		
 		Transport tr;
 		try {
@@ -82,12 +78,12 @@ public static final Logger logger = ManagerService.logger;
 			addresses[0] = adress;
 			msg.saveChanges();
 			tr.sendMessage(msg, addresses);
-			logger.debug("message sent");
+			Configuration.getLoggerInstance().debug("message sent");
 			return true;
 		} catch (NoSuchProviderException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (MessagingException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return false;
 	}

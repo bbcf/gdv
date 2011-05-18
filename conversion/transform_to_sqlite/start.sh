@@ -12,7 +12,7 @@ APP_PATH=$GDV_HOME/transform_to_sqlite
 if [ -f $APP_PATH/ActiveDaemonPID.pid ];then
 echo "Daemon already in progress"
 else
-java -Xmx2048m -jar $APP_PATH/transform_to_sqlite.jar $PARAM_GDV &
+java -Xmx2048m -jar $APP_PATH/transform_to_sqlite.jar $PARAM_GDV & >> $APP_PATH/sqlite.log
 pid=$!
 echo ${pid} > $APP_PATH/ActiveDaemonPID.pid
 fi

@@ -9,6 +9,8 @@ public class Job {
 	private String feedbackUrl;
 	private String jbrowseRessourcesUrl;
 	
+	private boolean doit;
+	
 	public void setExtension(String extension) {
 		this.extension = extension;
 	}
@@ -73,5 +75,12 @@ public class Job {
 	public String toString(){
 		return "file("+file+"),trackId("+trackId+"),tmpdir("+tmpdir+"),extension("+extension+")," +
 						"mail("+mail+"),nrassemblyid("+nrAssemblyId+")";
+	}
+	public void setDoit(boolean doit) {
+		this.doit = doit;
+	}
+	public boolean isRunnable() {
+		return (trackId!=-1 && file!=null && outputDirectory!=null);
+		
 	}
 }

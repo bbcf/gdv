@@ -353,8 +353,18 @@ public final class Configuration{
 		return instance.mail_passwd;
 	}
 
+	/**
+	 * Context that will match gdv
+	 *(gdv)
+	 * @return
+	 */
+	public static String getVersion() {
+		return instance.gdv_version;
+	}
 
 	/**
+	 * Get the URL that match the application URL
+	 * (http://my_proxy.com/gdv)
 	 * @return the gdv_appli_proxy
 	 */
 	public static String getGdv_appli_proxy() {
@@ -436,16 +446,37 @@ public final class Configuration{
 	}
 
 
-
+	/**
+	 * Get the URL where tomcat is located
+	 * (http://localhost)
+	 * @return
+	 */
 	public static String getGdvTomcatServ(){
 		return instance.gdv_tomcat_server;
 	}
+	
+	/**
+	 * Get the URL where the application
+	 * should be accessed
+	 * (http://my_proxy.com)
+	 * @return
+	 */
 	public static String getGdvProxyUrl(){
 		return instance.gdv_proxy_url;
 	}
+	/**
+	 * Where the project is located on the 
+	 * filesystem ($GDV_HOME)
+	 * @return
+	 */
 	public static String getGdvWorkingDir(){
 		return instance.gdv_working_directory;
 	}
+	/**
+	 * the context that will match public directory
+	 * (/public)
+	 * @return
+	 */
 	public static String getGdvPublicUrl(){
 		return instance.gdv_public_url;
 	}

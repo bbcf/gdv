@@ -7,7 +7,6 @@ import ch.epfl.bbcf.conversion.daemon.ManagerService;
 
 public class NodeONE extends Node{
 
-	private static final Logger logger = ManagerService.logger;
 
 	private NodeTWO parent2;
 	private NodeFIVE parent5;

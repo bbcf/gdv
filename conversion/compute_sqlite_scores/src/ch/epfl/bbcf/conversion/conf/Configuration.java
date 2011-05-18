@@ -23,7 +23,7 @@ public class Configuration {
 
 
 
-	public static final Logger logger = initLogger(Configuration.class.getName());
+	public static Logger logger; 
 
 	private static final String RELATIVE_PATH="compute_sqlite_scores";
 	//public static final String CONF_FILE = "/conf/conf.yaml";
@@ -37,14 +37,16 @@ public class Configuration {
 	private String workingDir;
 	private static String gdvHome;
 
-	public static boolean init(String gdvHome) {
-		gdvHome = System.getenv(gdvHome);
+	public static boolean init(String gdv_home) {
+		gdvHome = System.getenv(gdv_home);
 		if(instance==null){
 			synchronized(Configuration.class){
 				instance = new Configuration();
 			}
 		}
+		
 		instance.workingDir = gdvHome+"/"+RELATIVE_PATH;
+		logger = initLogger(Configuration.class.getName());
 		return instance!=null;
 	}
 
@@ -56,6 +58,10 @@ public class Configuration {
 		return gdvHome+"/"+RELATIVE_PATH+"/"+LOG_FILE;
 	}
 
+	public static Logger getLoggerInstance(){
+		return logger;
+	}
+	
 	public static Logger initLogger(String name) {
 		Logger out = Logger.getLogger(name);
 		out.setAdditivity(false);
@@ -87,16 +93,17 @@ public class Configuration {
 		Class.forName("org.sqlite.JDBC").newInstance();
 		Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+jobs.getAbsolutePath());
 		Statement stat = conn.createStatement();
-		return stat.execute("create table jobs " + 
+		 stat.execute("create table jobs " + 
 				"(trackId integer, " + //the trackId in gdv database
-				"indb text," +  //the name of your input sqlite database
-				"inpath text," + //the path where to fetch the sqlite database 
-				"outdb text," + //the name of your output directory
-				"outpath text," + //the path of the output
-				"feedback_url text,"+
-				"tmp_dir text,"+
-				"rapidity integer," + //0 : for small files , 1 for big
+				"indb text, " +  //the name of your input sqlite database
+				"inpath text ," + //the path where to fetch the sqlite database 
+				"outdb text, " + //the name of your output directory
+				"outpath text, " + //the path of the output
+				"feedback_url text, "+
+				"tmp_dir text, "+
+				"rapidity integer, " + //0 : for small files , 1 for big
 		"mail text);");  // the mail to feedback (nomail if no feedback)
+		return true;
 
 	}
 

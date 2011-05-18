@@ -5,6 +5,8 @@ public class Job {
 	private String 
 	indb,inPath,outdb,outPath,
 	mail,feedbackUrl,tmpDir;
+	
+	private boolean doit;
 
 	private int trackId,rapidity;
 	
@@ -84,5 +86,13 @@ public class Job {
 			" -output db : "+outdb+" with path : "+outPath+"\n"+
 			" -fast:slow ? "+rapidity+" -mail : "+mail+"\n" +
 					"tmp dir : "+tmpDir +" feedback : "+feedbackUrl;
+	}
+
+	public void setDoit(boolean doit) {
+		this.doit = doit;
+	}
+
+	public boolean isRunnable() {
+		return (trackId!=-1 && indb!=null &&inPath!=null &&outdb!=null &&outPath!=null);
 	}
 }

@@ -62,76 +62,13 @@ public class SQLiteProcessor implements Runnable{
 		SQLiteAccess access = new SQLiteAccess(Configuration.getTransform_to_sqlite_daemon());
 		access.writeNewJobTransform(
 				file.getAbsolutePath(), trackId, tmpDir, extension, mail, nrAssembly, user.getId(),
-				Configuration.getFilesDir(),Configuration.getTracks_dir(),Configuration.getJb_data_root());
+				Configuration.getFilesDir(),Configuration.getTracks_dir(),
+				Configuration.getJb_data_root(),
+				Configuration.getGdv_appli_proxy()+"/post");
 		access.close();
 		
 		
 		
 		
 	}
-
-//	public static Map<String, String> getJSONDescriptor(String database,
-//			Map<String, String> altsNames) {
-//		try {
-//			int id = 0;
-//			Connection conn = SQLiteAccess.getConnectionOnFileDirectory(database);
-//			Map<String,String> result = new HashMap<String, String>();
-//			List<String> chromosomes = SQLiteAccess.getChromosomesNames(conn);
-//			for(String chr:chromosomes){
-//				int featureCount = SQLiteAccess.getFeatureCountForChromosome(conn,chr);
-//				String params="[";
-//				ResultSet r = SQLiteAccess.getValuesForChromosome(conn,chr);
-//				try {
-//					while(r.next()){
-//						id++;
-//						String name = r.getString("name");
-//						if(altsNames!=null){
-//							//alt name
-//							if(altsNames.get(name)!=null){
-//								String[] names = altsNames.get(name).split(",");
-//								name = names[0];
-//							}
-//						}
-//						params+="["+r.getInt("start")+","+r.getInt("end")+","+r.getInt("strand")+","+id+",\""+name+"\"],";
-//					}
-//					r.close();
-//					params=params.substring(0,params.length()-1);
-//					params+="]";
-//				} catch (SQLException e) {
-//					Application.error(e);
-//				}
-//
-//				String finalParam = "{\"headers\":[\"start\",\"end\",\"strand\",\"id\",\"name\"]," +
-//				"\"subfeatureClasses\":null," +
-//				"\"featureCount\":"+featureCount+"," +
-//				"\"key\":\""+database+"\"," +
-//				"\"featureNCList\":[" +params+
-//				",\"className\":\"feature2\"," +
-//				"\"clientConfig\":null," +
-//				"\"rangeMap\":[]," +
-//				"\"arrowheadClass\":null," +
-//				"\"subfeatureHeaders\":[\"start\",\"end\",\"strand\",\"id\",\"type\"]," +
-//				"\"type\":\"FeatureTrack\"," +
-//				"\"label\":\"Alignments\"," +
-//				"\"sublistIndex\":5}";
-//
-//				result.put(chr, finalParam);	
-//
-//			}
-//			try {
-//				conn.close();
-//			} catch (SQLException e) {
-//				Application.error(e);
-//			}
-//
-//			return result;
-//		}catch(Exception e){
-//			Application.debug(e);
-//			for (StackTraceElement el : e.getStackTrace()){
-//				Application.debug(el.getMethodName()+"   "+el.getFileName()+"  "+el.getLineNumber());
-//			}
-//		}
-//		return null;
-//
-//	}
 }

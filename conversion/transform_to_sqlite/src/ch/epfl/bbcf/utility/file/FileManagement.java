@@ -10,9 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.conversion.daemon.Launcher;
+import ch.epfl.bbcf.conversion.conf.Configuration;
 
 
 
@@ -21,7 +20,6 @@ import ch.epfl.bbcf.conversion.daemon.Launcher;
 
 public class FileManagement {
 	
-	static final Logger log = Launcher.initLogger(FileManagement.class.getName());
 	static final int BUFF_SIZE = 2048;
 	static final byte[] buffer = new byte[BUFF_SIZE];
 	private OutputStream out;
@@ -30,7 +28,7 @@ public class FileManagement {
 		try {
 			this.out = new FileOutputStream(file,true);
 		} catch (FileNotFoundException e) {
-			log.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 	}
 	public void writeTo(String from) throws IOException{
@@ -47,11 +45,11 @@ public class FileManagement {
 				}
 			} 
 		} catch (FileNotFoundException e) {
-			log.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (UnsupportedEncodingException e) {
-			log.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (IOException e) {
-			log.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} finally {
 			if (in != null) {
 				in.close();
@@ -83,11 +81,11 @@ public class FileManagement {
 				}
 			} 
 		} catch (FileNotFoundException e) {
-			log.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (UnsupportedEncodingException e) {
-			log.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (IOException e) {
-			log.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} finally {
 			if (in != null) {
 				in.close();

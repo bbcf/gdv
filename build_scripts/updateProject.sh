@@ -23,9 +23,9 @@ wget 'http://salt.epfl.ch/java/gdv-archive/current/gdv.tgz'
 tar -xzf gdv.tgz 
 
 #copy 1st daemon
-cp -r $HOME_PROJECT/build/gdv/compute_sqlite_scores $HOME_PROJECT/compute_sqlite_scores
+cp -r $HOME_PROJECT/build/gdv/compute_sqlite_scores $HOME_PROJECT/.
 #copy 2nd daemon
-cp -r $HOME_PROJECT/build/gdv/transform_to_sqlite $HOME_PROJECT/transform_to_sqlite
+cp -r $HOME_PROJECT/build/gdv/transform_to_sqlite $HOME_PROJECT/.
 #copy WAR archive (change here to the actual version you wanna use : mv ...... ..../webapps/gdv_dev.war)
 mv $HOME_PROJECT/build/gdv/bin/gdv.war $CATALINA_HOME/webapps/gdv.war
 

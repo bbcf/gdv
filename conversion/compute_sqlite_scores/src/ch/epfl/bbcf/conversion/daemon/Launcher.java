@@ -19,7 +19,6 @@ import ch.epfl.bbcf.utility.Sender;
 
 public class Launcher extends Thread{
 
-	private static final Logger logger = Configuration.initLogger(Launcher.class.getName());
 	public final static int[]zooms = ScoreTree.zooms;
 	private Job job;
 	
@@ -30,13 +29,13 @@ public class Launcher extends Thread{
 	}
 
 	public void run(){
-		logger.debug("process tasks");
+		Configuration.getLoggerInstance().debug("process tasks");
 		try {
 			InternetConnection.sendPOSTConnection(job.getFeedbackUrl(),
 					"id=track_status&track_id="+job.getTrackId()+"&mess=computing", 
 					InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e1) {
-			logger.error(e1);
+			Configuration.getLoggerInstance().error(e1);
 		}
 		List<Future> tasks = new ArrayList<Future>();
 
@@ -61,12 +60,12 @@ public class Launcher extends Thread{
 			Future task = ManagerService.executeScores(scores,job.getRapidity());
 			tasks.add(task);
 		}
-		logger.debug("task launched. Waiting for end.....");
+		Configuration.getLoggerInstance().debug("task launched. Waiting for end.....");
 		while(waitForEnd(tasks)){
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				logger.error(e);
+				Configuration.getLoggerInstance().error(e);
 			}
 		}
 		try {
@@ -74,7 +73,7 @@ public class Launcher extends Thread{
 					job.getFeedbackUrl(),"id=track_status&track_id="+job.getTrackId()
 					+"&mess=completed", InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		if(!job.getMail().equalsIgnoreCase("nomail")){
 			Sender.sendMessage(
@@ -100,11 +99,11 @@ public class Launcher extends Thread{
 	}
 
 	private static void buildDirectories(String outdbName,String outdbPath) {
-		logger.debug("build directories");
+		Configuration.getLoggerInstance().debug("build directories");
 		File motherDir = new File(outdbPath+"/"+outdbName);
 		if(!motherDir.exists()){
 			if(!motherDir.mkdir()){
-				logger.debug("build directories failed");
+				Configuration.getLoggerInstance().debug("build directories failed");
 			}
 		}
 	}

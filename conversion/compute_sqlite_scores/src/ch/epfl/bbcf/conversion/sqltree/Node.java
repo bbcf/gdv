@@ -1,8 +1,6 @@
 package ch.epfl.bbcf.conversion.sqltree;
 
-import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.conversion.daemon.ManagerService;
 
 
 public abstract class Node {
@@ -16,7 +14,6 @@ public abstract class Node {
 	protected boolean first;
 	protected int previousStart;
 
-	private static final Logger logger = ManagerService.logger;
 	
 	protected Node(ScoreTree tree,int tabWidth,int zoom){
 		this.first = true;

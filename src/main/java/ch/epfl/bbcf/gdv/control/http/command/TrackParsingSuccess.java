@@ -29,7 +29,8 @@ public class TrackParsingSuccess extends Command{
 		if(params.getType().equalsIgnoreCase("quantitative")){
 			Application.debug("writing new job to calcul score on "+params.getDb());
 			SQLiteAccess access = new SQLiteAccess(Configuration.getCompute_scores_daemon());
-			access.writeNewJobCalculScores(params.getTrackId(),params.getDb(),Configuration.getFilesDir(),params.getDb(),Configuration.getTracks_dir(),"0",params.getUsermail());
+			access.writeNewJobCalculScores(params.getTrackId(),params.getDb(),Configuration.getFilesDir(),params.getDb(),Configuration.getTracks_dir(),"0",params.getUsermail(),
+					Configuration.getGdv_appli_proxy()+"/post",Configuration.getTmp_dir());
 			access.close();
 		} else if(params.getType().equalsIgnoreCase("qualitative")){
 			//UPDATE qualitatif

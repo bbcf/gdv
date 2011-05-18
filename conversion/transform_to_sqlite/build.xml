@@ -15,7 +15,7 @@
 
     <!-- download dependencies -->
     <target name="dl" depends="init">
-    <get src="http://salt.epfl.ch/java/maven/ch/epfl/bbcf/bbcfutils/1.0.2/bbcfutils-1.0.2.jar" dest="${lib.dir}/bbcfutils-1.0.2.jar"/>
+    <get src="http://salt.epfl.ch/java/maven/ch/epfl/bbcf/bbcfutils/1.0.3-SNAPSHOT/bbcfutils-1.0.3-SNAPSHOT.jar" dest="${lib.dir}/bbcfutils-1.0.2.jar"/>
     <get src="http://repo1.maven.org/maven2/log4j/log4j/1.2.16/log4j-1.2.16.jar" dest="${lib.dir}/log4j-1.2.16.jar"/>
     <get src="http://repo1.maven.org/maven2/org/yaml/snakeyaml/1.7/snakeyaml-1.7.jar" dest="${lib.dir}/snakeyaml-1.7.jar"/>
      <get src="http://salt.epfl.ch/java/javalib/sqlite-jdbc-3.7.2.jar" dest="${lib.dir}/sqlite-jdbc-3.7.2.jar"/>
@@ -63,13 +63,13 @@
            basedir="bin"
            includes="**/*.class">
 	<manifest>
-          <attribute name="Main-Class" value="ch.epfl.bbcf.conversion.daemon.Daemon"/>
+          <attribute name="Main-Class" value="ch.epfl.bbcf.conversion.daemon.TransformDaemon"/>
           <attribute name="Class-Path" value="${mf.classpath}" />
 	</manifest>
 	</jar>
     </target> 
     <target name="daemon">
-        <java classname="ch.epfl.bbcf.conversion.daemon.Daemon" failonerror="true" fork="yes">
+        <java classname="ch.epfl.bbcf.conversion.daemon.TransformDaemon" failonerror="true" fork="yes">
             <classpath refid="conversion.classpath"/>
         </java>
     </target>

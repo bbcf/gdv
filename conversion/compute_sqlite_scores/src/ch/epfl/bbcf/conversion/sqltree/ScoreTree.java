@@ -28,7 +28,6 @@ import ch.epfl.bbcf.utility.SQLIteManager;
 public class ScoreTree extends Thread {
 
 	public static final int TAB_WIDTH = 100;
-	private static final Logger logger = ManagerService.logger;
 	private NodeONE leaf;
 
 	private String dbName;
@@ -58,16 +57,16 @@ public class ScoreTree extends Thread {
 		try {
 			process();
 		} catch (NumberFormatException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (IOException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (Exception e){
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		try {
 			InternetConnection.sendPOSTConnection(feedbackUrl,body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 	}
 
@@ -77,7 +76,7 @@ public class ScoreTree extends Thread {
 
 
 	private void process() throws NumberFormatException, IOException {
-		//logger.info(this.getId()+" process for "+chrName);
+		//Configuration.getLoggerInstance().info(this.getId()+" process for "+chrName);
 		long s = System.currentTimeMillis();
 		File feat = SQLIteManager.getScoresForChromosome(tmpDir,dbPath+"/"+dbName,chrName);
 		BufferedReader reader = null;
@@ -86,9 +85,9 @@ public class ScoreTree extends Thread {
 			fr = new FileReader(feat);
 			reader = new BufferedReader(fr);
 		} catch (FileNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
-		//logger.debug(this.getId()+" reading file for "+chrName);
+		//Configuration.getLoggerInstance().debug(this.getId()+" reading file for "+chrName);
 		String line;
 		while( (line = reader.readLine())!=null){
 			String[] sss = line.split("\t");
@@ -101,7 +100,7 @@ public class ScoreTree extends Thread {
 					leaf.fill(j,score,imageNumber);
 				}
 			}else {
-				logger.error("sss length !=3 !!!!!");
+				Configuration.getLoggerInstance().error("sss length !=3 !!!!!");
 			}
 		}
 
@@ -119,23 +118,23 @@ public class ScoreTree extends Thread {
 //				minMax = SQLIteManager.getMinMaxScoreForChr(outdbPath+"/"+outdbDirectory+"/"+chrName+"_1.db");
 //				fail = false;
 //			} catch(SQLException e) {
-//				logger.error(e);
+//				Configuration.getLoggerInstance().error(e);
 //				cpt++;
 //				if(cpt>5){
 //					fail = false;
 //				}
 //			} catch (InterruptedException e) {
-//				logger.error(e);
+//				Configuration.getLoggerInstance().error(e);
 //			}
 //		}
 //		if(null!=minMax){
 //			buildJSON(minMax,outdbPath,outdbDirectory,zooms,chrName);
 //		} else {
-//			logger.error("cannot get min/max for chromosome : "+chrName);
+//			Configuration.getLoggerInstance().error("cannot get min/max for chromosome : "+chrName);
 //		}
 		long end = System.currentTimeMillis();
 		long time = (end-s)/1000;
-		logger.info(this.getId()+" time elapsed : "+time+"  sec. for "+chrName);
+		Configuration.getLoggerInstance().info(this.getId()+" time elapsed : "+time+"  sec. for "+chrName);
 
 	}
 
@@ -158,7 +157,7 @@ public class ScoreTree extends Thread {
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 	}
 
@@ -229,7 +228,7 @@ public class ScoreTree extends Thread {
 
 
 	public void initTree(){
-		//logger.debug("new tree => database : "+dbPath+"/"+dbName+" chromosome : "+chrName+" ("+chrLength+") on "+outdbPath+"/"+outdbDirectory);
+		//Configuration.getLoggerInstance().debug("new tree => database : "+dbPath+"/"+dbName+" chromosome : "+chrName+" ("+chrLength+") on "+outdbPath+"/"+outdbDirectory);
 		NodeONE lastZoom = new NodeONE(this,TAB_WIDTH,100000,null,null,true);
 		for(int i=4;i>=0;i--){
 			NodeFIVE node5 = new NodeFIVE(this,TAB_WIDTH,(int)Math.pow(10,i)*5,lastZoom);

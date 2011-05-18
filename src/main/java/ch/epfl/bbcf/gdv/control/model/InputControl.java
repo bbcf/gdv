@@ -317,7 +317,8 @@ public class InputControl extends Control{
 					SQLiteAccess access = new SQLiteAccess(Configuration.getCompute_scores_daemon());
 					access.writeNewJobCalculScores(
 							Integer.toString(trackId),database,Configuration.getFilesDir(),
-							database,Configuration.getTracks_dir(),"0","nomail");
+							database,Configuration.getTracks_dir(),"0","nomail",
+							Configuration.getGdv_appli_proxy()+"/post",Configuration.getTmp_dir());
 					access.close();
 				}
 				//TrackControl.linkToProject(trackId,projectId);

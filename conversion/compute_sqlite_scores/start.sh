@@ -12,7 +12,7 @@ APP_PATH=$GDV_HOME/compute_sqlite_scores
 if [ -f $APP_PATH/ActiveDaemonPID.pid ];then
 echo "Daemon already in progress"
 else
-java -jar $APP_PATH/compute_to_sqlite.jar $PARAM_GDV &
+java -jar $APP_PATH/compute_to_sqlite.jar $PARAM_GDV & >> $APP_PATH/compute_scores.log
 pid=$!
 echo ${pid} > $APP_PATH/ActiveDaemonPID.pid
 fi

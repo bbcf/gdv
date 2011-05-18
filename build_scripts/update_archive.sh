@@ -43,7 +43,7 @@ mkdir $TMP_DIR/$VERSION/gdv/bin
 
 #archive project
 cd $GDV_HOME
-mvn clean package
+mvn -U clean package
 mv target/gdv-$VERSION.war target/gdv.war
 chmod 777 target/gdv.war
 cp target/gdv.war $TMP_DIR/$VERSION/gdv/bin/.
@@ -79,7 +79,7 @@ ant jar
 cp transform_to_sqlite.jar $GDV_HOME/$TMP_DIR/$VERSION/gdv/transform_to_sqlite/.
 cp start.sh $GDV_HOME/$TMP_DIR/$VERSION/gdv/transform_to_sqlite/.
 cp stop.sh $GDV_HOME/$TMP_DIR/$VERSION/gdv/transform_to_sqlite/.
-cp -r lib $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.
+cp -r lib $GDV_HOME/$TMP_DIR/$VERSION/gdv/transform_to_sqlite/.
 
 echo "#############################################################################################################"
 echo "######################                        ARCHIVE TREE                        ###########################"

@@ -7,7 +7,6 @@ import ch.epfl.bbcf.conversion.daemon.ManagerService;
 
 public class NodeFIVE extends Node{
 
-	private static final Logger log = ManagerService.logger;
 	public NodeFIVE(ScoreTree tree,int tabWidth,int zoom, NodeONE upperLevel) {
 		super(tree,tabWidth,zoom);
 		this.parent1 = upperLevel;

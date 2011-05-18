@@ -2,24 +2,20 @@ package ch.epfl.bbcf.conversion.daemon;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
-import org.json.JSONException;
 
 import ch.epfl.bbcf.bbcfutils.Utility;
 import ch.epfl.bbcf.bbcfutils.access.gdv.RemoteAccess;
-import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.conversion.json.ConvertToJSON;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite.Extension;
 import ch.epfl.bbcf.bbcfutils.exception.ExtensionNotRecognisedException;
 import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
-import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.utility.file.FileManagement;
 
@@ -34,33 +30,6 @@ import ch.epfl.bbcf.utility.file.FileManagement;
  */
 public class Launcher extends Thread{
 
-	public static final Logger logger = initLogger(Launcher.class.getName());
-	/**
-	 * the track id in your database
-	 */
-	private String trackId;
-	/**
-	 * the extension of the file (must be part of Configuration.Extension)
-	 */
-	private String extension;
-	/**
-	 * the nr assembly id in Genrep
-	 */
-	private int nrAssemblyId;
-
-	/**
-	 * a directory to delete after use
-	 */
-	private String tmpdir;
-
-	/**
-	 * mail of an user (to send feedback when a track succeed)
-	 */
-	private String mail;
-	/**
-	 * the parh of the file to parse
-	 */
-	private String filePath;
 	private Job job;
 
 
@@ -75,21 +44,21 @@ public class Launcher extends Thread{
 
 
 		//////////   GETTING MD5   //////////
-		logger.debug(this.getId()+" run : "+filePath);
-		File file = new File(filePath);
+		Configuration.getLoggerInstance().debug(this.getId()+" run : "+job.getFile());
+		File file = new File(job.getFile());
 		String md5;
 		try {
 			md5 = Utility.getFileMd5(file.getAbsolutePath());
 		} catch (IOException e2) {
-			logger.error(e2);
+			Configuration.getLoggerInstance().error(e2);
 			return;
 		}
 		if(null==md5){
 			try {
 				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
-						"cannot get md5","md5",trackId, filePath);
+						"cannot get md5","md5",Integer.toString(job.getTrackId()), job.getFile());
 			} catch (IOException e) {
-				logger.error(e);
+				Configuration.getLoggerInstance().error(e);
 			}
 			return;
 		}
@@ -100,50 +69,51 @@ public class Launcher extends Thread{
 		//////////   EXTENSION   //////////
 		Extension ext = null;
 		String type = "";
-		if(extension.equalsIgnoreCase("wig")){
+		if(job.getExtension().equalsIgnoreCase("wig")){
 			doSQLite = true;
 			doJSON = true;
 			ext = Extension.WIG;
 			type="quantitative";
-		} else if(extension.equalsIgnoreCase("bedgraph")){
+		} else if(job.getExtension().equalsIgnoreCase("bedgraph")){
 			ext = Extension.BEDGRAPH;
 			doJSON = true;
 			doSQLite = true;
 			type="quantitative";
-		}else if(extension.equalsIgnoreCase("bed")){
+		}else if(job.getExtension().equalsIgnoreCase("bed")){
 			ext = Extension.BED;
 			doSQLite = true;
 			doJSON = true;
 			type="qualitative";
 			doJSON=true;
-		}else if(extension.equalsIgnoreCase("gff")){
+		}else if(job.getExtension().equalsIgnoreCase("gff")){
 			ext = Extension.GFF;
 			doSQLite = true;
 			doJSON = true;
 			type="qualitative";
 			doJSON=true;
-		}else if(extension.equalsIgnoreCase("gtf")){
+		}else if(job.getExtension().equalsIgnoreCase("gtf")){
 			ext = Extension.GFF;
 			doSQLite = true;
 			doJSON=true;
 			type="qualitative";
-		}else if(extension.equalsIgnoreCase("db")){
+		}else if(job.getExtension().equalsIgnoreCase("db")){
 			doJSON=true;
-		}else if(extension.equalsIgnoreCase("bam")||
-				extension.equalsIgnoreCase("sam")){
+		}else if(job.getExtension().equalsIgnoreCase("bam")||
+				job.getExtension().equalsIgnoreCase("sam")){
 			ext = Extension.BAM;
 			type="qualitative";
 		}else {
 			try {
 				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
-						"extension not recognized : "+ext,"ext",trackId, filePath);
+						"extension not recognized : "+ext,"ext",Integer.toString(job.getTrackId()),
+						job.getFile());
 			} catch (IOException e) {
-				logger.error(e);
+				Configuration.getLoggerInstance().error(e);
 			}
 			return;
 		}
 		String database = md5+".db";
-		logger.info(this.getId()+" start of convertion to SQLite :  "+filePath+" to "
+		Configuration.getLoggerInstance().info(this.getId()+" start of convertion to SQLite :  "+job.getFile()+" to "
 				+job.getOutputDirectory()+"/"+database);
 
 		boolean wellParsed = false;
@@ -152,28 +122,28 @@ public class Launcher extends Thread{
 		if(doSQLite){
 			Exception ex = null;
 			try {
-				ConvertToSQLite convertor = new ConvertToSQLite(filePath, ext,nrAssemblyId);
+				ConvertToSQLite convertor = new ConvertToSQLite(job.getFile(), ext,job.getNrAssemblyId());
 				wellParsed = convertor.convert(job.getOutputDirectory()+"/"+database,type);
 			} catch (IOException e1) {
-				logger.error(e1);
+				Configuration.getLoggerInstance().error(e1);
 				ex=e1;
 			} catch (ParsingException e1) {
-				logger.error(e1);
+				Configuration.getLoggerInstance().error(e1);
 				ex=e1;
 			} catch (ExtensionNotRecognisedException e) {
-				logger.error(e);
+				Configuration.getLoggerInstance().error(e);
 				ex=e;
 			}
 			if(null!=ex){
 				for(StackTraceElement el : ex.getStackTrace()){
-					logger.error(el.getClassName()+"."+el.getClassName()+"."+el.getMethodName()+" at line "+el.getLineNumber());
+					Configuration.getLoggerInstance().error(el.getClassName()+"."+el.getClassName()+"."+el.getMethodName()+" at line "+el.getLineNumber());
 				}
 			}
 		}
-		logger.info("end sqlite conversion");
+		Configuration.getLoggerInstance().info("end sqlite conversion");
 		//JSON 
 		if(doJSON){
-			logger.debug(this.getId()+" start of convertion to JSON :  " +
+			Configuration.getLoggerInstance().debug(this.getId()+" start of convertion to JSON :  " +
 					""+database+" to "+job.getJbrowseOutputDirectory()+"/"+database);
 			ConvertToJSON convertor = new ConvertToJSON(job.getOutputDirectory()+"/"+database, type);
 			/**
@@ -183,40 +153,41 @@ public class Launcher extends Thread{
 				wellParsed = convertor.convert(job.getJbrowseOutputDirectory(),
 						database,job.getJbrowseRessourcesUrl(),file.getName());
 			} catch (ParsingException e) {
-				logger.error(e);
+				Configuration.getLoggerInstance().error(e);
 				wellParsed=false;
 				error+=e.getMessage();
 			}
 		}
-		logger.info("end JSON conversion");
+		Configuration.getLoggerInstance().info("end JSON conversion");
 		//////////   FEEDBACK   //////////
 		if(wellParsed){
-			logger.debug(this.getId()+"well parsed");
+			Configuration.getLoggerInstance().debug(this.getId()+" well parsed");
 			try {
-				RemoteAccess.sendTrackSucceed(job.getFeedbackUrl(),trackId,database,mail,type);
+				RemoteAccess.sendTrackSucceed(job.getFeedbackUrl(),Integer.toString(job.getTrackId()),database,job.getMail(),type);
 			} catch (IOException e) {
-				logger.error(e);
+				Configuration.getLoggerInstance().error(e);
 			}
 
 			//DELETING TMPDIR
-			logger.debug("delete tmpdir : "+tmpdir);
-			if(tmpdir!=null && !tmpdir.equalsIgnoreCase("") && !tmpdir.equalsIgnoreCase("tmp")){
-				logger.debug("deleting ...");
-				FileManagement.deleteInTMPDirectory(tmpdir);
+			Configuration.getLoggerInstance().debug("delete tmpdir : "+job.getTmpdir());
+			if(job.getTmpdir()!=null && !job.getTmpdir().equalsIgnoreCase("") && !job.getTmpdir().equalsIgnoreCase("tmp")){
+				Configuration.getLoggerInstance().debug("deleting ...");
+				FileManagement.deleteInTMPDirectory(job.getTmpdir());
 			}
 		} else {
 			try {
 				RemoteAccess.sendTrackErrorMessage(
-						job.getFeedbackUrl(),"parsing error "+error,"parsing", trackId,filePath);
+						job.getFeedbackUrl(),"parsing error "+error,"parsing", Integer.toString(job.getTrackId()),job.getFile());
+				Configuration.getLoggerInstance().debug(this.getId()+" bad parsed : "+error);
 				return;
 			} catch (IOException e) {
-				logger.error(e);
+				Configuration.getLoggerInstance().error(e);
 			}
 		}
-		logger.debug("end job on track "+trackId+" at "+new Date()+".");
+		Configuration.getLoggerInstance().debug("end job on track "+job.getTrackId()+" at "+new Date()+".");
 		long end = System.currentTimeMillis();
 		long time = (end-start);
-		logger.debug("time elapsed : ~"+time/1000+" sec.");
+		Configuration.getLoggerInstance().debug("time elapsed : ~"+time/1000+" sec.");
 	}
 
 
@@ -238,7 +209,7 @@ public class Launcher extends Thread{
 		try {
 			appender = new RollingFileAppender(layout,Configuration.getLogger(),true);
 		} catch (IOException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		out.addAppender(appender);
 		return out;

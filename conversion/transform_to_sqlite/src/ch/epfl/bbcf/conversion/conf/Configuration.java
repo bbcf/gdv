@@ -16,9 +16,9 @@ public class Configuration {
 
 	private static Configuration instance;
 	private String workingDir;
-	
 
-	public static final Logger logger = Launcher.initLogger(Configuration.class.getName());
+
+	public static Logger logger;
 	private static final String RELATIVE_PATH="transform_to_sqlite";
 	private Configuration(){
 	}
@@ -38,17 +38,20 @@ public class Configuration {
 		}
 		gdvHome = System.getenv(gdv_home);
 		instance.workingDir = gdvHome+"/"+RELATIVE_PATH;
+		logger = Launcher.initLogger(Configuration.class.getName());
 		return instance!=null;
 	}
 
-
+	public static Logger getLoggerInstance(){
+		return logger;
+	}
 	public static String getJobsFile(){
 		return instance.workingDir+JOBS_FILE;
 	}
 	public static String getLogger(){
 		return  gdvHome+"/"+RELATIVE_PATH+"/"+LOG_FILE;
 	}
-	
+
 	public static boolean initJobsDatabase(File jobs) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
 		Class.forName("org.sqlite.JDBC").newInstance();
 		Connection conn = DriverManager.getConnection("jdbc:sqlite:/"+jobs.getAbsolutePath());
@@ -59,11 +62,17 @@ public class Configuration {
 				"tmpdir text," + //a tmp directory to delete after usage 
 				"extension text," + //extension of the file
 				"mail text," + // the mail to feedback (nomail if no feedback)
-		"nrassemblyid integer," +
-		"outdir text," +
-		"jbrowse_outdir text," +
-		"jbrowse_ressource_url text);");  // the assembly id of the genome in generep
+				"nrassemblyid integer," +
+				"outdir text," +
+				"jbrowse_outdir text," +
+				"jbrowse_ressource_url text," +
+				"feedback_url text);");  // the assembly id of the genome in generep
 
 		return true;
+	}
+
+
+	public static String getWorkingDirectory(){
+		return instance.workingDir;
 	}
 }

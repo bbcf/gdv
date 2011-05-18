@@ -5,9 +5,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.conversion.daemon.Launcher;
+import ch.epfl.bbcf.conversion.conf.Configuration;
 
 
 
@@ -16,7 +15,6 @@ public class ManagerService {
 	
 	private static ExecutorService sqliteInstance;
 
-	public static Logger logger=Launcher.logger;
 
 	/**
 	 * will process minor jobs for accessing & 
@@ -50,7 +48,7 @@ public class ManagerService {
 
 
 	private static void destructExecutorService(ExecutorService es){
-		logger.info("trying destruction of executor service : "+es+".");
+		Configuration.getLoggerInstance().info("trying destruction of executor service : "+es+".");
 		if(es!=null && !es.isShutdown()){
 			try {
 				if (!es.awaitTermination(1, TimeUnit.SECONDS)) {
@@ -61,16 +59,16 @@ public class ManagerService {
 					es.shutdownNow(); // Cancel currently executing tasks
 					// Wait a while for tasks to respond to being cancelled
 					if (!es.awaitTermination(10, TimeUnit.SECONDS))
-						logger.error("Thread manager did not terminate");
+						Configuration.getLoggerInstance().error("Thread manager did not terminate");
 				}
 			} catch (InterruptedException ie) {
 				// (Re-)Cancel if current thread also interrupted
 				es.shutdownNow();
 				// Preserve interrupt status
 				Thread.currentThread().interrupt();
-				logger.error(ie);
+				Configuration.getLoggerInstance().error(ie);
 			}
-			logger.info("Executor service : "+es+" destroyed ");
+			Configuration.getLoggerInstance().info("Executor service : "+es+" destroyed ");
 		}
 	}
 

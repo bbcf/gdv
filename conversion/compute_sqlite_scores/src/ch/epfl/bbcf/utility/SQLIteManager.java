@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
 
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.conversion.sqltree.ScoreTree;
@@ -24,7 +23,6 @@ import ch.epfl.bbcf.conversion.sqltree.ScoreTree;
 
 public class SQLIteManager {
 
-	private static final Logger logger = Configuration.initLogger(SQLIteManager.class.getName());
 	private final static int LIMIT_QUERY_SIZE = 100000000;
 
 	public static Connection getConnection(String path) throws ClassNotFoundException, SQLException{
@@ -53,9 +51,9 @@ public class SQLIteManager {
 			conn.close();
 			return f;
 		} catch (ClassNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (SQLException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return null;
 	}
@@ -73,9 +71,9 @@ public class SQLIteManager {
 			conn.close();
 			return f;
 		} catch (ClassNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (SQLException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return f;
 	}
@@ -88,7 +86,7 @@ public class SQLIteManager {
 			//ChromosomeFeature feat = new ChromosomeFeature();
 			File file = new File(tmpDir+"/"+UUID.randomUUID().toString()+".rset");
 			FileManagement fm = new FileManagement(file);
-			//logger.debug("writing on file : "+file.getAbsolutePath());
+			//Configuration.getLoggerInstance().debug("writing on file : "+file.getAbsolutePath());
 			while (rs.next()) {
 				int start = rs.getInt("start");
 				int stop = rs.getInt("end");
@@ -98,15 +96,15 @@ public class SQLIteManager {
 			rs.close();
 			conn.close();
 			fm.close();
-			//logger.debug("end writing");
+			//Configuration.getLoggerInstance().debug("end writing");
 			return file;
 		} catch (ClassNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (SQLException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return null;
 	}
@@ -126,9 +124,9 @@ public class SQLIteManager {
 			rs.close();
 			conn.close();
 		} catch (ClassNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (SQLException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return chrNames;
 	}
@@ -147,9 +145,9 @@ public class SQLIteManager {
 			rs.close();
 			conn.close();
 		} catch (ClassNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (SQLException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return result;
 	}
@@ -171,9 +169,9 @@ public class SQLIteManager {
 			rs.close();
 			conn.close();
 		} catch (ClassNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (SQLException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return result;
 	}
@@ -188,7 +186,7 @@ public class SQLIteManager {
 	 */
 	public static float[] getMinMaxScoreForChr(String database) throws SQLException{
 
-		logger.debug("MINMAX FOR : "+database);
+		Configuration.getLoggerInstance().debug("MINMAX FOR : "+database);
 		float[]minMax=new float[2];
 		try {
 			Connection conn = getConnection(database);
@@ -207,7 +205,7 @@ public class SQLIteManager {
 			}
 
 		} catch (ClassNotFoundException e) {
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return null;
 	}
@@ -235,7 +233,7 @@ public class SQLIteManager {
 						prep.setFloat(3, val);
 						prep.execute();
 					} catch (SQLException e) {
-						//logger.error(e);
+						//Configuration.getLoggerInstance().error(e);
 					}
 					pos=i;
 					val=tab[i];
@@ -247,7 +245,7 @@ public class SQLIteManager {
 				prep.setFloat(3, val);
 				prep.execute();
 			} catch (SQLException e) {
-				//logger.error(e);
+				//Configuration.getLoggerInstance().error(e);
 			}
 			int nbQueries = connectionStore.getNbQueries(database);
 			if(nbQueries>LIMIT_QUERY_SIZE || finish){
@@ -255,7 +253,7 @@ public class SQLIteManager {
 					conn.commit();
 					nbQueries = -ScoreTree.TAB_WIDTH;
 				} catch (SQLException e1) {
-					logger.error(e1);
+					Configuration.getLoggerInstance().error(e1);
 				}
 			}
 			connectionStore.setNbQueries(database,nbQueries+ScoreTree.TAB_WIDTH);
@@ -263,19 +261,19 @@ public class SQLIteManager {
 				try {
 					conn.close();
 				} catch (SQLException e1) {
-					logger.error(e1);
+					Configuration.getLoggerInstance().error(e1);
 				}
 			}
 		}
 		else {
-			logger.error("didn't find connection for "+database);
+			Configuration.getLoggerInstance().error("didn't find connection for "+database);
 		}
 	}
 	public static ConnectionStore createNewDatabase(String outdbName, String outdbPath,
 			String chromosome, int[] zooms) {
 		ConnectionStore connectionStore = new ConnectionStore();
 		boolean noerror = true;
-		//logger.debug("creating database (chrName_zoomLevel.db) for chromosome "+chromosome);
+		//Configuration.getLoggerInstance().debug("creating database (chrName_zoomLevel.db) for chromosome "+chromosome);
 		Connection conn;
 		try {
 			for(int z : zooms){
@@ -290,10 +288,10 @@ public class SQLIteManager {
 			}
 		} catch (ClassNotFoundException e) {
 			noerror = false;
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		} catch (SQLException e) {
 			noerror = false;
-			logger.error(e);
+			Configuration.getLoggerInstance().error(e);
 		}
 		return connectionStore;
 	}
