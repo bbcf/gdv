@@ -41,17 +41,28 @@ echo "##########################################################################
 #build war archive & daemons 
 mkdir $TMP_DIR/$VERSION/gdv/bin
 
-#archive project
+#build project
 cd $GDV_HOME
 mvn -U clean package
 mv target/gdv-$VERSION.war target/gdv.war
 chmod 777 target/gdv.war
 cp target/gdv.war $TMP_DIR/$VERSION/gdv/bin/.
 cd $TMP_DIR/$VERSION/gdv/bin
+#unarchive
 jar xvf gdv.war
+rm META-INF/gdv.yaml
+rm META-INF/gdv.yaml.prod
+rm META-INF/gdv.yaml.dev
+rm META-INF/gdv.yaml.local
 cd ../../../..
-cp build_scripts/start_gdv.sh $TMP_DIR/$VERSION/gdv/bin/.
-cp build_scripts/stop_gdv.sh $TMP_DIR/$VERSION/gdv/bin/.
+
+
+cp build_scripts/startDaemons.sh $TMP_DIR/$VERSION/gdv/bin/.
+cp build_scripts/stopDaemons.sh $TMP_DIR/$VERSION/gdv/bin/.
+cp build_scripts/updateProject.sh $TMP_DIR/$VERSION/gdv/bin/.
+cp build_script/hook.sh $TMP_DIR/$VERSION/gdv/bin/.
+
+cp build_scripts/ $TMP_DIR/$VERSION/gdv/bin/.
 cp src/main/sql/browser.sql $TMP_DIR/$VERSION/gdv/sql/.
 cp build_scripts/*.sh $TMP_DIR/$VERSION/gdv/.scripts
 echo "#############################################################################################################"
@@ -62,8 +73,6 @@ echo "##########################################################################
 cd conversion/compute_sqlite_scores
 ant jar
 
-echo $PWD
-ls
 
 cp compute_to_sqlite.jar $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.
 cp start.sh $GDV_HOME/$TMP_DIR/$VERSION/gdv/compute_sqlite_scores/.

@@ -34,6 +34,12 @@ rm -rf $HOME_PROJECT/.scripts
 mkdir $HOME_PROJECT/.scripts
 cp -r $HOME_PROJECT/build/gdv/.scripts/*.sh $HOME_PROJECT/.scripts
 
+#copy build_scripts
+cp -r $HOME_PROJECT/build/gdv/bin/*.sh $HOME_PROJECT/bin/.
+
+#execute hook
+sh $HOME_PROJECT/bin/hook.sh
+
 cd $HOME_PROJECT
 rm -rf build/
 

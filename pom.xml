@@ -263,9 +263,12 @@
 				</includes>
 				<excludes>
 					<exclude>**/*.java</exclude>
+					<exclude>**/*.yaml</exclude>
 				</excludes>
 			</resource>
 		</resources>
+
+
 		<testResources>
 			<testResource>
 				<filtering>false</filtering>

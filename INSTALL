@@ -94,8 +94,8 @@ D) Git
 6) For points 5 & 6, you should put them in your .bash_rc or .profile then source it.
        $ source .bash_rc 
 
-7) Put gdv.war under Tomcat webapps directory :
-       $ mv $GDV_HOME/bin/gdv.war $CATALINA_HOME/webapps/.
+7) Copy gdv.war under Tomcat webapps directory :
+       $ cp $GDV_HOME/bin/gdv.war $CATALINA_HOME/webapps/.
    - If you are still with the 'default' installation of Tomcat, GDV would start
      automatically.
 
@@ -112,7 +112,7 @@ D) Git
     You should be able to access the manager here : http://localhost:8080/manager/html 
 
 
-6) Access gdv to http://localhost:8080/gdv
+6) Access gdv to http://localhost/gdv
 
 7) Read GDV CONFIGURATION PART cause things should not work correctly ....
 
@@ -151,7 +151,7 @@ tell Appache to fetch ressources from 'public' and 'tracks' directories
 
 
 A) Apache configuration :
-   Theres a lot aof differents configurations possible, and I will just give hints on how
+   There is a lot of different configurations possible, and I will just give hints on how
    to do. For more detailled instructions, you should refer at the official documentation
    that you could find at http://httpd.apache.org/.
 
@@ -202,8 +202,24 @@ A) Apache configuration :
        If not perhaps you need to give permissions to read the 'public' & 'tracks' directories.
        On OSX you should see here : http://support.apple.com/kb/TA25038
 
-B) Advenced configuration :
+
+
+
+
+
+=> You should be able to start gdv with the script under $GDV_HOME/bin directory
+   $ sh $GDV_HOME/start_gdv.sh
+   
+   (it will start two daemons that are needed & copy the war archive to Tomcat)   
+
+=> You can update the project with the script (same directory) updateProject.sh
+
+   Don't forget to stop the daemons before (stop_gdv.sh).
+
+
+B) Advanced configuration :
    This part is if you want tu use load balancing & custom workers with Tomcat.
+   A more detailled documentation will take place here.
    As Apache, I advice you to read official documentation at http://tomcat.apache.org/ .
    
    - get mod_jk
