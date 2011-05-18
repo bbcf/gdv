@@ -50,7 +50,8 @@ public class UsersDAO extends DAO<Users>{
 				java.util.Date today = new java.util.Date();
 				java.sql.Date timestamp = new java.sql.Date(today.getTime());
 				statement.setDate(8,timestamp);
-				if(user.getType().equalsIgnoreCase("tequila")){
+				if(user.getType().equalsIgnoreCase("tequila")||
+						user.getType().equalsIgnoreCase("alternate")){
 					RandomKey r = new RandomKey();
 					statement.setString(9, r.getRandom());
 				} else {

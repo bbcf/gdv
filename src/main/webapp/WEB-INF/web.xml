@@ -73,8 +73,21 @@
     <url-pattern>/link/*</url-pattern>
   </filter-mapping>
 
+<!-- SEARCH ACCESS -->
+<filter>
+  <filter-name>SearchAccess</filter-name>
+  <filter-class>ch.epfl.bbcf.gdv.control.http.NamesFilter</filter-class>
+</filter>
 
-<!-- LINK ACCESS -->
+  <filter-mapping>
+    <filter-name>SearchAccess</filter-name>
+    <url-pattern>/gdv_names/*</url-pattern>
+  </filter-mapping>
+
+
+
+
+<!-- gFeatMiner ACCESS -->
 
 <filter>
   <filter-name>GFMAccess</filter-name>

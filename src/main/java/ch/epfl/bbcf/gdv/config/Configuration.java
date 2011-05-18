@@ -23,6 +23,7 @@ import org.yaml.snakeyaml.Yaml;
 import ch.epfl.bbcf.gdv.config.utility.RolesAuthorization;
 import ch.epfl.bbcf.gdv.html.AddSequencePage;
 import ch.epfl.bbcf.gdv.html.AdminPage;
+import ch.epfl.bbcf.gdv.html.AlternativeLoginPage;
 import ch.epfl.bbcf.gdv.html.AlternativeProjectPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
 import ch.epfl.bbcf.gdv.html.ErrorPage;
@@ -82,8 +83,8 @@ public final class Configuration{
 		css[0]=instance.gdv_public_url+"/css/gdv_style.css";
 		return css;
 	}
-	
-	
+
+
 	public static final String URL_LINK_TEMPLATE = "\" onClick=\"javascript:showLinkPanel('{name}'); return false\";";
 
 	public final static Class[] admin_pages = {AddSequencePage.class,AdminPage.class};
@@ -98,7 +99,7 @@ public final class Configuration{
 	public static List<MenuElement> getNavigationLinks() {
 		return Arrays.asList(navigation_links);
 	}
-	
+
 	public static void addRessourcesLocations(IResourceSettings resourceSettings){
 		resourceSettings.addResourceFolder("conf/");
 		resourceSettings.addResourceFolder("/html/");
@@ -115,6 +116,7 @@ public final class Configuration{
 		application.mount(new HybridUrlCodingStrategy("/projects", ProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/public_project", AlternativeProjectPage.class));
 		application.mount(new HybridUrlCodingStrategy("/login", LoginPage.class));
+		application.mount(new HybridUrlCodingStrategy("/login2", AlternativeLoginPage.class));
 		application.mount(new HybridUrlCodingStrategy("/admin", AdminPage.class));
 		//application.mount(new IndexedParamUrlCodingStrategy("/log", MagicPasswordPage.class));
 		HybridUrlCodingStrategy addSequence = new HybridUrlCodingStrategy(
@@ -165,6 +167,7 @@ public final class Configuration{
 	private static String gdv_working_directory;
 	private static String gdv_public_url;
 	private static String wicket_main_folder;
+	private static String login_type;
 
 	private static String gdv_appli_proxy,files_dir,tmp_dir,log_dir,
 	tracks_dir,public_dir,jbrowse_static_files_url,jbrowse_css_url,
@@ -172,7 +175,7 @@ public final class Configuration{
 	transform_to_sqlite_daemon,project_url,gdv_version,images_url,
 	jbrowse_images_url,log_directory,jb_browser_root,jb_data_root,
 	psql_db,psql_user,psql_pwd,gdv_browser_page_url,gFeatMinerDirectory;
-	
+
 	private static String gdv_post_access;
 	//private static List<String> gdv_types_access;
 
@@ -193,6 +196,8 @@ public final class Configuration{
 				instance = new Configuration();
 			}
 		}
+		
+		
 		if(instance!=null){
 			return readConfigurationFile(catalina_home,metaInf,confFile);
 		} 
@@ -220,14 +225,14 @@ public final class Configuration{
 					instance.gdv_working_directory = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_public_url")){
 					instance.gdv_public_url = (String)entry.getValue();
-//				} else if(entry.getKey().equalsIgnoreCase("wicket_main_folder")){
-//					instance.wicket_main_folder = (String)entry.getValue();
+					//				} else if(entry.getKey().equalsIgnoreCase("wicket_main_folder")){
+					//					instance.wicket_main_folder = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_version")){
 					instance.gdv_version = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("gdv_post_access")){
 					instance.gdv_post_access = (String)entry.getValue();
-//				} else if(entry.getKey().equalsIgnoreCase("gdv_types_access")){
-//					instance.gdv_types_access = (List<String>)entry.getValue();
+					//				} else if(entry.getKey().equalsIgnoreCase("gdv_types_access")){
+					//					instance.gdv_types_access = (List<String>)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("jb_browser_root")){
 					instance.jb_browser_root = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("jb_data_root")){
@@ -238,6 +243,8 @@ public final class Configuration{
 					instance.psql_user = (String)entry.getValue();
 				} else if(entry.getKey().equalsIgnoreCase("psql_pwd")){
 					instance.psql_pwd = (String)entry.getValue();
+				} else if(entry.getKey().equalsIgnoreCase("login_type")){
+					instance.login_type = (String)entry.getValue();
 				} else {
 					Application.warn("key : "+entry.getKey()+" not recognized");
 				}
@@ -246,7 +253,7 @@ public final class Configuration{
 					null!=instance.gdv_proxy_url &&
 					null!=instance.gdv_working_directory &&
 					null!=instance.gdv_public_url &&
-//					null!=instance.wicket_main_folder && 
+					//					null!=instance.wicket_main_folder && 
 					null!=instance.gdv_version){
 				Application.info("init parameters");
 				instance.wicket_main_folder=catalina_home+"/webapps/"+instance.gdv_version+"/WEB-INF/classes";
@@ -256,14 +263,14 @@ public final class Configuration{
 				instance.log_dir=instance.gdv_working_directory+"/log";
 				instance.tracks_dir=instance.gdv_working_directory+"/tracks";
 				instance.public_dir=instance.gdv_working_directory+"/public";
-				
+
 				instance.jbrowse_static_files_url=instance.gdv_public_url+"/jbrowse";
 				instance.jbrowse_css_url=instance.jbrowse_static_files_url+"/css";
 				instance.jbrowse_javascript_url=instance.jbrowse_static_files_url+"/javascript";
 				instance.jbrowse_images_url=instance.jbrowse_static_files_url+"/img";
 				instance.images_url=instance.gdv_public_url+"/img";
 				instance.das_dir=instance.files_dir+"/DAS";
-				
+
 				instance.databases_link_dir=instance.gdv_working_directory+"/databases_link";
 				instance.compute_scores_daemon=instance.gdv_working_directory+"/compute_sqlite_scores/jobs.db";
 				instance.transform_to_sqlite_daemon=instance.gdv_working_directory+"/transform_to_sqlite/jobs.db";
@@ -287,12 +294,12 @@ public final class Configuration{
 
 
 
-//	public static Configuration getConf(){
-//		if(null==instance){
-//			init();
-//		}
-//		return instance;
-//	}
+	//	public static Configuration getConf(){
+	//		if(null==instance){
+	//			init();
+	//		}
+	//		return instance;
+	//	}
 
 
 
@@ -354,6 +361,15 @@ public final class Configuration{
 	}
 
 	/**
+	 * Return the login type
+	 * either : "tequila" or "alternative"
+	 * @return
+	 */
+	public static String getLoginType() {
+		return instance.login_type;
+	}
+	
+	/**
 	 * Context that will match gdv
 	 *(gdv)
 	 * @return
@@ -393,7 +409,7 @@ public final class Configuration{
 	}
 
 
-	
+
 
 	/**
 	 * @return the javascript_dir
@@ -454,7 +470,7 @@ public final class Configuration{
 	public static String getGdvTomcatServ(){
 		return instance.gdv_tomcat_server;
 	}
-	
+
 	/**
 	 * Get the URL where the application
 	 * should be accessed
@@ -480,9 +496,9 @@ public final class Configuration{
 	public static String getGdvPublicUrl(){
 		return instance.gdv_public_url;
 	}
-//	public static String getWicketMainFolder(){
-//		return instance.wicket_main_folder;
-//	}
+	//	public static String getWicketMainFolder(){
+	//		return instance.wicket_main_folder;
+	//	}
 	public static String getFilesDir(){
 		return instance.files_dir;
 	}
@@ -504,9 +520,9 @@ public final class Configuration{
 	public static String getGdv_post_access() {
 		return instance.gdv_post_access;
 	}
-//	public static List<String> getGdv_types_access() {
-//		return instance.gdv_types_access;
-//	}
+	//	public static List<String> getGdv_types_access() {
+	//		return instance.gdv_types_access;
+	//	}
 	public static String getGdv_Images_url(){
 		return instance.images_url;
 	}

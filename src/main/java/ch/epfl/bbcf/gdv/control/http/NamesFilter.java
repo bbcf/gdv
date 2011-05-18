@@ -19,12 +19,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
 public class NamesFilter implements Filter{
 
-	private static Logger log = Logs.initNamesLogger();
+	private static Logger log = Logs.initLogger("names_queries.log",NamesFilter.class);
 
 	@Override
 	public void destroy() {
@@ -40,7 +41,6 @@ public class NamesFilter implements Filter{
 	}
 
 	private void doGet(ServletRequest request, ServletResponse response) {
-		log.debug("do get");
 			
 		PrintWriter out = null;
 		Params params = null;
@@ -51,7 +51,7 @@ public class NamesFilter implements Filter{
 		} catch (IOException e1) {
 			log.error(e1);
 		}
-		log.debug("receive : "+params.toString());
+		Application.debug("receive "+params.toString());
 		if(out!=null && params.getId()!=null && params.getTracks()!=null && params.getName()!=null && params.getChr()!=null){
 			String[]tracks = params.getTracks().split(",");
 			response.setContentType("application/json");

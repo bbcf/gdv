@@ -58,7 +58,7 @@ public class UserSession extends AuthenticatedWebSession{
 	public final boolean authenticate(final String email, final String type){
 		Session.set(this);
 		if (user == 0){
-			if(type.equalsIgnoreCase("tequila")){
+			if(type.equalsIgnoreCase("tequila") || type.equalsIgnoreCase("alternate")){
 				UsersDAO dao = new UsersDAO(Connect.getConnection(this));
 				if(dao.emailExist(email)){
 					Users person = dao.getUserByEmail(email);
@@ -66,7 +66,8 @@ public class UserSession extends AuthenticatedWebSession{
 					this.signIn(email, type);
 					Application.info("sign in",user);
 				}
-			} 
+				
+			}
 		}
 		return user != 0;
 	}

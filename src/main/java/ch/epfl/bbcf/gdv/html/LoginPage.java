@@ -5,21 +5,10 @@ import java.util.Iterator;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
-import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.PasswordTextField;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.markup.html.pages.RedirectPage;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.apache.wicket.util.value.ValueMap;
 
 import ch.epfl.authentication.TequilaAuthentication;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -34,6 +23,18 @@ public class LoginPage extends BasePage{
 
 	public LoginPage(PageParameters p) throws IOException {
 		super(p);
+		
+		//hack to redirect to an alternative login page
+		//if the installation do not use TEQUILA system
+		if(!Configuration.getLoginType().equalsIgnoreCase("tequila")){
+			throw new RestartResponseAtInterceptPageException(new AlternativeLoginPage(p));
+		}
+		
+		
+		
+		
+		
+		
 		if(((UserSession)getSession()).getUserId()==0){
 			String uri = getRequest().getQueryString();
 		// 	System.out.println("TEQUILA  : "+uri);

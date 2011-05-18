@@ -32,7 +32,12 @@ gdv_working_directory : $GDV_HOME
 
 gdv_version : gdv
 
+# Login type 
+# must be either 'tequila' : use of Tequila authentication system provided by the EPFL 
+# mostly secure, or 'alternate' : use of a simple login system that let webmaster
+# access your password
 
+login_type : tequila
 
 ################################################################
 ###########################   PSQL  ############################
