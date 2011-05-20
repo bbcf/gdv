@@ -8,7 +8,7 @@ A) Java Development Kit 1.6
    1) Look with :
       	   $ java -version
 
-      Pay attention that you need the JDK (different from the JRE).
+      Pay attention that you need the JDK (it is different from the JRE).
 
    2) Download at http://www.oracle.com/technetwork/java/javase/downloads/index.html
    
@@ -16,6 +16,7 @@ A) Java Development Kit 1.6
    
    4) Perhaps you will need to update your JAVA_HOME. You can do it with the following command :
       	      $ export JAVA_HOME=/<path where you installed the jdk> 
+	 (best to put it in your .basrc file)
 
 
 B) Apache Tomcat
@@ -24,7 +25,7 @@ B) Apache Tomcat
    1) Download it at http://tomcat.apache.org/ (the latest version - works with apache 6 or above -)
       (select the Core zip or tgz)
    
-   2) Uncompress it and put it somewhere like /srv.
+   2) Uncompress and put somewhere like /srv.
       So you should have something like /srv/apache-tomcat-<version>
       This path will be called $CATALINA_HOME
 
@@ -43,9 +44,9 @@ B) Apache Tomcat
 C) PostgreSQL
    
    GDV uses PostgreSQL as its database system.
-   1) Download it at : http://www.postgresql.org/download/
+   1) Download at : http://www.postgresql.org/download/
 
-   2) Install it by following the steps that you could find at http://wiki.postgresql.org/wiki/Detailed_installation_guides
+   2) Install by following the steps that you could find at http://wiki.postgresql.org/wiki/Detailed_installation_guides
 
    3) At this step you should be able to run (with correct user):
       	 $ createdb db_test
@@ -58,7 +59,7 @@ C) PostgreSQL
 D) Git
 
    You need git for the upgrade steps of GDV.
-   1) Download and Install it with your package manager 
+   1) Download and Install with your package manager 
       You should see this great tutorial if you don't know how to do it :
       http://progit.org/book/ch1-4.html
       (note that on OSX you could also use homebrew to install it : http://mxcl.github.com/homebrew/)
@@ -69,7 +70,7 @@ D) Git
 
 
 1) Download the latest gdv archive at http://salt.epfl.ch/java/gdv-archive/current/gdv.tgz
-   Untar it :
+   Untar :
    	 $ tar -xvzf gdv.tgz
    And the directory created, we will call it $GDV_HOME
 
