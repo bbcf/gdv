@@ -96,12 +96,19 @@ public class Launcher extends Thread{
 			doSQLite = true;
 			doJSON=true;
 			type="qualitative";
-		}else if(job.getExtension().equalsIgnoreCase("db")){
+		}else if(job.getExtension().equalsIgnoreCase("db")||job.getExtension().equalsIgnoreCase("sql")){
 			doJSON=true;
 		}else if(job.getExtension().equalsIgnoreCase("bam")||
 				job.getExtension().equalsIgnoreCase("sam")){
 			ext = Extension.BAM;
 			type="qualitative";
+			try {
+				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
+						"extension not supported : "+ext,"ext",Integer.toString(job.getTrackId()),
+						job.getFile());
+			} catch (IOException e) {
+				Configuration.getLoggerInstance().error(e);
+			}
 		}else {
 			try {
 				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),

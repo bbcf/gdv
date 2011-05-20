@@ -1,32 +1,20 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Map;
 
-import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.epfl.authentication.TequilaAuthentication;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
-import ch.epfl.bbcf.gdv.config.Configuration;
-import ch.epfl.bbcf.gdv.config.Logs;
-import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
-import ch.epfl.bbcf.gdv.control.model.InputControl.InputType;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
-import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
-import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
-import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class PostAccess extends Command{
 
@@ -95,7 +83,7 @@ public class PostAccess extends Command{
 		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
 		boolean result = InputControl.processInputs(user,projectId, params.getUrl(), null,-1, p.getSequenceId(), false, false, 
-				new ArrayList<Group>(),InputType.NEW_SQLITE,params.getDatatype(),name);
+				new ArrayList<Group>(),params.getDatatype(),name);
 		success(result);
 	}
 
@@ -113,7 +101,7 @@ public class PostAccess extends Command{
 		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
 		boolean result = InputControl.processInputs(user,projectId,params.getUrl(),null,-1,p.getSpecies().getId(),false,false,
-				new ArrayList<Group>(),InputType.NEW_FILE,null,name);
+				new ArrayList<Group>(),null,name);
 		success(result);
 	}
 

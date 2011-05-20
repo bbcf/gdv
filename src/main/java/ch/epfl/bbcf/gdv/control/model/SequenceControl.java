@@ -23,7 +23,6 @@ import ch.epfl.bbcf.gdv.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.gdv.access.jbrowsor.JbrowsoRAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.control.model.InputControl.InputType;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 
 public class SequenceControl extends Control{
@@ -164,7 +163,7 @@ public class SequenceControl extends Control{
 		String gftUrl = GenrepWrapper.getGtfUrlByNrAssemBly(nr_assembly.getId());
 		return InputControl.processInputs(session.getUser(),
 				-1,gftUrl,null,seqId,spId,false,true,
-				new ArrayList<Group>(),InputType.NEW_FILE,null,"Ensembl");
+				new ArrayList<Group>(),null,"Ensembl");
 	}
 
 

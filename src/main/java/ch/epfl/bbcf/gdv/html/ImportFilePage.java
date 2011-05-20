@@ -1,40 +1,22 @@
 package ch.epfl.bbcf.gdv.html;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 
-import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
-import ch.epfl.bbcf.gdv.control.model.InputControl.InputType;
-import ch.epfl.bbcf.gdv.control.model.SequenceControl;
-import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
-import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 
 
 
@@ -65,7 +47,7 @@ public class ImportFilePage extends WebPage{
 				if(checker.isFormSubmitable()){
 					boolean result = InputControl.processInputs(((UserSession)getSession()).getUser(),
 							projectId,url,uploadField.getFileUpload(),sequenceId,spId,sendMail,admin,
-							new ArrayList<Group>(),InputType.NEW_FILE,null,null);
+							new ArrayList<Group>(),null,null);
 					importModal.close(target);
 				} else {
 
