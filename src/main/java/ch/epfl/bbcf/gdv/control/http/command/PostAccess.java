@@ -1,6 +1,8 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
@@ -82,8 +84,13 @@ public class PostAccess extends Command{
 		int projectId = Integer.parseInt(params.getProjectId());
 		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
-		boolean result = InputControl.processInputs(user,projectId, params.getUrl(), null,-1, p.getSequenceId(), false, false, 
-				new ArrayList<Group>(),params.getDatatype(),name);
+		URL url = null;
+		try {
+			url = new URL(params.getUrl());
+		} catch (MalformedURLException e) {
+			error(e);
+		}
+		boolean result = InputControl.processUserInput(user.getId(), p, url, null,null);
 		success(result);
 	}
 
@@ -100,8 +107,13 @@ public class PostAccess extends Command{
 		int projectId = Integer.parseInt(params.getProjectId());
 		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
-		boolean result = InputControl.processInputs(user,projectId,params.getUrl(),null,-1,p.getSpecies().getId(),false,false,
-				new ArrayList<Group>(),null,name);
+		URL url = null;
+		try {
+			url = new URL(params.getUrl());
+		} catch (MalformedURLException e) {
+			error(e);
+		}
+		boolean result = InputControl.processUserInput(user.getId(),p, url, null,null);
 		success(result);
 	}
 

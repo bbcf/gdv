@@ -139,9 +139,53 @@ public class FileManagement {
 	//		}
 	//
 	//	}
-
-
-
+	/**
+	 * Upload  file from an URL to the desired location
+	 * with the desired name
+	 * @param url - the URL
+	 * @param to - the output directory
+	 * @param name - the desired name of the file
+	 * @return 
+	 */
+	public static File uploadFileFromURL(URL url,String to,String name) throws IOException{
+		URLConnection connection = url.openConnection();
+		InputStream input = connection.getInputStream();
+		FileOutputStream output = new FileOutputStream(to+"/"+name);
+		copy(input, output);
+		input.close();
+		output.close();
+		return new File(to+"/"+name);
+	}
+	
+	
+	/**
+	 * Upload  file from an FileUpload to the desired location
+	 * with the desired name
+	 * @param url - the URL
+	 * @param to - the output directory
+	 * @param name - the desired name of the file
+	 * @throws IOException 
+	 */
+	public static File uploadFileFromFileUpload(FileUpload fileUpload,String to,String name) throws IOException{
+		File output = new File(to+"/"+name);
+		fileUpload.writeTo(output);
+		return output;
+	}
+	/**
+	 * get a file from the filesysten to the desired location
+	 * with the desired name
+	 * @param systemPath - the path to the file
+	 * @param to - the output directory
+	 * @param name - the desired name of the file
+	 * @throws IOException 
+	 */
+	public static File getFileFromSystemPath(String systemPath,String to,String name) throws IOException{
+		InputStream input = new FileInputStream(systemPath);
+		FileOutputStream output = new FileOutputStream(to+"/"+name);
+		copy(input,output);
+		return new File(to+"/"+name);
+	}
+	
 	/**
 	 * upload a file from an url and return a HashMap
 	 * with key : the path, value : the file
@@ -170,7 +214,7 @@ public class FileManagement {
 			Application.error(e,userId);
 			return null;
 		}
-		String fileName = findName(u);
+		String fileName = findNameOfFileInURL(u);
 
 		FileOutputStream writeFile = null;
 		UUID uuid = UUID.randomUUID();
@@ -204,7 +248,7 @@ public class FileManagement {
 	}
 	private static final Pattern p = Pattern.compile("(name=|filename=)(.+)");
 
-	private static String findName(URL u) {
+	public static String findNameOfFileInURL(URL u) {
 		if(u.getQuery()!=null){
 			Matcher m = p.matcher(u.getQuery());
 			if(m.find()){
@@ -239,9 +283,12 @@ public class FileManagement {
 
 	}
 
-	public static boolean moveFile(File from,String to){
+	public static File moveFile(File from,String to){
 		File dir = new File(to);
-		return from.renameTo(new File(dir, from.getName()));
+		if(from.renameTo(new File(dir, from.getName()))){
+			return dir;
+		}
+		return null;
 	}
 
 	public static boolean deleteDirectory(File directory) {
@@ -403,6 +450,12 @@ public class FileManagement {
 	static final int BUFF_SIZE = 2048;
 	static final byte[] buffer = new byte[BUFF_SIZE];
 
+	/**
+	 * COPY & CLOSE the streams from/to
+	 * @param in
+	 * @param out
+	 * @throws IOException
+	 */
 	public static void copy(InputStream in, FileOutputStream out) throws IOException{
 		try {
 			while (true) {

@@ -1,5 +1,7 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +46,10 @@ public class SequenceControl extends Control{
 			return JbrowsoRAccess.checkGenomeCreation(jbid);
 		}
 		return false;
+	}
+	public static Sequence getSequence(int id){
+		SequenceDAO dao = new SequenceDAO(Connect.getConnection());
+		return dao.getSequenceFromId(id);
 	}
 
 	/**
@@ -161,9 +167,14 @@ public class SequenceControl extends Control{
 			return true;
 		}
 		String gftUrl = GenrepWrapper.getGtfUrlByNrAssemBly(nr_assembly.getId());
-		return InputControl.processInputs(session.getUser(),
-				-1,gftUrl,null,seqId,spId,false,true,
-				new ArrayList<Group>(),null,"Ensembl");
+		URL u;
+		try {
+			u = new URL(gftUrl);
+		} catch (MalformedURLException e) {
+			feedback.error("GTF URL doesn't exist for this assembly in Genrep. Add it manually");
+			return true;
+		}
+		return InputControl.processAdminInput(seqId, u, null,null,"Genes");
 	}
 
 

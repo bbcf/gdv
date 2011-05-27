@@ -27,7 +27,7 @@ public class TrackControl extends Control{
 	public static final String STATUS_UPLOADING ="uploading";
 	public static final String STATUS_DECOMPRESS ="decompressing";
 	public static final String STATUS_ERROR ="error";
-	public static final String STATUS_MD5 ="getting md5 ";
+	public static final String STATUS_SHA ="getting sha1 ";
 	public static final String STATUS_FILETYPE ="getting filetype";
 	public static final String STATUS_EXTENSION ="getting extensions";
 	public static final String NOT_DETEMINED = "ND";
@@ -211,8 +211,8 @@ public class TrackControl extends Control{
 	 * @param id
 	 * @return
 	 */
-	public String getFileFromTrackId(int id) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+	public static String getFileFromTrackId(int id) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection());
 		return tdao.getFileFromTrackId(id);
 	}
 
@@ -394,6 +394,21 @@ public class TrackControl extends Control{
 			String[] tracksNames) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
 		return tdao.getCompletedTracksFromProjectIdAndTrackNames(projectId,Arrays.asList(tracksNames));
+	}
+
+
+
+
+	/**
+	 * get the admin track for this assembly
+	 * it assume that there is only one
+	 * @param nr_assembly_id
+	 */
+	public static Track getAdminTrackByNrAssemblyID(int nr_assembly_id) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		Set<Track> tracks=  tdao.getAdminTracksFromSequenceId(nr_assembly_id);
+		Track track = tracks.iterator().next();
+		return track;
 	}
 
 

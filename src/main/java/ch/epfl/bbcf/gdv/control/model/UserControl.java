@@ -53,8 +53,8 @@ public class UserControl extends Control{
 		return dao.emailExist(mail);
 	}
 
-	public Users getUserByProjectId(int projectId) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+	public static Users getUserByProjectId(int projectId) {
+		UsersDAO dao = new UsersDAO(Connect.getConnection());
 		return dao.getUserByProjectId(projectId);
 	}
 

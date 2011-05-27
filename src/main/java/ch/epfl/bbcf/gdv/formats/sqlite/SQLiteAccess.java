@@ -78,7 +78,7 @@ public class SQLiteAccess {
 
 
 	public void writeNewJobTransform(String filePath,int trackId, String tmpDir,
-			String extension,String mail, int nrAssemblyId,int userId,String outdir,
+			String extension,String mail, int nrAssemblyId,String outdir,
 			String jbrowse_outdir,String jbrowse_ressource_url,String feedback_url) {
 		Application.info("write new sqlite job : file("+filePath+"),trackId("+trackId+"),tmpDir("+tmpDir+")," +
 				"extension("+extension+"),mail("+mail+")," +
@@ -100,7 +100,6 @@ public class SQLiteAccess {
 			stat.executeUpdate();
 			conn.commit();
 		} catch (SQLException e) {
-			Application.error(e,userId);
 			Application.error(e);
 		}
 	}
