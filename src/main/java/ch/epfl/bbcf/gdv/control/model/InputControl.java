@@ -255,7 +255,7 @@ public class InputControl extends Control{
 			TrackControl.updateTrack(trackId,TrackControl.STATUS_UPLOADING);
 			//get a temporary directory
 			String tmp_dir = Configuration.getTmp_dir()+"/"+UUID.randomUUID().toString();
-			
+			new File(tmp_dir).mkdir();
 			System.out.println("tmp dir : "+tmp_dir);
 			
 			File uploaded = null;
