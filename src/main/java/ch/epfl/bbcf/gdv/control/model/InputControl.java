@@ -241,14 +241,23 @@ public class InputControl extends Control{
 			this.admin = admin;
 		}
 
+		
+		
 		public void run(){
+			System.out.println(this.toString());
+			
+			
+			
 			//TODO errors & return false & track statuses updates
 			String error="";
-
+			System.out.println("UPLOAD");
 			// ## UPLOAD
 			TrackControl.updateTrack(trackId,TrackControl.STATUS_UPLOADING);
 			//get a temporary directory
 			String tmp_dir = Configuration.getTmp_dir()+"/"+UUID.randomUUID().toString();
+			
+			System.out.println("tmp dir : "+tmp_dir);
+			
 			File uploaded = null;
 			//get from URL
 			if(null!=url){
@@ -304,7 +313,7 @@ public class InputControl extends Control{
 				return;
 			}
 
-
+			System.out.println("DECOMP");
 			// ## DECOMPRESSING
 			TrackControl.updateTrack(trackId,TrackControl.STATUS_DECOMPRESS);
 			List<File> files = null;
@@ -335,14 +344,14 @@ public class InputControl extends Control{
 				TrackControl.updateTrack(trackId,error);
 				return;
 			}
-
+			System.out.println("PROCESS");
 			// ## PROCESSING
 			TrackControl.updateTrack(trackId,TrackControl.STATUS_SHA);
 			for(File file:files){
 				//get the shasum that will identify the file, so the database name
 				String sha1 = null;
 				try {
-					sha1 = Utility.getFileDigest(file.getAbsolutePath(), "SHA");
+					sha1 = Utility.getFileDigest(file.getAbsolutePath(), "SHA1");
 				} catch (NoSuchAlgorithmException e) {
 					error+=e.getMessage();
 					TrackControl.updateTrack(trackId,error);
@@ -432,5 +441,18 @@ public class InputControl extends Control{
 				access.close();
 			}
 		}
+		public String toString(){
+			return super.toString()+"\n"+
+			"sequenceId  " +sequenceId+
+			"\ntrackId " +trackId+
+			"\nurl " +url+
+			"\nfileUpload " +fileUpload+
+			"\nsystemPath " +systemPath+
+			"\ntrackName " +trackName+
+			"\nuserId " +userId+
+			"\nprojectId " +projectId+
+			"\nadmin " +admin;
+		}
 	}
+	
 }
