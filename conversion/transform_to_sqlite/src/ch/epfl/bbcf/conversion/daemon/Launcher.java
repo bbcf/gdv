@@ -2,6 +2,7 @@ package ch.epfl.bbcf.conversion.daemon;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import org.apache.log4j.Level;
@@ -48,9 +49,12 @@ public class Launcher extends Thread{
 		File file = new File(job.getFile());
 		String md5;
 		try {
-			md5 = Utility.getFileMd5(file.getAbsolutePath());
+			md5 = Utility.getFileDigest(file.getAbsolutePath(),"SHA1");
 		} catch (IOException e2) {
 			Configuration.getLoggerInstance().error(e2);
+			return;
+		} catch (NoSuchAlgorithmException e) {
+			Configuration.getLoggerInstance().error(e);
 			return;
 		}
 		if(null==md5){
