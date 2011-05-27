@@ -3,7 +3,6 @@
 /scripts/
 /target/
 /tmp_build/
-/build_scripts
 .DS_Store
 /.settings
 .project
