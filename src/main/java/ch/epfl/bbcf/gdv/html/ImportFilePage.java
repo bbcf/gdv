@@ -1,5 +1,7 @@
 package ch.epfl.bbcf.gdv.html;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -45,15 +47,18 @@ public class ImportFilePage extends WebPage{
 				FormChecker checker = new FormChecker(form_,(UserSession)getSession());
 				checker.checkImportFile(spId,url,uploadField);
 				if(checker.isFormSubmitable()){
-					boolean result = InputControl.processInputs(((UserSession)getSession()).getUser(),
-							projectId,url,uploadField.getFileUpload(),sequenceId,spId,sendMail,admin,
-							new ArrayList<Group>(),null,null);
+					URL u = null;
+					try {
+						u = new URL(url);
+					} catch (MalformedURLException e) {
+					}
+					if(admin){
+						InputControl.processAdminInput(sequenceId, u, uploadField.getFileUpload(), null,null);
+					} else {
+						InputControl.processUserInput(((UserSession)getSession()).getUserId(), projectId, u, uploadField.getFileUpload(), null);	
+					}
 					importModal.close(target);
-				} else {
-
-				}
-
-
+				} 
 			}
 
 		});

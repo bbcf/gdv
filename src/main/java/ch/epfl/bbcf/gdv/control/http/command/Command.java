@@ -63,4 +63,9 @@ public abstract class Command {
 		out.write(e.getMessage());
 		out.close();
 	}
+
+	protected void error(Exception e) {
+		out.write(e.getMessage());
+		out.close();
+	}
 }

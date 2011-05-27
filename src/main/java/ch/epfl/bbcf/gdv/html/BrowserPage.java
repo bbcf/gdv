@@ -175,7 +175,7 @@ public class BrowserPage extends WebPage{
 		"});" +
 		"b.showTracks();" +
 		//"b.showTracks();" +
-				"initGDV_browser();";
+				"initGDV_browser(b);";
 
 		add(new AbstractBehavior() {
 			@Override

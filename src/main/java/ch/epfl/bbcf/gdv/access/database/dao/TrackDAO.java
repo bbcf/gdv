@@ -541,7 +541,7 @@ public class TrackDAO extends DAO<Track>{
 			try {
 				String query = "select t1.md5 from input as t1 " +
 				"inner join inputToTrack as t2 on t1.id = t2.input_id " +
-				"where t2.track_id = ? ;";
+				"where t2.track_id = ? limit 1;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setInt(1,id);

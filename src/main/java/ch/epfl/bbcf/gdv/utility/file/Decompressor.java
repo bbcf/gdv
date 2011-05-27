@@ -52,6 +52,31 @@ public class Decompressor {
 		}
 	}
 
+	/**
+	 * Decompress a file to a list of files in the same directory
+	 * @param file
+	 * @return
+	 * @throws ExtensionNotRecognizedException
+	 * @throws ZipException
+	 * @throws IOException
+	 */
+	public static List<File> decompress(File file) throws ExtensionNotRecognizedException, ZipException, IOException{
+		Extension extension = FileTypeGuesser.guessExtension(file);
+		switch(extension){
+		case ZIP :
+			return unzip(file);
+		case GZ : case GZIP:
+			return ungunzip(file,extension.toString());
+		default:
+			List<File> files = new ArrayList<File>();
+			files.add(file);
+			return files;
+		}
+	}
+	
+	
+	
+	
 	private static List<File> unzip(File file) throws ZipException, IOException {
 		List<File> files = new ArrayList<File>();
 		BufferedOutputStream dest = null;

@@ -39,9 +39,8 @@ public class FileTypeGuesser {
 	 * @throws ExtensionNotRecognizedException
 	 * @throws IOException 
 	 */
-	public static String guessFileType(File file) throws ExtensionNotRecognizedException, IOException{
-		Extension extension = guessExtension(file);
-		switch(extension){
+	public static String guessFileType(File file,Extension ext) throws ExtensionNotRecognizedException, IOException{
+		switch(ext){
 		case GFF:case BED:case GTF:case BEDGRAPH:case BAM:case SAM:
 			return "qualitative";
 		case  DB :
