@@ -144,10 +144,11 @@ public class Launcher extends Thread{
 			} catch (ExtensionNotRecognisedException e) {
 				Configuration.getLoggerInstance().error(e);
 				ex=e;
-			}
-			if(null!=ex){
-				for(StackTraceElement el : ex.getStackTrace()){
-					Configuration.getLoggerInstance().error(el.getClassName()+"."+el.getClassName()+"."+el.getMethodName()+" at line "+el.getLineNumber());
+			} finally {
+				if(null!=ex){
+					for(StackTraceElement el : ex.getStackTrace()){
+						Configuration.getLoggerInstance().error(el.getClassName()+"."+el.getClassName()+"."+el.getMethodName()+" at line "+el.getLineNumber());
+					}
 				}
 			}
 		}

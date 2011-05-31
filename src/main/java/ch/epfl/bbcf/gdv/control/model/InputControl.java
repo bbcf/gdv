@@ -5,13 +5,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Future;
 import java.util.zip.ZipException;
 
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -19,10 +16,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import ch.epfl.bbcf.bbcfutils.Utility;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
-import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
-import ch.epfl.bbcf.gdv.access.database.pojo.Species;
-import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -32,7 +26,6 @@ import ch.epfl.bbcf.gdv.utility.file.Decompressor;
 import ch.epfl.bbcf.gdv.utility.file.ExtensionNotRecognizedException;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 import ch.epfl.bbcf.gdv.utility.file.FileTypeGuesser;
-import ch.epfl.bbcf.gdv.utility.thread.ManagerService;
 
 public class InputControl extends Control{
 
@@ -344,8 +337,8 @@ public class InputControl extends Control{
 				TrackControl.updateTrack(trackId,error);
 				return;
 			}
-			System.out.println("PROCESS");
 			// ## PROCESSING
+			System.out.println("PROCESS");
 			TrackControl.updateTrack(trackId,TrackControl.STATUS_SHA);
 			for(File file:files){
 				//get the shasum that will identify the file, so the database name
@@ -355,13 +348,14 @@ public class InputControl extends Control{
 				} catch (NoSuchAlgorithmException e) {
 					error+=e.getMessage();
 					TrackControl.updateTrack(trackId,error);
+					e.printStackTrace();
 					return;
 				} catch (IOException e) {
 					error+=e.getMessage();
 					TrackControl.updateTrack(trackId,error);
+					e.printStackTrace();
 					return;
 				}
-
 
 				//guess the extension
 				TrackControl.updateTrack(trackId,TrackControl.STATUS_EXTENSION);
@@ -371,9 +365,9 @@ public class InputControl extends Control{
 				} catch (ExtensionNotRecognizedException e) {
 					error+=e.getMessage();
 					TrackControl.updateTrack(trackId,error);
+					e.printStackTrace();
 					return;
 				}
-
 				//guess the file type
 				String filetype = null;
 				try {
@@ -383,11 +377,11 @@ public class InputControl extends Control{
 					TrackControl.updateTrack(trackId,error);
 					return;
 				} catch (IOException e) {
+					e.printStackTrace();
 					error+=e.getMessage();
 					TrackControl.updateTrack(trackId,error);
 					return;
 				}
-
 				if(null==filetype){
 					error+="cannot guess file type";
 					TrackControl.updateTrack(trackId,error);
@@ -404,17 +398,16 @@ public class InputControl extends Control{
 					TrackControl.updateTrackFields(trackId,trackName,filetype,TrackControl.STATUS_FINISHED);
 					return;
 				}
-
 				//create a new input
 				if(admin){
 					int inputId = createNewAdminInput(databaseName);
 					TrackControl.linkToInput(trackId, inputId);
+					TrackControl.createAdminTrack(sequenceId, trackId);
 				} else {
 					int inputId = createNewUserInput(databaseName,userId);
 					TrackControl.linkToInput(trackId, inputId);
 					TrackControl.linkToProject(trackId, projectId);
 				}
-
 
 				//process
 				//if it'a an SQL the first step is already done, so move file from
@@ -429,9 +422,8 @@ public class InputControl extends Control{
 					TrackControl.updateTrack(trackId,error);
 					return;
 				}
-
+				System.out.println("write job");
 				TrackControl.updateTrackFields(trackId,trackName,filetype,TrackControl.STATUS_PROCESSING);
-				TrackControl.updateTrack(trackId,TrackControl.STATUS_PROCESSING);
 				SQLiteAccess access = new SQLiteAccess(Configuration.getTransform_to_sqlite_daemon());
 				access.writeNewJobTransform(
 						file.getAbsolutePath(), trackId, tmp_dir, extension.toString(), "nomail", sequenceId,

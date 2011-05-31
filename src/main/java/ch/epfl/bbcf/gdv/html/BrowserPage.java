@@ -231,7 +231,7 @@ public class BrowserPage extends WebPage{
 			for(Chromosome chromosome : chromosomes){
 				JSONObject json = new JSONObject();
 				json.put("length", chromosome.getLength());
-				json.put("name", chromosome.getName());
+				json.put("name", chromosome.getChr_name());
 				json.put("seqDir", "SEQDIR/");
 				//TODO generate the chunk of fasta sequences
 				json.put("start",0);
