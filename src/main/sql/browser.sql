@@ -96,6 +96,7 @@ PRIMARY KEY ("user_id","project_id")
 CREATE TABLE tracks
 (
 "id" SERIAL NOT NULL,
+"job_id" INTEGER UNIQUE NOT NULL,
 "name" VARCHAR(255) NOT NULL,
 "paramaters" TEXT NOT NULL,
 "status" VARCHAR(255) NOT NULL,
@@ -138,6 +139,25 @@ PRIMARY KEY ("id")
 );
 
 
+CREATE TYPE job_type AS ENUM ('new_selection','new_track','gfeatminer');
+CREATE TYPE job_output AS ENUM ('reload', 'image');
+
+CREATE TABLE jobs(
+"id" SERIAL NOT NULL,
+"status" INTEGER NOT NULL,
+"project_id" INTEGER NOT NULL,
+"data" TEXT NOT NULL,
+"type" job_type NOT NULL,
+"output" job_output NOT NULL,
+PRIMARY KEY ("id")
+);
+
+ALTER TABLE tracks ADD FOREIGN KEY ("job_id") REFERENCES "jobs" ("id") on delete cascade;
+
+ALTER TABLE jobs ADD FOREIGN KEY ("status") REFERENCES "statuses" ("id") on delete cascade;
+
+ALTER TABLE jobs ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
+
 ALTER TABLE gfeatminerjob ADD FOREIGN KEY ("status") REFERENCES "statuses" ("id") on delete cascade;
 
 ALTER TABLE gfeatminerjob ADD FOREIGN KEY ("project_id") REFERENCES "projects" ("id") on delete cascade;
@@ -155,8 +175,6 @@ ALTER TABLE groups ADD FOREIGN KEY ("owner") REFERENCES "users" ("id") on delete
 ALTER TABLE admin ADD FOREIGN KEY ("id") REFERENCES "users" ("id") on delete cascade;
 
 ALTER TABLE sequences ADD FOREIGN KEY ("species_id") REFERENCES "species" ("id") on delete cascade;
-
-ALTER TABLE projects ADD FOREIGN KEY ("cur_seq_id") REFERENCES "sequences" ("id") on delete cascade;
 
 ALTER TABLE groupToProject ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") on delete cascade;
 
@@ -191,3 +209,4 @@ ALTER TABLE inputToTrack ADD UNIQUE ("input_id","track_id");
 INSERT into statuses values(0,'ERROR');
 INSERT into statuses values(1,'SUCCES');
 INSERT into statuses values(2,'RUNNING');
+INSERT into projects values(-1,70,'admin',false);

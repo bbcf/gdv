@@ -1,24 +1,22 @@
 package ch.epfl.bbcf.gdv.control.http.command;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.wicket.protocol.http.WebResponse;
-import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.config.Logs;
-import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 
 public abstract class Command {
 
+	public enum ID {job,gdv_post,track_error,track_success,track_status};
+	public enum ACTION {new_selection,gfeatminer,status};
+	public enum DB_TYPE {qualitative,quantitative};
+	public enum STATUS {error,running,success};
+	
 	protected RequestParameters params;
 	protected PrintWriter out;
 	protected static Logger log = Logs.initPostLogger(Command.class.getName());
@@ -28,12 +26,19 @@ public abstract class Command {
 		this.out=out;
 	}
 
-	//protected abstract void initLog();
 	public abstract void doRequest();
 
 	protected void checkParams(String... params) {
 		for(String p : params){
 			if(null==p){
+				failed("missing param(s)");
+			}
+		}
+
+	}
+	protected void checkParams(Integer ... params) {
+		for(Integer i : params){
+			if(null==i){
 				failed("missing param(s)");
 			}
 		}
@@ -45,6 +50,10 @@ public abstract class Command {
 		out.close();
 	}
 
+	protected void success(String mess){
+		out.write(mess);
+		out.close();
+	}
 	protected void success(final JSONObject json) {
 		out.write(json.toString());
 		out.close();

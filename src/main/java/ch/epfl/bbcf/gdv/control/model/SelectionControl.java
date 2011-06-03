@@ -28,12 +28,13 @@ public class SelectionControl extends Control{
 		super(session);
 	}
 
-	public static boolean createNewSelection(String selections, int projectId,int nr_assembly_id) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, IOException {
+	public static boolean createNewSelection(int jobId,String selections, int projectId,int nr_assembly_id,String selectionName) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, IOException {
 		JSONArray array = new JSONArray(selections);
 		if(array.length()>0){
 			//get tmp database
 			String randomPath= Configuration.getTmp_dir()+"/"+UUID.randomUUID().toString();
-			String databasePath =randomPath+"/selection.db"; 
+			String trackName = selectionName;
+			String databasePath =randomPath+"/"+trackName; 
 			new File(randomPath).mkdir();
 			System.out.println("db path = "+databasePath);
 			//get default track
@@ -60,11 +61,7 @@ public class SelectionControl extends Control{
 			constructor.close();
 		
 			Users user = UserControl.getUserByProjectId(projectId);
-			return InputControl.processUserInput(user.getId(),projectId,null,null,databasePath);
-			//TODO launch a new Track processing
-			
-			
-			
+			return InputControl.processUserInput(jobId,user.getId(),projectId,null,null,databasePath,trackName);
 		}
 		return false;
 	}

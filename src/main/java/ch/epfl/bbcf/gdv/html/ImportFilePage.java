@@ -18,6 +18,7 @@ import org.apache.wicket.util.value.ValueMap;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
+import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 
 
@@ -53,9 +54,9 @@ public class ImportFilePage extends WebPage{
 					} catch (MalformedURLException e) {
 					}
 					if(admin){
-						InputControl.processAdminInput(sequenceId, u, uploadField.getFileUpload(), null,null);
+						JobControl.newAdminTrack(sequenceId, u, uploadField.getFileUpload(), null,null);
 					} else {
-						InputControl.processUserInput(((UserSession)getSession()).getUserId(), projectId, u, uploadField.getFileUpload(), null);	
+						JobControl.newUserTrack(((UserSession)getSession()).getUserId(), projectId, u, uploadField.getFileUpload(), null,null);
 					}
 					importModal.close(target);
 				} 

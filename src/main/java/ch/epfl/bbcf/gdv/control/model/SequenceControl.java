@@ -174,7 +174,8 @@ public class SequenceControl extends Control{
 			feedback.error("GTF URL doesn't exist for this assembly in Genrep. Add it manually");
 			return true;
 		}
-		return InputControl.processAdminInput(seqId, u, null,null,"Genes");
+		
+		return JobControl.newAdminTrack(seqId, u,null,null,"Genes");
 	}
 
 

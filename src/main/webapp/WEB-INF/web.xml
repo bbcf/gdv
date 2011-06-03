@@ -86,31 +86,6 @@
 
 
 
-
-<!-- gFeatMiner ACCESS -->
-
-<filter>
-  <filter-name>GFMAccess</filter-name>
-  <filter-class>ch.epfl.bbcf.gdv.control.http.GFeatMinerFilter</filter-class>
-</filter>
-
-  <filter-mapping>
-    <filter-name>GFMAccess</filter-name>
-    <url-pattern>/GFeatMiner/*</url-pattern>
-  </filter-mapping>
-
-
-<!-- selection ACCESS -->
-
-<filter>
-  <filter-name>SelectionAccess</filter-name>
-  <filter-class>ch.epfl.bbcf.gdv.control.http.SelectionFilter</filter-class>
-</filter>
-
-<filter-mapping>
-  <filter-name>SelectionAccess</filter-name>
-  <url-pattern>/selections/*</url-pattern>
-</filter-mapping>
 <!-- GDV -->
 
 

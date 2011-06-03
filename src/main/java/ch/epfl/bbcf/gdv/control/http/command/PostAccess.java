@@ -15,6 +15,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
+import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
 
@@ -69,7 +70,7 @@ public class PostAccess extends Command{
 
 	}
 
-	
+
 
 	/**
 	 * Add a track already processed to sqlite
@@ -80,8 +81,9 @@ public class PostAccess extends Command{
 	 * @param user 
 	 */
 	private void addSqliteTrack(Users user) {
-		checkParams(params.getUrl(),params.getProjectId(),params.getDatatype());
-		int projectId = Integer.parseInt(params.getProjectId());
+		checkParams(params.getUrl(),params.getDatatype());
+		checkParams(params.getProjectId());
+		int projectId = params.getProjectId();
 		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
 		URL url = null;
@@ -90,8 +92,8 @@ public class PostAccess extends Command{
 		} catch (MalformedURLException e) {
 			error(e);
 		}
-		boolean result = InputControl.processUserInput(user.getId(), p, url, null,null);
-		success(result);
+		int jobId = JobControl.newUserTrack(user.getId(), p, url, null,null);
+		success("{job_id:"+jobId+"}");
 	}
 
 	/**
@@ -103,8 +105,9 @@ public class PostAccess extends Command{
 	 * @param user 
 	 */
 	private void addTrack(Users user) {
-		checkParams(params.getUrl(),params.getProjectId());
-		int projectId = Integer.parseInt(params.getProjectId());
+		checkParams(params.getUrl());
+		checkParams(params.getProjectId());
+		int projectId = params.getProjectId();
 		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
 		URL url = null;
@@ -113,8 +116,8 @@ public class PostAccess extends Command{
 		} catch (MalformedURLException e) {
 			error(e);
 		}
-		boolean result = InputControl.processUserInput(user.getId(),p, url, null,null);
-		success(result);
+		int jobId = JobControl.newUserTrack(user.getId(), p, url, null,null);
+		success("{job_id:"+jobId+"}");
 	}
 
 
@@ -148,25 +151,9 @@ public class PostAccess extends Command{
 			error(e);
 			throw new AbortWithHttpStatusException(400,true);
 		}
-		
-		//project creation for group
-		//		} else {
-		//			checkParams(params.getObfuscated());
-		//			UserControl uc = new UserControl(session);
-		//			if(!uc.sameMailExist(params.getObfuscated())){
-		//				int userId = uc.createNewUser(params.getObfuscated(),"","","","","",params.getType());
-		//				int projectId = pc.createNewProject(seqId,params.getName(),userId);
-		//				success(projectId);
-		//			} else {
-		//				Users u = uc.getuserByMail(params.getObfuscated());
-		//				session.signIn(u.getMail(), params.getType());
-		//				int projectId = pc.createNewProject(seqId,params.getName(),u.getId());
-		//				success(projectId);
-		//			}
-		//		}
 
 	}
 
 
-	
+
 }

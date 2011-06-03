@@ -17,6 +17,7 @@ import ch.epfl.bbcf.bbcfutils.Utility;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -51,10 +52,10 @@ public class InputControl extends Control{
 	 * @return
 	 * @throws TrackCreationFailedException 
 	 */
-	public static boolean processUserInput(int userId,Project project,URL url,FileUpload fileUpload,String systemPath){
-		int trackId = createTmpTrack(project.getId(),TrackControl.STATUS_UPLOADING);
+	public static boolean processUserInput(int job_id,int userId,Project project,URL url,FileUpload fileUpload,String systemPath){
+		int trackId = createTmpTrack(project.getId(),TrackControl.STATUS_UPLOADING,job_id);
 		if(trackId!=-1){
-			Handler handler = new Handler(project.getSequenceId(),project.getId(),trackId, url, fileUpload, systemPath, systemPath, userId, false);
+			Handler handler = new Handler(project.getSequenceId(),project.getId(),job_id, url, fileUpload, systemPath, systemPath, userId, false);
 			handler.start();
 			return true;
 		}
@@ -70,11 +71,11 @@ public class InputControl extends Control{
 	 * @return
 	 * @throws TrackCreationFailedException 
 	 */
-	public static boolean processUserInput(int userId,int projectId,URL url,FileUpload fileUpload,String systemPath){
-		int trackId = createTmpTrack(projectId,TrackControl.STATUS_UPLOADING);
+	public static boolean processUserInput(int job_id,int userId,int projectId,URL url,FileUpload fileUpload,String systemPath,String trackName){
+		int trackId = createTmpTrack(projectId,TrackControl.STATUS_UPLOADING,job_id);
 		if(trackId!=-1){
 			Project project = ProjectControl.getProject(projectId);
-			Handler handler = new Handler(project.getSequenceId(),projectId,trackId, url, fileUpload, systemPath, systemPath, userId, false);
+			Handler handler = new Handler(project.getSequenceId(),projectId,job_id, url, fileUpload, systemPath, trackName, userId, false);
 			handler.start();
 			return true;
 		}
@@ -92,10 +93,10 @@ public class InputControl extends Control{
 	 * @return
 	 * @throws TrackCreationFailedException 
 	 */
-	public static boolean processAdminInput(int sequenceId,URL url,FileUpload fileUpload,String systemPath,String name){
-		int trackId = createAdminTrack(TrackControl.STATUS_UPLOADING);
+	public static boolean processAdminInput(int job_id,int sequenceId,URL url,FileUpload fileUpload,String systemPath,String name){
+		int trackId = createAdminTrack(TrackControl.STATUS_UPLOADING,job_id);
 		if(trackId!=-1){
-			Handler handler = new Handler(sequenceId,-1,trackId, url, fileUpload, systemPath, name, -1,true);
+			Handler handler = new Handler(sequenceId,-1,job_id, url, fileUpload, systemPath, name, -1,true);
 			handler.start();
 			return true;
 		}
@@ -111,8 +112,8 @@ public class InputControl extends Control{
 	 * @param status
 	 * @return
 	 */
-	private static int createAdminTrack(String status) {
-		return TrackControl.createTmpTrack(status);
+	private static int createAdminTrack(String status,int job_id) {
+		return TrackControl.createTmpTrack(job_id,status);
 	}
 
 	/**
@@ -121,8 +122,8 @@ public class InputControl extends Control{
 	 * @param status
 	 * @return
 	 */
-	private static int createTmpTrack(int projectId, String status) {
-		int trackId = TrackControl.createTmpTrack(status);
+	private static int createTmpTrack(int projectId, String status,int job_id) {
+		int trackId = TrackControl.createTmpTrack(job_id,status);
 		//if(TrackControl.linkToUser(trackId, userId)){
 		if(TrackControl.linkToProject(trackId, projectId)){
 			return trackId;
@@ -215,16 +216,16 @@ public class InputControl extends Control{
 		private URL url;
 		private FileUpload fileUpload;
 		private String systemPath;
-		private int trackId;
+		private int jobId;
 		private int sequenceId;
 		private String trackName;
 		private int userId;
 		private int projectId;
 		private boolean admin;
 
-		private Handler(int sequenceId, int projectId,final int trackId, final URL url,final FileUpload fileUpload,final String systemPath,String trackName,int userId,boolean admin){
+		private Handler(int sequenceId, int projectId,final int jobId, final URL url,final FileUpload fileUpload,final String systemPath,String trackName,int userId,boolean admin){
 			this.sequenceId = sequenceId;
-			this.trackId = trackId;
+			this.jobId = jobId;
 			this.url = url;
 			this.fileUpload = fileUpload;
 			this.systemPath = systemPath;
@@ -239,13 +240,14 @@ public class InputControl extends Control{
 		public void run(){
 			System.out.println(this.toString());
 			
-			
+			Track track = TrackControl.getTrackIdWithJobId(jobId);
 			
 			//TODO errors & return false & track statuses updates
 			String error="";
 			System.out.println("UPLOAD");
 			// ## UPLOAD
-			TrackControl.updateTrack(trackId,TrackControl.STATUS_UPLOADING);
+			
+			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_UPLOADING);
 			//get a temporary directory
 			String tmp_dir = Configuration.getTmp_dir()+"/"+UUID.randomUUID().toString();
 			new File(tmp_dir).mkdir();
@@ -261,7 +263,7 @@ public class InputControl extends Control{
 					error+="error while uploading file from url : ";
 					error+=e.getMessage();
 					e.printStackTrace();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					return;
 				}
 
@@ -275,7 +277,7 @@ public class InputControl extends Control{
 					error+="error while uploading file file upload : ";
 					error+=e.getMessage();
 					e.printStackTrace();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					return;
 				}
 
@@ -287,28 +289,28 @@ public class InputControl extends Control{
 				try {
 					uploaded = FileManagement.getFileFromSystemPath(systemPath, tmp_dir, name);
 				} catch (IOException e) {
-					error+="error while gtting file from file system : ";
+					error+="error while getting file from file system : ";
 					error+=e.getMessage();
 					e.printStackTrace();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					return;
 				}
 
 
 			} else {
 				Application.error("cannot process inputs, no file are provided");
-				TrackControl.updateTrack(trackId,"file(s) not provided");
+				TrackControl.updateTrack(track.getId(),"file(s) not provided");
 				return;
 			}
 
 			if(null==uploaded){
-				TrackControl.updateTrack(trackId,"file(s) not uploaded");
+				TrackControl.updateTrack(track.getId(),"file(s) not uploaded");
 				return;
 			}
 
 			System.out.println("DECOMP");
 			// ## DECOMPRESSING
-			TrackControl.updateTrack(trackId,TrackControl.STATUS_DECOMPRESS);
+			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_DECOMPRESS);
 			List<File> files = null;
 			try {
 				files = Decompressor.decompress(uploaded);
@@ -316,30 +318,30 @@ public class InputControl extends Control{
 				error+="error while decompressing file : ";
 				error+=e.getMessage();
 				e.printStackTrace();
-				TrackControl.updateTrack(trackId,error);
+				TrackControl.updateTrack(track.getId(),error);
 				return;
 			} catch (ExtensionNotRecognizedException e) {
 				error+="error while reading file : ";
 				error+=e.getMessage();
 				e.printStackTrace();
-				TrackControl.updateTrack(trackId,error);
+				TrackControl.updateTrack(track.getId(),error);
 				return;
 			} catch (IOException e) {
 				error+="error while uploading file : ";
 				error+=e.getMessage();
 				e.printStackTrace();
-				TrackControl.updateTrack(trackId,error);
+				TrackControl.updateTrack(track.getId(),error);
 				return;
 			}
 
 			if(null==files){
 				error+="decompression failed";
-				TrackControl.updateTrack(trackId,error);
+				TrackControl.updateTrack(track.getId(),error);
 				return;
 			}
 			// ## PROCESSING
 			System.out.println("PROCESS");
-			TrackControl.updateTrack(trackId,TrackControl.STATUS_SHA);
+			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_SHA);
 			for(File file:files){
 				//get the shasum that will identify the file, so the database name
 				String sha1 = null;
@@ -347,24 +349,24 @@ public class InputControl extends Control{
 					sha1 = Utility.getFileDigest(file.getAbsolutePath(), "SHA1");
 				} catch (NoSuchAlgorithmException e) {
 					error+=e.getMessage();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					e.printStackTrace();
 					return;
 				} catch (IOException e) {
 					error+=e.getMessage();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					e.printStackTrace();
 					return;
 				}
 
 				//guess the extension
-				TrackControl.updateTrack(trackId,TrackControl.STATUS_EXTENSION);
+				TrackControl.updateTrack(track.getId(),TrackControl.STATUS_EXTENSION);
 				Extension extension = null;
 				try {
 					extension = FileTypeGuesser.guessExtension(file);
 				} catch (ExtensionNotRecognizedException e) {
 					error+=e.getMessage();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					e.printStackTrace();
 					return;
 				}
@@ -374,17 +376,17 @@ public class InputControl extends Control{
 					filetype = FileTypeGuesser.guessFileType(file, extension);
 				} catch (ExtensionNotRecognizedException e) {
 					error+=e.getMessage();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					return;
 				} catch (IOException e) {
 					e.printStackTrace();
 					error+=e.getMessage();
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					return;
 				}
 				if(null==filetype){
 					error+="cannot guess file type";
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					return;
 				}
 
@@ -395,38 +397,41 @@ public class InputControl extends Control{
 				}
 				//look if the file already exist
 				if(SQLiteAccess.dbAlreadyCreated(databaseName)){
-					TrackControl.updateTrackFields(trackId,trackName,filetype,TrackControl.STATUS_FINISHED);
+					TrackControl.updateTrackFields(track.getId(),trackName,filetype,TrackControl.STATUS_FINISHED);
 					return;
 				}
 				//create a new input
 				if(admin){
 					int inputId = createNewAdminInput(databaseName);
-					TrackControl.linkToInput(trackId, inputId);
-					TrackControl.createAdminTrack(sequenceId, trackId);
+					TrackControl.linkToInput(track.getId(), inputId);
+					TrackControl.createAdminTrack(sequenceId, track.getId());
 				} else {
 					int inputId = createNewUserInput(databaseName,userId);
-					TrackControl.linkToInput(trackId, inputId);
-					TrackControl.linkToProject(trackId, projectId);
+					TrackControl.linkToInput(track.getId(), inputId);
+					TrackControl.linkToProject(track.getId(), projectId);
 				}
 
 				//process
 				//if it'a an SQL the first step is already done, so move file from
 				//tmp directory to file directory
 				if(extension.equals(Extension.DB)){
-					file = FileManagement.moveFile(file, Configuration.getFilesDir());
+					System.out.println(file.getAbsolutePath());
+					file = FileManagement.moveFile(file, Configuration.getFilesDir(),databaseName);
+					Application.debug(" deleting : "+tmp_dir);
+					FileManagement.deleteDirectory(new File(tmp_dir));
 				} 
 
 				//submit process to first daemon
 				if(file==null){
 					error+="error while moving the file";
-					TrackControl.updateTrack(trackId,error);
+					TrackControl.updateTrack(track.getId(),error);
 					return;
 				}
 				System.out.println("write job");
-				TrackControl.updateTrackFields(trackId,trackName,filetype,TrackControl.STATUS_PROCESSING);
+				TrackControl.updateTrackFields(track.getId(),trackName,filetype,TrackControl.STATUS_PROCESSING);
 				SQLiteAccess access = new SQLiteAccess(Configuration.getTransform_to_sqlite_daemon());
 				access.writeNewJobTransform(
-						file.getAbsolutePath(), trackId, tmp_dir, extension.toString(), "nomail", sequenceId,
+						file.getAbsolutePath(), jobId, tmp_dir, extension.toString(), "nomail", sequenceId,
 						Configuration.getFilesDir(),Configuration.getTracks_dir(),
 						Configuration.getJb_data_root(),
 						Configuration.getGdv_appli_proxy()+"/post");
@@ -436,7 +441,7 @@ public class InputControl extends Control{
 		public String toString(){
 			return super.toString()+"\n"+
 			"sequenceId  " +sequenceId+
-			"\ntrackId " +trackId+
+			"\njobId " +jobId+
 			"\nurl " +url+
 			"\nfileUpload " +fileUpload+
 			"\nsystemPath " +systemPath+

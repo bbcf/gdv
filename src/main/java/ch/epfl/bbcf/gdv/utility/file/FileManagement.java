@@ -283,10 +283,11 @@ public class FileManagement {
 
 	}
 
-	public static File moveFile(File from,String to){
+	public static File moveFile(File from,String to,String name){
 		File dir = new File(to);
-		if(from.renameTo(new File(dir, from.getName()))){
-			return dir;
+		if(from.renameTo(new File(dir, name))){
+			File result = new File(to+"/"+name);
+			return result;
 		}
 		return null;
 	}

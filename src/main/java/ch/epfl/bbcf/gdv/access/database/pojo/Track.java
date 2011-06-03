@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Track implements Serializable{
 
-	private int id;
+	private int id,job_id;
 	private String name;
 	private String parameters;
 	private String status;
@@ -86,5 +86,11 @@ public class Track implements Serializable{
 	}
 	public String getInput() {
 		return input;
+	}
+	public void setJob_id(int job_id) {
+		this.job_id = job_id;
+	}
+	public int getJob_id() {
+		return job_id;
 	}
 }

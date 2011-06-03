@@ -32,7 +32,7 @@ public class Launcher extends Thread{
 		Configuration.getLoggerInstance().debug("process tasks");
 		try {
 			InternetConnection.sendPOSTConnection(job.getFeedbackUrl(),
-					"id=track_status&track_id="+job.getTrackId()+"&mess=computing", 
+					"id=track_status&job_id="+job.getTrackId()+"&data=computing", 
 					InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e1) {
 			Configuration.getLoggerInstance().error(e1);
@@ -49,7 +49,7 @@ public class Launcher extends Thread{
 		int nb = chrs.size();
 		int percentage = 100/nb;
 
-		String body = "id=track_status&track_id="+job.getTrackId()+"&mess="+percentage;
+		String body = "id=track_status&job_id="+job.getTrackId()+"&data="+percentage;
 		while(it.hasNext()){
 			String chr = it.next();
 			int length = chrs.get(chr);
@@ -69,9 +69,14 @@ public class Launcher extends Thread{
 			}
 		}
 		try {
-			InternetConnection.sendPOSTConnection(
-					job.getFeedbackUrl(),"id=track_status&track_id="+job.getTrackId()
-					+"&mess=completed", InternetConnection.MIME_TYPE_FORM_APPLICATION);
+			
+			body ="id=track_success&job_id="+job.getTrackId()+"&db_type=quantitative&data=end";
+			InternetConnection.sendPOSTConnection(job.getFeedbackUrl(),body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
+			
+			
+//			InternetConnection.sendPOSTConnection(
+//					job.getFeedbackUrl(),"id=track_status&track_id="+job.getTrackId()
+//					+"&mess=completed", InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		} catch (IOException e) {
 			Configuration.getLoggerInstance().error(e);
 		}

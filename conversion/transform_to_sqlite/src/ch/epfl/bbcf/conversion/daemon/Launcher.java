@@ -3,6 +3,7 @@ package ch.epfl.bbcf.conversion.daemon;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.log4j.Level;
@@ -11,12 +12,15 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 
 import ch.epfl.bbcf.bbcfutils.Utility;
+import ch.epfl.bbcf.bbcfutils.access.InternetConnection;
 import ch.epfl.bbcf.bbcfutils.access.gdv.RemoteAccess;
 import ch.epfl.bbcf.bbcfutils.conversion.json.ConvertToJSON;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite.Extension;
 import ch.epfl.bbcf.bbcfutils.exception.ExtensionNotRecognisedException;
 import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
+import ch.epfl.bbcf.bbcfutils.parser.feature.QualitativeFeature;
+import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.utility.file.FileManagement;
 
@@ -44,12 +48,12 @@ public class Launcher extends Thread{
 
 
 
-		//////////   GETTING MD5   //////////
+		//////////   GETTING SHA1   //////////
 		Configuration.getLoggerInstance().debug(this.getId()+" run : "+job.getFile());
 		File file = new File(job.getFile());
-		String md5;
+		String sha1;
 		try {
-			md5 = Utility.getFileDigest(file.getAbsolutePath(),"SHA1");
+			sha1 = Utility.getFileDigest(file.getAbsolutePath(),"SHA1");
 		} catch (IOException e2) {
 			Configuration.getLoggerInstance().error(e2);
 			return;
@@ -57,10 +61,10 @@ public class Launcher extends Thread{
 			Configuration.getLoggerInstance().error(e);
 			return;
 		}
-		if(null==md5){
+		if(null==sha1){
 			try {
 				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
-						"cannot get md5","md5",Integer.toString(job.getTrackId()), job.getFile());
+						"cannot get sha1","md5",Integer.toString(job.getTrackId()), job.getFile());
 			} catch (IOException e) {
 				Configuration.getLoggerInstance().error(e);
 			}
@@ -102,28 +106,47 @@ public class Launcher extends Thread{
 			type="qualitative";
 		}else if(job.getExtension().equalsIgnoreCase("db")||job.getExtension().equalsIgnoreCase("sql")){
 			doJSON=true;
+			try {
+				SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(job.getFile());
+				type = access.testIfQualitative();
+				System.out.println("TYPEEE : "+type);
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			
 		}else if(job.getExtension().equalsIgnoreCase("bam")||
 				job.getExtension().equalsIgnoreCase("sam")){
 			ext = Extension.BAM;
 			type="qualitative";
 			try {
-				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
-						"extension not supported : "+ext,"ext",Integer.toString(job.getTrackId()),
-						job.getFile());
+				String body ="id=track_error&job_id="+job.getTrackId()+"data=extension "+ext+"not supported";
+				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
+//				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
+//						"extension not supported : "+ext,"ext",Integer.toString(job.getTrackId()),
+//						job.getFile());
 			} catch (IOException e) {
 				Configuration.getLoggerInstance().error(e);
 			}
 		}else {
 			try {
-				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
-						"extension not recognized : "+ext,"ext",Integer.toString(job.getTrackId()),
-						job.getFile());
+				String body ="id=track_error&job_id="+job.getTrackId()+"data=extension not recognized";
+				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
+//				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
+//						"extension not recognized : "+ext,"ext",Integer.toString(job.getTrackId()),
+//						job.getFile());
 			} catch (IOException e) {
 				Configuration.getLoggerInstance().error(e);
 			}
 			return;
 		}
-		String database = md5+".db";
+		String database = sha1+".db";
 		Configuration.getLoggerInstance().info(this.getId()+" start of convertion to SQLite :  "+job.getFile()+" to "
 				+job.getOutputDirectory()+"/"+database);
 
@@ -175,7 +198,9 @@ public class Launcher extends Thread{
 		if(wellParsed){
 			Configuration.getLoggerInstance().debug(this.getId()+" well parsed");
 			try {
-				RemoteAccess.sendTrackSucceed(job.getFeedbackUrl(),Integer.toString(job.getTrackId()),database,job.getMail(),type);
+				String body ="id=track_success&job_id="+job.getTrackId()+"&db_type="+type;
+				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
+				//RemoteAccess.sendTrackSucceed(job.getFeedbackUrl(),Integer.toString(job.getTrackId()),database,job.getMail(),type);
 			} catch (IOException e) {
 				Configuration.getLoggerInstance().error(e);
 			}
@@ -188,8 +213,10 @@ public class Launcher extends Thread{
 			}
 		} else {
 			try {
-				RemoteAccess.sendTrackErrorMessage(
-						job.getFeedbackUrl(),"parsing error "+error,"parsing", Integer.toString(job.getTrackId()),job.getFile());
+				String body ="id=track_error&job_id="+job.getTrackId()+"data=parsing error "+error;
+				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
+//				RemoteAccess.sendTrackErrorMessage(
+//						job.getFeedbackUrl(),"parsing error "+error,"parsing", Integer.toString(job.getTrackId()),job.getFile());
 				Configuration.getLoggerInstance().debug(this.getId()+" bad parsed : "+error);
 				return;
 			} catch (IOException e) {

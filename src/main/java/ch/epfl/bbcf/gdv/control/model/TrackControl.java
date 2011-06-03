@@ -37,28 +37,6 @@ public class TrackControl extends Control{
 
 
 
-
-
-	//	public List<Track> getTracksFromAnnotationId(int annotationId) {
-	//		ViewTrackDAO dao = new ViewTrackDAO(Connect.getConnection(session));
-	//		return dao.getTracksFromAnnotationId(annotationId);
-	//	}
-	//
-	//	public boolean isCreated(Track t) {
-	//		ViewTrackDAO dao = new ViewTrackDAO(Connect.getConnection(session));
-	//		return dao.isCreated(t);
-	//	}
-	//
-	//	public Track getViewTrackById(int trackId) {
-	//		ViewTrackDAO dao = new ViewTrackDAO(Connect.getConnection(session));
-	//		return dao.getTrackById(trackId);
-	//	}
-	//
-	//	public void deleteTrack(int trackId) {
-	//		ViewTrackDAO dao = new ViewTrackDAO(Connect.getConnection(session));
-	//		dao.deleteTrack(trackId);
-	//	}
-
 	/**
 	 * delete the connections of the track (and user input)
 	 * with the user
@@ -83,19 +61,6 @@ public class TrackControl extends Control{
 		tdao.deleteTrack(trackId);
 
 	}
-	//	public Users getUserFromTrackId(int trackId) {
-	//		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
-	//		return dao.getUserFromTrackId(trackId);
-	//
-	//
-	//	}
-
-	//	public int getTrackStatus(int id) {
-	//		ViewTrackDAO dao = new ViewTrackDAO(Connect.getConnection(session));
-	//		return dao.getTrackById(id).getStatus();
-	//	}
-
-
 
 	/**
 	 * create an admin track ~ createTrack but link to admin instead of user
@@ -107,10 +72,10 @@ public class TrackControl extends Control{
 	 * @param i
 	 * @return
 	 */
-	public static int createAdminTrack(int userid, String assemblyId, String name,
+	public static int createAdminTrack(int jobId,int userid, String assemblyId, String name,
 			String filetype, boolean always, String status) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		int trackId = tdao.createNewTrack(assemblyId,name,filetype,always,status);
+		int trackId = tdao.createNewTrack(jobId,assemblyId,name,filetype,always,status);
 		if(trackId!=-1){
 			tdao.linkToAdmin(trackId,assemblyId);
 			return trackId;
@@ -141,6 +106,16 @@ public class TrackControl extends Control{
 		return -1;
 	}
 
+	/**
+	 * get the track with the specified job id
+	 * @param jobId the job id
+	 * @return the Track
+	 */
+	public static Track getTrackIdWithJobId(int jobId) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		return tdao.getTrackIdWithJobId(jobId);
+	}
+	
 	/**
 	 * Update the status of a track in the database
 	 * check if a project exist and add to it or create it
@@ -321,9 +296,9 @@ public class TrackControl extends Control{
 	 * @param status
 	 * @return the track ID
 	 */
-	public static int createTmpTrack(String status) {
+	public static int createTmpTrack(int job_id,String status) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		return tdao.createTmpTrack(status);
+		return tdao.createTmpTrack(status,job_id);
 	}
 
 

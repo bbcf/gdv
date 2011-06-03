@@ -48,7 +48,7 @@ public class StatusDAO  extends DAO<Status>{
 					return getStatus(resultSet);
 				}
 			} catch (SQLException e) {
-				logger.error("getInput : "+e);
+				logger.error("getStatus : "+e);
 				this.endQuery(false);
 			}
 		}

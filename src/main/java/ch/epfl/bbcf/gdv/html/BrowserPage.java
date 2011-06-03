@@ -320,10 +320,8 @@ public class BrowserPage extends WebPage{
 		for(Track t : tracks){
 			String parameters ="";
 			if(t.getParameters().equalsIgnoreCase("params") || t.getName().equalsIgnoreCase("in process")){
-				Application.debug("TRACK ID "+t.getId());
 
 				String directory = tc.getFileFromTrackId(t.getId());
-				Application.debug("TRACK ID "+directory);
 
 				String imageType = null;
 				if(t.getType().equalsIgnoreCase("quantitative")){
@@ -332,6 +330,7 @@ public class BrowserPage extends WebPage{
 					imageType="FeatureTrack";
 				} else {
 					Application.error("datatype not recognized : "+t.getId());
+					continue;
 				}
 				String params = "{\n\"url\" : \"../"+directory+"/{refseq}.json\",\n" +
 				"\"label\" : \""+protect(t.getName())+"\",\n"+

@@ -2,10 +2,18 @@ package ch.epfl.bbcf.gdv.control.http;
 
 import java.util.Map;
 
-public class RequestParameters {
+import ch.epfl.bbcf.gdv.control.http.command.Command;
+import ch.epfl.bbcf.gdv.control.http.command.Command.ID;
 
-	private String id; //request type : hidden from user (track_success,post_access,...)
-	private String type; //type of request from user (normal or for groups)
+public class RequestParameters {
+	
+	
+	private Command.ACTION action;
+	//private Command.TYPE type;
+	private Command.DB_TYPE dbType;
+	private Command.ID id;
+	private Command.STATUS status;
+	
 	private String datatype; //qualitative or quantitative
 	private String trackId; 
 	private String message; 
@@ -15,26 +23,44 @@ public class RequestParameters {
 	private String name;
 	private String seqId;
 	private String url;
-	private String projectId;
-	private String nrAssemblyId;
+	private int projectId;
+	private int nrAssemblyId;
 	private String file;
 	private String obfuscated;
 	private String mail;
 	private String key;
 	private String isPublic;
+	private int jobId;
+	private String data;
+	private String selections;
 	
 	
 	public RequestParameters(Map<String, String[]> map) {
 		if(map!=null){
 			try{
-				this.id = map.get("id")[0];
+				this.id = Command.ID.valueOf(map.get("id")[0]);
+			} catch (NullPointerException e){};
+			try{
+				this.status = Command.STATUS.valueOf(map.get("status")[0]);
+			} catch (NullPointerException e){};
+			try{
+				this.dbType = Command.DB_TYPE.valueOf(map.get("db_type")[0]);
+			} catch (NullPointerException e){};
+			try{
+				this.action = Command.ACTION.valueOf(map.get("action")[0]);
+			} catch (NullPointerException e){};
+			try{
+				this.jobId = Integer.parseInt(map.get("job_id")[0]);
 			} catch (NullPointerException e){};
 			try{
 				this.key = map.get("key")[0];
 			} catch (NullPointerException e){};
 			try{
-				this.type  = map.get("type")[0];
+				this.data = map.get("data")[0];
 			} catch (NullPointerException e){};
+//			try{
+//				this.type  = Command.TYPE.valueOf(map.get("type")[0]);
+//			} catch (NullPointerException e){};
 			try{
 				this.trackId = map.get("track_id")[0];
 			} catch (NullPointerException e){};
@@ -60,10 +86,10 @@ public class RequestParameters {
 				this.url = map.get("url")[0];
 			} catch (NullPointerException e){};
 			try{
-				this.projectId = map.get("project_id")[0];
+				this.projectId = Integer.parseInt(map.get("project_id")[0]);
 			} catch (NullPointerException e){};
 			try{
-				this.nrAssemblyId = map.get("nrass")[0];
+				this.nrAssemblyId = Integer.parseInt(map.get("nrass")[0]);
 			} catch (NullPointerException e){};
 			try{
 				this.obfuscated = map.get("obfuscated")[0];
@@ -80,6 +106,9 @@ public class RequestParameters {
 			try{
 				this.isPublic = map.get("public")[0];
 			} catch (NullPointerException e){};
+			try{
+				this.selections = map.get("selections")[0];
+			} catch (NullPointerException e){};
 		}
 	}
 	
@@ -87,27 +116,28 @@ public class RequestParameters {
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(ID id) {
 		this.id = id;
 	}
 	/**
+	 * Reserved for the FrontController
 	 * @return the id
 	 */
-	public String getId() {
+	public ID getId() {
 		return id;
 	}
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(String type) {
-		this.type = type;
-	}
-	/**
-	 * @return the type
-	 */
-	public String getType() {
-		return type;
-	}
+//	/**
+//	 * @param type the type to set
+//	 */
+//	public void setType(TYPE type) {
+//		this.type = type;
+//	}
+//	/**
+//	 * @return the type
+//	 */
+//	public TYPE getType() {
+//		return type;
+//	}
 	/**
 	 * @param trackId the trackId to set
 	 */
@@ -233,7 +263,7 @@ public class RequestParameters {
 	/**
 	 * @param projectId the projectId to set
 	 */
-	public void setProjectId(String projectId) {
+	public void setProjectId(int projectId) {
 		this.projectId = projectId;
 	}
 
@@ -241,7 +271,7 @@ public class RequestParameters {
 	/**
 	 * @return the projectId
 	 */
-	public String getProjectId() {
+	public int getProjectId() {
 		return projectId;
 	}
 
@@ -249,7 +279,7 @@ public class RequestParameters {
 	/**
 	 * @param nrAssemblyId the nrAssemblyId to set
 	 */
-	public void setNrAssemblyId(String nrAssemblyId) {
+	public void setNrAssemblyId(int nrAssemblyId) {
 		this.nrAssemblyId = nrAssemblyId;
 	}
 
@@ -257,7 +287,7 @@ public class RequestParameters {
 	/**
 	 * @return the nrAssemblyId
 	 */
-	public String getNrAssemblyId() {
+	public int getNrAssemblyId() {
 		return nrAssemblyId;
 	}
 
@@ -325,6 +355,66 @@ public class RequestParameters {
 
 	public String isPublic() {
 		return isPublic;
+	}
+
+
+	public void setJobId(int jobId) {
+		this.jobId = jobId;
+	}
+
+
+	public int getJobId() {
+		return jobId;
+	}
+
+
+	public void setAction(Command.ACTION action) {
+		this.action = action;
+	}
+
+
+	public Command.ACTION getAction() {
+		return action;
+	}
+
+
+	public void setDbType(Command.DB_TYPE dbType) {
+		this.dbType = dbType;
+	}
+
+
+	public Command.DB_TYPE getDbType() {
+		return dbType;
+	}
+
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
+
+	public String getData() {
+		return data;
+	}
+
+
+	public void setStatus(Command.STATUS status) {
+		this.status = status;
+	}
+
+
+	public Command.STATUS getStatus() {
+		return status;
+	}
+
+
+	public void setSelections(String selections) {
+		this.selections = selections;
+	}
+
+
+	public String getSelections() {
+		return selections;
 	}
 
 }

@@ -4,14 +4,12 @@ package ch.epfl.bbcf.gdv.control.http;
 import java.io.PrintWriter;
 
 import org.apache.log4j.Logger;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 
 import ch.epfl.bbcf.gdv.config.Application;
-import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.Logs;
-import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.http.command.Command;
+import ch.epfl.bbcf.gdv.control.http.command.JobAccess;
 import ch.epfl.bbcf.gdv.control.http.command.PostAccess;
 import ch.epfl.bbcf.gdv.control.http.command.TrackError;
 import ch.epfl.bbcf.gdv.control.http.command.TrackParsingSuccess;
@@ -29,29 +27,24 @@ public class FrontController {
 	}
 
 	public void doRequest() {
+		Application.debug("fc.doRequest() "+params.getId()+"   --   "+params.getJobId());
 		if(params.getId()!=null){
 			Command command = null;
-			//CHANGE STATUS OF A TRACK
-			if(params.getId().equalsIgnoreCase("track_status")){
-				command = new TrackStatus(params,out);
-				//ERROR IN TRACK PROCESSING
-			} else if(params.getId().equalsIgnoreCase("track_error")){
-				command = new TrackError(params,out);
-				//TRANSFORM TO SQLITE SUCCED
-			} else if(params.getId().equalsIgnoreCase("track_parsing_success")){
-				command = new TrackParsingSuccess(params,out);
-				//POST ACCESS TO GDV
-			} else if(params.getId().equalsIgnoreCase(Configuration.getGdv_post_access())){
-				command = new PostAccess(params,out);
+			switch(params.getId()){
+			case gdv_post : command = new PostAccess(params,out);
+			break;
+			case job : command = new JobAccess(params,out);
+			break;
+			case track_error: command = new TrackError(params,out);
+			break;
+			case track_status: command = new TrackStatus(params,out);
+			break;
+			case track_success: command = new TrackParsingSuccess(params,out);
+			break;
+			default:new AbortWithHttpStatusException(400,true);
 			}
-			if(null!=command){
-				command.doRequest();
-			} else {
-				log.error("no command");
-				new AbortWithHttpStatusException(400,true);
-			}
+			command.doRequest();
 		} else {
-			log.error("no id");
 			throw new AbortWithHttpStatusException(400,true);
 		}
 

@@ -48,19 +48,19 @@ public class SQLiteAccess {
 
 
 
-	public void writeNewJobCalculScores(String trackId, String indb,
+	public void writeNewJobCalculScores(int trackId, String indb,
 			String inPath, String outdb, String outPath,
-			String fast, String usermail,String feedback_url,String tmp_dir) {
+			int fast, String usermail,String feedback_url,String tmp_dir) {
 		try {
 			PreparedStatement stat = conn.prepareStatement("insert into jobs values (?,?,?,?,?,?,?,?,?); ");
-			stat.setString(1,trackId);
+			stat.setInt(1,trackId);
 			stat.setString(2,indb);
 			stat.setString(3,inPath);
 			stat.setString(4,outdb);
 			stat.setString(5,outPath);
 			stat.setString(6,feedback_url);
 			stat.setString(7,tmp_dir);
-			stat.setString(8,fast);
+			stat.setInt(8,fast);
 			stat.setString(9,usermail);
 			conn.setAutoCommit(false);
 			stat.execute();

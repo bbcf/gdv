@@ -19,55 +19,13 @@ import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 public class TrackDAO extends DAO<Track>{
 
 	private static String[] fields = {
-		"id","name","paramaters","status","type"
+		"id","job_id","name","paramaters","status","type"
 	};
 
 	public TrackDAO(Connect connection) {
 		super(connection);
 	}
 
-	//	public boolean create(final int jbTrackId,final String name,final int annotId,final String params) {
-	//		if(this.databaseConnected()){
-	//			this.startQuery();
-	//			try {
-	//				String query = "insert into JBtracks values (" +
-	//				"? , ? , ? , ? ,? ) ; ";
-	//				PreparedStatement statement = this.prepareStatement(query,
-	//						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-	//				statement.setInt(1,jbTrackId);
-	//				statement.setString(2, name);
-	//				statement.setInt(3, annotId);
-	//				statement.setString(4,params);
-	//				statement.setInt(5,4);
-	//				this.execute(statement);
-	//				return true;
-	//			} catch (SQLException e) {
-	//				logger.error(e);
-	//			}
-	//		}
-	//		return false;
-	//	}
-	//
-	//	public List<Track> getJBtracksFromAnnotationId(int annotationId) {
-	//		List<Track> annots = new ArrayList<Track>();
-	//		if(this.databaseConnected()){
-	//			this.startQuery();
-	//			try {
-	//				String query = "select t1.* from JBtracks as t1 " +
-	//				"where t1.annotationId = ? ;";
-	//				PreparedStatement statement = this.prepareStatement(query,
-	//						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-	//				statement.setInt(1, annotationId);
-	//				ResultSet resultSet = this.executeQuery(statement);
-	//				annots = getJBTracks(resultSet);
-	//				this.endQuery(true);
-	//			} catch (SQLException e) {
-	//				logger.error(e);
-	//				this.endQuery(false);
-	//			}
-	//		}
-	//		return annots;
-	//	}
 
 	private Track getTrack(ResultSet resultSet) {
 		Track track = new Track();
@@ -78,22 +36,27 @@ public class TrackDAO extends DAO<Track>{
 				logger.error(e);
 			}
 			try {
-				track.setName(resultSet.getString(fields[1]));
+				track.setJob_id(resultSet.getInt(fields[1]));
 			} catch (SQLException e) {
 				logger.error(e);
 			}
 			try {
-				track.setParameters(resultSet.getString(fields[2]));
+				track.setName(resultSet.getString(fields[2]));
 			} catch (SQLException e) {
 				logger.error(e);
 			}
 			try {
-				track.setStatus(resultSet.getString(fields[3]));
+				track.setParameters(resultSet.getString(fields[3]));
 			} catch (SQLException e) {
 				logger.error(e);
 			}
 			try {
-				track.setType(resultSet.getString(fields[4]));
+				track.setStatus(resultSet.getString(fields[4]));
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+			try {
+				track.setType(resultSet.getString(fields[5]));
 			} catch (SQLException e) {
 				logger.error(e);
 			}
@@ -143,47 +106,23 @@ public class TrackDAO extends DAO<Track>{
 	}
 
 	
-	//	public List<Track> getJBTracksFromIds(List<Integer> ids) {
-	//		List<Track> annots = new ArrayList<Track>();
-	//		if(this.databaseConnected()){
-	//			this.startQuery();
-	//			try {
-	//				for(Integer id : ids){
-	//					String query = "select t1.* from JBtracks as t1 " +
-	//					"where t1.jbtrackid = ? limit 1;";
-	//					PreparedStatement statement = this.prepareStatement(query,
-	//							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-	//					statement.setInt(1, id);
-	//					ResultSet resultSet = this.executeQuery(statement);
-	//					if(resultSet.first()){
-	//						annots.add(getJBTrack(resultSet));
-	//					}
-	//					
-	//				}
-	//				this.endQuery(true);
-	//			} catch (SQLException e) {
-	//				logger.error(e);
-	//				this.endQuery(false);
-	//			}
-	//		}
-	//		return annots;
-	//	}
 
 	/**
 	 * create a new track in GDV database
 	 */
-	public int createTmpTrack(String status) {
+	public int createTmpTrack(String status,int job_id) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
 				String query = "insert into tracks values (" +
-				"default, ? , ? , ? ,?) ; ";
+				"default, ? ,? , ? , ? ,?) ; ";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				statement.setString(1,"in process");
-				statement.setString(2, "params");
-				statement.setString(3, status);
-				statement.setString(4,TrackControl.NOT_DETEMINED);
+				statement.setInt(1,job_id);
+				statement.setString(2,"in process");
+				statement.setString(3, "params");
+				statement.setString(4, status);
+				statement.setString(5,TrackControl.NOT_DETEMINED);
 				this.executeUpdate(statement);
 				query = "select currval('tracks_id_seq') ; ";
 				statement = this.prepareStatement(query,
@@ -211,20 +150,21 @@ public class TrackDAO extends DAO<Track>{
 	 * @param always
 	 * @param status
 	 */
-	public int createNewTrack(String assemblyId, String name, String filetype,
+	public int createNewTrack(int job_id,String assemblyId, String name, String filetype,
 			boolean always, String status) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
 				String query = "insert into tracks values (" +
-				"default, ? , ? , ? ,?, ? ) ; ";
+				"default, ? , ? , ? , ? ,?, ? ) ; ";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				statement.setString(1, name);
-				statement.setString(2, "params");
-				statement.setString(3, filetype);
-				statement.setBoolean(4,always);
-				statement.setString(5,status);
+				statement.setInt(1,job_id);
+				statement.setString(2, name);
+				statement.setString(3, "params");
+				statement.setString(4, filetype);
+				statement.setBoolean(5,always);
+				statement.setString(6,status);
 				this.executeUpdate(statement);
 				query = "select currval('tracks_id_seq') ; ";
 				statement = this.prepareStatement(query,
@@ -386,6 +326,30 @@ public class TrackDAO extends DAO<Track>{
 			}
 			this.endQuery(true);
 			logger.debug("Rturn null");
+		}
+		return null;
+	}
+	
+
+
+	public Track getTrackIdWithJobId(int jobId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select * from tracks where job_id = ?;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,jobId);
+				ResultSet resultSet = this.executeQuery(statement);
+				if(resultSet.first()){
+					Track track = getTrack(resultSet);
+					this.endQuery(true);
+					return track;
+				}
+			} catch (SQLException e) {
+				logger.error("getTrackIdWithJobId : "+e);
+				this.endQuery(false);
+			}
 		}
 		return null;
 	}
@@ -811,6 +775,7 @@ public class TrackDAO extends DAO<Track>{
 		}
 		return jbTracks;
 	}
+
 
 
 	
