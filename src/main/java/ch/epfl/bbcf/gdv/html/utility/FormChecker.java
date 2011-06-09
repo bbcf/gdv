@@ -151,7 +151,6 @@ public class FormChecker {
 	 */
 	public void checkImportFile(int species,
 			String url, FileUploadField uploadField) {
-		Application.debug("subbmit");
 		if((null==url || url.equalsIgnoreCase("")) && null==uploadField.getFileUpload()){
 			this.submitable = false;
 			form.error("you must give an input");

@@ -24,12 +24,14 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
+import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
@@ -44,8 +46,8 @@ public class BrowserPage extends WebPage{
 		String userKey = null;
 		String publicKey = null;
 		String err ="";
-		
-		
+
+
 		//get request parameters
 		for(Entry<String, String[]> entry : p.toRequestParameters().entrySet()){
 			if(entry.getKey().equalsIgnoreCase("id")){
@@ -70,8 +72,8 @@ public class BrowserPage extends WebPage{
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
-		
-		
+
+
 		ProjectControl pc = new ProjectControl((UserSession)getSession());
 		final Project project = pc.getProject(projectId);
 		if(null==project){
@@ -82,10 +84,10 @@ public class BrowserPage extends WebPage{
 		}
 		boolean canView = false;//if the user can see the page
 		boolean isAdmin =false;//if the user provide uKey & pKey but he don't
-							   //need them because he own the page
+		//need them because he own the page
 		UserSession session = (UserSession)getSession();
 		Users user = session.getUser();
-		
+
 		//it can be a public view
 		if(userKey!=null && publicKey!=null){
 			if(pc.isProjectPublic(projectId)){
@@ -103,25 +105,24 @@ public class BrowserPage extends WebPage{
 			canView = true;
 			isAdmin=true;
 		} else {err="not authorized to browse this view";};
-		
+
 		if(!canView){
 			PageParameters params = new PageParameters();
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(ErrorPage.class);
 		}
-	
-		//change the display of the menu if
-		//it's public or admin
-		if(isAdmin){
-			add(new MenuPage("menu",Configuration.getNavigationLinks()));
-		} else {
-			MenuElement[] els = {new MenuElement(LoginPage.class, "import in my profile",true,projectId)};
-			add(new MenuPage("menu",Arrays.asList(els)));
-		}
-		
-		
-	
 
+		List<Job> jobs = JobControl.getGFeatMinerJobsAndNotTerminatedFromProjectId(projectId);
+		String jobOutput ="[";
+		for (Job job : jobs){
+			jobOutput+=JobControl.outputJob(job)+",";
+		}
+		int jl = jobOutput.length();
+		if(jl>1){
+			jobOutput=jobOutput.substring(0, jl-1);
+		}
+		jobOutput+="]";
+		add(new Label("init_jobs",jobOutput));
 
 		//adding speciesName on the view
 		SequenceControl sc = new SequenceControl((UserSession)getSession());
@@ -130,7 +131,8 @@ public class BrowserPage extends WebPage{
 		add(new Label("species",project.getSpecies().getName()));
 		add(new Label("nrAssemblyId",Integer.toString(project.getSequenceId())));
 		add(new Label("gdv_project_id",Integer.toString(project.getId())));
-		
+		add(new Label("isAdmin",Boolean.toString(isAdmin)));
+
 		//adding static javascript and css
 		for(String cp : Configuration.getGDVCSSFiles()){
 			add(CSSPackageResource.getHeaderContribution(cp));
@@ -153,8 +155,8 @@ public class BrowserPage extends WebPage{
 		//get names
 		String tracksNames = getTrackNames(formattedTracks);
 		//get refseq.js
-//		SequenceControl seqc = new SequenceControl((UserSession)getSession());
-//		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());
+		//		SequenceControl seqc = new SequenceControl((UserSession)getSession());
+		//		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());
 		final String refseq = buildRefseq(project.getSequenceId());//JbrowsoRAccess.getRefseq(seq.getJbrowsoRId());
 
 
@@ -175,7 +177,7 @@ public class BrowserPage extends WebPage{
 		"});" +
 		"b.showTracks();" +
 		//"b.showTracks();" +
-				"initGDV_browser(b);";
+		"initGDV_browser(b);";
 
 		add(new AbstractBehavior() {
 			@Override
@@ -186,31 +188,6 @@ public class BrowserPage extends WebPage{
 				response.renderJavascript(jsControl,"js_control_"+project.getId());
 			}
 		}); 
-
-		//adding tabbedPanel
-//		List<ITab> tabs = new ArrayList<ITab>();
-//		tabs.add(new AbstractTab(new Model("view")){
-//			@Override
-//			public Panel getPanel(String id) {
-//				return new BrowserPanel(id);
-//			}
-//		});
-//
-//		tabs.add(new AbstractTab(new Model("gMiner")){
-//			@Override
-//			public Panel getPanel(String id) {
-//				return new GFeatMinerPanel(id);
-//			}
-//		});
-//		add(new TabbedPanel("tabs", tabs));
-
-		//building gFeatMenu
-		//add(new GFeatMinerMenu("gfeat_menu",tracks));
-
-
-
-
-
 
 
 
@@ -237,7 +214,7 @@ public class BrowserPage extends WebPage{
 				json.put("start",0);
 				json.put("end", chromosome.getLength());
 				json.put("seqChunkSize",20000);
-				
+
 				array.put(json);
 			}
 			refSeq+= array.toString();
@@ -298,7 +275,7 @@ public class BrowserPage extends WebPage{
 		names=names.substring(0, names.length()-1);
 		names+="\"";
 		return names;
-		
+
 	}
 
 	/**

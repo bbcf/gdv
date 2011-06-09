@@ -46,6 +46,7 @@ import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.GroupControl;
+import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
@@ -265,7 +266,9 @@ public class ProjectPage extends BasePage{
 					public void onSubmit(){
 						PageParameters params 	= new PageParameters();
 						params.put("id", Integer.toString(projectWrapper.getId()));	
-						BrowserPageBuilder.buildPage((UserSession)getSession(),getRequestCycle(),projectWrapper.getId());
+						
+						getRequestCycle().setResponsePage(BrowserPage.class,params);
+						//BrowserPageBuilder.buildPage((UserSession)getSession(),getRequestCycle(),projectWrapper.getId());
 						//setResponsePage(BrowserPage.class,params);
 					}
 				};
@@ -293,7 +296,6 @@ public class ProjectPage extends BasePage{
 				shareBut.add(new SimpleAttributeModifier("title","share project with a group"));
 				item.add(shareBut);
 				//### delete it
-				//### configure it
 				AjaxButton del;
 				if(projectWrapper.isAdmin()){
 					del = new AjaxButton("delete_but"){
@@ -438,6 +440,7 @@ public class ProjectPage extends BasePage{
 						final AjaxLink link = new AjaxLink("delete"){
 							@Override
 							public void onClick(AjaxRequestTarget target) {
+								JobControl.removeJob(track.getTrackInstance().getJob_id());
 								TrackControl tc = new TrackControl((UserSession)getSession());
 								tc.removeTrackFromUser(track.getTrackInstance());
 								dtp.detach();

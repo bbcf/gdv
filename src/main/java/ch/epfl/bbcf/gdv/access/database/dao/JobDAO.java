@@ -188,4 +188,51 @@ public class JobDAO extends DAO<Job>{
 		}
 		return false;
 	}
+
+
+	public List<Job> getGFeatMinerJobsAndNotTerminatedFromProjectId(
+			int projectId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select * from jobs where project_id = ? and type = ?::job_type " +
+				"union select * from jobs where project_id = ? and type!= ?::job_type and status = ? ; ";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,projectId);
+				statement.setString(2,Job.JOB_TYPE.gfeatminer.toString());
+				statement.setInt(3,projectId);
+				statement.setString(4,Job.JOB_TYPE.gfeatminer.toString());
+				statement.setInt(5,Status.RUNNING);
+				ResultSet resultSet = this.executeQuery(statement);
+				List<Job> jobs = getJobs(resultSet);
+				this.endQuery(true);
+				return jobs;
+			} catch (SQLException e) {
+				logger.error(e);
+				this.endQuery(false);
+			}
+		}
+		return null;
+	}
+
+
+	public boolean removeJob(int id) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "delete from jobs where id = ? ; ";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1,id);
+				this.executeUpdate(statement);
+				this.endQuery(true);
+				return true;
+			} catch (SQLException e) {
+				logger.error(e);
+				this.endQuery(false);
+			}
+		}
+		return false;
+	}
 }

@@ -109,7 +109,6 @@ public class Launcher extends Thread{
 			try {
 				SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(job.getFile());
 				type = access.testIfQualitative();
-				System.out.println("TYPEEE : "+type);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -126,7 +125,7 @@ public class Launcher extends Thread{
 			ext = Extension.BAM;
 			type="qualitative";
 			try {
-				String body ="id=track_error&job_id="+job.getTrackId()+"data=extension "+ext+"not supported";
+				String body ="id=track_error&job_id="+job.getTrackId()+"&data=extension "+ext+"not supported";
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
 //				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
 //						"extension not supported : "+ext,"ext",Integer.toString(job.getTrackId()),
@@ -136,7 +135,7 @@ public class Launcher extends Thread{
 			}
 		}else {
 			try {
-				String body ="id=track_error&job_id="+job.getTrackId()+"data=extension not recognized";
+				String body ="id=track_error&job_id="+job.getTrackId()+"&data=extension not recognized";
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
 //				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
 //						"extension not recognized : "+ext,"ext",Integer.toString(job.getTrackId()),
@@ -213,7 +212,7 @@ public class Launcher extends Thread{
 			}
 		} else {
 			try {
-				String body ="id=track_error&job_id="+job.getTrackId()+"data=parsing error "+error;
+				String body ="id=track_error&job_id="+job.getTrackId()+"&data=parsing error "+error;
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
 //				RemoteAccess.sendTrackErrorMessage(
 //						job.getFeedbackUrl(),"parsing error "+error,"parsing", Integer.toString(job.getTrackId()),job.getFile());
