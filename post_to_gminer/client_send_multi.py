@@ -5,9 +5,10 @@ import httplib2, urllib
 def send_request(job_id=1, characteristic="number_of_features"):
     # Set up request #
     args = {
-            'data'            : '''{"job_id":"''' + str(job_id) + '''","operation_type":"desc_stat","characteristic":"''' + characteristic + '''","compare_parents":[],"per_chromosome":["per_chromosome"],"ntracks":[{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}]}''',
+            'data'            : '''{"operation_type":"desc_stat","characteristic":"''' + characteristic + '''","compare_parents":[],"per_chromosome":["per_chromosome"],"ntracks":[{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}]}''',
             'output_location' : '/tmp/gMiner',
             'callback_url'    : 'http://localhost:9999/',
+            'job_id'          : str(job_id),
     }
     # Make the request #
     connection = httplib2.Http()

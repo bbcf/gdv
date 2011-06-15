@@ -12,6 +12,7 @@ A typical job arriving to the server would be (HTML FORM ENCODED):
  - output_location = /tmp/ (path where you want the output)
  - callback_url = http://server.org/gfeatminer (URL to post back the response)
  - data = u'' (the data from the web form specifying the request, it is JSON formatted)
+ - job_id : 1 (the identifier of the job)
 
 This is the detailled description of 'data' parameter:
  - operation_type : 'desc_stat' (self-explanatory)
@@ -20,10 +21,9 @@ This is the detailled description of 'data' parameter:
  - per_chromosome : ['per_chromosome'] (idem)
  - filter:[{path:'/data/gdv_dev/files/115d5da7db0c588ae95bb91a5710ba2147be3df0.db',name:'foo'}] (path to a file that take the role of a filter, a selection)
  - ntracks:[{path:'/data/gdv_dev/files/d08aa4569c17aa79abc57c3b44da6abab927fa2.db',name:'bar'},{...},...] (path to the file(s) to process. It can be ordered)
- - job_id : 1 (the identifier of the job)
 
 Example:
-    {'output_location': u'/data/gdv_dev/gFeatMiner/208', 'data': u'{"compare_parents":["compare_parents"],"per_chromosome":["per_chromosome"],"characteristic":"base_coverage","operation_type":"desc_stat","ntracks":[{"name":"RNAPol_fwd.sql","path":"/data/gdv_dev/files/6cb8a2f895e2cf829912bdbd244a6092289fe82f.db"}],"filter":[{"name":"chr(2839500,2909000)_chr(3023000,3070000)_.db","path":"/data/gdv_dev/files/952f788e0e0c5b43ec854515c9ebbad6a5c5e771.db"}]}', 'callback_url': u'http://svitsrv25.epfl.ch/gdv_dev/post', 'output_name': u'gfeatminer_output', 'job_id': u'208'}
+    {'job_id': u'208', 'output_location': u'/data/gdv_dev/gFeatMiner/208', 'data': u'{"compare_parents":["compare_parents"],"per_chromosome":["per_chromosome"],"characteristic":"base_coverage","operation_type":"desc_stat","ntracks":[{"name":"RNAPol_fwd.sql","path":"/data/gdv_dev/files/6cb8a2f895e2cf829912bdbd244a6092289fe82f.db"}],"filter":[{"name":"chr(2839500,2909000)_chr(3023000,3070000)_.db","path":"/data/gdv_dev/files/952f788e0e0c5b43ec854515c9ebbad6a5c5e771.db"}]}', 'callback_url': u'http://svitsrv25.epfl.ch/gdv_dev/post', 'output_name': u'gfeatminer_output'}
 
 #########################  RESPONSE  ###########################
 A typical answer from the server would be (HTML FORM ENCODED):

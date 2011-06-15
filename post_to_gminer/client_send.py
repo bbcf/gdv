@@ -3,9 +3,10 @@ import httplib2, urllib
 
 # All parameters #
 args = {
-        'data'        : '''{"job_id":"1","operation_type":"desc_stat","characteristic":"number_of_features","compare_parents":[],"per_chromosome":["per_chromosome"],"filter":[{"name":"Ribi genes","path":"/scratch/genomic/tracks/ribosome_genesis.sql"}],"ntracks":[{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}]}''',
+        'data'        : '''{"operation_type":"desc_stat","characteristic":"number_of_features","compare_parents":[],"per_chromosome":["per_chromosome"],"filter":[{"name":"Ribi genes","path":"/scratch/genomic/tracks/ribosome_genesis.sql"}],"ntracks":[{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}]}''',
         'output_location' : '/tmp/gMiner',
         'callback_url'    : 'http://localhost:9999/',
+        'job_id'          : '1'
 }
 
 # Make the request #
