@@ -32,7 +32,7 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 /*LEFTPANE*/
 .lpfolded{border-color: transparent transparent SlateGrey transparent;border-style:solid;border-width:1.2em;position:absolute;left:0em;bottom:1em;width:0em;height:0;z-index:40;display:inline;}
 .lpunfolded{border-color: SlateGrey transparent transparent transparent;border-style:solid;border-width:1.2em;position:absolute;left:0em;bottom:6em;width:0em;height:0;z-index:40;}
-#dnd_exp{color:grey;font-size:125%;};
+#dnd_exp{color:grey;font-size:125%;position:relative;bottom:-7em;};
 /* TABBED PANEL */
 #tabpanel{float:left;width:100%;font-size:93%;line-height:normal;}
 #tabpanel ul{background-color:slategrey;margin:0;list-style:none;padding:0em;position:fixed;bottom:0em;}
@@ -119,7 +119,7 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 #suggest_field{background-color:LightGrey;position:fixed;right: 0em;padding:0.7em;top:2.5em;text-align:center;}
 
 /*GDV MENU & GFEATMINER*/
-#gdv_menu{left:0em;position:fixed;bottom:0em;top:0em;width:10em;height:100%;padding:0em;text-align:center;line-height:200%;border-width:0em 0.1em 0em 0em;border-style:outset;border-color:#CCCCCC;background-color:LightGrey;}
+#gdv_menu{z-index:50;left:0em;position:fixed;bottom:0em;top:0em;width:10em;height:100%;padding:0em;text-align:center;line-height:200%;border-width:0em 0.1em 0em 0em;border-style:outset;border-color:#CCCCCC;background-color:LightGrey;}
 .menu_entry{font-size:1.5em;letter-spacing:150%;padding:1em 0em 1em;margin:0em 0em 0.5em;background-color:LightSteelBlue;}
 .gdv_menu_item{margin:0.5em 0em 0.5em 0em;line-height:200%;}
 
@@ -159,5 +159,44 @@ div.clearer {clear: left; line-height: 0; height: 0;}
     display:inline-block;
     margin:1px;
 }
+
+
+.job_running{
+    font-family: sans-serif;
+    z-index: 20;
+    background-color: #E8E86C;
+    border: 1px #2b434c solid;
+    color: #2b434c;
+    cursor: pointer;
+    padding: 3px;
+    display:inline-block;
+    margin:1px;
+}
+.job_success{
+    font-family: sans-serif;
+    z-index: 20;
+    background-color: #99FF66;
+    border: 1px #2b434c solid;
+    color: #2b434c;
+    cursor: pointer;
+    padding: 3px;
+    display:inline-block;
+    margin:1px;
+}
+.job_error{
+    font-family: sans-serif;
+    z-index: 20;
+    background-color: #C14C4C;
+    border: 1px #2b434c solid;
+    color: #2b434c;
+    cursor: pointer;
+    padding: 3px;
+    display:inline-block;
+    margin:1px;
+}
+
+
+
+
 
 
