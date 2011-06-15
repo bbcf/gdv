@@ -94,8 +94,6 @@ def post_process(**kwargs):
         job = jobs.pop(0)
         # Load the form #
         request = json.loads(job['data'])
-        # Get the job id #
-        job['job_id'] = request.pop('job_id') 
         # Get the output location #
         request['output_location'] = job.pop('output_location')
         # Format the request #
