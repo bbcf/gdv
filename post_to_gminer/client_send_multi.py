@@ -2,15 +2,13 @@
 from multiprocessing import Process
 import httplib2, urllib
 
-def send_request(job_id='1', characteristic="number_of_features"):
+def send_request(job_id=1, characteristic="number_of_features"):
     # Set up request #
     args = {
-            'from'        : 'multi_send',
-            'job_id'      : str(job_id),
-            'callback_url': 'http://localhost:9999/',
+            'data'            : '''{"job_id":"''' + str(job_id) + '''","operation_type":"desc_stat","characteristic":"''' + characteristic + '''","compare_parents":[],"per_chromosome":["per_chromosome"],"ntracks":[{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}]}''',
+            'output_location' : '/tmp/gMiner',
+            'callback_url'    : 'http://localhost:9999/',
     }
-    form = '''{"operation_type":"desc_stat","characteristic":"''' + characteristic + '''","compare_parents":[],"per_chromosome":["per_chromosome"],"selected_regions":"chr1:0 .. 10000000;chr2:0 .. 10000000","tracks":{"1":{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},"2":{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}},"output_location":"/tmp/"}'''
-    args['form'] = form
     # Make the request #
     connection = httplib2.Http()
     body = urllib.urlencode(args)

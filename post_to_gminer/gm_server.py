@@ -45,7 +45,7 @@ If an error is found, the answer could be:
 """
 
 # General modules #
-import cherrypy, httplib2, urllib, json, sys, cgitb, warnings
+import cherrypy, httplib2, urllib, json, sys, cgitb, traceback, warnings, time
 
 # Other modules #
 import gMiner
@@ -89,37 +89,43 @@ def pre_process(**kwargs):
 
 def post_process(**kwargs):
     try:
-        # Default request #
-        request = {}
         # Get a job from the list #
         global jobs
         job = jobs.pop(0)
-        # Format the request #
+        # Load the form #
         request = json.loads(job['data'])
-        request['output_location'] = job['output_location']
-        if request.has_key('compare_parents' ): request['compare_parents' ] = bool(request['compare_parents' ])
-        if request.has_key('per_chromosome'  ): request['per_chromosome'  ] = bool(request['per_chromosome'  ])
-        if request.has_key('filter'          ): request['selected_regions'] =      request['filter']['path'  ]
+        # Get the job id #
+        job['job_id'] = request.pop('job_id') 
+        # Get the output location #
+        request['output_location'] = job.pop('output_location')
+        # Format the request #
+        if request.has_key('compare_parents' ): request['compare_parents' ] = bool(request['compare_parents'  ])
+        if request.has_key('per_chromosome'  ): request['per_chromosome'  ] = bool(request['per_chromosome'   ])
+        if request.has_key('filter'):
+            request['selected_regions'] = request['filter'][0]['path']
+            request.pop('filter')
         if request.has_key('ntracks'):
-            request.update(dict([('track' + str(k), v['path'])                         for k,v in request['ntracks']]))
-            request.update(dict([('track' + str(k) + '_name', v.get('name', 'Unamed')) for k,v in request['ntracks']]))
+            request.update(dict([('track' + str(i+1), v['path'])                         for i,v in enumerate(request['ntracks'])]))
+            request.update(dict([('track' + str(i+1) + '_name', v.get('name', 'Unamed')) for i,v in enumerate(request['ntracks'])]))
             request.pop('ntracks')
         # Unicode filtering #
         request = dict([(k.encode('ascii'),v) for k,v in request.items()])
-        # Run the request # 
+        # Run the request #
         files = gMiner.run(**request)
         # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
+        # Report success #
+        print '\033[1;33m[' + time.asctime() + ']\033[0m \033[42m' + files[0] + '\033[0m'
     except Exception as err:
-        print "The job raised an error: ", str(err)
+        traceback.print_exc()
+        print '\033[1;33m[' + time.asctime() + ']\033[0m \033[41m' + str(err) + '\033[0m'
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
-            # To remove in production version # 
-            print cgitb.text(sys.exc_info()) 
     finally:
+        result     = locals().get('result', '')
         connection = httplib2.Http()
-        body       = urllib.urlencode({'id':'job', 'action':'gfeatresponse', 'job_id':request.get('job_id', -1), 'data':json.dumps(result)})
+        body       = urllib.urlencode({'id':'job', 'action':'gfeatresponse', 'job_id':job.get('job_id', -1), 'data':json.dumps(result)})
         headers    = {'content-type': 'application/x-www-form-urlencoded'}
         address    = job['callback_url']
         response, content = connection.request(address, "POST", body=body, headers=headers)
