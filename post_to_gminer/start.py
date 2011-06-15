@@ -1,4 +1,4 @@
 import sys
-sys.path.append("../../gMiner")
-sys.path.append("../../bbcflib")
+sys.path.insert(0, "../../gMiner")
+sys.path.insert(0, "../../bbcflib")
 execfile("gm_server.py")
