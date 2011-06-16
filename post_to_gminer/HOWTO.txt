@@ -42,3 +42,8 @@ Notes
 You may have to adapt the address and ports. As is, the scripts are configured to send and recieve on localhost on ports 7520 and 9999.
 
 Essentially, the urlencoded parameters of the first POST body get directly passed as keyword arguments to the run function of gMiner. The return value is sent back to the application requesting the operation by another POST request, this time to the url specified in the ``callback_url`` parameter.
+
+#-----------------------------------------#
+# This code was written by Lucas Sinclair #
+# lucas.sinclair@epfl.ch                  #
+#-----------------------------------------#

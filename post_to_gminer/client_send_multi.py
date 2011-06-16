@@ -30,3 +30,8 @@ if __name__ == '__main__':
     }
     procs = [Process(target=send_request, args=(i,chara_dict[i%4])) for i in range(12)]
     for p in procs: p.start()
+
+#-----------------------------------------#
+# This code was written by Lucas Sinclair #
+# lucas.sinclair@epfl.ch                  #
+#-----------------------------------------#

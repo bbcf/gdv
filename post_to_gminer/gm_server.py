@@ -130,3 +130,8 @@ def post_process(**kwargs):
 
 #-------------------------------------------------------------------------#
 if __name__ == '__main__': gmServer().serve()
+
+#-----------------------------------------#
+# This code was written by Lucas Sinclair #
+# lucas.sinclair@epfl.ch                  #
+#-----------------------------------------#

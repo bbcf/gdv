@@ -20,3 +20,8 @@ response, content = connection.request(address, "POST", body=body, headers=heade
 print "Server status: ",  response.status
 print "Server reason: ",  response.reason
 print "Server content:", content
+
+#-----------------------------------------#
+# This code was written by Lucas Sinclair #
+# lucas.sinclair@epfl.ch                  #
+#-----------------------------------------#
