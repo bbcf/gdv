@@ -85,7 +85,7 @@ class CherryRoot(object):
 def pre_process(**kwargs):
     global jobs
     jobs.append(kwargs)
-    return 'Job added to queue'
+    return 'Job "' + kwargs.get('job_id', -1) + '" added to queue'
 
 def post_process(**kwargs):
     try:
