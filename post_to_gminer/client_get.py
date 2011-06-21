@@ -12,3 +12,8 @@ class CherryRoot(object):
 cherrypy.server.socket_port = 9999
 cherrypy.quickstart(CherryRoot(), config={'/':
     {'request.dispatch': cherrypy.dispatch.MethodDispatcher()}})
+
+#-----------------------------------------#
+# This code was written by Lucas Sinclair #
+# lucas.sinclair@epfl.ch                  #
+#-----------------------------------------#
