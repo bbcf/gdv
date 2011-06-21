@@ -44,10 +44,8 @@ public class PostAccess extends Command{
 		}
 		if(params.getCommand().equalsIgnoreCase(NEW_PROJECT)){
 			createNewProject(user);
-		}else if(params.getCommand().equalsIgnoreCase(ADD_TRACK)){
+		}else if(params.getCommand().equalsIgnoreCase(ADD_TRACK)||params.getCommand().equalsIgnoreCase(ADD_SQLITE_FILE)){
 			addTrack(user);
-		}else if(params.getCommand().equalsIgnoreCase(ADD_SQLITE_FILE)){
-			addSqliteTrack(user);
 		}else if(params.getCommand().equalsIgnoreCase(REQUEST_LOGIN)){
 			requestLogin();
 		} else {
@@ -71,30 +69,6 @@ public class PostAccess extends Command{
 	}
 
 
-
-	/**
-	 * Add a track already processed to sqlite
-	 * to an existing project
-	 * url : the url where to fetch the file
-	 * project_id : the project the track belongs to
-	 * mail : the user
-	 * @param user 
-	 */
-	private void addSqliteTrack(Users user) {
-		checkParams(params.getUrl(),params.getDatatype());
-		checkParams(params.getProjectId());
-		int projectId = params.getProjectId();
-		Project p = ProjectControl.getProject(projectId);
-		String name = params.getName();
-		URL url = null;
-		try {
-			url = new URL(params.getUrl());
-		} catch (MalformedURLException e) {
-			error(e);
-		}
-		int jobId = JobControl.newUserTrack(user.getId(), p, url, null,null);
-		success("{job_id:"+jobId+"}");
-	}
 
 	/**
 	 * Add a track to an already existing project

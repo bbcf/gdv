@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -56,7 +57,15 @@ public class TrackDAO extends DAO<Track>{
 				logger.error(e);
 			}
 			try {
-				track.setType(resultSet.getString(fields[5]));
+				String t = resultSet.getString(fields[5]);
+				if(t.equalsIgnoreCase(SQLiteExtension.QUALITATIVE.toString())){
+					track.setType(SQLiteExtension.QUALITATIVE);
+				} else if(t.equalsIgnoreCase(SQLiteExtension.QUALITATIVE_EXTENDED.toString())){
+					track.setType(SQLiteExtension.QUALITATIVE_EXTENDED);
+				} else if(t.equalsIgnoreCase(SQLiteExtension.QUANTITATIVE.toString())){
+					track.setType(SQLiteExtension.QUANTITATIVE);
+				}
+				
 			} catch (SQLException e) {
 				logger.error(e);
 			}
@@ -427,29 +436,7 @@ public class TrackDAO extends DAO<Track>{
 		}
 		return null;
 	}
-	public Track getTrackByUserInput(String database) {
-		if(this.databaseConnected()){
-			this.startQuery();
-			try {
-				String query = "select t1.* from tracks as t1 " +
-				"inner join filetotrack as t2 on t1.id = t2.track_id " +
-				"where t2.file_name = ?;";
-				PreparedStatement statement = this.prepareStatement(query,
-						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				statement.setString(1,database);
-				ResultSet resultSet = this.executeQuery(statement);
-				if(resultSet.first()){
-					Track track = getTrack(resultSet);
-					this.endQuery(true);
-					return track;
-				}
-			} catch (SQLException e) {
-				logger.error("getTrackByUserInput : "+e);
-				this.endQuery(false);
-			}
-		}
-		return null;
-	}
+	
 
 	public List<Track> getTracksFromUserId(int userId) {
 		if(this.databaseConnected()){

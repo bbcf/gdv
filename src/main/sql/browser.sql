@@ -152,6 +152,23 @@ CREATE TABLE jobs(
 PRIMARY KEY ("id")
 );
 
+
+CREATE TABLE styles(
+"id" SERIAL NOT NULL,
+"style" TEXT NOT NULL,
+PRIMARY KEY ("id")
+);
+
+CREATE TABLE trackToStyle(
+"track_id" INTEGER NOT NULL,
+"type" VARCHAR(255) NOT NULL,
+"style_id" INTEGER NOT NULL
+);
+
+ALTER TABLE trackToStyle ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
+
+ALTER TABLE trackToStyle ADD FOREIGN KEY ("style_id") REFERENCES "styles" ("id") on delete cascade;
+
 ALTER TABLE tracks ADD FOREIGN KEY ("job_id") REFERENCES "jobs" ("id") on delete cascade;
 
 ALTER TABLE jobs ADD FOREIGN KEY ("status") REFERENCES "statuses" ("id") on delete cascade;

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,11 +14,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.bbcfutils.Utility;
+import ch.epfl.bbcf.bbcfutils.access.genrep.GenrepWrapper;
+import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
+import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteConstruct;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
@@ -31,39 +37,58 @@ public class SelectionControl extends Control{
 	public static boolean createNewSelection(int jobId,String selections, int projectId,int nr_assembly_id,String selectionName) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, IOException {
 		JSONArray array = new JSONArray(selections);
 		if(array.length()>0){
-			//get tmp database
+			/* get tmp database */
 			String randomPath= Configuration.getTmp_dir()+"/"+UUID.randomUUID().toString();
 			String trackName = selectionName;
 			String databasePath =randomPath+"/"+trackName; 
 			new File(randomPath).mkdir();
 			System.out.println("db path = "+databasePath);
-			//get default track
-			Track t = TrackControl.getAdminTrackByNrAssemblyID(nr_assembly_id);
-			String input = TrackControl.getFileFromTrackId(t.getId());
-			String defaultTrackPath = Configuration.getFilesDir()+"/"+input;
-			
-			
-			
+
+			/* get constructor */
 			SQLiteConstruct constructor = SQLiteConstruct.getConnectionWithDatabase(databasePath);
-			SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(defaultTrackPath);
 			constructor.createNewDatabase("qualitative");
-			Map<String,Integer> map = new HashMap<String, Integer>();
-			for(int i=0;i<array.length();i++){
-				JSONObject chrJSON = array.getJSONObject(i);
-				String chr=chrJSON.getString("chr");
-				int length = access.getLengthForChromosome(chr);
-				map.put(chr, length);
-				constructor.newChromosome_qual(chr);
-				constructor.writeValues_qual(chr,chrJSON.getInt("start"), chrJSON.getInt("end"),0f,"", 0, "");
+
+
+
+			/* get chromosomes */
+			Assembly assembly;
+			System.out.println("take chromosomes");
+			try {
+				assembly = GenrepWrapper.getAssemblyFromNrAssemblyId(nr_assembly_id);
+				List<Chromosome> chromosomes = assembly.getChromosomes();
+				Map<String,Integer> map = new HashMap<String, Integer>();
+				for(int i=0;i<array.length();i++){
+					JSONObject chrJSON = array.getJSONObject(i);
+					String chr=chrJSON.getString("chr");
+					int length = getChromosomeLength(chr,chromosomes);
+					map.put(chr, length);
+					constructor.newChromosome_qual(chr);
+					constructor.writeValues_qual(chr,chrJSON.getInt("start"), chrJSON.getInt("end"),0f,"", 0, "");
+				}
+				constructor.finalizeDatabase(map, false, true, true);
+				constructor.close();
+
+				Users user = UserControl.getUserByProjectId(projectId);
+				return InputControl.processUserInput(jobId,user.getId(),projectId,null,null,databasePath,trackName);
+			} catch (MethodNotFoundException e) {
+				Application.error(e);
 			}
-			access.close();
-			constructor.finalizeDatabase(map, false, true, true);
-			constructor.close();
-		
-			Users user = UserControl.getUserByProjectId(projectId);
-			return InputControl.processUserInput(jobId,user.getId(),projectId,null,null,databasePath,trackName);
 		}
 		return false;
+	}
+	
+	
+	
+	
+	
+	
+	private static int getChromosomeLength(String chromosome,List<Chromosome> chromosomes){
+		for(Chromosome chr : chromosomes){
+			if(chr.getChr_name().equalsIgnoreCase(chromosome)){
+				return chr.getLength();
+			}
+		}
+		return -1;
 	}
 
 }

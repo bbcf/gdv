@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 
 public class TrackWrapper implements Serializable{
@@ -80,13 +81,13 @@ public class TrackWrapper implements Serializable{
 	/**
 	 * @param filetype the filetype to set
 	 */
-	public void setType(String filetype) {
+	public void setType(SQLiteExtension filetype) {
 		this.track.setType(filetype);
 	}
 	/**
 	 * @return the filetype
 	 */
-	public String getType() {
+	public SQLiteExtension getType() {
 		return this.track.getType();
 	}
 

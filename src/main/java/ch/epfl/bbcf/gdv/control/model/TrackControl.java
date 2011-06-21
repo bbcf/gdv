@@ -83,29 +83,7 @@ public class TrackControl extends Control{
 		return -1;
 	}
 
-	/** 
-	 * get the if of the trackName by this
-	 * md5 in the database
-	 * @param md5
-	 * @return
-	 */
-	public static Track getTrackWithInputName(String md5) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		Track t = tdao.getTrackWithInputName(md5);
-		if(t!=null){
-			return t;
-		}
-		return null;
-	}
-	public static int getTrackIdWithName(String md5) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
-		Track t = tdao.getTrackByUserInput(md5);
-		if(t!=null){
-			return t.getId();
-		}
-		return -1;
-	}
-
+	
 	/**
 	 * get the track with the specified job id
 	 * @param jobId the job id
@@ -384,6 +362,17 @@ public class TrackControl extends Control{
 		Set<Track> tracks=  tdao.getAdminTracksFromSequenceId(nr_assembly_id);
 		Track track = tracks.iterator().next();
 		return track;
+	}
+
+
+	/**
+	 * get a Track form the name of the file 
+	 * @param dbName - the name of the file
+	 * @param jobId - the jobId 
+	 */
+	public static void getTrackWithDBName(String dbName, int jobId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

@@ -5,43 +5,59 @@
 <body>
 <wicket:extend>
  
-<p>
-  GDV stands for Genome Data Viewer. It’s goal is to provide biologists and bio-analysts a fast, browsable and editable view of their data along the genome. Once achieved, the user will be able to launch different statistics modules on his data and thus prepare all the mining process of the analysis.
-GDV is a web application, and will never be downloaded, but will be accessible at any time, directly from a web-browser. So, an user can access his data everywhere, and also share it with other people which make it interesting if the user collaborate with other entities that are not in the same site or even in the same countries.
+<p class="homepage">
+  GDV stands for Genome Data Viewer. It’s goal is to provide biologists and bio-analysts a fast, browsable and editable view of their data along the genome. 
+</p>
+<p class="homepage">
+The user will be able to launch different statistics modules on his data and thus prepare all the mining process of the analysis.
+GDV is a web application, and will never be downloaded, but will be accessible at any time, directly from a web-browser. So, an user can access his data everywhere, and also share it with other people which make it interesting if the user collaborate with other entities that are not in the same site or even in the same countries.</p>
 <br/>
 
-<h1>Create a project</h1>
-<p>Go to <wicket:link><a href="ProjectPage.html">Projects</a></wicket:link> page and create a new one by selecting the species and assembly you are interested in.
+
+<h1>Presentation</h1>
+
+
+
+
+<div id="gdv_prez">
+</div>
+
+<!-- <h1>Create a project</h1> -->
+<!-- <p class="homepage">Go to <wicket:link><a href="ProjectPage.html">Projects</a></wicket:link> page and create a new one by selecting the species and assembly you are interested in. -->
+<!-- </p> -->
+
+<!-- <h1>Import data</h1> -->
+<!-- <p class="homepage"> -->
+<!--   For each project, you can import your data. Simply provide a link where  -->
+<!--   your file can be accessed or upload it via the browser.<br/> -->
+<!--   Supported format are : GFF, GTF, WIG (wiggle & bedgraph), BED -->
+<!-- </p> -->
+
+<!-- <h1>Share</h1> -->
+<!--  <p class="homepage"> -->
+<!--    You have two possibilities of sharing a project : -->
+<!--    <ul> -->
+<!--      <li> -->
+<!--        Make it public : your project will be accessible by everyone via an obfuscated URL.<br/> -->
+<!--        Every user will be able to COPY your project. -->
+<!--      </li> -->
+<!--      <li> -->
+<!--        Share it with groups : create a group and add the email of the people you want to collaborate with.<br/> -->
+<!--        Every colaborator will be able to PARTICIPATE to your project. -->
+<!--      </li> -->
+<!--    </ul> -->
+
+<!-- </p> -->
+
+<!--  <h1>Mine your data</h1> -->
+<!-- <p class="homepage"> -->
+<!--   A statistic and a manipulation module will be soon integrated to GDV. You will be able to mine your data (e.g : base coverage, scores, overlap,complement...) -->
+<!--  </p> -->
+
+
+<p id="hpfooter">
+  If you have questions or experience a problem, email <a href="mailto:webmaster.bbcf@epfl.ch">webmaster.bbcf@epfl.ch</a>
 </p>
-
-<h1>Import data</h1>
-<p>
-  For each project, you can import your data. Simply provide a link where 
-  your file can be accessed or upload it via the browser.<br/>
-  Supported format are : GFF, GTF, WIG (wiggle & bedgraph), BED
-</p>
-
-<h1>Share</h1>
- <p>
-   You have two possibilities of sharing a project :
-   <ul>
-     <li>
-       Make it public : your project will be accessible by everyone via an obfuscated URL.<br/>
-       Every user will be able to COPY your project.
-     </li>
-     <li>
-       Share it with groups : create a group and add the email of the people you want to collaborate with.<br/>
-       Every colaborator will be able to PARTICIPATE to your project.
-     </li>
-   </ul>
-
-</p>
-
- <h1>Mine your data</h1>
-<p>
-  A statistic and a manipulation module will be soon integrated to GDV. You will be able to mine your data (e.g : base coverage, scores, overlap,complement...)
- </p>
-
 
 <!-- <h1>Technologies</h1> -->
 <!-- <li>written in <a href="http://www.oracle.com/technetwork/java/index.html">JAVA</a> .</li><br/> -->
@@ -49,7 +65,7 @@ GDV is a web application, and will never be downloaded, but will be accessible a
 <!-- <li> served by <a href="http://tomcat.apache.org/">Apache Tomcat</a>.</li><br/> -->
 <!-- <li> viewer in Javascript from <a href="http://jbrowse.org/">JBrowse</a> engine.</li><br/> -->
 <!-- <li> database in <a href="http://www.postgresql.org/">postgresql</a>.</li> -->
-<!-- <p> -->
+<!-- <p class="homepage"> -->
 
 <!-- <h1>Features provided</h1> -->
 <!-- <li>based on the last web-features <a href="http://www.w3.org/TR/html5/">HTML5</a>.</li><br/> -->
@@ -62,7 +78,7 @@ GDV is a web application, and will never be downloaded, but will be accessible a
 
 
 <!-- <h1>Architecture</h1> -->
-<!-- <p> -->
+<!-- <p class="homepage"> -->
 <!-- GDV is composed by 3 modules:<br/> -->
 <!-- <li>JBrowsoR, built on top of JBrowse, is a job manager that interacts with JBrowse.</li><br/> -->
 <!-- <li>GeneRep  stores information about the genomes and assemblies for GDV.</li><br/> -->

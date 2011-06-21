@@ -20,7 +20,9 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
+import ch.epfl.bbcf.gdv.config.ManagerService;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.http.command.Command;
 import ch.epfl.bbcf.gdv.exception.TrackCreationFailedException;
 import ch.epfl.bbcf.gdv.formats.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.gdv.utility.file.Decompressor;
@@ -56,7 +58,7 @@ public class InputControl extends Control{
 		int trackId = createTmpTrack(project.getId(),TrackControl.STATUS_UPLOADING,job_id);
 		if(trackId!=-1){
 			Handler handler = new Handler(project.getSequenceId(),project.getId(),job_id, url, fileUpload, systemPath, systemPath, userId, false);
-			handler.start();
+			ManagerService.submitApplicationProcess(handler);
 			return true;
 		}
 		return false;
@@ -76,7 +78,7 @@ public class InputControl extends Control{
 		if(trackId!=-1){
 			Project project = ProjectControl.getProject(projectId);
 			Handler handler = new Handler(project.getSequenceId(),projectId,job_id, url, fileUpload, systemPath, trackName, userId, false);
-			handler.start();
+			ManagerService.submitApplicationProcess(handler);
 			return true;
 		}
 		return false;
@@ -97,7 +99,7 @@ public class InputControl extends Control{
 		int trackId = createAdminTrack(TrackControl.STATUS_UPLOADING,job_id);
 		if(trackId!=-1){
 			Handler handler = new Handler(sequenceId,-1,job_id, url, fileUpload, systemPath, name, -1,true);
-			handler.start();
+			ManagerService.submitApplicationProcess(handler);
 			return true;
 		}
 		return false;
@@ -235,24 +237,24 @@ public class InputControl extends Control{
 			this.admin = admin;
 		}
 
-		
-		
+
+
 		public void run(){
-			System.out.println(this.toString());
-			
+			Application.debug("###################");
+			Application.debug(this.toString());
+			Application.debug("###################");
+
 			Track track = TrackControl.getTrackIdWithJobId(jobId);
-			
-			//TODO errors & return false & track statuses updates
+
 			String error="";
-			System.out.println("UPLOAD");
 			// ## UPLOAD
-			
+
 			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_UPLOADING);
 			//get a temporary directory
 			String tmp_dir = Configuration.getTmp_dir()+"/"+UUID.randomUUID().toString();
 			new File(tmp_dir).mkdir();
 			System.out.println("tmp dir : "+tmp_dir);
-			
+
 			File uploaded = null;
 			//get from URL
 			if(null!=url){
@@ -264,6 +266,7 @@ public class InputControl extends Control{
 					error+=e.getMessage();
 					e.printStackTrace();
 					TrackControl.updateTrack(track.getId(),error);
+					JobControl.updateJob(jobId, Command.STATUS.error,error);
 					return;
 				}
 
@@ -278,6 +281,7 @@ public class InputControl extends Control{
 					error+=e.getMessage();
 					e.printStackTrace();
 					TrackControl.updateTrack(track.getId(),error);
+					JobControl.updateJob(jobId, Command.STATUS.error,error);
 					return;
 				}
 
@@ -293,6 +297,7 @@ public class InputControl extends Control{
 					error+=e.getMessage();
 					e.printStackTrace();
 					TrackControl.updateTrack(track.getId(),error);
+					JobControl.updateJob(jobId, Command.STATUS.error,error);
 					return;
 				}
 
@@ -300,15 +305,25 @@ public class InputControl extends Control{
 			} else {
 				Application.error("cannot process inputs, no file are provided");
 				TrackControl.updateTrack(track.getId(),"file(s) not provided");
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
 				return;
 			}
 
 			if(null==uploaded){
 				TrackControl.updateTrack(track.getId(),"file(s) not uploaded");
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
 				return;
 			}
 
-			System.out.println("DECOMP");
+
+
+
+
+
+
+
+
+
 			// ## DECOMPRESSING
 			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_DECOMPRESS);
 			List<File> files = null;
@@ -319,124 +334,154 @@ public class InputControl extends Control{
 				error+=e.getMessage();
 				e.printStackTrace();
 				TrackControl.updateTrack(track.getId(),error);
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
 				return;
 			} catch (ExtensionNotRecognizedException e) {
 				error+="error while reading file : ";
 				error+=e.getMessage();
 				e.printStackTrace();
 				TrackControl.updateTrack(track.getId(),error);
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
 				return;
 			} catch (IOException e) {
 				error+="error while uploading file : ";
 				error+=e.getMessage();
 				e.printStackTrace();
 				TrackControl.updateTrack(track.getId(),error);
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
 				return;
 			}
 
 			if(null==files){
 				error+="decompression failed";
 				TrackControl.updateTrack(track.getId(),error);
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
 				return;
 			}
-			// ## PROCESSING
-			System.out.println("PROCESS");
-			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_SHA);
-			for(File file:files){
-				//get the shasum that will identify the file, so the database name
-				String sha1 = null;
-				try {
-					sha1 = Utility.getFileDigest(file.getAbsolutePath(), "SHA1");
-				} catch (NoSuchAlgorithmException e) {
-					error+=e.getMessage();
-					TrackControl.updateTrack(track.getId(),error);
-					e.printStackTrace();
-					return;
-				} catch (IOException e) {
-					error+=e.getMessage();
-					TrackControl.updateTrack(track.getId(),error);
-					e.printStackTrace();
-					return;
-				}
-
-				//guess the extension
-				TrackControl.updateTrack(track.getId(),TrackControl.STATUS_EXTENSION);
-				Extension extension = null;
-				try {
-					extension = FileTypeGuesser.guessExtension(file);
-				} catch (ExtensionNotRecognizedException e) {
-					error+=e.getMessage();
-					TrackControl.updateTrack(track.getId(),error);
-					e.printStackTrace();
-					return;
-				}
-				//guess the file type
-				String filetype = null;
-				try {
-					filetype = FileTypeGuesser.guessFileType(file, extension);
-				} catch (ExtensionNotRecognizedException e) {
-					error+=e.getMessage();
-					TrackControl.updateTrack(track.getId(),error);
-					return;
-				} catch (IOException e) {
-					e.printStackTrace();
-					error+=e.getMessage();
-					TrackControl.updateTrack(track.getId(),error);
-					return;
-				}
-				if(null==filetype){
-					error+="cannot guess file type";
-					TrackControl.updateTrack(track.getId(),error);
-					return;
-				}
 
 
-				String databaseName = sha1+".db";
-				if(trackName==null){
-					trackName=file.getName();
-				}
-				//look if the file already exist
-				if(SQLiteAccess.dbAlreadyCreated(databaseName)){
-					TrackControl.updateTrackFields(track.getId(),trackName,filetype,TrackControl.STATUS_FINISHED);
-					return;
-				}
-				//create a new input
-				if(admin){
-					int inputId = createNewAdminInput(databaseName);
-					TrackControl.linkToInput(track.getId(), inputId);
-					TrackControl.createAdminTrack(sequenceId, track.getId());
-				} else {
-					int inputId = createNewUserInput(databaseName,userId);
-					TrackControl.linkToInput(track.getId(), inputId);
-					TrackControl.linkToProject(track.getId(), projectId);
-				}
+			/* if size > 1, it was a compressed archive so 
+			 * continue normal handling with the first file
+			 * & launch other job for other files
+			 */
 
-				//process
-				//if it'a an SQL the first step is already done, so move file from
-				//tmp directory to file directory
-				if(extension.equals(Extension.DB)){
-					System.out.println(file.getAbsolutePath());
-					file = FileManagement.moveFile(file, Configuration.getFilesDir(),databaseName);
-					Application.debug(" deleting : "+tmp_dir);
-					FileManagement.deleteDirectory(new File(tmp_dir));
-				} 
-
-				//submit process to first daemon
-				if(file==null){
-					error+="error while moving the file";
-					TrackControl.updateTrack(track.getId(),error);
-					return;
+			if(files.size()>1){
+				Project p = ProjectControl.getProject(projectId);
+				for(int i=1;i<files.size();i++){
+					File f = files.get(i);
+					JobControl.newUserTrack(userId, p, null, null, f.getAbsolutePath());
 				}
-				System.out.println("write job");
-				TrackControl.updateTrackFields(track.getId(),trackName,filetype,TrackControl.STATUS_PROCESSING);
-				SQLiteAccess access = new SQLiteAccess(Configuration.getTransform_to_sqlite_daemon());
-				access.writeNewJobTransform(
-						file.getAbsolutePath(), jobId, tmp_dir, extension.toString(), "nomail", sequenceId,
-						Configuration.getFilesDir(),Configuration.getTracks_dir(),
-						Configuration.getJb_data_root(),
-						Configuration.getGdv_appli_proxy()+"/post");
-				access.close();
 			}
+
+
+
+
+
+
+			// ## PROCESSING
+			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_SHA);
+			File file = files.get(0);
+			Application.debug("--> "+file.getAbsolutePath());
+			//get the shasum that will identify the file, so the database name
+			String sha1 = null;
+			try {
+				sha1 = Utility.getFileDigest(file.getAbsolutePath(), "SHA1");
+			} catch (NoSuchAlgorithmException e) {
+				error+=e.getMessage();
+				TrackControl.updateTrack(track.getId(),error);
+				e.printStackTrace();
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
+				return;
+			} catch (IOException e) {
+				error+=e.getMessage();
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
+				TrackControl.updateTrack(track.getId(),error);
+				e.printStackTrace();
+				return;
+			}
+
+			/* guess the extension */
+			TrackControl.updateTrack(track.getId(),TrackControl.STATUS_EXTENSION);
+			Extension extension = null;
+			try {
+				extension = FileTypeGuesser.guessExtension(file);
+			} catch (ExtensionNotRecognizedException e) {
+				error+=e.getMessage();
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
+				TrackControl.updateTrack(track.getId(),error);
+				e.printStackTrace();
+				return;
+			}
+			/* guess the file type */
+			String filetype = null;
+			try {
+				filetype = FileTypeGuesser.guessFileType(file, extension);
+			} catch (ExtensionNotRecognizedException e) {
+				error+=e.getMessage();
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
+				TrackControl.updateTrack(track.getId(),error);
+				return;
+			} catch (IOException e) {
+				e.printStackTrace();
+				error+=e.getMessage();
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
+				TrackControl.updateTrack(track.getId(),error);
+				return;
+			}
+			if(null==filetype){
+				error+="cannot guess file type";
+				TrackControl.updateTrack(track.getId(),error);
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
+				return;
+			}
+
+
+			String databaseName = sha1+".db";
+			if(trackName==null){
+				trackName=file.getName();
+			}
+			/* look if the file already exist */
+			if(SQLiteAccess.dbAlreadyCreated(databaseName)){
+				TrackControl.updateTrackFields(track.getId(),trackName,filetype,TrackControl.STATUS_FINISHED);
+				JobControl.updateJob(jobId, Command.STATUS.success,"");
+				return;
+			}
+			//create a new input
+			if(admin){
+				int inputId = createNewAdminInput(databaseName);
+				TrackControl.linkToInput(track.getId(), inputId);
+				TrackControl.createAdminTrack(sequenceId, track.getId());
+			} else {
+				int inputId = createNewUserInput(databaseName,userId);
+				TrackControl.linkToInput(track.getId(), inputId);
+				TrackControl.linkToProject(track.getId(), projectId);
+			}
+
+			/*
+			 * process
+			 * if it'a an SQL the first step is already done, so move file from
+			 * tmp directory to file directory
+			 */
+			if(extension.equals(Extension.DB)){
+				file = FileManagement.moveFile(file, Configuration.getFilesDir(),databaseName);
+				FileManagement.deleteDirectory(new File(tmp_dir));
+			} 
+
+			/* submit process to first daemon */
+			if(file==null){
+				error+="error while moving the file";
+				TrackControl.updateTrack(track.getId(),error);
+				JobControl.updateJob(jobId, Command.STATUS.error,error);
+				return;
+			}
+			TrackControl.updateTrackFields(track.getId(),trackName,filetype,TrackControl.STATUS_PROCESSING);
+			SQLiteAccess access = new SQLiteAccess(Configuration.getTransform_to_sqlite_daemon());
+			access.writeNewJobTransform(
+					file.getAbsolutePath(), jobId, tmp_dir, extension.toString(), "nomail", sequenceId,
+					Configuration.getFilesDir(),Configuration.getTracks_dir(),
+					Configuration.getJb_data_root(),
+					Configuration.getGdv_appli_proxy()+"/post");
+			access.close();
 		}
 		public String toString(){
 			return super.toString()+"\n"+
@@ -451,5 +496,5 @@ public class InputControl extends Control{
 			"\nadmin " +admin;
 		}
 	}
-	
+
 }

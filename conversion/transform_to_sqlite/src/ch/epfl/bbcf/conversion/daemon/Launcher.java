@@ -16,10 +16,10 @@ import ch.epfl.bbcf.bbcfutils.access.InternetConnection;
 import ch.epfl.bbcf.bbcfutils.access.gdv.RemoteAccess;
 import ch.epfl.bbcf.bbcfutils.conversion.json.ConvertToJSON;
 import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite;
-import ch.epfl.bbcf.bbcfutils.conversion.sqlite.ConvertToSQLite.Extension;
+import ch.epfl.bbcf.bbcfutils.exception.ConvertToJSONException;
 import ch.epfl.bbcf.bbcfutils.exception.ExtensionNotRecognisedException;
-import ch.epfl.bbcf.bbcfutils.parser.exception.ParsingException;
-import ch.epfl.bbcf.bbcfutils.parser.feature.QualitativeFeature;
+import ch.epfl.bbcf.bbcfutils.exception.ParsingException;
+import ch.epfl.bbcf.bbcfutils.parsing.Extension;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.conf.Configuration;
 import ch.epfl.bbcf.utility.file.FileManagement;
@@ -46,10 +46,10 @@ public class Launcher extends Thread{
 	public void run(){
 		long start = System.currentTimeMillis();
 
-
+		Configuration.getLoggerInstance().debug("getting sha1sum");
 
 		//////////   GETTING SHA1   //////////
-		Configuration.getLoggerInstance().debug(this.getId()+" run : "+job.getFile());
+		Configuration.getLoggerInstance().debug(this.getId()+" run : "+job.toString());
 		File file = new File(job.getFile());
 		String sha1;
 		try {
@@ -74,6 +74,9 @@ public class Launcher extends Thread{
 
 		boolean doJSON = false;
 		boolean doSQLite = false;
+
+		Configuration.getLoggerInstance().debug("getting extension & connection to db");
+
 		//////////   EXTENSION   //////////
 		Extension ext = null;
 		String type = "";
@@ -118,8 +121,8 @@ public class Launcher extends Thread{
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
-			
+
+
 		}else if(job.getExtension().equalsIgnoreCase("bam")||
 				job.getExtension().equalsIgnoreCase("sam")){
 			ext = Extension.BAM;
@@ -127,9 +130,6 @@ public class Launcher extends Thread{
 			try {
 				String body ="id=track_error&job_id="+job.getTrackId()+"&data=extension "+ext+"not supported";
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
-//				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
-//						"extension not supported : "+ext,"ext",Integer.toString(job.getTrackId()),
-//						job.getFile());
 			} catch (IOException e) {
 				Configuration.getLoggerInstance().error(e);
 			}
@@ -137,14 +137,13 @@ public class Launcher extends Thread{
 			try {
 				String body ="id=track_error&job_id="+job.getTrackId()+"&data=extension not recognized";
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
-//				RemoteAccess.sendTrackErrorMessage(job.getFeedbackUrl(),
-//						"extension not recognized : "+ext,"ext",Integer.toString(job.getTrackId()),
-//						job.getFile());
 			} catch (IOException e) {
 				Configuration.getLoggerInstance().error(e);
 			}
 			return;
 		}
+
+
 		String database = sha1+".db";
 		Configuration.getLoggerInstance().info(this.getId()+" start of convertion to SQLite :  "+job.getFile()+" to "
 				+job.getOutputDirectory()+"/"+database);
@@ -171,14 +170,28 @@ public class Launcher extends Thread{
 					for(StackTraceElement el : ex.getStackTrace()){
 						Configuration.getLoggerInstance().error(el.getClassName()+"."+el.getClassName()+"."+el.getMethodName()+" at line "+el.getLineNumber());
 					}
+					String body ="id=track_error&job_id="+job.getTrackId()+"&data=parsing error  ("+this.getId()+")  :  "+ex.getMessage();
+					try {
+						InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					return;
 				}
 			}
 		}
-		Configuration.getLoggerInstance().info("end sqlite conversion");
+		Configuration.getLoggerInstance().info("end sqlite conversion for "+this.getId());
+
+
+
+
+
+
+
 		//JSON 
 		if(doJSON){
 			Configuration.getLoggerInstance().debug(this.getId()+" start of convertion to JSON :  " +
-					""+database+" to "+job.getJbrowseOutputDirectory()+"/"+database);
+					""+database+" to "+job.getJbrowseOutputDirectory()+"/"+database +"\nand file : "+file.getName());
 			ConvertToJSON convertor = new ConvertToJSON(job.getOutputDirectory()+"/"+database, type);
 			/**
 			 * String outputPath,String dbName,String ressourceUrl,String trackName
@@ -186,20 +199,27 @@ public class Launcher extends Thread{
 			try {
 				wellParsed = convertor.convert(job.getJbrowseOutputDirectory(),
 						database,job.getJbrowseRessourcesUrl(),file.getName());
-			} catch (ParsingException e) {
+			} catch (ConvertToJSONException e) {
 				Configuration.getLoggerInstance().error(e);
 				wellParsed=false;
 				error+=e.getMessage();
 			}
 		}
-		Configuration.getLoggerInstance().info("end JSON conversion");
+		Configuration.getLoggerInstance().info("end JSON conversion for "+this.getId());
+
+
+
+
+
+
+
+
 		//////////   FEEDBACK   //////////
 		if(wellParsed){
 			Configuration.getLoggerInstance().debug(this.getId()+" well parsed");
 			try {
 				String body ="id=track_success&job_id="+job.getTrackId()+"&db_type="+type;
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
-				//RemoteAccess.sendTrackSucceed(job.getFeedbackUrl(),Integer.toString(job.getTrackId()),database,job.getMail(),type);
 			} catch (IOException e) {
 				Configuration.getLoggerInstance().error(e);
 			}
@@ -212,10 +232,8 @@ public class Launcher extends Thread{
 			}
 		} else {
 			try {
-				String body ="id=track_error&job_id="+job.getTrackId()+"&data=parsing error "+error;
+				String body ="id=track_error&job_id="+job.getTrackId()+"&data=parsing error for "+this.getId()+"  :  "+error;
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);
-//				RemoteAccess.sendTrackErrorMessage(
-//						job.getFeedbackUrl(),"parsing error "+error,"parsing", Integer.toString(job.getTrackId()),job.getFile());
 				Configuration.getLoggerInstance().debug(this.getId()+" bad parsed : "+error);
 				return;
 			} catch (IOException e) {

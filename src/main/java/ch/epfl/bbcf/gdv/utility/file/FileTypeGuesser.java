@@ -50,8 +50,8 @@ public class FileTypeGuesser {
 				access = SQLiteAccess.getConnectionWithDatabase(file.getAbsolutePath());
 				Map<String, Integer> chromosomes= access.getChromosomesAndLength();
 				String firstChromosome = chromosomes.keySet().iterator().next();
-				r = access.prepareQualitativeFeatures(firstChromosome);
-				access.getNextQualitativeFeature(r);
+				r = access.prepareFeatures(firstChromosome);
+				access.getNextQualitativeFeature(r,firstChromosome);
 				r.close();
 				access.close();
 				return "qualitative";

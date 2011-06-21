@@ -78,4 +78,14 @@ public class UserControl extends Control{
 		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
 		return dao.getUserFromTrackId(trackId);
 	}
+
+	public static boolean checkUserAuthorizedToConfigureTrack(Integer trackId) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	public static boolean checkUserAuthorizedToViewImage(Integer imageId) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

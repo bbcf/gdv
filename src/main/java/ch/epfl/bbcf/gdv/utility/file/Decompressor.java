@@ -78,6 +78,7 @@ public class Decompressor {
 	
 	
 	private static List<File> unzip(File file) throws ZipException, IOException {
+		Application.debug("UNZIP");
 		List<File> files = new ArrayList<File>();
 		BufferedOutputStream dest = null;
 		BufferedInputStream is = null;
@@ -104,7 +105,7 @@ public class Decompressor {
 	}
 
 	private static List<File> ungunzip(File file,String extension) throws IOException {
-
+		Application.debug("UNGUNZIP");
 		String zipname, source;
 		List<File> files = new ArrayList<File>();
 		zipname = file.getAbsolutePath();

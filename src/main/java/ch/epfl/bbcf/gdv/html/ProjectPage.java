@@ -15,7 +15,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
@@ -40,19 +39,18 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 
+import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
+import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
-import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.control.model.GroupControl;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.database.DataProjectProvider;
 import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
-import ch.epfl.bbcf.gdv.html.utility.BrowserPageBuilder;
 import ch.epfl.bbcf.gdv.html.utility.ConfigureModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
@@ -71,8 +69,7 @@ public class ProjectPage extends BasePage{
 	private DataView<ProjectWrapper> projectData;
 	private CustModalWindow importModal;
 	private GroupModalWindow groupModal;
-	private ConfigureModalWindow configureModal;
-	
+
 	private final static IChoiceRenderer<SelectOption> choiceRenderer = new ChoiceRenderer<SelectOption>("value", "key");
 
 	public ProjectPage(PageParameters p) {
@@ -214,49 +211,6 @@ public class ProjectPage extends BasePage{
 						importModal.show(target);
 					}
 				};
-//				//### public
-//				final Label pubLabel = new Label("pubLabel",new Model<String>());
-//				AjaxCheckBox cb = new AjaxCheckBox("pubCheck"){
-//					@Override
-//					protected void onUpdate(AjaxRequestTarget arg0) {
-//					}
-//				};
-//				cb.setOutputMarkupPlaceholderTag(true);
-//				pubLabel.setOutputMarkupPlaceholderTag(true);
-//
-//				if(projectWrapper.isAdmin()){
-//					if(projectWrapper.isPublic()){
-//						pubLabel.setDefaultModelObject("public link : "+projectWrapper.getPublicUrl());
-//					} else {
-//						pubLabel.setDefaultModelObject("make it public");
-//					}
-//
-//					cb = new AjaxCheckBox("pubCheck",new Model(projectWrapper.isPublic())) {
-//						@Override
-//						protected void onUpdate(AjaxRequestTarget target) {
-//							ProjectControl pc = new ProjectControl((UserSession)getSession());
-//							if(projectWrapper.isPublic()){
-//								projectWrapper.setPublic(false);
-//								pc.setProjectPublic(projectWrapper.getId(),false);
-//								pubLabel.setDefaultModelObject("make it public");
-//							} else {
-//								pc.setProjectPublic(projectWrapper.getId(),true);
-//								projectWrapper.setPublic(true);
-//								String purl = pc.getPublicUrlFromProjectId(projectWrapper.getId());
-//								projectWrapper.setPublicUrl(purl);
-//								pubLabel.setDefaultModelObject("link : "+purl);
-//							}
-//							target.addComponent(pubLabel);
-//						}
-//					};
-//
-//
-//				} else {
-//					pubLabel.setVisible(false);
-//					cb.setVisible(false);
-//				}
-//				item.add(cb);
-//				item.add(pubLabel);
 
 
 				importBut.add(new SimpleAttributeModifier("title","import a new track"));
@@ -266,7 +220,7 @@ public class ProjectPage extends BasePage{
 					public void onSubmit(){
 						PageParameters params 	= new PageParameters();
 						params.put("id", Integer.toString(projectWrapper.getId()));	
-						
+
 						getRequestCycle().setResponsePage(BrowserPage.class,params);
 						//BrowserPageBuilder.buildPage((UserSession)getSession(),getRequestCycle(),projectWrapper.getId());
 						//setResponsePage(BrowserPage.class,params);
@@ -279,8 +233,8 @@ public class ProjectPage extends BasePage{
 				if(projectWrapper.isAdmin()){
 					shareBut = new AjaxButton("share_but"){
 						public void onSubmit(AjaxRequestTarget target, Form<?> form){
-								groupModal.setProject(projectWrapper);
-								groupModal.show(target);
+							groupModal.setProject(projectWrapper);
+							groupModal.show(target);
 						}
 					};
 				} else {
@@ -445,48 +399,55 @@ public class ProjectPage extends BasePage{
 								tc.removeTrackFromUser(track.getTrackInstance());
 								dtp.detach();
 								target.addComponent(trackContainer);
-								
+
 							}
 						};
 						link.add(new SimpleAttributeModifier("title","delete track"));
 						item.add(link);
-						
-						
+
+
 						//### configure
 						final AjaxLink conflink = new AjaxLink("configure"){
 							@Override
 							public void onClick(AjaxRequestTarget target) {
-								configureModal.setTrack(track);
-								configureModal.show(target);
+								PageParameters p = new PageParameters();
+								p.put("id",track.getId());
+								setResponsePage(new ConfigureTrackPage(p));
 							}
 						};
 						conflink.add(new SimpleAttributeModifier("title","configure track"));
 						item.add(conflink);
-						
-					}
 
+					}
+					/* get the status of the track & update it */
 					private String getStatus(TrackWrapper track, Image image,
 							AjaxRequestTarget ajaxRequestTarget, AbstractAjaxTimerBehavior behaviour) {
 						TrackControl tc = new TrackControl((UserSession)getSession());
 						Track newTrack = tc.getTrackById(track.getId());
-						String status="";
 						if(newTrack!=null){
-							status = newTrack.getStatus();
-							if(status==null){
-								status ="";
+							Job job = JobControl.getJob(newTrack.getJob_id());
+							if(null!=job){
+								int status = job.getStatus();
+								switch(status){
+								case Status.SUCCES:
+								case Status.ERROR:
+									image.setVisible(false);
+									if(null!=behaviour){
+										behaviour.stop();
+									}
+									ajaxRequestTarget.addComponent(image);
+									break;
+								case Status.RUNNING:
+									image.setVisible(true);
+									ajaxRequestTarget.addComponent(image);
+									break;
+								}
+								/* return the display */
+								return newTrack.getStatus();
 							}
 						}
-						if(status.equalsIgnoreCase("completed") || status.equalsIgnoreCase(TrackControl.STATUS_ERROR)){
-							image.setVisible(false);
-							if(null!=behaviour){
-								behaviour.stop();
-							}
-							ajaxRequestTarget.addComponent(image);
-						} else {
-							image.setVisible(true);
-							ajaxRequestTarget.addComponent(image);
-						}
-						return status;
+						return "";
+
 					}
 				};
 				alt++;
@@ -540,31 +501,10 @@ public class ProjectPage extends BasePage{
 				setResponsePage(ProjectPage.class);
 			}
 		});
-		
-		
-		
-		
-		//MODAL PANEL CONFIGURE
-		configureModal = new ConfigureModalWindow("modal_configure"); 
-		configureModal.setInitialWidth(800);
-		configureModal.setInitialHeight(700);
-		configureModal.setCssClassName(ModalWindow.CSS_CLASS_GRAY);
-		add(configureModal);
-		configureModal.setPageCreator(new ModalWindow.PageCreator(){
-			public Page createPage() {
-				return new ConfigureTrackPage(ProjectPage.this,configureModal);
-			}
-		});
-		configureModal.setWindowClosedCallback(new ModalWindow.WindowClosedCallback() {
-			public void onClose(AjaxRequestTarget target) {
-				setResponsePage(ProjectPage.class);
-			}
-		});
-		
-		
+
 	}
 
-		
-	
-	
+
+
+
 }

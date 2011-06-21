@@ -26,7 +26,9 @@ import ch.epfl.bbcf.gdv.html.AdminPage;
 import ch.epfl.bbcf.gdv.html.AlternativeLoginPage;
 import ch.epfl.bbcf.gdv.html.AlternativeProjectPage;
 import ch.epfl.bbcf.gdv.html.BrowserPage;
+import ch.epfl.bbcf.gdv.html.ConfigureTrackPage;
 import ch.epfl.bbcf.gdv.html.ErrorPage;
+import ch.epfl.bbcf.gdv.html.ImageDisplayer;
 import ch.epfl.bbcf.gdv.html.PreferencesPage;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.ImportFilePage;
@@ -127,6 +129,8 @@ public final class Configuration{
 		application.mount(addSequence);
 		application.mount(new HybridUrlCodingStrategy("/import_file", ImportFilePage.class));
 		application.mount(new MixedParamUrlCodingStrategy("/preferences", PreferencesPage.class,new String[]{"project_id"}));
+		application.mount(new MixedParamUrlCodingStrategy("/image", ImageDisplayer.class,new String[]{"id"}));
+		application.mount(new MixedParamUrlCodingStrategy("/configure_track", ConfigureTrackPage.class,new String[]{"id"}));
 		application.mount(new HybridUrlCodingStrategy("/tracks_status", TrackStatus.class));
 		application.mount(new QueryStringUrlCodingStrategy("/browser", BrowserPage.class));
 		//application.mount(new QueryStringUrlCodingStrategy("/browser2", BrowserPage2.class));
@@ -522,6 +526,9 @@ public final class Configuration{
 	}
 	public static String getGdv_post_access() {
 		return "gdv_post";
+	}
+	public static String getJavascriptUrl(){
+		return instance.jbrowse_javascript_url;
 	}
 	//	public static List<String> getGdv_types_access() {
 	//		return instance.gdv_types_access;

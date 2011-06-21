@@ -24,6 +24,7 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
+import ch.epfl.bbcf.bbcfutils.json.JsonMapper;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
@@ -36,6 +37,8 @@ import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.utility.MenuElement;
+import ch.epfl.bbcf.gdv.model.pojos.json.BrowserParameters;
+import ch.epfl.bbcf.gdv.model.pojos.json.TrackInfo;
 
 
 public class BrowserPage extends WebPage{
@@ -160,34 +163,35 @@ public class BrowserPage extends WebPage{
 		final String refseq = buildRefseq(project.getSequenceId());//JbrowsoRAccess.getRefseq(seq.getJbrowsoRId());
 
 
-
-		//
+		BrowserParameters bp = new BrowserParameters(
+				"GenomeBrowser",
+				"refSeqs",
+				Configuration.getJb_browser_root(),
+				Configuration.getJb_data_root(),
+				"../../"+Configuration.getJbrowse_static_files_url(),
+				"trackInfo",
+				tracksNames
+				);
 		//adding final javascript
-		final String jsControl = " var b = new Browser({" +
-		"containerID: \"GenomeBrowser\",\n" +
-		"refSeqs: refSeqs,\n" +
-		//"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+"\"+browserRoot,\n" +//+JbrowsoRAccess.SERV+"/\"+browserRoot," +
-		"browserRoot: \""+ Configuration.getJb_browser_root()+   "\",\n" +
-		//"dataRoot: \"/jbdata/\",\n"+
-		//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
-		"dataRoot: \""+Configuration.getJb_data_root()+"/"+"\",\n" +
-		"styleRoot: \""+"../../"+Configuration.getJbrowse_static_files_url()+"/"+"\",\n" +
-		"trackData: trackInfo,\n" +
-		"defaultTracks : "+tracksNames+"" +
-		"});" +
-		"b.showTracks();" +
-		//"b.showTracks();" +
-		"initGDV_browser(b);";
+		try {
+			final String jsControl = " var b = new Browser("+JsonMapper.serialize(bp)+");" +
+			"b.showTracks();" +
+			"initGDV_browser(b);";
+			add(new AbstractBehavior() {
+				@Override
+				public void renderHead(IHeaderResponse response) {
+					super.renderHead(response);
+					response.renderJavascript(refseq,"refseq_"+project.getId());
+					response.renderJavascript(trackInfo,"js_view_"+project.getId());
+					response.renderJavascript(jsControl,"js_control_"+project.getId());
+				}
+			}); 
+		} catch (IOException e) {
+			e.printStackTrace();
+			Application.error(e);
+		}
 
-		add(new AbstractBehavior() {
-			@Override
-			public void renderHead(IHeaderResponse response) {
-				super.renderHead(response);
-				response.renderJavascript(refseq,"refseq_"+project.getId());
-				response.renderJavascript(trackInfo,"js_view_"+project.getId());
-				response.renderJavascript(jsControl,"js_control_"+project.getId());
-			}
-		}); 
+		
 
 
 
@@ -224,6 +228,12 @@ public class BrowserPage extends WebPage{
 			Application.error(e);
 		} catch (JSONException e) {
 			Application.error(e);
+		} catch (NullPointerException e) {
+			Application.error(e);
+			String err="Genrep server has a problem";
+			PageParameters params = new PageParameters();
+			params.put("err", err);
+			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
 		if(null==array){
 			refSeq+="[]";
@@ -298,21 +308,14 @@ public class BrowserPage extends WebPage{
 			String parameters ="";
 			if(t.getParameters().equalsIgnoreCase("params") || t.getName().equalsIgnoreCase("in process")){
 
-				String directory = tc.getFileFromTrackId(t.getId());
-
-				String imageType = null;
-				if(t.getType().equalsIgnoreCase("quantitative")){
-					imageType="ImageTrack";
-				} else if(t.getType().equalsIgnoreCase("qualitative")){
-					imageType="FeatureTrack";
-				} else {
-					Application.error("datatype not recognized : "+t.getId());
-					continue;
+				String directory = TrackControl.getFileFromTrackId(t.getId());
+				TrackInfo ti = new TrackInfo(directory,protect(t.getName()),t.getType(),protect(t.getName()));
+				String params = null;
+				try {
+					params = JsonMapper.serialize(ti);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				String params = "{\n\"url\" : \"../"+directory+"/{refseq}.json\",\n" +
-				"\"label\" : \""+protect(t.getName())+"\",\n"+
-				"\"type\" : \""+imageType+"\",\n"+
-				"\"key\" : \""+protect(t.getName())+"\"\n}";
 				tc.setParams(t.getId(),params);
 				parameters = params;
 			} else {

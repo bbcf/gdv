@@ -13,7 +13,7 @@ import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 public abstract class Command {
 
 	public enum ID {job,gdv_post,track_error,track_success,track_status};
-	public enum ACTION {new_selection,gfeatminer,status};
+	public enum ACTION {new_selection,gfeatminer,status,gfeatresponse};
 	public enum DB_TYPE {qualitative,quantitative};
 	public enum STATUS {error,running,success};
 	

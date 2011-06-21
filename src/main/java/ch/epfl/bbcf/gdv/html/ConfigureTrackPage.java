@@ -1,5 +1,7 @@
 package ch.epfl.bbcf.gdv.html;
 
+import org.apache.wicket.PageParameters;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
@@ -16,43 +18,39 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
-import ch.epfl.bbcf.gdv.html.utility.ConfigureModalWindow;
+import ch.epfl.bbcf.gdv.control.model.UserControl;
 import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
-public class ConfigureTrackPage extends WebPage{
+public class ConfigureTrackPage extends BasePage{
 
-	public ConfigureTrackPage(ProjectPage projectPage,
-			ConfigureModalWindow configureModal) {
-		final TrackWrapper track = configureModal.getTrack();
-		
-		for(String cp : Configuration.getGDVCSSFiles()){
-			add(CSSPackageResource.getHeaderContribution(cp));
+	public ConfigureTrackPage(PageParameters p) {
+		super(p);
+
+		/* get the track id from parameters */
+		Integer trackId = p.getInt("id");
+		if(trackId==null){
+			String err="no track id in the request";
+			PageParameters params = new PageParameters();
+			params.put("err", err);
+			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
-		for(String cp : Configuration.getJavascriptFiles()){
-			add(JavascriptPackageResource.getHeaderContribution(cp));
+		/* check if user is authorized */
+		if(!UserControl.checkUserAuthorizedToConfigureTrack(trackId)){
+			String err="you are not authorized to configure this track";
+			PageParameters params = new PageParameters();
+			params.put("err", err);
+			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
-		
-		final String jsControl = "initGDV_configure();";
 
-		add(new AbstractBehavior() {
-			@Override
-			public void renderHead(IHeaderResponse response) {
-				super.renderHead(response);
-				response.renderJavascript(jsControl,"js_control_"+track.getId());
-			}
-		}); 
-		
-		
-		
-		
-		
-		
+		final Track track = TrackControl.getTrackById(trackId);
 
+		/* build the page */
 		Form form = new Form("form");
 
-		Label trackInfo = new Label("track_info","configure track");
-		form.add(trackInfo);
-		final AjaxEditableLabel<String> editableTrackName = new AjaxEditableLabel<String>("track_info2",
+
+
+		//editable name 
+		final AjaxEditableLabel<String> editableTrackName = new AjaxEditableLabel<String>("editable_name",
 				new Model<String>(track.getName())){
 			@Override
 			protected void onSubmit(AjaxRequestTarget target){
@@ -66,26 +64,39 @@ public class ConfigureTrackPage extends WebPage{
 			}
 		};
 		form.add(editableTrackName);
-		Label trackInfo3 = new Label("track_info3","datatype : "+track.getType());
-		form.add(trackInfo3);
-		Label trackInfo4 = new Label("track_info4","created at : "+track.getDate());
-		form.add(trackInfo4);
-		
-		
-		//QUALITATIVE
-		TextField colorPicker = new TextField("colorPicker");
-		colorPicker.setOutputMarkupPlaceholderTag(true);
-		colorPicker.setVisible(false);
-		
-		form.add(colorPicker);
-		
-		
-		
-		//QUANTITATIVE
-		
-		
-		
-		
+
+		//quantitative color input (link with a dojo color picker on the HTML page)
+		TextField<String> colorInput = new TextField<String>("color_input1");
+		colorInput.setOutputMarkupPlaceholderTag(true);
+		form.add(colorInput);
+
+
+		//qualitative color input (link with the same dojo color picker on the HTML page)
+		TextField<String> colorInput2 = new TextField<String>("color_input2");
+		colorInput2.setOutputMarkupPlaceholderTag(true);
+		form.add(colorInput2);
+
+		//qualitative extended
+		//TODO select display for each types
+
+		//datatype switch
+		switch(track.getType()){
+		case QUALITATIVE: 
+			colorInput.setVisible(false);
+			break;
+		case  QUANTITATIVE: 
+			colorInput2.setVisible(false);
+			break;
+		case QUALITATIVE_EXTENDED: 
+			colorInput.setVisible(false);
+			colorInput2.setVisible(false);
+			break;
+		}
+
+
+
+
+
 		add(form);
 	}
 

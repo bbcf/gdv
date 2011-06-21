@@ -2,13 +2,15 @@ package ch.epfl.bbcf.gdv.access.database.pojo;
 
 import java.io.Serializable;
 
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
+
 public class Track implements Serializable{
 
 	private int id,job_id;
 	private String name;
 	private String parameters;
 	private String status;
-	private String type;
+	private SQLiteExtension type;
 	private String input;
 	
 	public Track(){
@@ -75,10 +77,10 @@ public class Track implements Serializable{
 		return false;
 		
 	}
-	public void setType(String type) {
+	public void setType(SQLiteExtension type) {
 		this.type = type;
 	}
-	public String getType() {
+	public SQLiteExtension getType() {
 		return type;
 	}
 	public void setInput(String input) {

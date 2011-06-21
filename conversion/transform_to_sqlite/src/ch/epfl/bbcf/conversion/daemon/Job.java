@@ -74,7 +74,9 @@ public class Job {
 	}
 	public String toString(){
 		return "file("+file+"),trackId("+trackId+"),tmpdir("+tmpdir+"),extension("+extension+")," +
-						"mail("+mail+"),nrassemblyid("+nrAssemblyId+")";
+						"mail("+mail+"),nrassemblyid("+nrAssemblyId+"),outputDirectory("+outputDirectory+")," +
+								"jbrowseOutputDirectory("+jbrowseOutputDirectory+"),feedbackUrl("+feedbackUrl+")," +
+										"jbrowseRessourcesUrl("+jbrowseRessourcesUrl+")";
 	}
 	public void setDoit(boolean doit) {
 		this.doit = doit;

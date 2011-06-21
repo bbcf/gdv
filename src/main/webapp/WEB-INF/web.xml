@@ -84,7 +84,16 @@
     <url-pattern>/gdv_names/*</url-pattern>
   </filter-mapping>
 
+<!-- EXPORT ACCESS --> 
+<filter>
+  <filter-name>ExportAccess</filter-name>
+  <filter-class>ch.epfl.bbcf.gdv.control.http.ExportFilter</filter-class>
+</filter>
 
+  <filter-mapping>
+    <filter-name>ExportAccess</filter-name>
+    <url-pattern>/gdv_export/*</url-pattern>
+  </filter-mapping>
 
 <!-- GDV -->
 

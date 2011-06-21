@@ -12,9 +12,11 @@ import org.json.JSONObject;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job.JOB_OUTPUT;
 import ch.epfl.bbcf.gdv.access.database.pojo.Status;
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
+import ch.epfl.bbcf.gdv.control.model.TrackControl;
 
 public class JobAccess extends Command{
 
@@ -32,8 +34,8 @@ public class JobAccess extends Command{
 			throw new AbortWithHttpStatusException(400,true);
 		}
 		switch(params.getAction()){
-		
-		
+
+
 		case gfeatminer:
 			checkParams(params.getData());
 			checkParams(params.getProjectId());
@@ -50,11 +52,57 @@ public class JobAccess extends Command{
 				new AbortWithHttpStatusException(500,true);
 			} catch (IOException e) {
 				log.error(e);
+				out.write("{failed :\""+e+"\"}");
+				new AbortWithHttpStatusException(500,true);
+			} finally {
+				out.close();
 			}
 			break;
 
-		
-		
+		case gfeatresponse:
+			checkParams(params.getData());
+			checkParams(params.getProjectId(),params.getJobId());
+			try {
+				JSONObject data = new JSONObject(params.getData());
+				Application.debug("data : "+data.toString());
+				String type = data.getString("type");
+				Application.debug("type : "+type);
+				/* handle error */
+				if(type.equalsIgnoreCase("error")){
+					JobControl.updateJob(params.getJobId(),Command.STATUS.error, data.getString("msg"));
+				} 
+			} catch (JSONException e1) {
+				/* handle reponse */
+				Application.debug("update job success");
+				JobControl.updateJob(params.getJobId(),Command.STATUS.success, params.getData());
+			} finally {
+				out.close();
+			}
+
+			/**
+			 * id : job - action : gfeatresponse - 
+			 * data : {"files": [{"path": "/data/gdv_dev/gFeatMiner/251/gminer_base_coverage.png", "type": "png"}]} - 
+			 * job_id : 251
+			 * 
+			 *  
+			 *  
+			 *  
+			 *  
+			 *   id : job - action : gfeatresponse - 
+			 *   data : {"msg": "The index creation on the database '/data/gdv_dev/files/619c70b13b52b8ad0740d
+			 *   6dfa1823594d8fcc1a4.db' failed with error: database is locked", 
+			 *   "html": "<body bgcolor=\"#f0f0f8\">\n<table wid
+			 *   issing_indexes\n    raise Exception(\"The index creation on the database '\" 
+			 *   + self.path + \"' failed with
+			 *    error: \" + str(err))\nException
+			 *    : The index creation on the database '/data/gdv_dev
+			 *    /files/619c70b13b52b8ad0740d6dfa1823594d8fcc1a4.db' 
+			 *    failed with error: database is locked\n\n-->\n", 
+			 *    "type": "error"} - job_id : 244 
+			 *  
+			 */
+
+			break;
 		case new_selection:
 			checkParams(params.getSelections());
 			checkParams(params.getNrAssemblyId(),params.getProjectId());
@@ -63,6 +111,7 @@ public class JobAccess extends Command{
 				jobId = JobControl.newSelection(params.getSelections(), params.getProjectId(), params.getNrAssemblyId(),params.getData());
 				Job job = JobControl.getJob(jobId);
 				if(null!=job){
+					Application.debug(JobControl.outputJob(job));
 					out.write(JobControl.outputJob(job));
 				} else {
 					throw new AbortWithHttpStatusException(500,true);
@@ -74,10 +123,10 @@ public class JobAccess extends Command{
 				out.close();
 			}
 			break;
-		
-		
-		
-		
+
+
+
+
 		case status :
 			checkParams(params.getJobId());
 			Job job = JobControl.getJob(params.getJobId());
@@ -87,18 +136,18 @@ public class JobAccess extends Command{
 		default:throw new AbortWithHttpStatusException(400,true);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * check if the data is correct
 	 * Dummy at the moment
@@ -120,11 +169,11 @@ public class JobAccess extends Command{
 		}
 		return json;
 	}	
-	
-	
-	
+
+
+
 	/**
-	 * Change the path of the dazabase, cauz 
+	 * Change the path of the database, cauz 
 	 * we just have the database name from the
 	 * browser interface
 	 * @param array - the array containing the paths
@@ -134,17 +183,20 @@ public class JobAccess extends Command{
 	private JSONArray addCompletePath(JSONArray array) throws JSONException{
 		JSONArray newArray = new JSONArray();
 		for(int i=0;i<array.length();i++){
-			newArray.put(i,Configuration.getFilesDir()+"/"+array.getString(i));
+			JSONObject j = array.getJSONObject(i);
+			String dbName=j.getString("path");
+			j.put("path",Configuration.getFilesDir()+"/"+dbName);
+			newArray.put(i,j);
 		}
 		return newArray;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
 }

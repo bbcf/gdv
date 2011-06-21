@@ -75,7 +75,7 @@ public class JobControl extends Control{
 	 * @param data the data if one
 	 * @return
 	 */
-	private static boolean updateJob(int jobId,Command.STATUS status,String data){
+	public static boolean updateJob(int jobId,Command.STATUS status,String data){
 		int stat=0;
 		switch(status){
 		case error : stat = Status.ERROR;
@@ -124,7 +124,6 @@ public class JobControl extends Control{
 	 * @param jobId
 	 */
 	public static void updateTrackJobSuccess(int jobId) {
-		Application.debug("updateTrackJobSuccess "+jobId);
 		Track track = TrackControl.getTrackIdWithJobId(jobId);
 		updateJob(jobId, Command.STATUS.success,null);
 		TrackControl.updateTrack(track.getId(),"completed");
@@ -167,8 +166,11 @@ public class JobControl extends Control{
 	 * @throws IOException
 	 */
 	public static int newSelection(String selections, int projectId,int nr_assembly_id,String selectionName) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, IOException{
+		Application.debug("new selection");
 		int jobId = createJob(projectId,JOB_TYPE.new_selection,JOB_OUTPUT.reload);
+		Application.debug("job created "+jobId);
 		SelectionControl.createNewSelection(jobId,selections,projectId,nr_assembly_id,selectionName);
+		Application.debug("create new selection");
 		return jobId;
 	}
 
@@ -200,7 +202,6 @@ public class JobControl extends Control{
 	 * @return the job identifier
 	 */
 	public static int newUserTrack(int userId,int projectId,URL url,FileUpload fileUpload,String systemPath,String trackName){
-		Application.debug("new user track : "+userId+"  pid "+projectId+"   tn "+trackName);
 		int jobId = createJob(projectId,JOB_TYPE.new_track,JOB_OUTPUT.reload);
 		InputControl.processUserInput(jobId,userId, projectId, url, fileUpload, systemPath,trackName);
 		return jobId;
@@ -243,14 +244,19 @@ public class JobControl extends Control{
 		String output = null;
 		int status = job.getStatus();
 		if(status==Status.RUNNING){
-			output = "{job_id:"+job.getId()+",status:\"running\"}";
+			output = "{job_id:"+job.getId()+",status:\"running\",type:\""+job.getType()+"\"}";
 		} else if(status==Status.ERROR){
-			output = "{job_id:"+job.getId()+",status:\"error\",data:\""+job.getData()+"\"}";
+			output = "{job_id:"+job.getId()+",status:\"error\",data:\""+formatData(job.getData())+"\"}";
 		} else if(status==Status.SUCCES){
-			output = "{job_id:"+job.getId()+",status:\"success\",output:\""+job.getOutput()+"\",data:\""+job.getData()+"\"}";
+			output = "{job_id:"+job.getId()+",status:\"success\",output:\""+job.getOutput()+"\",data:\""+formatData(job.getData())+"\",type:\""+job.getType()+"\"}";
 		}
 		return output;
 	}
+	
+	private static String formatData(String data){
+		return data.replace("\"", "'");
+	}
+	
 	/**
 	 * remove the job corresponding to the track
 	 * @param id the job id
@@ -273,6 +279,7 @@ public class JobControl extends Control{
 		body+="&job_id="+URLEncoder.encode(Integer.toString(jobId),"UTF-8");
 		body+="&output_location="+URLEncoder.encode(Configuration.getgFeatMinerDirectory()+"/"+jobId,"UTF-8");
 		body+="&data="+URLEncoder.encode(data.toString(),"UTF-8");
+		body+="&output_name=gfeatminer_output";
 		InternetConnection.sendPOSTConnection(
 				getGFMUrl(), body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
 

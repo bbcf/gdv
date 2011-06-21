@@ -40,9 +40,10 @@ public class TrackParsingSuccess extends Command{
 
 
 		case quantitative :
-			if(params.getData().equalsIgnoreCase("end")){
+			if(params.getData()!=null && params.getData().equalsIgnoreCase("end")){
 				JobControl.updateTrackJobSuccess(params.getJobId());
 			} else {
+				Application.debug("got to computing");
 				Track track = TrackControl.getTrackIdWithJobId(params.getJobId());
 				SQLiteAccess access = new SQLiteAccess(Configuration.getCompute_scores_daemon());
 				access.writeNewJobCalculScores(params.getJobId(),track.getInput(),Configuration.getFilesDir(),track.getInput(),Configuration.getTracks_dir(),0,"nomail",
