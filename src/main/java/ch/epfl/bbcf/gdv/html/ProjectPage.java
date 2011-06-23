@@ -51,7 +51,6 @@ import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.database.DataProjectProvider;
 import ch.epfl.bbcf.gdv.html.database.DataTrackProvider;
-import ch.epfl.bbcf.gdv.html.utility.ConfigureModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.CustModalWindow;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 import ch.epfl.bbcf.gdv.html.utility.GroupModalWindow;

@@ -7,13 +7,13 @@ public class BrowserParameters {
 	private String containerID,refSeqs,browserRoot,dataRoot,styleRoot,trackData,defaultTracks;
 
 	public BrowserParameters(String containerID, String refSeqs,
-			String jb_browser_root, String jb_data_root, String string3,
+			String jb_browser_root, String jb_data_root, String styleroot,
 			String trackData, String tracksNames) {
 		this.containerID = containerID;
 		this.refSeqs = refSeqs;
-		this.browserRoot = browserRoot;
-		this.dataRoot = dataRoot;
-		this.styleRoot = styleRoot;
+		this.browserRoot = jb_browser_root;
+		this.dataRoot = jb_data_root;
+		this.styleRoot = styleroot;
 		this.trackData = trackData;
 		this.defaultTracks = tracksNames;
 	}

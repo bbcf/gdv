@@ -144,9 +144,9 @@ public class ProjectControl extends Control implements Serializable{
 	 * see this project
 	 * @return
 	 */
-	public boolean userAuthorized(Project p) {
-		ProjectDAO dao = new ProjectDAO(Connect.getConnection(session));
-		return dao.userAuthorized(session.getUser(),p.getId());
+	public static boolean userAuthorized(Project p,Users user) {
+		ProjectDAO dao = new ProjectDAO(Connect.getConnection());
+		return dao.userAuthorized(user,p.getId());
 	}
 
 	/**
@@ -263,22 +263,22 @@ public class ProjectControl extends Control implements Serializable{
 
 
 
-	public boolean isProjectPublic(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+	public static boolean isProjectPublic(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		return pdao.isProjectPublic(projectId);
 	}
 
 
 
-	public String getPublicKeyFromProjectId(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+	public static String getPublicKeyFromProjectId(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		return pdao.getPublicKeyFromProjectId(projectId);
 	}
 
 
 
-	public String getUserKeyFromProjectId(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Connect.getConnection(session));
+	public static String getUserKeyFromProjectId(int projectId) {
+		ProjectDAO pdao = new ProjectDAO(Connect.getConnection());
 		return pdao.getUserKeyFromProjectId(projectId);
 	}
 

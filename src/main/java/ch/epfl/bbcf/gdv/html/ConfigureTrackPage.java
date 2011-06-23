@@ -4,25 +4,35 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.value.ValueMap;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
+import ch.epfl.bbcf.gdv.html.utility.FormChecker;
+import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
 public class ConfigureTrackPage extends BasePage{
 
+	protected final ValueMap properties = new ValueMap();
+	
 	public ConfigureTrackPage(PageParameters p) {
 		super(p);
 
@@ -65,16 +75,13 @@ public class ConfigureTrackPage extends BasePage{
 		};
 		form.add(editableTrackName);
 
-		//quantitative color input (link with a dojo color picker on the HTML page)
-		TextField<String> colorInput = new TextField<String>("color_input1");
-		colorInput.setOutputMarkupPlaceholderTag(true);
-		form.add(colorInput);
+		//color input (link with a dojo color picker on the HTML page)
+		TextField<String> colorInput1 = new TextField<String>("color_input1",new PropertyModel<String>(properties,"color_input"));
+		colorInput1.setOutputMarkupPlaceholderTag(true);
+		form.add(colorInput1);
 
 
-		//qualitative color input (link with the same dojo color picker on the HTML page)
-		TextField<String> colorInput2 = new TextField<String>("color_input2");
-		colorInput2.setOutputMarkupPlaceholderTag(true);
-		form.add(colorInput2);
+		
 
 		//qualitative extended
 		//TODO select display for each types
@@ -82,17 +89,34 @@ public class ConfigureTrackPage extends BasePage{
 		//datatype switch
 		switch(track.getType()){
 		case QUALITATIVE: 
-			colorInput.setVisible(false);
-			break;
 		case  QUANTITATIVE: 
-			colorInput2.setVisible(false);
 			break;
 		case QUALITATIVE_EXTENDED: 
-			colorInput.setVisible(false);
-			colorInput2.setVisible(false);
+			colorInput1.setVisible(false);
 			break;
 		}
 
+		Button sub = new Button("sub"){
+			public void onSubmit(){
+				
+				switch(track.getType()){
+				case QUALITATIVE: 
+					Application.debug("configure track qualitative");
+					break;
+				case  QUANTITATIVE: 
+					Application.debug("configure track quantitative");
+					String color = properties.getString("color_input");
+					if(color!=null){
+						TrackControl.buildTrackParams(track, color);
+					}
+					break;
+				case QUALITATIVE_EXTENDED: 
+					Application.debug("configure track qualitative extended");
+					break;
+				}
+			}
+		};
+		form.add(sub);
 
 
 

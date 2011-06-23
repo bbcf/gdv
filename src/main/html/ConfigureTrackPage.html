@@ -2,19 +2,22 @@
 <head>
  <title>Genome Data Viewer</title>
 </head>
-<body class="modalbd">
-  <form wicket:id="form">
-    <h1><span class="sh1" wicket:id="track_info"/></h1> 
-    <ul>
-      <li><div class="sh1" wicket:id="editable_name"/></li>
-      <p>(click to rename - also possible in the project view)</p>
-      <li><div class="sh1" wicket:id="color_input1"/></li>
-      <li><div class="sh1" wicket:id="color_input2"/></li>
-  </ul>
+<body>
+  <wicket:extend>
+    <form wicket:id="form">
+      
+      <ul>
+	<div class="sh1" wicket:id="editable_name"/>
+	<p>(click to rename - also possible in the project view)</p>
+	<input class="sh1" wicket:id="color_input1"/>
+      </ul>
+      
+      
+      <input  type="submit" wicket:id="sub" value="Submit"/>
+    </form>
     
     
-    
-  </form>
+  </wicket:extend>
   <div id="dojoColorPicker"></div>
 </body>
 </html>

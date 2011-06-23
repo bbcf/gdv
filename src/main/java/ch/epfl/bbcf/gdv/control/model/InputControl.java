@@ -14,6 +14,7 @@ import java.util.zip.ZipException;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 
 import ch.epfl.bbcf.bbcfutils.Utility;
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
@@ -413,7 +414,7 @@ public class InputControl extends Control{
 				return;
 			}
 			/* guess the file type */
-			String filetype = null;
+			SQLiteExtension filetype = null;
 			try {
 				filetype = FileTypeGuesser.guessFileType(file, extension);
 			} catch (ExtensionNotRecognizedException e) {

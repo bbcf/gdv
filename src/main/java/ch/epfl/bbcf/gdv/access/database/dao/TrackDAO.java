@@ -537,7 +537,7 @@ public class TrackDAO extends DAO<Track>{
 	 * @param status
 	 */
 	public void updateTrackFields(int trackId,String name,
-			String filetype, String status) {
+			SQLiteExtension filetype, String status) {
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
@@ -546,7 +546,7 @@ public class TrackDAO extends DAO<Track>{
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setString(1,name);
-				statement.setString(2,filetype);
+				statement.setString(2,filetype.toString());
 				statement.setString(3,status);
 				statement.setInt(4, trackId);
 				this.executeUpdate(statement);

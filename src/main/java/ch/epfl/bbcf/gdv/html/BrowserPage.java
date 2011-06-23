@@ -25,6 +25,7 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
 import ch.epfl.bbcf.bbcfutils.json.JsonMapper;
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
@@ -51,7 +52,7 @@ public class BrowserPage extends WebPage{
 		String err ="";
 
 
-		//get request parameters
+		/* get request parameters */
 		for(Entry<String, String[]> entry : p.toRequestParameters().entrySet()){
 			if(entry.getKey().equalsIgnoreCase("id")){
 				try{
@@ -68,7 +69,7 @@ public class BrowserPage extends WebPage{
 				publicKey = entry.getValue()[0];
 			}
 		}
-		//check project id
+		/* check project id */
 		if(projectId<0){
 			err="no project id (id) in the request, you must log in";
 			PageParameters params = new PageParameters();
@@ -76,27 +77,27 @@ public class BrowserPage extends WebPage{
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
 
-
-		ProjectControl pc = new ProjectControl((UserSession)getSession());
-		final Project project = pc.getProject(projectId);
+		/* get project */
+		final Project project = ProjectControl.getProject(projectId);
 		if(null==project){
 			err="project id ("+projectId+") doesn't exist or you must login before";
 			PageParameters params = new PageParameters();
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
+		
 		boolean canView = false;//if the user can see the page
 		boolean isAdmin =false;//if the user provide uKey & pKey but he don't
 		//need them because he own the page
 		UserSession session = (UserSession)getSession();
 		Users user = session.getUser();
 
-		//it can be a public view
+		/* check public view */
 		if(userKey!=null && publicKey!=null){
-			if(pc.isProjectPublic(projectId)){
-				String pKey = pc.getPublicKeyFromProjectId(projectId);
+			if(ProjectControl.isProjectPublic(projectId)){
+				String pKey = ProjectControl.getPublicKeyFromProjectId(projectId);
 				if(publicKey.equalsIgnoreCase(pKey)){
-					String uKey = pc.getUserKeyFromProjectId(projectId);
+					String uKey = ProjectControl.getUserKeyFromProjectId(projectId);
 					if(userKey.equalsIgnoreCase(uKey)){
 						canView = true;
 					} else {err="wrong uKey";};
@@ -104,7 +105,9 @@ public class BrowserPage extends WebPage{
 			} else {err="not a public project";};
 			//else the user must have the rights to view this 
 		} 	
-		if(user!=null && pc.userAuthorized(project)){
+		
+		/* check if user own project */
+		if(user!=null && ProjectControl.userAuthorized(project,session.getUser())){
 			canView = true;
 			isAdmin=true;
 		} else {err="not authorized to browse this view";};
@@ -115,6 +118,8 @@ public class BrowserPage extends WebPage{
 			throw new RestartResponseAtInterceptPageException(ErrorPage.class);
 		}
 
+		
+		/* take jobs */
 		List<Job> jobs = JobControl.getGFeatMinerJobsAndNotTerminatedFromProjectId(projectId);
 		String jobOutput ="[";
 		for (Job job : jobs){
@@ -127,16 +132,13 @@ public class BrowserPage extends WebPage{
 		jobOutput+="]";
 		add(new Label("init_jobs",jobOutput));
 
-		//adding speciesName on the view
-		SequenceControl sc = new SequenceControl((UserSession)getSession());
-		//String [] tmp = sc.getSpeciesNameAndAssemblyNameFromAssemblyId(project.getSpeciesId());
-		//String species = tmp[0];
+		/*adding additionnals parameters */
 		add(new Label("species",project.getSpecies().getName()));
 		add(new Label("nrAssemblyId",Integer.toString(project.getSequenceId())));
 		add(new Label("gdv_project_id",Integer.toString(project.getId())));
 		add(new Label("isAdmin",Boolean.toString(isAdmin)));
 
-		//adding static javascript and css
+		/* adding static javascript and css */
 		for(String cp : Configuration.getGDVCSSFiles()){
 			add(CSSPackageResource.getHeaderContribution(cp));
 		}
@@ -146,7 +148,8 @@ public class BrowserPage extends WebPage{
 		for(String cp : Configuration.getJavascriptFiles()){
 			add(JavascriptPackageResource.getHeaderContribution(cp));
 		}
-		//get tracks
+		
+		/* get tracks */
 		TrackControl tc = new TrackControl((UserSession)getSession());
 		Set<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
 		Set<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
@@ -162,34 +165,46 @@ public class BrowserPage extends WebPage{
 		//		Sequence seq = seqc.getSequenceFromId(project.getSequenceId());
 		final String refseq = buildRefseq(project.getSequenceId());//JbrowsoRAccess.getRefseq(seq.getJbrowsoRId());
 
-
+		/* build browser parameters */
 		BrowserParameters bp = new BrowserParameters(
 				"GenomeBrowser",
-				"refSeqs",
+				refseq,
 				Configuration.getJb_browser_root(),
 				Configuration.getJb_data_root(),
 				"../../"+Configuration.getJbrowse_static_files_url(),
 				"trackInfo",
 				tracksNames
 				);
-		//adding final javascript
-		try {
-			final String jsControl = " var b = new Browser("+JsonMapper.serialize(bp)+");" +
-			"b.showTracks();" +
-			"initGDV_browser(b);";
+		/* adding final javascript */
+			String jsControl = " var b = new Browser({" +
+			"containerID: \"GenomeBrowser\",\n" +
+			"refSeqs: refSeqs,\n" +
+			//"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+"\"+browserRoot,\n" +//+JbrowsoRAccess.SERV+"/\"+browserRoot," +
+			"browserRoot: \""+ Configuration.getJb_browser_root()+   "\",\n" +
+			//"dataRoot: \"/jbdata/\",\n"+
+			//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
+			"dataRoot: \""+Configuration.getJb_data_root()+"/"+"\",\n" +
+			"styleRoot: \""+"../../"+Configuration.getJbrowse_static_files_url()+"/"+"\",\n" +
+			"trackData: trackInfo,\n" +
+			"defaultTracks : "+tracksNames+"" +
+			"});" +
+			"b.showTracks();";
+			//"b.showTracks();" +
+			if(isAdmin){
+				jsControl+="initGDV_browser(b);";
+			} else {
+				jsControl+="initGDV_browser(b,true);";
+			}
+			final String s = jsControl;
 			add(new AbstractBehavior() {
 				@Override
 				public void renderHead(IHeaderResponse response) {
 					super.renderHead(response);
-					response.renderJavascript(refseq,"refseq_"+project.getId());
+					response.renderJavascript("refSeqs = "+refseq,"refseq_"+project.getId());
 					response.renderJavascript(trackInfo,"js_view_"+project.getId());
-					response.renderJavascript(jsControl,"js_control_"+project.getId());
+					response.renderJavascript(s,"js_control_"+project.getId());
 				}
 			}); 
-		} catch (IOException e) {
-			e.printStackTrace();
-			Application.error(e);
-		}
 
 		
 
@@ -203,7 +218,7 @@ public class BrowserPage extends WebPage{
 	 * @return
 	 */
 	private String buildRefseq(int seq_id) {
-		String refSeq="refSeqs = ";
+		String refSeq="";
 		JSONArray array = null;
 		try {
 			Assembly ass = GenrepWrapper.getAssemblyFromNrAssemblyId(seq_id);
@@ -307,17 +322,8 @@ public class BrowserPage extends WebPage{
 		for(Track t : tracks){
 			String parameters ="";
 			if(t.getParameters().equalsIgnoreCase("params") || t.getName().equalsIgnoreCase("in process")){
-
-				String directory = TrackControl.getFileFromTrackId(t.getId());
-				TrackInfo ti = new TrackInfo(directory,protect(t.getName()),t.getType(),protect(t.getName()));
-				String params = null;
-				try {
-					params = JsonMapper.serialize(ti);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				tc.setParams(t.getId(),params);
-				parameters = params;
+				
+				parameters = TrackControl.buildTrackParams(t,null);
 			} else {
 				parameters = t.getParameters();
 			}

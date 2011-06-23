@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.model.InputControl.Extension;
@@ -32,29 +33,25 @@ public class FileTypeGuesser {
 	/**
 	 * Guess if the file is qualitative or quantitative,
 	 * because process of the file will be differents.
-	 * just test (if the file is gff) if there is score in the file
-	 * TODO ALWAYS RETURN QUALITATIVE
-	 * @param file
-	 * @return 'qualitative' or 'quantitative'
 	 * @throws ExtensionNotRecognizedException
 	 * @throws IOException 
 	 */
-	public static String guessFileType(File file,Extension ext) throws ExtensionNotRecognizedException, IOException{
+	public static SQLiteExtension guessFileType(File file,Extension ext) throws ExtensionNotRecognizedException, IOException{
 		switch(ext){
-		case GFF:case BED:case GTF:case BEDGRAPH:case BAM:case SAM:
-			return "qualitative";
+		case GFF:case BED:case BEDGRAPH:case BAM:case SAM:
+			return SQLiteExtension.QUALITATIVE;
+		case GTF: 
+			return SQLiteExtension.QUALITATIVE_EXTENDED;
 		case  DB :
 			ResultSet r = null;
 			SQLiteAccess access = null;
+			String chr = null;
 			try {
 				access = SQLiteAccess.getConnectionWithDatabase(file.getAbsolutePath());
 				Map<String, Integer> chromosomes= access.getChromosomesAndLength();
-				String firstChromosome = chromosomes.keySet().iterator().next();
-				r = access.prepareFeatures(firstChromosome);
-				access.getNextQualitativeFeature(r,firstChromosome);
-				r.close();
-				access.close();
-				return "qualitative";
+				chr = chromosomes.keySet().iterator().next();
+				r = access.prepareFeatures(chr);
+				access.getNextQualitativeFeature(r,chr);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -62,58 +59,64 @@ public class FileTypeGuesser {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
-				return "quantitative";
-			} finally {
+				return SQLiteExtension.QUANTITATIVE;
+			}
+			try {
+				access.getNextExtendedQualitativeFeature(r, chr);
+			} catch (SQLException e) {
+				return SQLiteExtension.QUALITATIVE;
+			}  finally {
 				try {
 					r.close();
 					access.close();
 				} catch (SQLException e) {
+					Application.error(e);
 				}
 			}
-
-			default :
-				return "quantitative";
-			}
-		}
-
-
-
-
-
-		private static Extension processExtension(String ext) throws ExtensionNotRecognizedException{
-			Extension extension = null;
-			if(ext.equalsIgnoreCase("gff")||ext.equalsIgnoreCase("gff3")){
-				extension = Extension.GFF;
-			}
-			else if (ext.equalsIgnoreCase("wig")||ext.equalsIgnoreCase("wiggle")){
-				extension = Extension.WIG;
-			}
-			else if (ext.equalsIgnoreCase("bed")){
-				extension = Extension.BED;
-			}
-			else if(ext.equalsIgnoreCase("zip")){
-				extension = Extension.ZIP;
-			}
-			else if(ext.equalsIgnoreCase("gzip")){
-				extension = Extension.GZIP;
-			}
-			else if(ext.equalsIgnoreCase("gz")){
-				extension = Extension.GZ;
-			}
-			else if(ext.equalsIgnoreCase("bam")){
-				extension = Extension.BAM;
-			}
-			else if(ext.equalsIgnoreCase("bedgraph")){
-				extension = Extension.BEDGRAPH;
-			} else if(ext.equalsIgnoreCase("gtf")){
-				extension = Extension.GTF;
-			} else if(ext.equalsIgnoreCase("db")||ext.equalsIgnoreCase("sql")){
-				extension = Extension.DB;
-			}
-
-			else {
-				throw new ExtensionNotRecognizedException(ext);
-			}
-			return extension;
+			return SQLiteExtension.QUALITATIVE_EXTENDED;
+		default :
+			return SQLiteExtension.QUANTITATIVE;
 		}
 	}
+
+
+
+
+
+	private static Extension processExtension(String ext) throws ExtensionNotRecognizedException{
+		Extension extension = null;
+		if(ext.equalsIgnoreCase("gff")||ext.equalsIgnoreCase("gff3")){
+			extension = Extension.GFF;
+		}
+		else if (ext.equalsIgnoreCase("wig")||ext.equalsIgnoreCase("wiggle")){
+			extension = Extension.WIG;
+		}
+		else if (ext.equalsIgnoreCase("bed")){
+			extension = Extension.BED;
+		}
+		else if(ext.equalsIgnoreCase("zip")){
+			extension = Extension.ZIP;
+		}
+		else if(ext.equalsIgnoreCase("gzip")){
+			extension = Extension.GZIP;
+		}
+		else if(ext.equalsIgnoreCase("gz")){
+			extension = Extension.GZ;
+		}
+		else if(ext.equalsIgnoreCase("bam")){
+			extension = Extension.BAM;
+		}
+		else if(ext.equalsIgnoreCase("bedgraph")){
+			extension = Extension.BEDGRAPH;
+		} else if(ext.equalsIgnoreCase("gtf")){
+			extension = Extension.GTF;
+		} else if(ext.equalsIgnoreCase("db")||ext.equalsIgnoreCase("sql")){
+			extension = Extension.DB;
+		}
+
+		else {
+			throw new ExtensionNotRecognizedException(ext);
+		}
+		return extension;
+	}
+}

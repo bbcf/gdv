@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.wicket.Session;
 
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.access.database.Connect;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
@@ -177,8 +178,8 @@ public class TrackControl extends Control{
 	 * @param id
 	 * @param params
 	 */
-	public void setParams(int id, String params) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+	public static void setParams(int id, String params) {
+		TrackDAO tdao = new TrackDAO(Connect.getConnection());
 		tdao.setParams(id,params);
 	}
 
@@ -251,8 +252,7 @@ public class TrackControl extends Control{
 	 * @param status
 	 */
 	public static void updateTrackFields(int trackId,
-			String name, String filetype, String status) {
-		Application.debug("UPDATE TRACK FIELD : "+trackId+" "+name+" "+filetype+" "+status);
+			String name, SQLiteExtension filetype, String status) {
 		TrackDAO tdao = new TrackDAO(Connect.getConnection());
 		tdao.updateTrackFields(trackId,name,filetype,status);
 	}
@@ -364,6 +364,37 @@ public class TrackControl extends Control{
 		return track;
 	}
 
+	
+	
+	
+	
+	
+	public static String buildTrackParams(Track track,String color){
+		if(null==color){
+			color = "red";
+		}
+		
+		String params = "{\n";
+		String directory = getFileFromTrackId(track.getId());
+
+		String imageType = null;
+		if(track.getType().toString().equalsIgnoreCase(SQLiteExtension.QUANTITATIVE.toString())){
+			imageType="ImageTrack";
+			params+="\"color\":\""+color+"\",";
+		} else if(track.getType().toString().equalsIgnoreCase(SQLiteExtension.QUALITATIVE.toString())||
+				track.getType().toString().equalsIgnoreCase(SQLiteExtension.QUALITATIVE_EXTENDED.toString())){
+			imageType="FeatureTrack";
+		} else {
+			Application.error("datatype not recognized : "+track.getId());
+		}
+		
+		params+="\"url\" : \"../"+directory+"/{refseq}.json\",\n" +
+		"\"label\" : \""+protect(track.getName())+"\",\n"+
+		"\"type\" : \""+imageType+"\",\n"+
+		"\"key\" : \""+protect(track.getName())+"\"\n}";
+		setParams(track.getId(),params);
+		return params;
+	}
 
 	/**
 	 * get a Track form the name of the file 
@@ -377,7 +408,15 @@ public class TrackControl extends Control{
 
 
 
-
+	/**
+	 * protect char " with a backslash
+	 * if there is one in the name
+	 * @param name
+	 * @return
+	 */
+	private static String protect(String name) {
+		return name.replaceAll("\"", "\\\\\"");
+	}
 
 
 
