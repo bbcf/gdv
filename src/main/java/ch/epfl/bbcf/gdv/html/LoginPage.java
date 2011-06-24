@@ -122,8 +122,7 @@ public class LoginPage extends BasePage{
 						}
 						else{
 							//CREATE USER
-							UserControl controller = new UserControl((UserSession)getSession());
-							if(controller.createNewUser(email,name,firstname,title,phone,office,"tequila")!=-1){
+							if(UserControl.createNewUser(email,name,firstname,title,phone,office,"tequila")!=-1){
 								setResponsePage(new ProjectPage(new PageParameters()));
 							}
 							//TODO ERROR PAGE

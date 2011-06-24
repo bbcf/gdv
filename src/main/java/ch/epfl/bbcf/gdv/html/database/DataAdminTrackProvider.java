@@ -17,11 +17,9 @@ import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 public class DataAdminTrackProvider extends SortableDataProvider<TrackWrapper>{
 
 	private List<TrackWrapper> tracks;
-	private TrackControl tc;
 	
 	public DataAdminTrackProvider(UserSession session){
-		tc = new TrackControl(session);
-		tracks = getTrackWrappers(tc.getAllAdminTracks());
+		tracks = getTrackWrappers(TrackControl.getAllAdminTracks());
 	}
 	private List<TrackWrapper> getTrackWrappers(Set<Track> allAdminTracks) {
 		List<TrackWrapper> wrappers = new ArrayList<TrackWrapper>();
@@ -52,7 +50,7 @@ public class DataAdminTrackProvider extends SortableDataProvider<TrackWrapper>{
 	}
 	
 	public void detach() {
-		tracks = getTrackWrappers(tc.getAllAdminTracks());
+		tracks = getTrackWrappers(TrackControl.getAllAdminTracks());
 	}
 
 }

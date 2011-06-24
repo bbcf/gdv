@@ -12,7 +12,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.value.ValueMap;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;

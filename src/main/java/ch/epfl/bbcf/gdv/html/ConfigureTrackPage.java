@@ -64,11 +64,10 @@ public class ConfigureTrackPage extends BasePage{
 				new Model<String>(track.getName())){
 			@Override
 			protected void onSubmit(AjaxRequestTarget target){
-				TrackControl tc = new TrackControl((UserSession)getSession());
-				Track newTrack = tc.getTrackById(track.getId());
+				Track newTrack = TrackControl.getTrackById(track.getId());
 				if(null!=newTrack && null!=track.getName() && !track.getName().equalsIgnoreCase("in process")){
 					if(null!=getEditor().getInput()){
-						tc.renameTrack(track.getId(),getEditor().getInput());
+						TrackControl.renameTrack(track.getId(),getEditor().getInput());
 					}
 				}
 			}

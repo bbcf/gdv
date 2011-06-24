@@ -1,12 +1,13 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Species;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
@@ -17,7 +18,7 @@ public class SpeciesDAO extends DAO<Species>{
 	private final static String tableName = "species";
 	private final static String[] fields = {"id","name"};
 
-	public SpeciesDAO(Connect connection) {
+	public SpeciesDAO(Connection connection) {
 		super(connection);
 	}
 

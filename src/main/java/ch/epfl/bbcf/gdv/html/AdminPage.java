@@ -61,8 +61,7 @@ public class AdminPage extends BasePage{
 		 form = new Form("form"){
 			public void onSubmit(){
 				if(-1!=speciesId && -1!=assemblyId){
-					SequenceControl sc = new SequenceControl((UserSession)getSession());
-					boolean created = sc.createGenome(assemblyId,speciesId,feedback);
+					boolean created = SequenceControl.createGenome(assemblyId,speciesId,feedback);
 					if(created){
 						feedback.info("genome created");
 					} else {
@@ -92,8 +91,7 @@ public class AdminPage extends BasePage{
 					return new ArrayList<SelectOption>();
 				}
 				else {
-					SequenceControl sc = new SequenceControl((UserSession)getSession());
-					List<SelectOption> ass = sc.getNRAssembliesNotCreated(speciesId);
+					List<SelectOption> ass = SequenceControl.getNRAssembliesNotCreated(speciesId);
 					return ass;
 				}
 			}
@@ -194,10 +192,9 @@ public class AdminPage extends BasePage{
 						new Model<String>(track.getName())){
 					@Override
 					protected void onSubmit(AjaxRequestTarget target){
-						TrackControl tc = new TrackControl((UserSession)getSession());
-						Track newTrack = tc.getTrackById(track.getId());
+						Track newTrack = TrackControl.getTrackById(track.getId());
 						if(null!=newTrack && null!=track.getName() && !track.getName().equalsIgnoreCase("in process")){
-							tc.renameTrack(track.getId(),getEditor().getInput());
+							TrackControl.renameTrack(track.getId(),getEditor().getInput());
 						}
 					}
 				};
@@ -206,8 +203,7 @@ public class AdminPage extends BasePage{
 				final AjaxLink link = new AjaxLink("delete"){
 					@Override
 					public void onClick(AjaxRequestTarget target) {
-						TrackControl tc = new TrackControl((UserSession)getSession());
-						tc.removeAdminTrack(track.getTrackInstance());
+						TrackControl.removeAdminTrack(track.getTrackInstance());
 						dtp.detach();
 					}
 				};

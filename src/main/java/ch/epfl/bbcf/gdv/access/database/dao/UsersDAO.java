@@ -1,5 +1,6 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,7 @@ import java.util.List;
 
 import org.apache.wicket.authorization.strategies.role.Roles;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -21,7 +22,7 @@ import ch.epfl.bbcf.gdv.utility.RandomKey;
  */
 public class UsersDAO extends DAO<Users>{
 
-	public UsersDAO(Connect connection) {
+	public UsersDAO(Connection connection) {
 		super(connection);
 	}
 

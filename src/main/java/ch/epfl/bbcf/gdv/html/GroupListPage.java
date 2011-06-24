@@ -121,9 +121,8 @@ public class GroupListPage extends WebPage{
 			@Override
 			protected void onSubmit(AjaxRequestTarget target, Form<?> arg1) {
 				List<GroupWrapper> list = (List<GroupWrapper>) group.getDefaultModelObject();
-				GroupControl gc = new GroupControl((UserSession)getSession());
 				for(GroupWrapper gw : list){
-					gc.shareProject(project.getId(),gw.getId());
+					GroupControl.shareProject(project.getId(),gw.getId());
 				}
 				groupModal.close(target);
 			}

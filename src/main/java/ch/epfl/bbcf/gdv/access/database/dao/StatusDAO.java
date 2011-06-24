@@ -1,16 +1,17 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 
 
 public class StatusDAO  extends DAO<Status>{
 
-	public StatusDAO(Connect connection) {
+	public StatusDAO(Connection connection) {
 		super(connection);
 	}
 

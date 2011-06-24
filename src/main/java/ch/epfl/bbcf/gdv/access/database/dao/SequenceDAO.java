@@ -1,12 +1,13 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.config.Application;
 
@@ -15,7 +16,7 @@ public class SequenceDAO extends DAO<Sequence>{
 	private final static String tableName = "sequences";
 	private final static String[] fields = {"id","jbrowse_id","type","name","species_id"};
 
-	public SequenceDAO(Connect connection) {
+	public SequenceDAO(Connection connection) {
 		super(connection);
 	}
 

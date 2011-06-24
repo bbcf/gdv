@@ -1,12 +1,13 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
@@ -16,9 +17,9 @@ import ch.epfl.bbcf.gdv.utility.RandomKey;
 public class ProjectDAO extends DAO<Project>{
 
 	private final static String tableName ="projects";
-	private final static String[] fields = {"id","cur_seq_id","name","\"isPublic\""};
+	private final static String[] fields = {"id","cur_seq_id","name","isPublic"};
 
-	public ProjectDAO(Connect connection) {
+	public ProjectDAO(Connection connection) {
 		super(connection);
 	}
 
@@ -553,7 +554,7 @@ public class ProjectDAO extends DAO<Project>{
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
-				String query = "update projects set \"isPublic\" = ? " +
+				String query = "update projects set isPublic = ? " +
 				"where id = ? ;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -596,7 +597,7 @@ public class ProjectDAO extends DAO<Project>{
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
-				String query = "select t1.\"isPublic\" from projects as t1 " +
+				String query = "select t1.isPublic from projects as t1 " +
 				"where t1.id = ? limit 1; ";
 				PreparedStatement statement;
 				statement = this.prepareStatement(query,

@@ -6,18 +6,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.wicket.Session;
 
 import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
-import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class TrackControl extends Control{
@@ -32,9 +29,6 @@ public class TrackControl extends Control{
 	public static final String STATUS_FILETYPE ="getting filetype";
 	public static final String STATUS_EXTENSION ="getting extensions";
 	public static final String NOT_DETEMINED = "ND";
-	public TrackControl(UserSession session) {
-		super(session);
-	}
 
 
 
@@ -43,14 +37,14 @@ public class TrackControl extends Control{
 	 * with the user
 	 * @param track id
 	 */
-	public void removeTrackFromUser(Track track) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
-		tdao.removeConnection(session.getUserId(),track.getId());
+	public static void removeTrackFromUser(Track track,int userId) {
+		TrackDAO tdao = new TrackDAO(Conn.get());
+		tdao.removeConnection(userId,track.getId());
 		String filename = tdao.getFileFromTrackId(track.getId());
-		InputDAO udao = new InputDAO(Connect.getConnection(session));
-		udao.removeConnection(session.getUserId(),filename);
-		ProjectDAO vdao = new ProjectDAO(Connect.getConnection(session));
-		vdao.removeConnection(session.getUserId(),track.getId());
+		InputDAO udao = new InputDAO(Conn.get());
+		udao.removeConnection(userId,filename);
+		ProjectDAO vdao = new ProjectDAO(Conn.get());
+		vdao.removeConnection(userId,track.getId());
 
 	}
 	/**
@@ -58,7 +52,7 @@ public class TrackControl extends Control{
 	 * @param trackId
 	 */
 	public static void deleteTrack(int trackId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		tdao.deleteTrack(trackId);
 
 	}
@@ -75,7 +69,7 @@ public class TrackControl extends Control{
 	 */
 	public static int createAdminTrack(int jobId,int userid, String assemblyId, String name,
 			String filetype, boolean always, String status) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		int trackId = tdao.createNewTrack(jobId,assemblyId,name,filetype,always,status);
 		if(trackId!=-1){
 			tdao.linkToAdmin(trackId,assemblyId);
@@ -91,7 +85,7 @@ public class TrackControl extends Control{
 	 * @return the Track
 	 */
 	public static Track getTrackIdWithJobId(int jobId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.getTrackIdWithJobId(jobId);
 	}
 	
@@ -102,7 +96,7 @@ public class TrackControl extends Control{
 	 * @param status
 	 */
 	public static void updateTrack(int trackId, String status) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		tdao.updateTrack(trackId,status);
 	}
 	/**
@@ -111,7 +105,7 @@ public class TrackControl extends Control{
 	 * @param status
 	 */
 	public static void updatePercentage(int trackId, int status) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		Track t = tdao.getTrackById(trackId);
 		try {
 			String strStatus = t.getStatus();
@@ -139,7 +133,7 @@ public class TrackControl extends Control{
 	 * @param inputId
 	 */
 	public static void linkToInput(int trackId, int inputId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		tdao.linkToInput(trackId,inputId);
 	}
 
@@ -150,9 +144,9 @@ public class TrackControl extends Control{
 	 * get the tracks belonging to the user
 	 * @return
 	 */
-	public List<Track> getTracksFromUser() {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
-		return tdao.getTracksFromUserId(session.getUserId());
+	public static List<Track> getTracksFromUser(int userId) {
+		TrackDAO tdao = new TrackDAO(Conn.get());
+		return tdao.getTracksFromUserId(userId);
 	}
 
 
@@ -166,7 +160,7 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static String getFileFromTrackId(int id) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.getFileFromTrackId(id);
 	}
 
@@ -179,7 +173,7 @@ public class TrackControl extends Control{
 	 * @param params
 	 */
 	public static void setParams(int id, String params) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		tdao.setParams(id,params);
 	}
 
@@ -192,7 +186,7 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static Track getTrackById(int trackId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.getTrackById(trackId);
 	}
 
@@ -204,9 +198,9 @@ public class TrackControl extends Control{
 	 * @param id
 	 * @return
 	 */
-	public Date getDate(int trackid) {
-		InputDAO udao = new InputDAO(Connect.getConnection(session));
-		return udao.getDateFromTrackId(trackid,session.getUserId());
+	public static Date getDate(int trackid,int userId) {
+		InputDAO udao = new InputDAO(Conn.get());
+		return udao.getDateFromTrackId(trackid,userId);
 	}
 
 
@@ -217,8 +211,8 @@ public class TrackControl extends Control{
 	 * @param sequenceId
 	 * @return
 	 */
-	public Set<Track> getAdminTracksFromSpeciesId(int sequenceId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+	public static Set<Track> getAdminTracksFromSpeciesId(int sequenceId) {
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.getAdminTracksFromSequenceId(sequenceId);
 	}
 
@@ -231,7 +225,7 @@ public class TrackControl extends Control{
 	 * @param projectId
 	 */
 	public static boolean linkToProject(int trackId, int projectId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.linkToProject(trackId, projectId);
 
 	}
@@ -253,7 +247,7 @@ public class TrackControl extends Control{
 	 */
 	public static void updateTrackFields(int trackId,
 			String name, SQLiteExtension filetype, String status) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		tdao.updateTrackFields(trackId,name,filetype,status);
 	}
 
@@ -261,8 +255,8 @@ public class TrackControl extends Control{
 
 
 
-	public List<Track> getTracksFromProjectId(int projectId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+	public static List<Track> getTracksFromProjectId(int projectId) {
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.getTracksFromProjectId(projectId);
 	}
 
@@ -275,7 +269,7 @@ public class TrackControl extends Control{
 	 * @return the track ID
 	 */
 	public static int createTmpTrack(int job_id,String status) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.createTmpTrack(status,job_id);
 	}
 
@@ -289,7 +283,7 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static boolean createAdminTrack(int sequenceId, int trackId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.createAdminTrack(sequenceId,trackId);
 
 	}
@@ -298,8 +292,8 @@ public class TrackControl extends Control{
 
 
 
-	public boolean renameTrack(int id, String input) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+	public static boolean renameTrack(int id, String input) {
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		tdao.resetParams(id);
 		return tdao.renameTrack(id,input);
 	}
@@ -308,8 +302,8 @@ public class TrackControl extends Control{
 
 
 
-	public Set<Track> getAllAdminTracks() {
-		TrackDAO dao = new TrackDAO(Connect.getConnection(session));
+	public static Set<Track> getAllAdminTracks() {
+		TrackDAO dao = new TrackDAO(Conn.get());
 		return dao.getAllAdminTracks();
 	}
 
@@ -321,10 +315,10 @@ public class TrackControl extends Control{
 	 * flat files on the filesystem
 	 * @param trackInstance
 	 */
-	public void removeAdminTrack(Track track) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+	public static void removeAdminTrack(Track track) {
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		tdao.deleteTrack(track.getId());
-		InputDAO idao = new InputDAO(Connect.getConnection(session));
+		InputDAO idao = new InputDAO(Conn.get());
 		idao.remove(track.getInput());
 		FileManagement.deleteDirectory(new File(Configuration.getFilesDir()+"/"+track.getInput()));
 		FileManagement.deleteDirectory(new File(Configuration.getTracks_dir()+"/"+track.getInput()));
@@ -337,15 +331,15 @@ public class TrackControl extends Control{
 	 * @param projectId
 	 * @return
 	 */
-	public Set<Track> getCompletedTracksFromProjectId(int projectId) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+	public static Set<Track> getCompletedTracksFromProjectId(int projectId) {
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.getCompletedTracksFromProjectId(projectId);
 	}
 
 
-	public Set<Track> getCompletedTracksFromProjectIdAndTrackNames(int projectId,
+	public static Set<Track> getCompletedTracksFromProjectIdAndTrackNames(int projectId,
 			String[] tracksNames) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection(session));
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		return tdao.getCompletedTracksFromProjectIdAndTrackNames(projectId,Arrays.asList(tracksNames));
 	}
 
@@ -358,7 +352,7 @@ public class TrackControl extends Control{
 	 * @param nr_assembly_id
 	 */
 	public static Track getAdminTrackByNrAssemblyID(int nr_assembly_id) {
-		TrackDAO tdao = new TrackDAO(Connect.getConnection());
+		TrackDAO tdao = new TrackDAO(Conn.get());
 		Set<Track> tracks=  tdao.getAdminTracksFromSequenceId(nr_assembly_id);
 		Track track = tracks.iterator().next();
 		return track;

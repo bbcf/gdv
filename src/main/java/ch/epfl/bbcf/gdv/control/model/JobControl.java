@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 
 import ch.epfl.bbcf.bbcfutils.access.InternetConnection;
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.JobDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job.JOB_OUTPUT;
@@ -34,8 +34,7 @@ import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class JobControl extends Control{
 
-	public JobControl(UserSession session) {
-		super(session);
+	public JobControl() {
 	}
 
 	/**
@@ -44,7 +43,7 @@ public class JobControl extends Control{
 	 * @return the job id
 	 */
 	public static int createJob(int projectId,Job.JOB_TYPE type,Job.JOB_OUTPUT output){
-		JobDAO jdao = new JobDAO(Connect.getConnection());
+		JobDAO jdao = new JobDAO(Conn.get());
 		return jdao.createJob(projectId, type, output);
 	}
 
@@ -54,7 +53,7 @@ public class JobControl extends Control{
 	 * @return the status of the job
 	 */
 	public static int getJobStatus(int jobId){
-		JobDAO jdao = new JobDAO(Connect.getConnection());
+		JobDAO jdao = new JobDAO(Conn.get());
 		return jdao.getJobStatus(jobId);
 	}
 
@@ -64,7 +63,7 @@ public class JobControl extends Control{
 	 * @return the job
 	 */
 	public static Job getJob(int jobId){
-		JobDAO jdao = new JobDAO(Connect.getConnection());
+		JobDAO jdao = new JobDAO(Conn.get());
 		return jdao.getJob(jobId);
 	}
 
@@ -84,7 +83,7 @@ public class JobControl extends Control{
 		break;
 		case success : stat = Status.SUCCES;
 		}
-		JobDAO jdao = new JobDAO(Connect.getConnection());
+		JobDAO jdao = new JobDAO(Conn.get());
 		return jdao.updateJob(jobId, stat,data);
 	}
 
@@ -228,7 +227,7 @@ public class JobControl extends Control{
 	 * @return
 	 */
 	public static List<Job> getGFeatMinerJobsAndNotTerminatedFromProjectId(int projectId) {
-		JobDAO dao = new JobDAO(Connect.getConnection());
+		JobDAO dao = new JobDAO(Conn.get());
 		return dao.getGFeatMinerJobsAndNotTerminatedFromProjectId(projectId);
 	}
 
@@ -262,7 +261,7 @@ public class JobControl extends Control{
 	 * @param id the job id
 	 */
 	public static void removeJob(int id) {
-		JobDAO dao = new JobDAO(Connect.getConnection());
+		JobDAO dao = new JobDAO(Conn.get());
 		dao.removeJob(id);
 
 	}

@@ -29,16 +29,13 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 
 	private UserSession session;
 	private List<ProjectWrapper> projects;
-	ProjectControl controller;
 	private Users user;
 
 	public DataProjectProvider(UserSession session){
 		this.session = session;
 		this.user = session.getUser();
-		ProjectControl pc = new ProjectControl(session);
-		controller = pc;
 		//List<Project> p = pc.getProjectsFromUser();
-		List<Project> p = pc.getAllProjectFromUser();
+		List<Project> p = ProjectControl.getAllProjectFromUser(session.getUser());
 		projects = getProjectsWrappers(p);
 		setSort("name", true);
 	}
@@ -48,13 +45,13 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 		List<ProjectWrapper> wrappers = new ArrayList<ProjectWrapper>();
 		for(Project project : projects){
 			ProjectWrapper wrapper = new ProjectWrapper(project);
-			Species species = controller.getSpeciesFromProjectId(project.getId());
+			Species species = ProjectControl.getSpeciesFromProjectId(project.getId());
 			// #species
 			wrapper.setSpeciesName(species.getName());
 			wrapper.setSpeciesId(species.getId());
-			wrapper.setSequences(controller.getSequencesFromSpeciesIdSO(species.getId()));
+			wrapper.setSequences(ProjectControl.getSequencesFromSpeciesIdSO(species.getId()));
 			// #groups
-			List<Group> groups = controller.getGroupNameFromProjectId(project.getId(),user.getMail());
+			List<Group> groups = ProjectControl.getGroupNameFromProjectId(project.getId(),user.getMail());
 			String groupNames = "";
 			for(Group group:groups){
 				groupNames+=group.getName()+",";
@@ -67,7 +64,7 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 			}
 			wrapper.setGroupName(groupNames);
 			// #tracks number
-			int tn = controller.tracksNumberUnderProject(project.getId());
+			int tn = ProjectControl.tracksNumberUnderProject(project.getId());
 			wrapper.setTracksNumber(tn);
 			
 			// #public url
@@ -103,7 +100,7 @@ public class DataProjectProvider extends SortableDataProvider<ProjectWrapper>{
 	}
 
 	public void detach() {
-		List<Project> p = controller.getAllProjectFromUser();
+		List<Project> p = ProjectControl.getAllProjectFromUser(session.getUser());
 		projects = getProjectsWrappers(p);
 	}
 

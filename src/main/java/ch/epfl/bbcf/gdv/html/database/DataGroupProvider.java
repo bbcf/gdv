@@ -23,38 +23,35 @@ public class DataGroupProvider extends SortableDataProvider<GroupWrapper>{
 	public final static int BELONG = 2;
 
 	private List<GroupWrapper> groups;
-	private GroupControl controller;
 	private int type;
 	private Users user;
 
 	public DataGroupProvider(UserSession session, int tag) {
-		GroupControl gc = new GroupControl(session);
-		controller = gc;
 		type = tag;
 		user = session.getUser();
 		List<Group> g = new ArrayList<Group>();
 		switch(type){
-		case OWNER : g = controller.getGroupOwnedByUser(user.getId());
+		case OWNER : g = GroupControl.getGroupOwnedByUser(user.getId());
 		break;
-		case BELONG : g = controller.getGroupBelongingToUser(user.getMail());
+		case BELONG : g = GroupControl.getGroupBelongingToUser(user.getMail());
 		break;
 		default : g = new ArrayList<Group>();
 		}
-		groups = getGroupWrappers(g,type,controller);
+		groups = getGroupWrappers(g,type);
 
 	}
 
-	private List<GroupWrapper> getGroupWrappers(List<Group> groups,int tag, GroupControl gc) {
+	private List<GroupWrapper> getGroupWrappers(List<Group> groups,int tag) {
 		List<GroupWrapper> wrappers = new ArrayList<GroupWrapper>();
 		for (Group g : groups){
 			GroupWrapper gw = new GroupWrapper(g);
 			switch(tag){
 			case OWNER:
-				List<String> users = gc.getUserMailFromGroupId(g.getId());
+				List<String> users = GroupControl.getUserMailFromGroupId(g.getId());
 				gw.setUsersMails(users);
 				break;
 			case BELONG :
-				String userMail = gc.getUserMailOwnerFromGroupId(g.getId());
+				String userMail = GroupControl.getUserMailOwnerFromGroupId(g.getId());
 				gw.setUserowner(userMail);
 				break;
 
@@ -85,12 +82,12 @@ public class DataGroupProvider extends SortableDataProvider<GroupWrapper>{
 	public void detach() {
 		List<Group> g = new ArrayList<Group>();
 		switch(type){
-		case OWNER : g = controller.getGroupOwnedByUser(user.getId());
+		case OWNER : g = GroupControl.getGroupOwnedByUser(user.getId());
 		break;
-		case BELONG : g = controller.getGroupBelongingToUser(user.getMail());
+		case BELONG : g = GroupControl.getGroupBelongingToUser(user.getMail());
 		break;
 		default : g = new ArrayList<Group>();
 		}
-		groups = getGroupWrappers(g,type,controller);
+		groups = getGroupWrappers(g,type);
 	}
 }

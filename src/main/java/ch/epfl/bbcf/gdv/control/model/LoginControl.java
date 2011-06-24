@@ -11,18 +11,8 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 
 public class LoginControl extends Control{
 
-	public LoginControl(UserSession session) {
-		super(session);
-	}
 
-//	public boolean logAlternativeUser(String type, String key) {
-//		if(Configuration.getGdv_types_access().contains(type)){
-//			return session.authenticate(key,type);
-//		}
-//		return false;
-//	}
-
-	public void logOut(WebPage page, boolean finishSession) {
+	public static void logOut(WebPage page, boolean finishSession,UserSession session) {
 		removeCookie(page);
 		session.signOut();
 		session.logOut();
@@ -32,7 +22,7 @@ public class LoginControl extends Control{
 
 	}
 
-	private void removeCookie(WebPage page) {
+	private static void removeCookie(WebPage page) {
 		Cookie cook = ((WebRequest) page.getRequestCycle().getRequest()).getCookie("TEQUILA_KEY");
 		if(null!=cook){
 			cook.setMaxAge(0);

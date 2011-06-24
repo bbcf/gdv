@@ -1,28 +1,27 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import java.sql.Connection;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.GroupDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
-import ch.epfl.bbcf.gdv.config.UserSession;
 
 public class GroupControl extends Control{
 
-	public GroupControl(UserSession session) {
-		super(session);
-	}
 
 	/**
 	 * get the list of group created by the user
 	 * @param userId
 	 * @return
 	 */
-	public List<Group> getGroupOwnedByUser(int userId) {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
-		return gdao.getGroupOwnedByUser(userId);
+	public static List<Group> getGroupOwnedByUser(int userId) {
+		Connection conn = Conn.get();
+		GroupDAO gdao = new GroupDAO(conn);
+		List<Group> r = gdao.getGroupOwnedByUser(userId);
+		return r;
 	}
 
 	/**
@@ -30,8 +29,8 @@ public class GroupControl extends Control{
 	 * @param userMail
 	 * @return
 	 */
-	public List<Group> getGroupBelongingToUser(String userMail) {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
+	public static List<Group> getGroupBelongingToUser(String userMail) {
+		GroupDAO gdao = new GroupDAO(Conn.get());
 		return gdao.getGroupBelongingToUser(userMail);
 	}
 
@@ -40,8 +39,8 @@ public class GroupControl extends Control{
 	 * @param groupId
 	 * @return
 	 */
-	public List<Users> getUserListFromGroupId(int groupId) {
-		UsersDAO udao = new UsersDAO(Connect.getConnection(session));
+	public static List<Users> getUserListFromGroupId(int groupId) {
+		UsersDAO udao = new UsersDAO(Conn.get());
 		return udao.getUserListFromGroupId(groupId);
 	}
 	/**
@@ -49,8 +48,8 @@ public class GroupControl extends Control{
 	 * @param id
 	 * @return
 	 */
-	public List<String> getUserMailFromGroupId(int groupId) {
-		UsersDAO udao = new UsersDAO(Connect.getConnection(session));
+	public static List<String> getUserMailFromGroupId(int groupId) {
+		UsersDAO udao = new UsersDAO(Conn.get());
 		return udao.getUserMailFromGroupId(groupId);
 	}
 	/**
@@ -58,8 +57,8 @@ public class GroupControl extends Control{
 	 * @param id
 	 * @return
 	 */
-	public String getUserMailOwnerFromGroupId(int groupId) {
-		UsersDAO udao = new UsersDAO(Connect.getConnection(session));
+	public static String getUserMailOwnerFromGroupId(int groupId) {
+		UsersDAO udao = new UsersDAO(Conn.get());
 		Users u = udao .getUserOwnerFromGroupId(groupId);
 		if(null!=u){
 			return u.getMail();
@@ -73,9 +72,9 @@ public class GroupControl extends Control{
 	 * create a new group 
 	 * @param gn - the group name
 	 */
-	public int createNewGroup(String gn) {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
-		return gdao.createNewGroup(session.getUserId(),gn);
+	public static int createNewGroup(String gn,int userId) {
+		GroupDAO gdao = new GroupDAO(Conn.get());
+		return gdao.createNewGroup(userId,gn);
 
 	}
 	/**
@@ -83,8 +82,8 @@ public class GroupControl extends Control{
 	 * @param groupId - the group
 	 * @param userMail - the user mail
 	 */
-	public void addUserToGroup(int groupId, String userMail) {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
+	public static void addUserToGroup(int groupId, String userMail) {
+		GroupDAO gdao = new GroupDAO(Conn.get());
 		gdao.addUserToGroup(groupId,userMail);
 	}
 
@@ -93,8 +92,8 @@ public class GroupControl extends Control{
 	 * @param id
 	 * @param currentUser
 	 */
-	public void removeUserFromGroup(int id, String mail) {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
+	public static void removeUserFromGroup(int id, String mail) {
+		GroupDAO gdao = new GroupDAO(Conn.get());
 		gdao.removeUserFromGroup(id,mail);
 	}
 
@@ -102,17 +101,16 @@ public class GroupControl extends Control{
 	 * remove the group
 	 * @param id
 	 */
-	public void removeGroup(int id) {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
+	public static void removeGroup(int id) {
+		GroupDAO gdao = new GroupDAO(Conn.get());
 		gdao.removeGroup(id);
 	}
 	/**
 	 * check if the user have group or is in group
 	 * @return
 	 */
-	public boolean checkIfGroupsForUser() {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
-		Users user = session.getUser();
+	public static  boolean checkIfGroupsForUser(Users user) {
+		GroupDAO gdao = new GroupDAO(Conn.get());
 		if( (getGroupBelongingToUser(user.getMail()).isEmpty()) &&
 				(getGroupOwnedByUser(user.getId()).isEmpty()) ){
 			return false;
@@ -126,8 +124,8 @@ public class GroupControl extends Control{
 	 * @param groupId
 	 * @return
 	 */
-	public boolean shareProject(int projectId, int groupId) {
-		GroupDAO gdao = new GroupDAO(Connect.getConnection(session));
+	public static boolean shareProject(int projectId, int groupId) {
+		GroupDAO gdao = new GroupDAO(Conn.get());
 		return gdao.shareProject(projectId,groupId);
 	}
 

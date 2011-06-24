@@ -97,8 +97,7 @@ public class AlternativeProjectPage extends WebPage{
 				item.add(speciesName);
 				//### assembly
 				//###assembly
-				SequenceControl secC = new SequenceControl((UserSession)getSession());
-				Sequence seq = secC.getSequenceFromId(projectWrapper.getSequenceId());
+				Sequence seq = SequenceControl.getSequenceFromId(projectWrapper.getSequenceId());
 				Label assemblyName = new Label("project_version",seq.getName());
 				assemblyName.add(new SimpleAttributeModifier("title","assembly name"));
 				item.add(assemblyName);
@@ -200,8 +199,7 @@ public class AlternativeProjectPage extends WebPage{
 									target.addComponent(label);
 								}
 								private String getLabel(int id, AjaxSelfUpdatingTimerBehavior behavior) {
-									TrackControl tc = new TrackControl((UserSession)getSession());
-									Track newTrack = tc.getTrackById(track.getId());
+									Track newTrack = TrackControl.getTrackById(track.getId());
 									if(null==newTrack || null==track.getName()){
 										return "in process";
 									}
@@ -249,8 +247,7 @@ public class AlternativeProjectPage extends WebPage{
 						final AjaxLink link = new AjaxLink("delete"){
 							@Override
 							public void onClick(AjaxRequestTarget target) {
-								TrackControl tc = new TrackControl((UserSession)getSession());
-								tc.removeTrackFromUser(track.getTrackInstance());
+								TrackControl.removeTrackFromUser(track.getTrackInstance(),((UserSession)getSession()).getUserId());
 								dtp.detach();
 								target.addComponent(trackContainer);
 							}
@@ -262,8 +259,7 @@ public class AlternativeProjectPage extends WebPage{
 
 					private String getStatus(TrackWrapper track, Image image,
 							AjaxRequestTarget ajaxRequestTarget, AjaxSelfUpdatingTimerBehavior behavior) {
-						TrackControl tc = new TrackControl((UserSession)getSession());
-						Track newTrack = tc.getTrackById(track.getId());
+						Track newTrack = TrackControl.getTrackById(track.getId());
 						String status="";
 						if(newTrack!=null){
 							status = newTrack.getStatus();

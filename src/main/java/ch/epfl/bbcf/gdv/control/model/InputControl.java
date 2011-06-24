@@ -15,7 +15,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 
 import ch.epfl.bbcf.bbcfutils.Utility;
 import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
@@ -36,9 +36,6 @@ public class InputControl extends Control{
 
 	public enum Extension {GFF,GFF3,GTF,WIG,BEDGRAPH,BED,BAM,SAM,DB,ZIP,GZ,GZIP};
 	public enum ZipExtension {};
-	public InputControl(UserSession session) {
-		super(session);
-	}
 
 
 
@@ -169,7 +166,7 @@ public class InputControl extends Control{
 
 
 	private static int createNewAdminInput(String dbName) {
-		InputDAO uidao = new InputDAO(Connect.getConnection());
+		InputDAO uidao = new InputDAO(Conn.get());
 		int inputId = -1;
 		if(uidao.exist(dbName)){
 			inputId = uidao.getUserInputByFileName(dbName).getId();
@@ -184,7 +181,7 @@ public class InputControl extends Control{
 	 * @param md5
 	 */
 	private static int createNewUserInput(String dbName,int userId) {
-		InputDAO uidao = new InputDAO(Connect.getConnection());
+		InputDAO uidao = new InputDAO(Conn.get());
 		int inputId = -1;
 		if(uidao.exist(dbName)){
 			inputId = uidao.getUserInputByFileName(dbName).getId();
@@ -201,7 +198,7 @@ public class InputControl extends Control{
 	 * @param input - the name of the input (generally the md5)
 	 */
 	public static void removeInput(String input) {
-		InputDAO idao = new InputDAO(Connect.getConnection());
+		InputDAO idao = new InputDAO(Conn.get());
 		idao.remove(input);
 	}
 

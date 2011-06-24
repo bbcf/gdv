@@ -1,5 +1,6 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
@@ -23,7 +24,7 @@ public class TrackDAO extends DAO<Track>{
 		"id","job_id","name","paramaters","status","type"
 	};
 
-	public TrackDAO(Connect connection) {
+	public TrackDAO(Connection connection) {
 		super(connection);
 	}
 

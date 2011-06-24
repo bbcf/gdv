@@ -73,13 +73,14 @@ public class ProjectPage extends BasePage{
 
 	public ProjectPage(PageParameters p) {
 		super(p);
+		UserSession sess = (UserSession)getSession();
 		Cookie cook = ((WebRequest)getRequestCycle().getRequest()).getCookie("PROJECT_ID");
 		if(null!=cook){
-			ProjectControl pc = new ProjectControl((UserSession)getSession());
 			try{
+				
 				int projectId = Integer.parseInt(cook.getValue());
-				if(!pc.hasProject(projectId)){
-					if(pc.importProject(projectId)){
+				if(!ProjectControl.hasProject(projectId,sess.getUserId())){
+					if(ProjectControl.importProject(projectId,sess.getUserId())){
 						cook.setMaxAge(0);
 						((WebResponse)getRequestCycle().getResponse()).addCookie(cook);
 					}
@@ -139,8 +140,7 @@ public class ProjectPage extends BasePage{
 				FormChecker checker = new FormChecker(create_form,(UserSession)getSession());
 				checker.checkCreateNewProject(species,version,project_name);
 				if(checker.isFormSubmitable()){
-					ProjectControl pc = new ProjectControl((UserSession)getSession());
-					if(pc.createNewProjectFromProjectPage(species,version,project_name)){
+					if(ProjectControl.createNewProjectFromProjectPage(species,version,project_name,((UserSession)getSession()).getUserId())){
 						setResponsePage(new ProjectPage(new PageParameters()));
 					}
 					else {
@@ -175,8 +175,7 @@ public class ProjectPage extends BasePage{
 
 					@Override
 					protected void onSubmit(AjaxRequestTarget target){
-						ProjectControl pc = new ProjectControl((UserSession)getSession());
-						pc.renameProject(projectWrapper.getId(),getEditor().getInput());
+						ProjectControl.renameProject(projectWrapper.getId(),getEditor().getInput());
 
 					}
 				};
@@ -192,8 +191,7 @@ public class ProjectPage extends BasePage{
 				species.add(new SimpleAttributeModifier("title","species"));
 				item.add(species);
 				//###assembly
-				SequenceControl secC = new SequenceControl((UserSession)getSession());
-				Sequence seq = secC.getSequenceFromId(projectWrapper.getSequenceId());
+				Sequence seq = SequenceControl.getSequenceFromId(projectWrapper.getSequenceId());
 				Label assemblyName = new Label("project_version",seq.getName());
 				assemblyName.add(new SimpleAttributeModifier("title","assembly name"));
 				item.add(assemblyName);
@@ -253,8 +251,7 @@ public class ProjectPage extends BasePage{
 				if(projectWrapper.isAdmin()){
 					del = new AjaxButton("delete_but"){
 						public void onSubmit(AjaxRequestTarget target, Form<?> form){
-							ProjectControl pc = new ProjectControl((UserSession)getSession());
-							pc.deleteProject(projectWrapper.getId());
+							ProjectControl.deleteProject(projectWrapper.getId());
 							dpp.detach();
 							target.addComponent(projectContainer);
 						}
@@ -323,10 +320,9 @@ public class ProjectPage extends BasePage{
 								new Model<String>(track.getName())){
 							@Override
 							protected void onSubmit(AjaxRequestTarget target){
-								TrackControl tc = new TrackControl((UserSession)getSession());
-								Track newTrack = tc.getTrackById(track.getId());
+								Track newTrack = TrackControl.getTrackById(track.getId());
 								if(null!=newTrack && null!=track.getName() && !track.getName().equalsIgnoreCase("in process")){
-									tc.renameTrack(track.getId(),getEditor().getInput());
+									TrackControl.renameTrack(track.getId(),getEditor().getInput());
 								}
 							}
 						};
@@ -339,13 +335,11 @@ public class ProjectPage extends BasePage{
 									target.addComponent(editableTrackName);
 								}
 								private String getLabel(int id, AjaxEditableLabel label, AbstractAjaxTimerBehavior behaviour) {
-									TrackControl tc = new TrackControl((UserSession)getSession());
-									Track newTrack = tc.getTrackById(track.getId());
-									if(null==newTrack || null==track.getName()){
+									if(null==track || null==track.getName()){
 										return "in process";
 									}
 									behaviour.stop();
-									return newTrack.getName();
+									return track.getName();
 								} 
 							};
 							editableTrackName.add(new SimpleAttributeModifier("title","track name"));
@@ -394,8 +388,7 @@ public class ProjectPage extends BasePage{
 							@Override
 							public void onClick(AjaxRequestTarget target) {
 								JobControl.removeJob(track.getTrackInstance().getJob_id());
-								TrackControl tc = new TrackControl((UserSession)getSession());
-								tc.removeTrackFromUser(track.getTrackInstance());
+								TrackControl.removeTrackFromUser(track.getTrackInstance(),((UserSession)getSession()).getUserId());
 								dtp.detach();
 								target.addComponent(trackContainer);
 
@@ -421,8 +414,7 @@ public class ProjectPage extends BasePage{
 					/* get the status of the track & update it */
 					private String getStatus(TrackWrapper track, Image image,
 							AjaxRequestTarget ajaxRequestTarget, AbstractAjaxTimerBehavior behaviour) {
-						TrackControl tc = new TrackControl((UserSession)getSession());
-						Track newTrack = tc.getTrackById(track.getId());
+						Track newTrack = TrackControl.getTrackById(track.getId());
 						if(newTrack!=null){
 							Job job = JobControl.getJob(newTrack.getJob_id());
 							if(null!=job){

@@ -1,17 +1,18 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 
 public class GroupDAO extends DAO<Group>{
 
-	public GroupDAO(Connect connection) {
+	public GroupDAO(Connection connection) {
 		super(connection);
 	}
 

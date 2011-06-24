@@ -150,13 +150,12 @@ public class BrowserPage extends WebPage{
 		}
 		
 		/* get tracks */
-		TrackControl tc = new TrackControl((UserSession)getSession());
-		Set<Track> tracks = tc.getCompletedTracksFromProjectId(project.getId());
-		Set<Track> adminTrack = tc.getAdminTracksFromSpeciesId(project.getSequenceId());
+		Set<Track> tracks = TrackControl.getCompletedTracksFromProjectId(project.getId());
+		Set<Track> adminTrack = TrackControl.getAdminTracksFromSpeciesId(project.getSequenceId());
 		tracks.addAll(adminTrack);
 
-		Set<Track> formattedTracks = getFormattedTracks(tc,tracks);
-		final String trackInfo = getTrackInfo(formattedTracks,tc,project.getSpecies().getName());
+		Set<Track> formattedTracks = getFormattedTracks(tracks);
+		final String trackInfo = getTrackInfo(formattedTracks,project.getSpecies().getName());
 		//Application.debug("get track Info :"+trackInfo);
 		//get names
 		String tracksNames = getTrackNames(formattedTracks);
@@ -262,7 +261,7 @@ public class BrowserPage extends WebPage{
 	 * @param tracks
 	 * @return
 	 */
-	private Set<Track> getFormattedTracks(TrackControl tc, Set<Track> tracks) {
+	private Set<Track> getFormattedTracks(Set<Track> tracks) {
 		Set<String> nameSet = new HashSet<String>();
 		Set<Track> formattedTracks = new HashSet<Track>();
 		for(Track t : tracks){
@@ -278,7 +277,7 @@ public class BrowserPage extends WebPage{
 					cpt++;
 				}
 				nameSet.add(altName);
-				tc.renameTrack(t.getId(), altName);
+				TrackControl.renameTrack(t.getId(), altName);
 				t.setName(altName);
 				formattedTracks.add(t);
 			}
@@ -309,7 +308,7 @@ public class BrowserPage extends WebPage{
 	 * @param tc
 	 * @return
 	 */
-	private String getTrackInfo(Set<Track> tracks, TrackControl tc,String species) {
+	private String getTrackInfo(Set<Track> tracks,String species) {
 		String result ="trackInfo = [{"+
 		"\"url\" : \"data/seq/{refseq}/\","+
 		"\"args\" : {"+

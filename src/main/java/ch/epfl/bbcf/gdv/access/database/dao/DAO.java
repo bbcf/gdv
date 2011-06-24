@@ -1,15 +1,15 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Logs;
-import ch.epfl.bbcf.gdv.config.UserSession;
 
 /**
  * Basic abstract class for the data access object
@@ -19,42 +19,59 @@ import ch.epfl.bbcf.gdv.config.UserSession;
  */
 public abstract class DAO<T> {
 
-	private Connect connection = null;
-	protected static final Logger logger = Logs.initSQLLogger();
+	private Connection connection = null;
+	protected static final Logger logger = Logs.initLogger("sql.log", DAO.class);
 	/**
 	 * Constructeur
 	 * @param conn
 	 */
-	public DAO(Connect connection){
+	public DAO(Connection connection){
 		this.connection = connection;
 	}
 
 	protected void executer(PreparedStatement statement) throws SQLException {
 		logger.debug(statement.toString());
-		this.connection.execute(statement);
+		statement.execute();
+		statement.close();
 	}
 	protected ResultSet executeQuery(PreparedStatement statement) throws SQLException{
 		logger.debug(statement.toString());
-		return this.connection.executeQuery(statement);
+		ResultSet r = statement.executeQuery();
+		return r;
+		
 	}
 
 	protected boolean databaseConnected(){
-		return Connect.isConnected();
+		return connection!=null;
 	}
 
 	protected void startQuery(){
-		this.connection.startTransaction();
+		try {
+			this.connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			Application.error(e);
+		}
 	}
 
 	protected void endQuery(boolean wellFinished){
-		this.connection.endTransaction(wellFinished);
+		try {
+			if(wellFinished){
+				this.connection.commit();
+			} else {
+				this.connection.rollback();
+			}
+		} catch (SQLException e) {
+			Application.error(e);
+		} finally {
+			Conn.returnToPool(connection);
+		}
 	}
 
 	protected void finalize(){
 		try {
-			//this.connection.finalize();
-		} catch (Throwable e) {
-			Application.error(e, connection.getSession().getUserId());
+			this.connection.close();
+		} catch (SQLException e) {
+			Application.error(e);
 		}
 	}
 
@@ -63,6 +80,7 @@ public abstract class DAO<T> {
 	}
 	protected void executeUpdate(PreparedStatement statement) throws SQLException {
 		logger.debug(statement.toString());
-		this.connection.executeUpdate(statement);
+		statement.executeUpdate();
+		statement.close();
 	}
 }

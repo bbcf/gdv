@@ -3,7 +3,6 @@ package ch.epfl.bbcf.gdv.control.model;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,27 +12,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.epfl.bbcf.bbcfutils.Utility;
 import ch.epfl.bbcf.bbcfutils.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
-import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteConstruct;
-import ch.epfl.bbcf.gdv.access.database.pojo.Group;
-import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
-import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class SelectionControl extends Control{
 
-	public SelectionControl(UserSession session) {
-		super(session);
-	}
-
+	
 	public static boolean createNewSelection(int jobId,String selections, int projectId,int nr_assembly_id,String selectionName) throws JSONException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, IOException {
 		JSONArray array = new JSONArray(selections);
 		if(array.length()>0){

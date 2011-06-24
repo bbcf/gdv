@@ -14,7 +14,7 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.WicketFilter;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 
 
@@ -27,12 +27,8 @@ public class MyFilter extends WicketFilter{
 			javax.servlet.http.HttpServletResponse servletResponse) 
 	throws ServletException,IOException{
 		//	Application.debug("doGet"+servletRequest.getRequestURI());
-		boolean doget =  super.doGet(servletRequest, servletResponse);
-		if (!servletResponse.isCommitted()){
-			HttpSession s = servletRequest.getSession(true);
-			Connect.removeConnection(s.getId());
-		}
-		return doget;
+		return  super.doGet(servletRequest, servletResponse);
+	
 	}
 
 	protected  WebApplication	getWebApplication() {

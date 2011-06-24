@@ -14,7 +14,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.json.JSONException;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
@@ -59,7 +59,7 @@ public class UserSession extends AuthenticatedWebSession{
 		Session.set(this);
 		if (user == 0){
 			if(type.equalsIgnoreCase("tequila") || type.equalsIgnoreCase("alternate")){
-				UsersDAO dao = new UsersDAO(Connect.getConnection(this));
+				UsersDAO dao = new UsersDAO(Conn.get());
 				if(dao.emailExist(email)){
 					Users person = dao.getUserByEmail(email);
 					user = person.getId();
@@ -76,7 +76,7 @@ public class UserSession extends AuthenticatedWebSession{
 
 
 	public Users getUser(){
-		UsersDAO dao = new UsersDAO(Connect.getConnection(this));
+		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.getUserById(user);
 
 	}
@@ -109,7 +109,6 @@ public class UserSession extends AuthenticatedWebSession{
 
 	public void finalize() {
 		Application.warn("FINALIZE "+this);
-		Connect.removeConnection(this);
 		Application.removeLogger(this.getUserId());
 	}
 
@@ -129,7 +128,7 @@ public class UserSession extends AuthenticatedWebSession{
 
 
 	public boolean isAdmin() {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(this));
+		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.isAdmin(user);
 	}
 

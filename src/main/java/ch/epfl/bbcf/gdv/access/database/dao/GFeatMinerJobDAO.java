@@ -1,15 +1,16 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.GFeatMinerJob;
 
 public class GFeatMinerJobDAO extends DAO<GFeatMinerJob>{
 
-	public GFeatMinerJobDAO(Connect connection) {
+	public GFeatMinerJobDAO(Connection connection) {
 		super(connection);
 	}
 

@@ -5,14 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.wicket.Session;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.UsersDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
-import ch.epfl.bbcf.gdv.config.UserSession;
 
 /**
  * Contains methods controlling user management
@@ -21,13 +19,10 @@ import ch.epfl.bbcf.gdv.config.UserSession;
  */
 public class UserControl extends Control{
 
-	public UserControl(UserSession session) {
-		super(session);
-	}
 
-	public int createNewUser(Users user) {
+	public static int createNewUser(Users user) {
 		Application.info("create new user :\n"+user.toString());
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+		UsersDAO dao = new UsersDAO(Conn.get());
 		int userId = dao.createUser(user);
 		if(userId!=-1){
 			File logfile = new File(Configuration.getGdvWorkingDir()+"/log/"+userId+".log");
@@ -42,40 +37,40 @@ public class UserControl extends Control{
 		}
 		return userId;
 	}
-	public int createNewUser(String email, String name, String firstname,
+	public static int createNewUser(String email, String name, String firstname,
 			String title, String phone, String office,String type) {
 		Users user = new Users(email,name,firstname,title,phone,office,type);
 		return createNewUser(user);
 	}
 
-	public boolean sameMailExist(String mail) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+	public static boolean sameMailExist(String mail) {
+		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.emailExist(mail);
 	}
 
 	public static Users getUserByProjectId(int projectId) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection());
+		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.getUserByProjectId(projectId);
 	}
 
-	public Users getuserByMail(String mail) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+	public static Users getuserByMail(String mail) {
+		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.getUserByEmail(mail);
 	}
 
 	public static boolean checkUserKey(String key, String mail) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection());
+		UsersDAO dao = new UsersDAO(Conn.get());
 		Users u = dao.getUserByEmail(mail);
 		return u.getKey().equalsIgnoreCase(key);
 	}
 
 	public static Users getuserByMailAndPass(String mail, String pass) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection());
+		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.getUserByEmailAndPass(mail,pass);
 	}
 
-	public List<Users> getUserFromTrackId(int trackId) {
-		UsersDAO dao = new UsersDAO(Connect.getConnection(session));
+	public static List<Users> getUserFromTrackId(int trackId) {
+		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.getUserFromTrackId(trackId);
 	}
 

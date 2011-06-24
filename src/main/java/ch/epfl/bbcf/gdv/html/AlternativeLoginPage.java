@@ -33,7 +33,6 @@ public class AlternativeLoginPage extends BasePage{
 				String mail=properties.getString("login_");
 				String pwd = properties.getString("pwd_$");
 				UserSession session = (UserSession)getSession();
-				UserControl uc = new UserControl(session);
 				if(session.authenticate(mail,"alternate")){
 					setResponsePage(new ProjectPage(new PageParameters()));
 				}
@@ -80,8 +79,7 @@ public class AlternativeLoginPage extends BasePage{
 				String p2=properties.getString("pwd3");
 				formchecker.checkPasswords(p1, p2);
 				if(formchecker.isFormSubmitable()){
-					UserControl uc = new UserControl((UserSession)getSession());
-					int uid= uc.createNewUser(mail, properties.getString("login2"), "", "", "", "", "alternate");
+					int uid= UserControl.createNewUser(mail, properties.getString("login2"), "", "", "", "", "alternate");
 					if(uid!=-1){
 						info("you can now login with : login : "+properties.getString("mail")+" and password : "+p1);
 					} else {

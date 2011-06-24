@@ -50,8 +50,7 @@ public class AddSequencePage extends BasePage{
 		form = new Form("form"){
 			public void onSubmit(){
 				if(-1!=speciesId && -1!=assemblyId){
-					SequenceControl sc = new SequenceControl((UserSession)getSession());
-					boolean created = sc.createGenome(assemblyId,speciesId,feedback);
+					boolean created = SequenceControl.createGenome(assemblyId,speciesId,feedback);
 					if(created){
 						feedback.info("genome created");
 					} else {
@@ -91,10 +90,9 @@ public class AddSequencePage extends BasePage{
 				else {
 					List<SelectOption> allAssemblies = Arrays.asList(GenrepWrapper.getNRAssembliesByOrganismIdSO(speciesId));
 					List<SelectOption> nonAddedAssemblies = new ArrayList<SelectOption>();
-					SequenceControl sc = new SequenceControl((UserSession)getSession());
 					Application.debug("seq control");
 					for (SelectOption so : allAssemblies){
-						if(!sc.isCreatedOnJBrowsoR(so.getKey(),so.getValue())){
+						if(!SequenceControl.isCreatedOnJBrowsoR(so.getKey(),so.getValue())){
 							nonAddedAssemblies.add(so);
 						}
 					}

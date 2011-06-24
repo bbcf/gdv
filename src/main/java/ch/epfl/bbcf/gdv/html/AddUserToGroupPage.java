@@ -29,8 +29,7 @@ public class AddUserToGroupPage extends WebPage{
 				FormChecker checker = new FormChecker(form, (UserSession)getSession());
 				checker.checkMail(userMail);
 				if(checker.isFormSubmitable()){
-					GroupControl gc = new GroupControl((UserSession)getSession());
-					gc.addUserToGroup(modal.getGroupId(),userMail);
+					GroupControl.addUserToGroup(modal.getGroupId(),userMail);
 					modal.close(target);
 				}
 

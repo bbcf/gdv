@@ -1,5 +1,6 @@
 package ch.epfl.bbcf.gdv.access.database.dao;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,13 +8,13 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Input;
 
 public class InputDAO extends DAO<Input>{
 
 
-	public InputDAO(Connect connection) {
+	public InputDAO(Connection connection) {
 		super(connection);
 	}
 

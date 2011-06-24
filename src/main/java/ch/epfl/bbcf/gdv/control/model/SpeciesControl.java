@@ -2,18 +2,15 @@ package ch.epfl.bbcf.gdv.control.model;
 
 import org.apache.wicket.Session;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
 import ch.epfl.bbcf.gdv.config.UserSession;
 
 public class SpeciesControl extends Control{
 
-	public SpeciesControl(UserSession session) {
-		super(session);
-	}
 
 	public static String getSpeciesNameBySpeciesId(int speciesId) {
-		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection());
+		SpeciesDAO spDAO = new SpeciesDAO(Conn.get());
 		return spDAO.getSpeciesNameById(speciesId);
 	}
 
@@ -27,7 +24,7 @@ public class SpeciesControl extends Control{
 	 * @return
 	 */
 	public static int getNrAssemblyBySpeciesIdForBuildingChrList(int speciesId) {
-		SpeciesDAO spDAO = new SpeciesDAO(Connect.getConnection());
+		SpeciesDAO spDAO = new SpeciesDAO(Conn.get());
 		return spDAO.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
 	}
 

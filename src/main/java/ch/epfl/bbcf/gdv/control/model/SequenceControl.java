@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,23 +14,18 @@ import org.json.JSONObject;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.NR_Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Organism;
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.SequenceDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.SpeciesDAO;
-import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Species;
 import ch.epfl.bbcf.gdv.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.gdv.access.jbrowsor.JbrowsoRAccess;
 import ch.epfl.bbcf.gdv.config.Application;
-import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 
 public class SequenceControl extends Control{
 
-	public SequenceControl(UserSession session) {
-		super(session);
-	}
 
 	/**
 	 * look if the sequence with the assemblyId is created on JBrowsoR
@@ -39,8 +33,8 @@ public class SequenceControl extends Control{
 	 * @param value
 	 * @return
 	 */
-	public boolean isCreatedOnJBrowsoR(int assemblyId, String value) {
-		SequenceDAO gDAO = new SequenceDAO(Connect.getConnection(session));
+	public static boolean isCreatedOnJBrowsoR(int assemblyId, String value) {
+		SequenceDAO gDAO = new SequenceDAO(Conn.get());
 		int jbid = gDAO.getJBGenomeIdFromGenrepId(assemblyId);
 		if(jbid!=-1){
 			return JbrowsoRAccess.checkGenomeCreation(jbid);
@@ -48,7 +42,7 @@ public class SequenceControl extends Control{
 		return false;
 	}
 	public static Sequence getSequence(int id){
-		SequenceDAO dao = new SequenceDAO(Connect.getConnection());
+		SequenceDAO dao = new SequenceDAO(Conn.get());
 		return dao.getSequenceFromId(id);
 	}
 
@@ -58,7 +52,7 @@ public class SequenceControl extends Control{
 	 * @return
 	 */
 	public static int getJbrowsorIdFromSequenceId(String sequenceId) {
-		SequenceDAO sdao = new SequenceDAO(Connect.getConnection());
+		SequenceDAO sdao = new SequenceDAO(Conn.get());
 		return sdao.getJBGenomeIdFromGenrepId(Integer.parseInt(sequenceId));
 	}
 
@@ -67,8 +61,8 @@ public class SequenceControl extends Control{
 	 * @param sequenceId
 	 * @return
 	 */
-	public Sequence getSequenceFromId(int sequenceId) {
-		SequenceDAO gDAO = new SequenceDAO(Connect.getConnection(session));
+	public static Sequence getSequenceFromId(int sequenceId) {
+		SequenceDAO gDAO = new SequenceDAO(Conn.get());
 		return gDAO.getSequenceFromId(sequenceId);
 	}
 
@@ -82,12 +76,11 @@ public class SequenceControl extends Control{
 	 * @param feedback
 	 * @return
 	 */
-	public boolean createGenome(int nr_assemblyId, int speciesId, FeedbackPanel feedback) {
+	public static boolean createGenome(int nr_assemblyId, int speciesId, FeedbackPanel feedback) {
 		Application.debug("create genome with assembly id = "+nr_assemblyId);
 		NR_Assembly nr_assembly = GenrepWrapper.getNRAssemblyById(nr_assemblyId);
 		//JSONObject assembly = AssembliesAccess.getNRAssemblyById(nr_assemblyId);
 		if(null==nr_assembly){
-			Application.error("error in retriving nr_assembly from JBrowsoR", session.getUserId());
 			feedback.error("An error occurs : something went wrong with JBrowsoR (nr_assembly)");
 			return false;
 		}
@@ -100,7 +93,6 @@ public class SequenceControl extends Control{
 		Organism organism = GenrepWrapper.getOrganismsById(speciesId);
 		//JSONObject species = SpeciesAccess.getOrganismById(speciesId);
 		if(null==organism){
-			Application.error("error in retriving species from JBrowsoR", session.getUserId());
 			feedback.error("An error occurs : something went wrong with JBrowsoR (species)");
 			return false;
 		}
@@ -119,7 +111,6 @@ public class SequenceControl extends Control{
 		}
 		String url = GenrepWrapper.getURLFastaFileByNRAssemblyId(nr_assemblyId);
 		if(null==url){
-			Application.error("error in retriving fasta file from Generep", session.getUserId());
 			feedback.error("An error occurs : something went wrong with JBrowsoR (url)");
 			return false;
 		}
@@ -141,7 +132,7 @@ public class SequenceControl extends Control{
 			return false;
 		}
 		//get the species in GDV or create it
-		SpeciesDAO spdao = new SpeciesDAO(Connect.getConnection(session));
+		SpeciesDAO spdao = new SpeciesDAO(Conn.get());
 		int spId = -1;
 		if(spdao.exist(speciesName)){
 			spId = spdao.getSpeciesIdByName(speciesName);
@@ -149,7 +140,7 @@ public class SequenceControl extends Control{
 			spId = spdao.createSpecies(speciesName);
 		}
 		//create the sequence on GDV
-		SequenceDAO sdao = new SequenceDAO(Connect.getConnection(session));
+		SequenceDAO sdao = new SequenceDAO(Conn.get());
 		int seqId = sdao.createSequence(nr_assembly.getId(),jbId,"generep",version,spId);
 		//create an admin track
 		if(seqId==-1){
@@ -184,7 +175,7 @@ public class SequenceControl extends Control{
  * @param chromosomeObject
  * @return
  */
-private JSONObject buildChrEquivalence(Chromosome chromosome) {
+private static JSONObject buildChrEquivalence(Chromosome chromosome) {
 	JSONObject chr = new JSONObject(); 
 	try {
 		//JSONObject chromosome = chromosomeObject.getJSONObject(ChromosomeAccess.CHROMOSOM_KEY);
@@ -194,7 +185,7 @@ private JSONObject buildChrEquivalence(Chromosome chromosome) {
 		//			version = chromosome.get(ChromosomeAccess.CHR_VERSION);
 		chr.put(chromosome.getId()+"_"+chromosome.getRefseq_locus()+"."+chromosome.getRefseq_version(), chromosome.getName());
 	} catch (JSONException e) {
-		Application.error(e, session.getUserId());
+		Application.error(e);
 	}
 	return chr;
 }
@@ -225,7 +216,7 @@ private JSONObject buildChrEquivalence(Chromosome chromosome) {
  * get a list of SelectOption representing all species in gdv
  */
 public static List<SelectOption> getSpeciesSO(){
-	SpeciesDAO spdao = new SpeciesDAO(Connect.getConnection());
+	SpeciesDAO spdao = new SpeciesDAO(Conn.get());
 	List<Species> species = spdao.getAllSpecies();
 	List<SelectOption> tab = new ArrayList<SelectOption>();
 	for(Species sp : species){
@@ -241,7 +232,7 @@ public static List<SelectOption> getSpeciesSO(){
  * @return
  */
 public static List<SelectOption> getSequencesFromSpeciesIdSO(int speciesId) {
-	SequenceDAO sdao = new SequenceDAO(Connect.getConnection());
+	SequenceDAO sdao = new SequenceDAO(Conn.get());
 	List<Sequence> seqs = sdao.getSequencesFromSpeciesId(speciesId);
 	List<SelectOption> tab = new ArrayList<SelectOption>();
 	for(Sequence seq : seqs){
@@ -254,10 +245,10 @@ public static List<SelectOption> getSequencesFromSpeciesIdSO(int speciesId) {
  * get the assemblies list not created on GDV and JBrowsoR
  * @return
  */
-public List<SelectOption> getNRAssembliesNotCreated(int speciesId) {
+public static List<SelectOption> getNRAssembliesNotCreated(int speciesId) {
 	List<SelectOption> allAssemblies = Arrays.asList(GenrepWrapper.getNRAssembliesByOrganismIdSO(speciesId));
 	List<SelectOption> nonAddedAssemblies = new ArrayList<SelectOption>();
-	SequenceControl sc = new SequenceControl(session);
+	SequenceControl sc = new SequenceControl();
 	for (SelectOption so : allAssemblies){
 		if(!sc.isCreatedOnJBrowsoR(so.getKey(),so.getValue())){
 			nonAddedAssemblies.add(so);

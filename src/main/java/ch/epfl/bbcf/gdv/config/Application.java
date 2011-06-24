@@ -17,7 +17,7 @@ import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebSession;
 
-import ch.epfl.bbcf.gdv.access.database.Connect;
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.config.utility.FileResource;
 import ch.epfl.bbcf.gdv.html.HomePage;
 import ch.epfl.bbcf.gdv.html.LoginPage;
@@ -78,7 +78,8 @@ public class Application extends AuthenticatedWebApplication
 	}
 
 	public static void destruct(){
-		Connect.removeAllConnection();
+		info("closing connection to BDD");
+		Conn.destroy();
 		info("destroying thread manager...");
 		ManagerService.destruct();
 	}

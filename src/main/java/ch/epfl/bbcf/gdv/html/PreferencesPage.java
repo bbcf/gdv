@@ -100,11 +100,10 @@ public class PreferencesPage extends BasePage{
 			public void onSubmit(){
 				String gn = properties.getString("group_name");
 				if(gn!=null){
-					GroupControl gc = new GroupControl((UserSession)getSession());
-					int groupId = gc.createNewGroup(gn);
+					int groupId = GroupControl.createNewGroup(gn,((UserSession)getSession()).getUserId());
 					Application.debug("project id :"+projectId);
 					if(projectId!=-1 && groupId!=-1){
-						gc.shareProject(projectId,groupId);
+						GroupControl.shareProject(projectId,groupId);
 					}
 					setResponsePage(PreferencesPage.class);
 				}
@@ -138,8 +137,7 @@ public class PreferencesPage extends BasePage{
 				item.add(groupStatus);
 				AjaxButton abdg = new AjaxButton("delete_group"){
 					public void onSubmit(AjaxRequestTarget target, Form<?> form){
-						GroupControl gc = new GroupControl((UserSession)getSession());
-						gc.removeGroup(gw.getId());
+						GroupControl.removeGroup(gw.getId());
 						dgp.detach();
 					}
 				};
@@ -171,8 +169,7 @@ public class PreferencesPage extends BasePage{
 						final AjaxLink rmUser = new AjaxLink("delete_user"){
 							@Override
 							public void onClick(AjaxRequestTarget target) {
-								GroupControl gc = new GroupControl((UserSession)getSession());
-								gc.removeUserFromGroup(gw.getId(),mail);
+								GroupControl.removeUserFromGroup(gw.getId(),mail);
 								dugp.removeUserMail(mail);
 								dugp.detach();
 							}
