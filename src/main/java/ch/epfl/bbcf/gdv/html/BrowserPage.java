@@ -123,7 +123,7 @@ public class BrowserPage extends WebPage{
 		List<Job> jobs = JobControl.getGFeatMinerJobsAndNotTerminatedFromProjectId(projectId);
 		String jobOutput ="[";
 		for (Job job : jobs){
-			jobOutput+=JobControl.outputJob(job)+",";
+			jobOutput+=JobControl.outputJobForWebInterface(job)+",";
 		}
 		int jl = jobOutput.length();
 		if(jl>1){

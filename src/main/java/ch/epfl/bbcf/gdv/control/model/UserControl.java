@@ -53,6 +53,11 @@ public class UserControl extends Control{
 		return dao.getUserByProjectId(projectId);
 	}
 
+	public static Users getUserById(int userId) {
+		UsersDAO dao = new UsersDAO(Conn.get());
+		return dao.getUserById(userId);
+	}
+	
 	public static Users getuserByMail(String mail) {
 		UsersDAO dao = new UsersDAO(Conn.get());
 		return dao.getUserByEmail(mail);
@@ -83,4 +88,5 @@ public class UserControl extends Control{
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
 }

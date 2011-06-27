@@ -130,7 +130,7 @@ public final class Configuration{
 		application.mount(new HybridUrlCodingStrategy("/import_file", ImportFilePage.class));
 		application.mount(new MixedParamUrlCodingStrategy("/preferences", PreferencesPage.class,new String[]{"project_id"}));
 		application.mount(new MixedParamUrlCodingStrategy("/image", ImageDisplayer.class,new String[]{"id"}));
-		application.mount(new MixedParamUrlCodingStrategy("/configure_track", ConfigureTrackPage.class,new String[]{"id"}));
+		application.mount(new QueryStringUrlCodingStrategy("/configure_track", ConfigureTrackPage.class));
 		application.mount(new HybridUrlCodingStrategy("/tracks_status", TrackStatus.class));
 		application.mount(new QueryStringUrlCodingStrategy("/browser", BrowserPage.class));
 		//application.mount(new QueryStringUrlCodingStrategy("/browser2", BrowserPage2.class));

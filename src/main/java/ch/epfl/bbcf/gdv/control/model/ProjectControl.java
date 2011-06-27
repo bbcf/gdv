@@ -100,6 +100,7 @@ public class ProjectControl extends Control implements Serializable{
 	 * @throws JSONException 
 	 */
 	public static JSONObject createNewProject(Users user,int seq_id,String projectName,int userId,boolean isPublic) throws JSONException{
+		Application.info("SEQ ID : "+seq_id);
 		JSONObject json = new JSONObject();
 		ProjectDAO pdao = new ProjectDAO(Conn.get());
 		int projectId = pdao.createNewProject(seq_id,projectName,isPublic);
@@ -138,12 +139,29 @@ public class ProjectControl extends Control implements Serializable{
 
 	/**
 	 * check if an user is auth to 
-	 * see this project
+	 * see or modify this project
 	 * @return
 	 */
 	public static boolean userAuthorized(Project p,Users user) {
+		return userAuthorized(p.getId(), user);
+	}
+	/**
+	 * check if an user is auth to 
+	 * see or modify this project
+	 * @return
+	 */
+	public static boolean userAuthorized(int projectId,int userId) {
+		Users u = UserControl.getUserById(userId);
+		return userAuthorized(projectId, u);
+	}
+	/**
+	 * check if an user is auth to 
+	 * see or modify this project
+	 * @return
+	 */
+	public static boolean userAuthorized(int projectId,Users user) {
 		ProjectDAO dao = new ProjectDAO(Conn.get());
-		return dao.userAuthorized(user,p.getId());
+		return dao.userAuthorized(user,projectId);
 	}
 
 	/**
@@ -285,6 +303,8 @@ public class ProjectControl extends Control implements Serializable{
 		ProjectDAO pdao = new ProjectDAO(Conn.get());
 		return pdao.userHasProject(userId,projectId);
 	}
+
+
 
 
 }

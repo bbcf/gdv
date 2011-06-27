@@ -256,5 +256,13 @@ public static List<SelectOption> getNRAssembliesNotCreated(int speciesId) {
 	}
 	return nonAddedAssemblies;
 }
+/**
+ * get all sequences use in GDV
+ * @return
+ */
+public static List<Sequence> getAllSequences() {
+	SequenceDAO dao = new SequenceDAO(Conn.get());
+	return dao.getAllSequences();
+}
 
 }

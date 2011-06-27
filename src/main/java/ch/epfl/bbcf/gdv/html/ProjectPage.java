@@ -404,7 +404,7 @@ public class ProjectPage extends BasePage{
 							public void onClick(AjaxRequestTarget target) {
 								PageParameters p = new PageParameters();
 								p.put("id",track.getId());
-								setResponsePage(new ConfigureTrackPage(p));
+								getRequestCycle().setResponsePage(ConfigureTrackPage.class,p);
 							}
 						};
 						conflink.add(new SimpleAttributeModifier("title","configure track"));

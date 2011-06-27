@@ -239,7 +239,7 @@ public class JobControl extends Control{
 	 * @return a String in JSON format that will be parser
 	 * by the javascript
 	 */
-	public static String outputJob(Job job){
+	public static String outputJobForWebInterface(Job job){
 		String output = null;
 		int status = job.getStatus();
 		if(status==Status.RUNNING){
@@ -248,6 +248,19 @@ public class JobControl extends Control{
 			output = "{job_id:"+job.getId()+",status:\"error\",data:\""+formatData(job.getData())+"\"}";
 		} else if(status==Status.SUCCES){
 			output = "{job_id:"+job.getId()+",status:\"success\",output:\""+job.getOutput()+"\",data:\""+formatData(job.getData())+"\",type:\""+job.getType()+"\"}";
+		}
+		return output;
+	}
+	
+	public static String outputJobForTerminal(Job job){
+		String output = null;
+		int status = job.getStatus();
+		if(status==Status.RUNNING){
+			output = "{job_id:"+job.getId()+",status:\"running\"}";
+		} else if(status==Status.ERROR){
+			output = "{job_id:"+job.getId()+",status:\"error\"}";
+		} else if(status==Status.SUCCES){
+			output = "{job_id:"+job.getId()+",status:\"success\"}";
 		}
 		return output;
 	}

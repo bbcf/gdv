@@ -77,4 +77,9 @@ public abstract class Command {
 		out.write(e.getMessage());
 		out.close();
 	}
+
+	protected void error(String mess) {
+		out.write("{error:"+mess+"}");
+		out.close();
+	}
 }

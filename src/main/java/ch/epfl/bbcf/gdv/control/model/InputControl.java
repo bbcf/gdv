@@ -238,9 +238,6 @@ public class InputControl extends Control{
 
 
 		public void run(){
-			Application.debug("###################");
-			Application.debug(this.toString());
-			Application.debug("###################");
 
 			Track track = TrackControl.getTrackIdWithJobId(jobId);
 

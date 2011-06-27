@@ -9,15 +9,15 @@
       <ul>
 	<div class="sh1" wicket:id="editable_name"/>
 	<p>(click to rename - also possible in the project view)</p>
-	<input class="sh1" wicket:id="color_input1"/>
+	<input id="color_input" class="sh1" wicket:id="color_input1"/>
       </ul>
       
       
       <input  type="submit" wicket:id="sub" value="Submit"/>
     </form>
     
-    
+  <div dojoType="dojox.widget.ColorPicker" id="color_picker"/>    
   </wicket:extend>
-  <div id="dojoColorPicker"></div>
+  
 </body>
 </html>

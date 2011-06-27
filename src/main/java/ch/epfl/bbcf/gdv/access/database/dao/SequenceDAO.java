@@ -167,4 +167,23 @@ public class SequenceDAO extends DAO<Sequence>{
 		return null;
 	}
 
+	public List<Sequence> getAllSequences() {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select * from sequences;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				ResultSet r = this.executeQuery(statement);
+				List<Sequence> seqs = getSequences(r);
+				this.endQuery(true);
+				return seqs;
+			} catch (SQLException e) {
+				logger.error(e);
+				this.endQuery(false);
+			}
+		}
+		return null;
+	}
+
 }

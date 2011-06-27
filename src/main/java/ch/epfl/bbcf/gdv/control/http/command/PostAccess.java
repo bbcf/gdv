@@ -4,19 +4,24 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Group;
+import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Sequence;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
+import ch.epfl.bbcf.gdv.control.model.SequenceControl;
+import ch.epfl.bbcf.gdv.control.model.SpeciesControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
 
 public class PostAccess extends Command{
@@ -25,48 +30,49 @@ public class PostAccess extends Command{
 		super(params, out);
 	}
 
-
-	private static final String NEW_PROJECT = "new_project"; 
-	private static final String ADD_TRACK = "add_track";
-	private static final String ADD_SQLITE_FILE = "add_sqlite"; 
-	private static final String REQUEST_LOGIN = "request_login"; 
-
-
+	public enum COMMAND {new_project,new_track,status,assemblies}
 
 	@Override
 	public void doRequest() {
-		Application.debug("do request ");
-		//SIGN IN
-		checkParams(params.getMail(),params.getKey(),params.getCommand());
+		/* sign in the use wo whant to modify or add project(s) */
+		checkParams(params.getMail(),params.getKey());
+		if(null==params.getCommand()){
+			throw new AbortWithHttpStatusException(400,true);
+		}
 		Users user = UserControl.getuserByMailAndPass(params.getMail(),params.getKey());
 		if(null==user){
 			failed("problem with your key and password - check if they are valid");
 		}
-		if(params.getCommand().equalsIgnoreCase(NEW_PROJECT)){
+		
+		
+		/* dispatch */
+		
+		switch(params.getCommand()){
+		case new_project:
 			createNewProject(user);
-		}else if(params.getCommand().equalsIgnoreCase(ADD_TRACK)||params.getCommand().equalsIgnoreCase(ADD_SQLITE_FILE)){
+		break;
+		case new_track:
 			addTrack(user);
-		}else if(params.getCommand().equalsIgnoreCase(REQUEST_LOGIN)){
-			requestLogin();
-		} else {
-			throw new AbortWithHttpStatusException(400,true);
+			break;
+		case status :
+			checkParams(params.getJobId());
+			Job job = JobControl.getJob(params.getJobId());
+			out.write(JobControl.outputJobForTerminal(job));
+			out.close();
+			break;
+		case assemblies:
+			List<Sequence> seqs = SequenceControl.getAllSequences();
+			out.write("[");
+			for(Sequence seq : seqs){
+				out.write("{id:"+seq.getId()+",name:\""+seq.getName()+"\"}");
+			}
+			out.write("]");
+			break;
+		default:throw new AbortWithHttpStatusException(400,true);
 		}
 
 	}
 
-	/**
-	 * request a login on GDV
-	 */
-	private void requestLogin() {
-		checkParams(params.getObfuscated(),params.getUrl());
-		if(UserControl.checkUserKey(params.getObfuscated(),params.getUrl())){
-			success(true);
-		} else {
-			failed("bad key (you will find it by login on GDV on the web interface\n" +
-			" under preferences)");
-		}
-
-	}
 
 
 
@@ -82,17 +88,23 @@ public class PostAccess extends Command{
 		checkParams(params.getUrl());
 		checkParams(params.getProjectId());
 		int projectId = params.getProjectId();
-		Project p = ProjectControl.getProject(projectId);
 		String name = params.getName();
-		URL url = null;
-		try {
-			url = new URL(params.getUrl());
-		} catch (MalformedURLException e) {
-			error(e);
+
+		boolean ok = ProjectControl.userAuthorized(projectId,user);
+		if(!ok){
+			error("not authorized to modify this project");
+		} else {
+			URL url = null;
+			try {
+				url = new URL(params.getUrl());
+			} catch (MalformedURLException e) {
+				error(e);
+			}
+			int jobId = JobControl.newUserTrack(user.getId(), projectId, url, null,null,name);
+			success("{job_id:"+jobId+"}");
 		}
-		int jobId = JobControl.newUserTrack(user.getId(), p, url, null,null);
-		success("{job_id:"+jobId+"}");
 	}
+
 
 
 	/**
@@ -109,12 +121,17 @@ public class PostAccess extends Command{
 		if(seqId==-1){
 			throw new AbortWithHttpStatusException(400,true);
 		}
-
+		/* check if this seq id exist in GDV */
+		Sequence seq = SequenceControl.getSequence(seqId);
+		if(null==seq){
+			error("sequence : "+seqId+" is not created on GDV. You can ask at webmaster.bbcf@epfl.ch to add it");
+			throw new AbortWithHttpStatusException(400,true);
+		}
+		
 		boolean pub = false;
 		if(params.isPublic()!=null && (params.isPublic().equalsIgnoreCase("true") || params.isPublic().equalsIgnoreCase("1"))){
 			pub=true;
 		}
-		log.debug("pub : "+pub);
 
 		JSONObject json = null;
 		try {

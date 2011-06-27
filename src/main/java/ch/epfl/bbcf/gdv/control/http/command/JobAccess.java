@@ -2,6 +2,8 @@ package ch.epfl.bbcf.gdv.control.http.command;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Iterator;
 
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
@@ -16,6 +18,7 @@ import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
+import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 
 public class JobAccess extends Command{
@@ -43,7 +46,7 @@ public class JobAccess extends Command{
 				JSONObject data = checkData(params.getData());
 				int jobId = JobControl.newGfeatMinerJob(params.getProjectId(), JOB_OUTPUT.image);
 				Job job = JobControl.getJob(jobId);
-				out.write(JobControl.outputJob(job));
+				out.write(JobControl.outputJobForWebInterface(job));
 				out.close();
 				JobControl.sendToGFeatMiner(jobId,data);
 			} catch (JSONException e1) {
@@ -79,29 +82,6 @@ public class JobAccess extends Command{
 				out.close();
 			}
 
-			/**
-			 * id : job - action : gfeatresponse - 
-			 * data : {"files": [{"path": "/data/gdv_dev/gFeatMiner/251/gminer_base_coverage.png", "type": "png"}]} - 
-			 * job_id : 251
-			 * 
-			 *  
-			 *  
-			 *  
-			 *  
-			 *   id : job - action : gfeatresponse - 
-			 *   data : {"msg": "The index creation on the database '/data/gdv_dev/files/619c70b13b52b8ad0740d
-			 *   6dfa1823594d8fcc1a4.db' failed with error: database is locked", 
-			 *   "html": "<body bgcolor=\"#f0f0f8\">\n<table wid
-			 *   issing_indexes\n    raise Exception(\"The index creation on the database '\" 
-			 *   + self.path + \"' failed with
-			 *    error: \" + str(err))\nException
-			 *    : The index creation on the database '/data/gdv_dev
-			 *    /files/619c70b13b52b8ad0740d6dfa1823594d8fcc1a4.db' 
-			 *    failed with error: database is locked\n\n-->\n", 
-			 *    "type": "error"} - job_id : 244 
-			 *  
-			 */
-
 			break;
 		case new_selection:
 			checkParams(params.getSelections());
@@ -111,8 +91,8 @@ public class JobAccess extends Command{
 				jobId = JobControl.newSelection(params.getSelections(), params.getProjectId(), params.getNrAssemblyId(),params.getData());
 				Job job = JobControl.getJob(jobId);
 				if(null!=job){
-					Application.debug(JobControl.outputJob(job));
-					out.write(JobControl.outputJob(job));
+					Application.debug(JobControl.outputJobForWebInterface(job));
+					out.write(JobControl.outputJobForWebInterface(job));
 				} else {
 					throw new AbortWithHttpStatusException(500,true);
 				}
@@ -125,12 +105,10 @@ public class JobAccess extends Command{
 			break;
 
 
-
-
 		case status :
 			checkParams(params.getJobId());
 			Job job = JobControl.getJob(params.getJobId());
-			out.write(JobControl.outputJob(job));
+			out.write(JobControl.outputJobForWebInterface(job));
 			out.close();
 			break;
 		default:throw new AbortWithHttpStatusException(400,true);

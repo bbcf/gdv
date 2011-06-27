@@ -17,6 +17,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -32,9 +34,25 @@ import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 public class ConfigureTrackPage extends BasePage{
 
 	protected final ValueMap properties = new ValueMap();
-	
+
 	public ConfigureTrackPage(PageParameters p) {
 		super(p);
+
+		add(JavascriptPackageResource.getHeaderContribution(Configuration.getJavascriptUrl()+"/js/gdv.js"));
+		add(JavascriptPackageResource.getHeaderContribution(Configuration.getJavascriptUrl()+"/jslib/dojo/dojo.js"));
+		add(JavascriptPackageResource.getHeaderContribution(Configuration.getJavascriptUrl()+"/jslib/dojo/jbrowse_dojo.js"));
+		add(CSSPackageResource.getHeaderContribution(Configuration.getJavascriptUrl()+"/jslib/dojox/widget/ColorPicker/ColorPicker.css"));
+
+		final String jsControl = "initGDV_configure();";
+
+		add(new AbstractBehavior() {
+			@Override
+			public void renderHead(IHeaderResponse response) {
+				super.renderHead(response);
+				response.renderJavascript(jsControl,"js_control");
+			}
+		}); 
+
 
 		/* get the track id from parameters */
 		Integer trackId = p.getInt("id");
@@ -52,8 +70,17 @@ public class ConfigureTrackPage extends BasePage{
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
 
+		/* get the track */
 		final Track track = TrackControl.getTrackById(trackId);
 
+		/* get the color */
+		String params = track.getParameters();
+		String color ="red";
+		try {
+			JSONObject j = new JSONObject(params);
+			color = j.getString("color");
+		} catch (JSONException e) {
+		}
 		/* build the page */
 		Form form = new Form("form");
 
@@ -77,10 +104,16 @@ public class ConfigureTrackPage extends BasePage{
 		//color input (link with a dojo color picker on the HTML page)
 		TextField<String> colorInput1 = new TextField<String>("color_input1",new PropertyModel<String>(properties,"color_input"));
 		colorInput1.setOutputMarkupPlaceholderTag(true);
+		colorInput1.setMarkupId("color_input");
+		colorInput1.setVisible(false);
+
+
+
+		colorInput1.setModelObject(color);
 		form.add(colorInput1);
 
 
-		
+
 
 		//qualitative extended
 		//TODO select display for each types
@@ -97,7 +130,7 @@ public class ConfigureTrackPage extends BasePage{
 
 		Button sub = new Button("sub"){
 			public void onSubmit(){
-				
+
 				switch(track.getType()){
 				case QUALITATIVE: 
 					Application.debug("configure track qualitative");

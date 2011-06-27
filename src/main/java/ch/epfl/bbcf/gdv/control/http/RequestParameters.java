@@ -4,6 +4,8 @@ import java.util.Map;
 
 import ch.epfl.bbcf.gdv.control.http.command.Command;
 import ch.epfl.bbcf.gdv.control.http.command.Command.ID;
+import ch.epfl.bbcf.gdv.control.http.command.PostAccess;
+import ch.epfl.bbcf.gdv.control.http.command.PostAccess.COMMAND;
 
 public class RequestParameters {
 	
@@ -19,7 +21,7 @@ public class RequestParameters {
 	private String message; 
 	private String db;
 	private String usermail;//mail to send a reply when at the end of processing files
-	private String command;//command launched by user (new project,add track,...)
+	private COMMAND command;//command launched by user (new project,add track,...)
 	private String name;
 	private String seqId;
 	private String url;
@@ -74,7 +76,7 @@ public class RequestParameters {
 				this.usermail = map.get("usermail")[0];
 			} catch (NullPointerException e){};
 			try{
-				this.command = map.get("command")[0];
+				this.command = PostAccess.COMMAND.valueOf(map.get("command")[0]);
 			} catch (NullPointerException e){};
 			try{
 				this.name = map.get("name")[0];
@@ -199,7 +201,7 @@ public class RequestParameters {
 	/**
 	 * @param htc3cseq_number the command to set
 	 */
-	public void setCommand(String command) {
+	public void setCommand(COMMAND command) {
 		this.command = command;
 	}
 
@@ -207,7 +209,7 @@ public class RequestParameters {
 	/**
 	 * @return the command
 	 */
-	public String getCommand() {
+	public COMMAND getCommand() {
 		return command;
 	}
 

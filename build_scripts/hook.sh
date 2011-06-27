@@ -20,9 +20,17 @@ cp -r $HOME_PROJECT/$TMP_DIR/gdv/compute_sqlite_scores $HOME_PROJECT/.
 cp -r $HOME_PROJECT/$TMP_DIR/gdv/transform_to_sqlite $HOME_PROJECT/.
 
 
+echo "## importing gfeatminer server ... "
+cp -r $HOME_PROJECT/$TMP_DIR/gdv/post_to_gminer $HOME_PROJECT/.
+
+
 echo "## importing new scripts ... " 
-#cp -r $HOME_PROJECT/$TMP_DIR/gdv/scripts/startDaemons.sh $HOME_PROJECT/scripts/.
-#cp -r $HOME_PROJECT/$TMP_DIR/gdv/scripts/stopDaemons.sh $HOME_PROJECT/scripts/.
+cp $HOME_PROJECT/$TMP_DIR/gdv/scripts/startDaemons.sh $HOME_PROJECT/scripts/.
+cp $HOME_PROJECT/$TMP_DIR/gdv/scripts/stopDaemons.sh $HOME_PROJECT/scripts/.
+
+
+
+
 
 echo "## getting old configuration ... (gdv.yaml)"
 #copy old yaml configuration script
