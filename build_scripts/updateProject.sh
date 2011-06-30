@@ -37,7 +37,7 @@ echo "## import new project ..."
 mkdir $HOME_PROJECT/$TMP_DIR
 cd $HOME_PROJECT/$TMP_DIR
 wget 'http://salt.epfl.ch/java/gdv-archive/'$CURRENT'/gdv.tgz'
-tar -xzf gdv.tgz 
+tar -xzf gdv.tgz
 
 
 #copy hook.sh

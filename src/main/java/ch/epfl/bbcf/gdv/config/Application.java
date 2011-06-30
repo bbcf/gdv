@@ -54,6 +54,9 @@ public class Application extends AuthenticatedWebApplication
 		String ctxPath = ctx.getContextPath();
 		System.out.println("Found CATALINA_HOME :"+System.getenv("CATALINA_HOME"));
 		System.out.println("Found GDV_HOME :"+System.getenv("GDV_HOME"));
+		if(null==catalina_home){
+			fatal("missing CATALINA_HOME - APPLICATION WILL NOT WORK");
+		}
 		String metaInf = catalina_home+"/webapps"+ctxPath+"/META-INF";
 		File confFile = new File(metaInf+"/gdv.yaml");
 		if(!confFile.exists()){

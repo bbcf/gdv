@@ -34,7 +34,7 @@ public class PostAccess extends Command{
 
 	@Override
 	public void doRequest() {
-		/* sign in the use wo whant to modify or add project(s) */
+		/* sign in the use who want to modify or add project(s) */
 		checkParams(params.getMail(),params.getKey());
 		if(null==params.getCommand()){
 			throw new AbortWithHttpStatusException(400,true);

@@ -5,65 +5,64 @@ A) Java Development Kit 1.6
 
    You need JDK 1.6 to run the application.
 
-   1) Look with :
-      	   $ java -version
+   Pay attention that you need the JDK (it is different from the JRE).
 
-      Pay attention that you need the JDK (it is different from the JRE).
+   1) Download at http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
-   2) Download at http://www.oracle.com/technetwork/java/javase/downloads/index.html
-   
-   3) Follow this instructions : http://www.oracle.com/technetwork/java/javase/index-137561.html
-   
-   4) Perhaps you will need to update your JAVA_HOME. You can do it with the following command :
-      	      $ export JAVA_HOME=/<path where you installed the jdk> 
-	 (best to put it in your .basrc file)
+   2) Follow this instructions : http://www.oracle.com/technetwork/java/javase/index-137561.html
+
+   3) Perhaps you will need to update your JAVA_HOME. You can do it with the following command :
+            $ export JAVA_HOME=/<path where you installed the jdk>
+     (best to put it in your .basrc file)
 
 
 B) Apache Tomcat
-   
+
    You need Apache Tomcat to deploy the application.
    1) Download it at http://tomcat.apache.org/ (the latest version - works with apache 6 or above -)
       (select the Core zip or tgz)
-   
+
    2) Uncompress and put somewhere like /srv.
       So you should have something like /srv/apache-tomcat-<version>
       This path will be called $CATALINA_HOME
 
    3) You could start it with the command :
-      	  $ sh $CATALINA_HOME/bin/startup.sh 
-      
+            $ sh $CATALINA_HOME/bin/startup.sh
+
    4) At this point you should see something on your browser at http://localhost:8080/ .
-      
+
       If not, perhaps you have already somethind running on port 8080.
       You can change it in $CATALINA_HOME/conf/server.xml .
       Search for the line  <Connector port="8080" protocol="HTTP/1.1"
       and change here the port to another.
-      If it's still not working I'm redirecting you to 
+      If it's still not working I'm redirecting you to
       the official documentation od Apache Tomcat.
 
 C) PostgreSQL
-   
+
    GDV uses PostgreSQL as its database system.
    1) Download at : http://www.postgresql.org/download/
 
    2) Install by following the steps that you could find at http://wiki.postgresql.org/wiki/Detailed_installation_guides
 
    3) At this step you should be able to run (with correct user):
-      	 $ createdb db_test
-      	 $ psql db_test
-      	 db_test=> \q 
-      	 $ dropdb db_test
+           $ createdb db_test
+           $ psql db_test
+           db_test=> \q
+           $ dropdb db_test
       If not, you could have missed something : back to point 2)
 
 
 D) Git
 
-   You need git for the upgrade steps of GDV.
-   1) Download and Install with your package manager 
-      You should see this great tutorial if you don't know how to do it :
-      http://progit.org/book/ch1-4.html
-      (note that on OSX you could also use homebrew to install it : http://mxcl.github.com/homebrew/)
+   Download and Install with your package manager
+   You should see this great tutorial if you don't know how to do it :
+   http://progit.org/book/ch1-4.html
+   (note that on OSX you could also use homebrew to install it : http://mxcl.github.com/homebrew/)
 
+E) AWK
+
+   Already installed in UNIX system : http://en.wikipedia.org/wiki/AWK
 ################################################################
 ####################### INSTALLATION ###########################
 ################################################################
@@ -71,20 +70,20 @@ D) Git
 
 1) Download the latest gdv archive at http://salt.epfl.ch/java/gdv-archive/current/gdv.tgz
    Untar :
-   	 $ tar -xvzf gdv.tgz
+     $ tar -xvzf gdv.tgz
    And the directory created, we will call it $GDV_HOME
 
 2) Edit the file under $GDV_HOME/bin/META-INF/gdv.yaml
    This file doesn't exist but you have gdv.yaml.example under the same
    directory. Just remove the .example & edit it.
-   
+
    This file should be correctly edited in order to GDV to be functionnal.
    WHen editing the file, more information is provided.
-   See the section "GDV CONFIGURATION" below. 
-   	
+   See the section "GDV CONFIGURATION" below.
+
 3) Archive  gdv.war :
-   	   $ cd $GDV_HOME/bin
-	   $ jar cvf gdv.war .
+       $ cd $GDV_HOME/bin
+       $ jar cvf gdv.war .
 
 4) GDV application must know where Tomcat is installed :
        $ export CATALINA_HOME=<path where tomcat is installed> (previously called $CATALINA_HOME itself)
@@ -93,29 +92,30 @@ D) Git
        $ export GDV_HOME=<path where GDV is installed> (previously called $GDV_HOME itsefl)
 
 6) For points 5 & 6, you should put them in your .bash_rc or .profile then source it.
-       $ source .bash_rc 
+       $ source .bash_rc
 
 7) Copy gdv.war under Tomcat webapps directory :
        $ cp $GDV_HOME/bin/gdv.war $CATALINA_HOME/webapps/.
    - If you are still with the 'default' installation of Tomcat, GDV would start
      automatically.
 
-   - Either you could launch the application with the web manager of tomcat : 
+   - Either you could launch the application with the web manager of tomcat :
     edit the file $CATALINA_HOME/conf/tomcat-users.xml
     and enter the following lines :
-   
+
     <role rolename="manager-gui"/>
-    <user username="tomcat" password="tomcat" roles="manager-gui"/>	
+    <user username="tomcat" password="tomcat" roles="manager-gui"/>
 
     (this lines refer to apache Tomcat 7, for other versions, see the documentation : http://tomcat.apache.org/)
     (you can of course change the password & username)
 
-    You should be able to access the manager here : http://localhost:8080/manager/html 
+    You should be able to access the manager here : http://localhost:8080/manager/html
 
+6) run $ sh $GDV_HOME/scripts/updateProject.sh
 
-6) Access gdv to http://localhost/gdv
+7) Access gdv to http://localhost/gdv
 
-7) Read GDV CONFIGURATION PART cause things should not work correctly ....
+8) Read GDV CONFIGURATION PART cause things should not work correctly ....
 
 ################################################################
 ##################### GDV CONFIGURATION ########################
@@ -128,25 +128,13 @@ You need to create a database. The file is $GDV_HOME/sql/browser.sql.
     $ createdb gdv
     $ psql gdv < browser.sql
 
-####################  JAVASCRIPT
-
-You need to edit by hand the file called gdv.js. It's located
-under $GDV_HOME/public/jbrowse/javascript/js/gdv.js
-
-At the top of the script, you will find this 2 variable called _GDV_PROXY & _GDV_URL.
-You must change it & put the same as you put with gdv.yaml.
-                                                                                                                                                                                  
-var _GDV_PROXY="http://localhost/"; (-> put gdv_proxy_url)
-var _GDV_URL=_GDV_PROXY+"gdv"; (-> put gdv_version)
-
-
 ####################  WEB SERVER
 
 
-Apache is better than Tomcat to serve static files see 
+Apache is better than Tomcat to serve static files see
 http://wiki.apache.org/tomcat/FAQ/Connectors#Q3 if you want to know more
 
-So statics files are served by apache in GDV. This is why you have to 
+So statics files are served by apache in GDV. This is why you have to
 tell Appache to fetch ressources from 'public' and 'tracks' directories
 ($GDV_HOME/public & $GDV_HOME/tracks).
 
@@ -156,50 +144,50 @@ A) Apache configuration :
    to do. For more detailled instructions, you should refer at the official documentation
    that you could find at http://httpd.apache.org/.
 
-   
+
    1) Find your httpd (apache2) configuration directory :
       It should be under /etc/httpd/conf.d/ (Linux distrib) or /etc/apache2/ (OSX)
 
 
    2) Write a new file named gdv.conf and enter the following lines :
 
-      	    Alias /public/ $GDV_HOME/public/
-	    <Location /public/>
-	    </Location>
-	    <Location /public/stuff>
-	              Options +Indexes
-  	    </Location>
+           Alias /public/ $GDV_HOME/public/
+            <Location /public/>
+            </Location>
+            <Location /public/stuff>
+                      Options +Indexes
+            </Location>
 
 
-	    Alias /tracks/ $GDV_HOME/tracks/
-	    <Location /tracks/>
-	    </Location>
-	    <Location /tracks/stuff>
-            	      Options +Indexes
-	    </Location>
+            Alias /tracks/ $GDV_HOME/tracks/
+            <Location /tracks/>
+            </Location>
+            <Location /tracks/stuff>
+                          Options +Indexes
+            </Location>
 
 
-	    Replace $GDV_HOME by the absolute path of GDV home directory.
-     	 
+            Replace $GDV_HOME by the absolute path of GDV home directory.
+
    3) Put it in conf.d/ directory.
       If you don't have it. Create it and the add the following line to your httpd.conf file :
- 
-		Include <path to httpd configuration directory>/conf.d/*.conf
 
-      
+        Include <path to httpd configuration directory>/conf.d/*.conf
+
+
 
    4) In order to get rid of the port number in the url (e.g : transform http://localhost:8080/gdv to http://localhost/gdv )
       You need to write this following lines in gdv.conf :
-      
+
       ProxyPass /gdv http://localhost:8080/gdv
       ProxyPassReverse /gdv http://localhost:8080/gdv
-   
-   5) You could restart yout httpd service with : 
+
+   5) You could restart yout httpd service with :
       $ sudo /sbin/service httpd reload (Linux distrib)
-      	or
+    or
       $ sudo apachectl restart (OSX)
-       
-       It should do the trick.       
+
+       It should do the trick.
        If not perhaps you need to give permissions to read the 'public' & 'tracks' directories.
        On OSX you should see here : http://support.apple.com/kb/TA25038
 
@@ -210,25 +198,25 @@ A) Apache configuration :
 
 => You should be able to start gdv with the script under $GDV_HOME/bin directory
    $ sh $GDV_HOME/startDaemons.sh
-   
-   (it will start two daemons that are needed)   
+
+   (it will start two daemons that are needed)
 
 => To update the project :
       - stop the daemons : stopDaemons.sh
       - run the update script : updateProject.sh
       - start the daemons : startDaemons.sh
-       
-      
+
+
 
 B) Advanced configuration :
    This part is if you want tu use load balancing & custom workers with Tomcat.
    A more detailled documentation will take place here.
    As Apache, I advice you to read official documentation at http://tomcat.apache.org/ .
-   
+
    - get mod_jk
    - workers.properties file
    - JKmount & Unmount in httpd.conf
    - server.xml in Tomcat conf directory
-   - remove ProxyPass :8080 
+   - remove ProxyPass :8080
    - unlimit -H for the daemons that will handle large files
-  
+

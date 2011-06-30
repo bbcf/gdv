@@ -16,7 +16,7 @@ GDV_HOME=$1
 
 
 
-if [ -z $2 ];then 
+if [ -z $2 ];then
     echo "must provide a version number"
     exit 1
 fi
@@ -37,14 +37,18 @@ echo "##########################################################################
 
 #build tree
 sh $GDV_HOME/build_scripts/build_tree.sh $GDV_HOME $GDV_HOME/$TMP_DIR/$VERSION
-mkdir $TMP_DIR/$VERSION/gdv/sql
-mkdir $TMP_DIR/$VERSION/gdv/scripts
+SQL_DIR=$TMP_DIR/$VERSION/gdv/sql
+mkdir $SQL_DIR
+SCRIPT_DIR=$TMP_DIR/$VERSION/gdv/scripts
+mkdir $SCRIPT_DIR
+GMINER_DIR=$TMP_DIR/$VERSION/gdv/post_to_gminer
+mkdir $GMINER_DIR
 
 echo "#############################################################################################################"
 echo "######################                          BUILD WAR                         ###########################"
 echo "#############################################################################################################"
 
-#build war archive & daemons 
+#build war archive & daemons
 mkdir $TMP_DIR/$VERSION/gdv/bin
 
 #archive project
@@ -54,21 +58,27 @@ mv target/gdv-$VERSION.war target/gdv.war
 chmod 777 target/gdv.war
 cp target/gdv.war $TMP_DIR/$VERSION/gdv/bin/.
 cd $TMP_DIR/$VERSION/gdv/bin
-jar xvf gdv.war
+jar xf gdv.war
 rm gdv.war
 rm META-INF/gdv.yaml
 cd ../../../..
 
+echo "#############################################################################################################"
+echo "######################                          COPING SCRIPTS                    ###########################"
+echo "#############################################################################################################"
+
 #copy scripts to bin directory
-cp build_scripts/startDaemons.sh $TMP_DIR/$VERSION/gdv/scripts/.
-cp build_scripts/stopDaemons.sh $TMP_DIR/$VERSION/gdv/scripts/.
-cp build_scripts/hook.sh $TMP_DIR/$VERSION/gdv/scripts/.
+cp build_scripts/startDaemons.sh $SCRIPT_DIR
+cp build_scripts/stopDaemons.sh $SCRIPT_DIR
+cp build_scripts/hook.sh $SCRIPT_DIR
+cp build_scripts/updateProject.sh $SCRIPT_DIR
 
-cp src/main/sql/browser.sql $TMP_DIR/$VERSION/gdv/sql/.
+cp src/main/sql/browser.sql $SQL_DIR
 
+cp post_to_gminer/start.py $GMINER_DIR/.
+cp post_to_gminer/gm_server.py $GMINER_DIR/.
 
-
-#add VERSION
+echo "done ..."
 echo $VERSION > $TMP_DIR/$VERSION/gdv/VERSION
 
 echo "#############################################################################################################"
