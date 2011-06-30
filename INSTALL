@@ -146,7 +146,7 @@ A) Apache configuration :
 
 
    1) Find your httpd (apache2) configuration directory :
-      It should be under /etc/httpd/conf.d/ (Linux distrib) or /etc/apache2/ (OSX)
+      It should be under /etc/httpd/conf.d/ or /etc/apache2/
 
 
    2) Write a new file named gdv.conf and enter the following lines :
@@ -177,15 +177,17 @@ A) Apache configuration :
 
 
    4) In order to get rid of the port number in the url (e.g : transform http://localhost:8080/gdv to http://localhost/gdv )
-      You need to write this following lines in gdv.conf :
+      You need to write this following lines in gdv.conf : (You need mod_proxy installed)
 
       ProxyPass /gdv http://localhost:8080/gdv
       ProxyPassReverse /gdv http://localhost:8080/gdv
 
    5) You could restart yout httpd service with :
-      $ sudo /sbin/service httpd reload (Linux distrib)
+        $ sudo /sbin/service httpd reload
     or
-      $ sudo apachectl restart (OSX)
+        $ sudo apachectl reload
+    or
+        $ sudo /etc/init.d/apache2 reload
 
        It should do the trick.
        If not perhaps you need to give permissions to read the 'public' & 'tracks' directories.
