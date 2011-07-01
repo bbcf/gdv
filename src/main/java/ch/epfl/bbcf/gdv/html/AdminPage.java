@@ -61,7 +61,7 @@ public class AdminPage extends BasePage{
 		 form = new Form("form"){
 			public void onSubmit(){
 				if(-1!=speciesId && -1!=assemblyId){
-					boolean created = SequenceControl.createGenome(assemblyId,speciesId,feedback);
+					boolean created = SequenceControl.createGenome2(assemblyId,speciesId,feedback);
 					if(created){
 						feedback.info("genome created");
 					} else {

@@ -112,6 +112,10 @@ public class FileTypeGuesser {
 			extension = Extension.GTF;
 		} else if(ext.equalsIgnoreCase("db")||ext.equalsIgnoreCase("sql")){
 			extension = Extension.DB;
+		} else if(ext.equalsIgnoreCase("tar")){
+			extension = Extension.TAR;
+		} else if(ext.equalsIgnoreCase("tar.gz")|| ext.equalsIgnoreCase("tgz")){
+			extension= Extension.TARGZ;
 		}
 
 		else {

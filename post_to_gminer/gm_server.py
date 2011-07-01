@@ -3,7 +3,7 @@
 Script: gm_server
 =================
 
-Implementation of a web server around the functionality of gFeatMiner. 
+Implementation of a web server around the functionality of gFeatMiner.
 
 The servers listens for requests. When it gets one, it formats them. Then, sends the request off to the gMiner library. Formats the result obtained and sends that off in a HTTP POST to an URL specified in the original request. This can be useful if GDV wants to send requests to an instance of gm_server and receive answers.
 
@@ -31,12 +31,12 @@ A typical answer from the server would be (HTML FORM ENCODED):
  - action = 'gfeatresponse' (static)
  - job_id = the job identifier
  - data = u'' (the result, JSON formatted)
- 
+
 This is the detailled description of 'data' parameter:
  - files : [] a list of result files in JSON
  -  ...  path : path to the file
  -  ...  type : type of the file
- 
+
 Example:
     {'id':'job','action':'gfeatresponse','job_id':'1','data':'''{"files":[{"path":"/tmp/asd.sql","type":"sql"},{"path":"/tmp/qq.png","type":"png"}]}'''}
 
@@ -61,7 +61,7 @@ jobs = []
 class gmServer(object):
     def __init__(self, port=7522):
         self.port = port
-         
+
     def serve(self):
         # Change the server name #
         serverTag = gm_project_name + "/" + str(gm_project_version)
@@ -129,7 +129,7 @@ def post_process(**kwargs):
         response, content = connection.request(address, "POST", body=body, headers=headers)
 
 #-------------------------------------------------------------------------#
-if __name__ == '__main__': gmServer().serve()
+if __name__ == '__main__': gmServer(port=7522).serve()
 
 #-----------------------------------------#
 # This code was written by Lucas Sinclair #

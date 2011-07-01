@@ -5,11 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 
-import org.postgresql.ds.PGPoolingDataSource;
 
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
@@ -90,7 +86,6 @@ public class Conn {
 		catch(ClassNotFoundException cnfe){
 			Application.fatal(cnfe);
 		}
-		Application.debug(connection);
 		return connection;
 	}
 
@@ -117,7 +112,7 @@ public class Conn {
 			Connection connection = (Connection) connectionPool.firstElement();
 			connectionPool.removeElementAt(0);
 			try {
-				if(connection.isClosed()){
+				if(null==connection || connection.isClosed()){
 					connection = createNewConnection(base, user, passwd);
 				}
 			} catch (SQLException e) {

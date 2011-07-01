@@ -1,6 +1,7 @@
 import sys
 sys.path.insert(0, "../../gMiner")
 sys.path.insert(0, "../../bbcflib")
+sys.path.insert(0, "../../bein")
 import bbcflib
 print 'Using this bbcflib:', bbcflib, 'v', bbcflib.__version__
 import gMiner

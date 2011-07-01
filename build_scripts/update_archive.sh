@@ -79,6 +79,15 @@ cp post_to_gminer/start.py $GMINER_DIR/.
 cp post_to_gminer/gm_server.py $GMINER_DIR/.
 
 echo "done ..."
+echo "#############################################################################################################"
+echo "######################                       IMPORTING GFM SERVER               #############################"
+echo "#############################################################################################################"
+cp -r bbcflib $GMINER_DIR/.
+cp -r gMiner $GMINER_DIR/.
+cp -r bein $GMINER_DIR/.
+echo "done ..."
+
+
 echo $VERSION > $TMP_DIR/$VERSION/gdv/VERSION
 
 echo "#############################################################################################################"

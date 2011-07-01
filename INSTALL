@@ -63,6 +63,23 @@ D) Git
 E) AWK
 
    Already installed in UNIX system : http://en.wikipedia.org/wiki/AWK
+
+
+
+################################################################
+####################### gFeatMiner #############################
+################################################################
+gFeatminer is a python module that will process jobs on the tracks
+displayed by GDV. So if you don't want to use it, stop reading here
+and directly go to the `INSTALLATION` section.
+
+You can find all documentation here : http://bbcf.epfl.ch/gMiner/
+
+Note : by default, gfm server serve on port 7522. If you want to change it
+edit the file located at $GDV_HOME/post_to_gminer/gm_server.py. At the
+end, you should find this line : if __name__ == '__main__': gmServer(port=7522).serve().
+Change here the port number.
+
 ################################################################
 ####################### INSTALLATION ###########################
 ################################################################

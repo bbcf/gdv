@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -14,6 +15,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
+import org.apache.tools.tar.TarEntry;
+import org.apache.tools.tar.TarInputStream;
 
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.model.InputControl.Extension;
@@ -67,16 +71,42 @@ public class Decompressor {
 			return unzip(file);
 		case GZ : case GZIP:
 			return ungunzip(file,extension.toString());
+		case TAR : case TARGZ:
+			return untar(file);
+
 		default:
 			List<File> files = new ArrayList<File>();
 			files.add(file);
 			return files;
 		}
 	}
-	
-	
-	
-	
+
+
+
+
+	private static List<File> untar(File file) throws IOException {
+		List<File> files = new ArrayList<File>();
+//		/* create tar stream */
+//		FileInputStream fin = new FileInputStream(file);
+//		GZIPInputStream gin = new GZIPInputStream(fin);
+//		TarInputStream tin = new TarInputStream(gin);
+//		/* extract all */
+//		TarEntry tarEntry = tin.getNextEntry();
+//		while (tarEntry != null) {
+//			if (!tarEntry.isDirectory()) {
+//				File destPath = new File(tarEntry.getName());
+//				FileOutputStream fout = new FileOutputStream(destPath);
+//				tin.copyEntryContents(fout);
+//				fout.close();
+//				files.add(destPath);
+//			}
+//			tarEntry = tin.getNextEntry();
+//		}
+//		tin.close();
+		return files;
+	}	
+
+
 	private static List<File> unzip(File file) throws ZipException, IOException {
 		Application.debug("UNZIP");
 		List<File> files = new ArrayList<File>();
@@ -91,7 +121,6 @@ public class Decompressor {
 			int count;
 			byte data[] = new byte[BUFFER];
 			FileOutputStream fos = new FileOutputStream(entry.getName());
-			Application.debug("fos : "+fos.toString());
 			dest = new BufferedOutputStream(fos, BUFFER);
 			while ((count = is.read(data, 0, BUFFER)) != -1) {
 				dest.write(data, 0, count);

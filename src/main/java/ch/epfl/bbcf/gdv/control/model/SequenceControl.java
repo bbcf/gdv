@@ -1,5 +1,6 @@
 package ch.epfl.bbcf.gdv.control.model;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import ch.epfl.bbcf.gdv.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.gdv.access.jbrowsor.JbrowsoRAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
+import ch.epfl.bbcf.gdv.utility.file.ExtensionNotRecognizedException;
 
 public class SequenceControl extends Control{
 
@@ -66,6 +68,98 @@ public class SequenceControl extends Control{
 		return gDAO.getSequenceFromId(sequenceId);
 	}
 
+	
+	
+	
+	public static boolean createGenome2(int nr_assemblyId, int speciesId,FeedbackPanel feedback){
+		Application.debug("create genome with assembly id = "+nr_assemblyId);
+		NR_Assembly nr_assembly = GenrepWrapper.getNRAssemblyById(nr_assemblyId);
+		
+		if(null==nr_assembly){
+			feedback.error("An error occurs : something went wrong with Genrep (nr_assembly)");
+			return false;
+		}
+		Application.debug("assembly :"+nr_assembly.toString());
+		//		}
+		Organism organism = GenrepWrapper.getOrganismsById(speciesId);
+		//JSONObject species = SpeciesAccess.getOrganismById(speciesId);
+		if(null==organism){
+			feedback.error("An error occurs : something went wrong with Genrep (species)");
+			return false;
+		}
+		String version = null;
+		int taxId = 0;
+		String speciesName = null;
+		JSONArray chrArray = new JSONArray();
+		version =nr_assembly.getName();// assembly.getString(AssembliesAccess.NAME_KEY);
+		taxId = organism.getTax_id();//species.getString(SpeciesAccess.TAXID_KEY);
+		speciesName = organism.getSpecies();//species.getString(SpeciesAccess.NAME_KEY);
+		List<Chromosome> chromosomes = GenrepWrapper.getChromosomesByNRassemblyId(nr_assemblyId);
+		//List<JSONObject> chromosomes = AssembliesAccess.getChromosomesByNRAssemblyId(nr_assemblyId);
+		for(Chromosome chromosome : chromosomes){
+			JSONObject chrEq = buildChrEquivalence(chromosome);
+			chrArray.put(chrEq);
+		}
+		String url = GenrepWrapper.getURLFastaFileByNRAssemblyId(nr_assemblyId);
+		if(null==url){
+			feedback.error("An error occurs : something went wrong with Genrep (cannot get fasta sequence)");
+			return false;
+		}
+
+		//TODO fetch and process fasta
+	//	try {
+//			boolean ok = InputControl.processFastaInput(nr_assemblyId,url);
+//			Application.debug(ok);
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (ExtensionNotRecognizedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+		//get the species in GDV or create it
+		SpeciesDAO spdao = new SpeciesDAO(Conn.get());
+		int spId = -1;
+		if(spdao.exist(speciesName)){
+			spId = spdao.getSpeciesIdByName(speciesName);
+		} else {
+			spId = spdao.createSpecies(speciesName);
+		}
+		//create the sequence on GDV
+		SequenceDAO sdao = new SequenceDAO(Conn.get());
+		int seqId = sdao.createSequence(nr_assembly.getId(),-1,"generep",version,spId);
+		//create an admin track
+		if(seqId==-1){
+			feedback.error("Something went wront with GDV : sequence cannot be created : "+seqId);
+			return false;
+		}
+		Application.debug("sequence id : "+seqId);
+		Application.debug("nr_assembly "+nr_assembly.getGtf_file_ftp());
+		if(null==nr_assembly.getGtf_file_ftp()){
+			feedback.error("GTF doesn't exist for this assembly in Genrep. Add it manually");
+			return true;
+		}
+		if(nr_assembly.getGtf_file_ftp().equalsIgnoreCase("")){
+			feedback.error("GTF doesn't exist for this assembly in Genrep. Add it manually");
+			return true;
+		}
+		String gftUrl = GenrepWrapper.getGtfUrlByNrAssemBly(nr_assembly.getId());
+		URL u;
+		try {
+			u = new URL(gftUrl);
+		} catch (MalformedURLException e) {
+			feedback.error("GTF URL doesn't exist for this assembly in Genrep. Add it manually");
+			return true;
+		}
+		
+		return JobControl.newAdminTrack(seqId, u,null,null,"Genes");
+	}
+	
+	
+	
+	
+	
 	/**
 	 * method to create a new sequence in GDV database :
 	 * create the species if not exist

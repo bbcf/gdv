@@ -181,7 +181,7 @@ public final class Configuration{
 	das_dir,databases_link_dir,compute_scores_daemon,jbrowse_javascript_url,
 	transform_to_sqlite_daemon,project_url,gdv_version,images_url,
 	jbrowse_images_url,log_directory,jb_browser_root,jb_data_root,
-	psql_db,psql_user,psql_pwd,gdv_browser_page_url,gFeatMinerDirectory;
+	psql_db,psql_user,psql_pwd,gdv_browser_page_url,gFeatMinerDirectory,fastaDirectory;
 
 	private static String gdv_post_access;
 	//private static List<String> gdv_types_access;
@@ -288,6 +288,7 @@ public final class Configuration{
 				instance.log_directory = metaInfPath+"/logs/";
 				instance.gdv_browser_page_url=instance.gdv_appli_proxy+"/browser";
 				instance.gFeatMinerDirectory=instance.gdv_working_directory+"/gFeatMiner";
+				instance.fastaDirectory=instance.gdv_working_directory+"/fasta";
 				return true;
 			}
 			Application.error("parameters not corrects");
@@ -568,6 +569,12 @@ public final class Configuration{
 	}
 	public static String getgFeatMinerDirectory() {
 		return instance.gFeatMinerDirectory;
+	}
+	public static void setFatstaDirectory(String fastaDirectory) {
+		instance.fastaDirectory = fastaDirectory;
+	}
+	public static String getFastaDirectory() {
+		return instance.fastaDirectory;
 	}
 
 	public static String getWicketMainFolder() {

@@ -131,6 +131,7 @@ public class SequenceDAO extends DAO<Sequence>{
 				statement.setString(4, version);
 				statement.setInt(5, spId);
 				this.executeUpdate(statement);
+				this.endQuery(true);
 				return genomeId;
 			} catch (SQLException e) {
 				logger.error(e);

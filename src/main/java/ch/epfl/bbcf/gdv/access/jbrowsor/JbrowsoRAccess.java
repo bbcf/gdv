@@ -14,7 +14,6 @@ import ch.epfl.bbcf.gdv.config.Configuration;
 
 public abstract class JbrowsoRAccess {
 	
-	//public final static String SERV = "http://ptbbpc1.epfl.ch/jbrowsor/";
 	public final static String SERV ="http://bbcftools.vital-it.ch/jbrowsor/";
 	public final static String SERV_JS = "/";
 	
@@ -25,28 +24,6 @@ public abstract class JbrowsoRAccess {
 	public final static String GET_VIEW = SERV+"jbrowse_views.json";
 	public final static String JBROWSE = SERV+"jbrowse";
 	public final static String JAVASCRIPT_VIEW = SERV+"jbrowse_views/";//don't forget to add '[viewId].js
-	//public final static String JBROWSE_DATA = "../../tracks_dev/";
-	
-	//private static final String CALLBACK_URL = Configuration.APPLI_URL+"/tracks_status/";
-//	public static final String[] JBrowseJavascript = {
-//		//SERV_JS+"js/gdv_link.js",
-//		SERV_JS+"js/Browser.js",
-//		SERV_JS+"js/Util.js",
-//		SERV_JS+"js/NCList.js",
-//		SERV_JS+"js/LazyPatricia.js",
-//		SERV_JS+"js/Track.js",
-//		SERV_JS+"js/SequenceTrack.js",
-//		SERV_JS+"js/FeatureTrack.js",
-//		SERV_JS+"js/StaticTrack.js",
-//		SERV_JS+"js/ImageTrack.js",
-//		SERV_JS+"js/prototype_reduced.js",
-//		SERV_JS+"js/rectmarquee.js",
-//		SERV_JS+"js/Selection.js",
-//		SERV_JS+"js/SelectionHandler.js",
-//		SERV_JS+"js/GenomeView.js",
-//		SERV_JS+"jslib/dojo/dojo.js",
-//		SERV_JS+"jslib/dojo/jbrowse_dojo.js"
-//	};
 
 	public static final String[] JBrowseCSS = {
 		SERV_JS+"jslib/dijit/themes/tundra/tundra.css",
@@ -153,14 +130,6 @@ public abstract class JbrowsoRAccess {
 				(0!=dataTypeId) &&(0!=fileTypeId) &&(null!=url)){
 			if(null==params){params="";}
 			try {
-//				String body = 
-//					"track[name]=" + URLEncoder.encode(annotationName, "UTF-8") +
-//					"&track[genome_id]=" + assemblyId +
-//					"&track[data_type_id]=" + dataTypeId +
-//					"&track[file_type_id]=" + fileTypeId +
-//					"&track[url]=" + URLEncoder.encode(url, "UTF-8") +
-//					"&track[jbrowse_params]=" + URLEncoder.encode(params, "UTF-8") +
-//					"&url_callback[track_id]=" + URLEncoder.encode(JbrowsoRAccess.CALLBACK_URL, "UTF-8");
 				String result =  InternetConnection.sendPOSTConnection(NEW_TRACK,"body");
 				return processAnnotationResult(result);
 			}catch(Exception e) {

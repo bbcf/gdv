@@ -80,7 +80,6 @@ public abstract class DAO<T> {
 	}
 	protected void executeUpdate(PreparedStatement statement) throws SQLException {
 		logger.debug(statement.toString());
-		statement.executeUpdate();
-		statement.close();
+		statement.execute();
 	}
 }

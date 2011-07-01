@@ -16,6 +16,7 @@ JBROWSE_DIR="jbrowse"
 FILE_DIR="files"
 TRACK_DIR="tracks"
 GFEATMINER_DIR="gFeatMiner"
+FASTA_DIR="fasta"
 TMP_DIR="tmp"
 
 mkdir $FILE_DIR
@@ -27,6 +28,7 @@ mkdir $PUBLIC_DIR/$JBROWSE_DIR
 mkdir $PUBLIC_DIR/$JBROWSE_DIR/javascript
 mkdir $TRACK_DIR
 mkdir $GFEATMINER_DIR
+mkdir $FASTA_DIR
 mkdir compute_sqlite_scores
 mkdir transform_to_sqlite
 mkdir $TMP_DIR
@@ -56,7 +58,7 @@ cp -r img  $INSTALL_PATH/$PUBLIC_DIR/$JBROWSE_DIR
 
 cp -r $GDV_HOME/src/main/img $INSTALL_PATH/$PUBLIC_DIR
 cp -r $GDV_HOME/src/main/css $INSTALL_PATH/$PUBLIC_DIR
- 
+
 cd $INSTALL_PATH
 #remove temporary directory
 rm -r $TMP_DIR

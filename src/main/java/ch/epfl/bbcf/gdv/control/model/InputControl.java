@@ -34,7 +34,7 @@ import ch.epfl.bbcf.gdv.utility.file.FileTypeGuesser;
 public class InputControl extends Control{
 
 
-	public enum Extension {GFF,GFF3,GTF,WIG,BEDGRAPH,BED,BAM,SAM,DB,ZIP,GZ,GZIP};
+	public enum Extension {GFF,GFF3,GTF,WIG,BEDGRAPH,BED,BAM,SAM,DB,ZIP,GZ,GZIP,TARGZ,TAR};
 	public enum ZipExtension {};
 
 
@@ -491,5 +491,38 @@ public class InputControl extends Control{
 			"\nadmin " +admin;
 		}
 	}
+
+
+	/**
+	 * process the fasta file from Genrep and cut
+	 * it in chunk of 20000 to display in the view
+	 * @param url
+	 * @return
+	 * @throws IOException 
+	 * @throws ExtensionNotRecognizedException 
+	 */
+	public static boolean processFastaInput(int nrAssemblyId,String u) throws IOException, ExtensionNotRecognizedException {
+		Application.debug("mkdir");
+		/* make the directory */
+		File out = new File(Configuration.getFastaDirectory()+"/"+nrAssemblyId);
+		if(out.exists()){
+			FileManagement.deleteDirectory(out);
+		}
+		if(!out.mkdir()){
+			return false;
+		}
+		Application.debug("UPLOAD");
+		Application.debug(u);
+		URL url = new URL(u);
+		File uploaded = FileManagement.uploadFileFromURL(url,out.getAbsolutePath(),"seq.tgz");
+		Application.debug("decompress");
+		List<File> decompressed = Decompressor.decompress(uploaded);
+		Application.debug("ok??");
+		if(null==uploaded){
+			return false;
+		}
+		return true;
+	}
+	
 
 }

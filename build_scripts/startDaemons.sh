@@ -21,7 +21,9 @@ sh start.sh $HOME_PROJECT 'GDV_HOME'
 cd $HOME_PROJECT/transform_to_sqlite/
 sh start.sh $HOME_PROJECT 'GDV_HOME'
 
-
+echo 'START gFeatMiner server ...'
+cd $HOME_PROJECT/post_to_gminer
+nohup python start.py &> gfm.log &
 
 cd $CUR
 exit 0
