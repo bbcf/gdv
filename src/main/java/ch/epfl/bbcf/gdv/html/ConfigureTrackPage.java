@@ -2,22 +2,18 @@ package ch.epfl.bbcf.gdv.html;
 
 import java.util.Arrays;
 
-import javax.swing.text.html.ListView;
 
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
@@ -34,17 +30,10 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
-import ch.epfl.bbcf.gdv.config.UserSession;
-import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
-import ch.epfl.bbcf.gdv.html.database.DataProjectProvider;
 import ch.epfl.bbcf.gdv.html.database.DataTrackConfigureProvider;
-import ch.epfl.bbcf.gdv.html.utility.FormChecker;
-import ch.epfl.bbcf.gdv.html.utility.SelectOption;
-import ch.epfl.bbcf.gdv.html.wrapper.ProjectWrapper;
 import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
-import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
 public class ConfigureTrackPage extends BasePage{
 
@@ -162,8 +151,6 @@ public class ConfigureTrackPage extends BasePage{
 		
 		
 		
-		//qualitative extended
-		//TODO select display for each types
 
 		//datatype switch
 		switch(track.getType()){

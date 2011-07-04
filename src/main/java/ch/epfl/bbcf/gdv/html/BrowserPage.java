@@ -2,6 +2,7 @@ package ch.epfl.bbcf.gdv.html;
 
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
+import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -80,7 +82,7 @@ public class BrowserPage extends WebPage{
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
-		
+
 		boolean canView = false;//if the user can see the page
 		boolean isAdmin =false;//if the user provide uKey & pKey but he don't
 		//need them because he own the page
@@ -100,7 +102,7 @@ public class BrowserPage extends WebPage{
 			} else {err="not a public project";};
 			//else the user must have the rights to view this 
 		} 	
-		
+
 		/* check if user own project */
 		if(user!=null && ProjectControl.userAuthorized(project,session.getUser())){
 			canView = true;
@@ -113,7 +115,7 @@ public class BrowserPage extends WebPage{
 			throw new RestartResponseAtInterceptPageException(ErrorPage.class);
 		}
 
-		
+
 		/* take jobs */
 		List<Job> jobs = JobControl.getGFeatMinerJobsAndNotTerminatedFromProjectId(projectId);
 		String jobOutput ="[";
@@ -143,7 +145,7 @@ public class BrowserPage extends WebPage{
 		for(String cp : Configuration.getJavascriptFiles()){
 			add(JavascriptPackageResource.getHeaderContribution(cp));
 		}
-		
+
 		/* get tracks */
 		Set<Track> tracks = TrackControl.getCompletedTracksFromProjectId(project.getId());
 		Set<Track> adminTrack = TrackControl.getAdminTracksFromSpeciesId(project.getSequenceId());
@@ -168,43 +170,135 @@ public class BrowserPage extends WebPage{
 				"../../"+Configuration.getJbrowse_static_files_url(),
 				"trackInfo",
 				tracksNames
-				);
+		);
 		/* adding final javascript */
-			String jsControl = " var b = new Browser({" +
-			"containerID: \"GenomeBrowser\",\n" +
-			"refSeqs: refSeqs,\n" +
-			//"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+"\"+browserRoot,\n" +//+JbrowsoRAccess.SERV+"/\"+browserRoot," +
-			"browserRoot: \""+ Configuration.getJb_browser_root()+   "\",\n" +
-			//"dataRoot: \"/jbdata/\",\n"+
-			//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
-			"dataRoot: \""+Configuration.getJb_data_root()+"/"+"\",\n" +
-			"styleRoot: \""+"../../"+Configuration.getJbrowse_static_files_url()+"/"+"\",\n" +
-			"trackData: trackInfo,\n" +
-			"defaultTracks : "+tracksNames+"" +
-			"});" +
-			"b.showTracks();";
-			//"b.showTracks();" +
-			if(isAdmin){
-				jsControl+="initGDV_browser(b);";
-			} else {
-				jsControl+="initGDV_browser(b,true);";
-			}
-			final String s = jsControl;
-			add(new AbstractBehavior() {
-				@Override
-				public void renderHead(IHeaderResponse response) {
-					super.renderHead(response);
-					response.renderJavascript("refSeqs = "+refseq,"refseq_"+project.getId());
-					response.renderJavascript(trackInfo,"js_view_"+project.getId());
-					response.renderJavascript(s,"js_control_"+project.getId());
-				}
-			}); 
+		String jsControl = " var b = new Browser({" +
+		"containerID: \"GenomeBrowser\",\n" +
+		"refSeqs: refSeqs,\n" +
+		//"browserRoot: \""+ JbrowsoRAccess.JBROWSE_DATA+"\"+browserRoot,\n" +//+JbrowsoRAccess.SERV+"/\"+browserRoot," +
+		"browserRoot: \""+ Configuration.getJb_browser_root()+   "\",\n" +
+		//"dataRoot: \"/jbdata/\",\n"+
+		//		"dataRoot: \""+JbrowsoRAccess.JBROWSE_DATA+"\"+dataRoot,\n" +
+		"dataRoot: \""+Configuration.getJb_data_root()+"/"+"\",\n" +
+		"styleRoot: \""+"../../"+Configuration.getJbrowse_static_files_url()+"/"+"\",\n" +
+		"trackData: trackInfo,\n" +
+		"defaultTracks : "+tracksNames+"" +
+		"});" +
+		"b.showTracks();";
+		//"b.showTracks();" +
+		if(isAdmin){
+			jsControl+="initGDV_browser(b);";
+		} else {
+			jsControl+="initGDV_browser(b,true);";
+		}
 
+
+		/* building style javascript */
+
+		String featureStyle ="function getFeatureStyle(type,div){div.style.backgroundColor='#3333D7';div.className='basic';";
+		for(Track track : tracks){
+			List<String> types;
+			try {
+				types = TrackControl.getTrackTypesFromDatabase(track.getId());
+				if(null==types){
+					types = TrackControl.buildRandomTypeForTrack(track.getId());
+				}
+				featureStyle+=buildFeartureStyleString(track.getId(),types);
+			} catch (SQLException e) {
+				Application.error(e);
+			} catch (InstantiationException e) {
+				Application.error(e);
+			} catch (IllegalAccessException e) {
+				Application.error(e);
+			} catch (ClassNotFoundException e) {
+				Application.error(e);
+			}
+		}
 		
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+		final String s = jsControl;
+		add(new AbstractBehavior() {
+			@Override
+			public void renderHead(IHeaderResponse response) {
+				super.renderHead(response);
+				response.renderJavascript("refSeqs = "+refseq,"refseq_"+project.getId());
+				response.renderJavascript(trackInfo,"js_view_"+project.getId());
+				response.renderJavascript(s,"js_control_"+project.getId());
+			}
+		}); 
+	}
+	/**
+
+	function getFeatureStyle(type,div){
+	    div.style.backgroundColor="#3333D7";
+	    div.className="basic";
+	    switch(type){
+	    case"CDS": case"thick":
+	        div.style.height="20px";
+	        div.style.marginTop ="-8px";
+	        break;
+	    case "exon":
+	        div.style.height="8px";
+	        div.style.marginTop ="-3px";
+	        break ;
+	    case "start_codon":case "stop_codon":
+	        div.style.height="20px";
+	        div.style.marginTop ="-8px";
+	        div.style.backgroundColor="red";
+	        div.style.zIndex="10";
+	        break ;
+	    case "ncRNA":case "tRNA":
+	        div.style.height="20px";
+	        div.style.marginTop ="-8px";
+	        div.style.backgroundColor="green";
+	        div.style.zIndex="10";
+	        break ;
+	    case "repeat_region":
+	        div.style.height="20px";
+	        div.style.marginTop ="-8px";
+	        div.style.backgroundColor="yellow";
+	        div.style.zIndex="10";
+	        break ;
+	    case "UTR":case "thin":
+	        div.style.height="8px";
+	        div.style.marginTop="-3px";
+	        div.style.backgroundColor="black";
+	        break;
+
+ */
+
+	private String buildFeartureStyleString(int trackId,List<String> types) {
+		String res = "";
+		for(String type : types){
+			Style s = TrackControl.getStyleForTrackIdAndType(trackId, type);
+			res+="case '"+type+"' : ";
+			switch(s.getStyle_height()){
+			case small:
+				res+="div.style.height='10px';div.style.marginTop='-4px';div.style.zIndex='30'";
+				break;
+			case medium:
+				res+="div.style.height='20px';div.style.marginTop='-8px';div.style.zIndex='20'";
+				break;
+			case big :
+				res+="div.style.height='30px';div.style.marginTop='-13px';div.style.zIndex='10'";
+				break;
+			}
+			
+		}
+		return null;
 	}
 	/**
 	 * build the refseq needed for the view
@@ -316,7 +410,7 @@ public class BrowserPage extends WebPage{
 		for(Track t : tracks){
 			String parameters ="";
 			if(t.getParameters().equalsIgnoreCase("params") || t.getName().equalsIgnoreCase("in process")){
-				
+
 				parameters = TrackControl.buildTrackParams(t,null);
 			} else {
 				parameters = t.getParameters();

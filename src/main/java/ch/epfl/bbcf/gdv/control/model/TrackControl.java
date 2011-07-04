@@ -470,7 +470,13 @@ public class TrackControl extends Control{
 		}
 		return types;
 	}
-
+	/**
+	 * set the style given for the track given, and if the type exist in another track of the same project
+	 * @param trackId
+	 * @param type
+	 * @param style
+	 * @return
+	 */
 	public static boolean setStyleForTrackAndType(int trackId,String type,Style style){
 		StyleDAO dao = new StyleDAO(Conn.get());
 		return dao.setStyleForTrackAndType(trackId, type, style);
