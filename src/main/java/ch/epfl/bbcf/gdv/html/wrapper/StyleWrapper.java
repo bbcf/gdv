@@ -30,4 +30,7 @@ public class StyleWrapper {
 	public STYLE_COLOR getStyle_color() {
 		return style.getStyle_color();
 	}
+	public Style getStyleObject() {
+		return style;
+	}
 }

@@ -421,7 +421,7 @@ public class TrackControl extends Control{
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public static List<String> getTrackTypesFromDatabase(int trackId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+	public static List<String> getTrackTypesFromDatabase(int trackId) throws SQLException{
 		StyleDAO dao = new StyleDAO(Conn.get());
 		return dao.getTrackTypes(trackId);
 	}
@@ -471,7 +471,10 @@ public class TrackControl extends Control{
 		return types;
 	}
 
-
+	public static boolean setStyleForTrackAndType(int trackId,String type,Style style){
+		StyleDAO dao = new StyleDAO(Conn.get());
+		return dao.setStyleForTrackAndType(trackId, type, style);
+	}
 
 
 }

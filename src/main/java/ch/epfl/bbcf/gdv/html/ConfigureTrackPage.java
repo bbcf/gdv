@@ -7,6 +7,7 @@ import javax.swing.text.html.ListView;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_HEIGHT;
+import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
@@ -133,13 +135,20 @@ public class ConfigureTrackPage extends BasePage{
 		DataView<StyleWrapper> data = new DataView<StyleWrapper>("style_data",dtcp) {
 			@Override
 			protected void populateItem(Item<StyleWrapper> item) {
-				StyleWrapper sw = item.getModelObject();
+				final StyleWrapper sw = item.getModelObject();
 				/* type name */
 				Label name = new Label("name",sw.getName());
 				item.add(name);
 				/* height */
-				RadioChoice rc = new RadioChoice("height",Arrays.asList(STYLE_HEIGHT.values()));
+				final RadioChoice rc = new RadioChoice("height",Arrays.asList(STYLE_HEIGHT.values()));
 				rc.setModelObject(sw.getStyle_height());
+				 rc.add(new AjaxFormComponentUpdatingBehavior("onchange") { 
+				        protected void onUpdate(AjaxRequestTarget target) {
+				        	Style s = sw.getStyleObject();
+				        	sw.setStyle_height(rc.getModelValue());
+				        	TrackControl.setStyleForTrackAndType(track.getId(),sw.getName(), s);
+				        }
+				 });
 				item.add(rc);
 				/* color */
 				Label color = new Label("color",sw.getStyle_color().toString());

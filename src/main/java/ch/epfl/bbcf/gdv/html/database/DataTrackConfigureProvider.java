@@ -9,27 +9,30 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
+import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
 
 public class DataTrackConfigureProvider extends SortableDataProvider<StyleWrapper>{
 
-	
+
 	private List<StyleWrapper> styles;
-	
+	private int trackId;
+
 	public DataTrackConfigureProvider(int trackId){
+		this.trackId = trackId;
 		try {
 			styles = new ArrayList<StyleWrapper>();
 			List<String> types = TrackControl.getTrackTypesFromDatabase(trackId);
 			if(null==types){
 				types = TrackControl.buildRandomTypeForTrack(trackId);
 			}
-			
+
 			for(String t: types){
 				StyleWrapper sw = new StyleWrapper(t,TrackControl.getStyleForTrackIdAndType(trackId, t));
 				styles.add(sw);
 			}
-			
+
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -39,7 +42,7 @@ public class DataTrackConfigureProvider extends SortableDataProvider<StyleWrappe
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 	@Override
 	public Iterator<StyleWrapper> iterator(int arg0, int arg1) {
@@ -60,6 +63,23 @@ public class DataTrackConfigureProvider extends SortableDataProvider<StyleWrappe
 			}
 
 		};
+	}
+
+	@Override
+	public void detach() {
+		super.detach();
+		List<String> types;
+		try {
+			types = TrackControl.getTrackTypesFromDatabase(trackId);
+			for(String t: types){
+				StyleWrapper sw = new StyleWrapper(t,TrackControl.getStyleForTrackIdAndType(trackId, t));
+				styles.add(sw);
+			}
+		} catch (SQLException e) {
+			Application.error(e);
+		}
+
+
 	}
 
 }
