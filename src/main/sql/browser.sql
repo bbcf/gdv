@@ -153,17 +153,26 @@ PRIMARY KEY ("id")
 );
 
 
+
+
+CREATE TYPE style_height AS ENUM ('small', 'medium','big');
+CREATE TYPE style_color as ENUM ('blue','green','red','yellow','pink','black','BlueViolet','Chocolate','Orange','CornflowerBlue','Crimson','Cyan','DarkOliveGreen','DarkOrchid','DarkSalmon','Gold','LawnGreen','Magenta','NavajoWhite','Orchid','SaddleBrown','SteelBlue','YellowGreen');
+
 CREATE TABLE styles(
 "id" SERIAL NOT NULL,
-"style" TEXT NOT NULL,
+"height" style_height NOT NULL,
+"color" style_color NOT NULL,
 PRIMARY KEY ("id")
 );
 
 CREATE TABLE trackToStyle(
 "track_id" INTEGER NOT NULL,
 "type" VARCHAR(255) NOT NULL,
-"style_id" INTEGER NOT NULL
+"style_id" INTEGER NOT NULL,
+PRIMARY KEY ("track_id","type")
 );
+
+-- ALTER TABLE track_style ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
 
 ALTER TABLE trackToStyle ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
 
@@ -222,8 +231,90 @@ ALTER TABLE inputToTrack ADD UNIQUE ("input_id","track_id");
 
 
 
-
+-- STATUSES
 INSERT into statuses values(0,'ERROR');
 INSERT into statuses values(1,'SUCCES');
 INSERT into statuses values(2,'RUNNING');
+
+-- ADMIN PROJECT
 INSERT into projects values(-1,70,'admin',false);
+
+-- DEFAULT STYLES
+INSERT into sytles values(default,'small','blue');
+INSERT into styles values(default,'small','blue');
+INSERT into styles values(default,'small','green');
+INSERT into styles values(default,'small','red');
+INSERT into styles values(default,'small','yellow');
+INSERT into styles values(default,'small','pink');
+INSERT into styles values(default,'small','black');
+INSERT into styles values(default,'small','BlueViolet');
+INSERT into styles values(default,'small','Chocolate');
+INSERT into styles values(default,'small','Orange');
+INSERT into styles values(default,'small','CornflowerBlue');
+INSERT into styles values(default,'small','Crimson');
+INSERT into styles values(default,'small','Cyan');
+INSERT into styles values(default,'small','DarkOliveGreen');
+INSERT into styles values(default,'small','DarkOrchid');
+INSERT into styles values(default,'small','DarkSalmon');
+INSERT into styles values(default,'small','Gold');
+INSERT into styles values(default,'small','LawnGreen');
+INSERT into styles values(default,'small','Magenta');
+INSERT into styles values(default,'small','NavajoWhite');
+INSERT into styles values(default,'small','Orchid');
+INSERT into styles values(default,'small','SaddleBrown');
+INSERT into styles values(default,'small','SteelBlue');
+INSERT into styles values(default,'small','YellowGreen');
+
+
+
+INSERT into styles values(default,'medium','blue');
+INSERT into styles values(default,'medium','green');
+INSERT into styles values(default,'medium','red');
+INSERT into styles values(default,'medium','yellow');
+INSERT into styles values(default,'medium','pink');
+INSERT into styles values(default,'medium','black');
+INSERT into styles values(default,'medium','BlueViolet');
+INSERT into styles values(default,'medium','Chocolate');
+INSERT into styles values(default,'medium','Orange');
+INSERT into styles values(default,'medium','CornflowerBlue');
+INSERT into styles values(default,'medium','Crimson');
+INSERT into styles values(default,'medium','Cyan');
+INSERT into styles values(default,'medium','DarkOliveGreen');
+INSERT into styles values(default,'medium','DarkOrchid');
+INSERT into styles values(default,'medium','DarkSalmon');
+INSERT into styles values(default,'medium','Gold');
+INSERT into styles values(default,'medium','LawnGreen');
+INSERT into styles values(default,'medium','Magenta');
+INSERT into styles values(default,'medium','NavajoWhite');
+INSERT into styles values(default,'medium','Orchid');
+INSERT into styles values(default,'medium','SaddleBrown');
+INSERT into styles values(default,'medium','SteelBlue');
+INSERT into styles values(default,'medium','YellowGreen');
+
+
+
+
+
+INSERT into styles values(default,'big','blue');
+INSERT into styles values(default,'big','green');
+INSERT into styles values(default,'big','red');
+INSERT into styles values(default,'big','yellow');
+INSERT into styles values(default,'big','pink');
+INSERT into styles values(default,'big','black');
+INSERT into styles values(default,'big','BlueViolet');
+INSERT into styles values(default,'big','Chocolate');
+INSERT into styles values(default,'big','Orange');
+INSERT into styles values(default,'big','CornflowerBlue');
+INSERT into styles values(default,'big','Crimson');
+INSERT into styles values(default,'big','Cyan');
+INSERT into styles values(default,'big','DarkOliveGreen');
+INSERT into styles values(default,'big','DarkOrchid');
+INSERT into styles values(default,'big','DarkSalmon');
+INSERT into styles values(default,'big','Gold');
+INSERT into styles values(default,'big','LawnGreen');
+INSERT into styles values(default,'big','Magenta');
+INSERT into styles values(default,'big','NavajoWhite');
+INSERT into styles values(default,'big','Orchid');
+INSERT into styles values(default,'big','SaddleBrown');
+INSERT into styles values(default,'big','SteelBlue');
+INSERT into styles values(default,'big','YellowGreen');

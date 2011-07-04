@@ -1,5 +1,9 @@
 package ch.epfl.bbcf.gdv.html;
 
+import java.util.Arrays;
+
+import javax.swing.text.html.ListView;
+
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -12,14 +16,19 @@ import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_HEIGHT;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
@@ -27,8 +36,12 @@ import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
+import ch.epfl.bbcf.gdv.html.database.DataProjectProvider;
+import ch.epfl.bbcf.gdv.html.database.DataTrackConfigureProvider;
 import ch.epfl.bbcf.gdv.html.utility.FormChecker;
 import ch.epfl.bbcf.gdv.html.utility.SelectOption;
+import ch.epfl.bbcf.gdv.html.wrapper.ProjectWrapper;
+import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
 import ch.epfl.bbcf.gdv.html.wrapper.TrackWrapper;
 
 public class ConfigureTrackPage extends BasePage{
@@ -73,7 +86,7 @@ public class ConfigureTrackPage extends BasePage{
 		/* get the track */
 		final Track track = TrackControl.getTrackById(trackId);
 
-		/* get the color */
+		/* get the color of quantitative track (no use if qualitative)*/
 		String params = track.getParameters();
 		String color ="red";
 		try {
@@ -86,7 +99,7 @@ public class ConfigureTrackPage extends BasePage{
 
 
 
-		//editable name 
+		/* editable name */ 
 		final AjaxEditableLabel<String> editableTrackName = new AjaxEditableLabel<String>("editable_name",
 				new Model<String>(track.getName())){
 			@Override
@@ -101,20 +114,45 @@ public class ConfigureTrackPage extends BasePage{
 		};
 		form.add(editableTrackName);
 
-		//color input (link with a dojo color picker on the HTML page)
+		/* color input (link with a dojo color picker on the HTML page) */
 		TextField<String> colorInput1 = new TextField<String>("color_input1",new PropertyModel<String>(properties,"color_input"));
 		colorInput1.setOutputMarkupPlaceholderTag(true);
 		colorInput1.setMarkupId("color_input");
 		colorInput1.setVisible(false);
-
-
-
 		colorInput1.setModelObject(color);
 		form.add(colorInput1);
 
 
+		
+	
+		
+		
+		/* style chooser */
+		final DataTrackConfigureProvider dtcp = new DataTrackConfigureProvider(track.getId());
 
-
+		DataView<StyleWrapper> data = new DataView<StyleWrapper>("style_data",dtcp) {
+			@Override
+			protected void populateItem(Item<StyleWrapper> item) {
+				StyleWrapper sw = item.getModelObject();
+				/* type name */
+				Label name = new Label("name",sw.getName());
+				item.add(name);
+				/* height */
+				RadioChoice rc = new RadioChoice("height",Arrays.asList(STYLE_HEIGHT.values()));
+				rc.setModelObject(sw.getStyle_height());
+				item.add(rc);
+				/* color */
+				Label color = new Label("color",sw.getStyle_color().toString());
+				item.add(color);
+				
+			}
+		};
+		
+		data.setOutputMarkupPlaceholderTag(true);
+		form.add(data);
+		
+		
+		
 		//qualitative extended
 		//TODO select display for each types
 
@@ -122,9 +160,9 @@ public class ConfigureTrackPage extends BasePage{
 		switch(track.getType()){
 		case QUALITATIVE: 
 		case  QUANTITATIVE: 
+			data.setVisible(false);
 			break;
 		case QUALITATIVE_EXTENDED: 
-			colorInput1.setVisible(false);
 			break;
 		}
 
@@ -149,7 +187,7 @@ public class ConfigureTrackPage extends BasePage{
 			}
 		};
 		form.add(sub);
-
+		
 
 
 

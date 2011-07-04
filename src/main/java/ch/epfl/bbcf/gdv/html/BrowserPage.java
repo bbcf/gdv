@@ -24,8 +24,6 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
-import ch.epfl.bbcf.bbcfutils.json.JsonMapper;
-import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
@@ -35,11 +33,8 @@ import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
-import ch.epfl.bbcf.gdv.control.model.SequenceControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
-import ch.epfl.bbcf.gdv.html.utility.MenuElement;
 import ch.epfl.bbcf.gdv.model.pojos.json.BrowserParameters;
-import ch.epfl.bbcf.gdv.model.pojos.json.TrackInfo;
 
 
 public class BrowserPage extends WebPage{
