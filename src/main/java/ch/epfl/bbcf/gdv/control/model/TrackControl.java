@@ -394,50 +394,6 @@ public class TrackControl extends Control{
 		setParams(track.getId(),params);
 		return params;
 	}
-	/**
-	 * fetch the types of the qualitative extended track in the SQLite db
-	 * @param trackId
-	 * @return
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
-	public static List<String> getTrackTypesFromLocalFile(int trackId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
-		String file = getFileFromTrackId(trackId);
-		if(null==file){
-			return null;
-		}
-		SQLiteAccess  access = SQLiteAccess.getConnectionWithDatabase(Configuration.getFilesDir()+File.separator+file);
-		return access.getTypes();
-	}
-
-	/**
-	 * get the types of this track
-	 * @param trackId
-	 * @return
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
-	public static List<String> getTrackTypesFromDatabase(int trackId) throws SQLException{
-		StyleDAO dao = new StyleDAO(Conn.get());
-		return dao.getTrackTypes(trackId);
-	}
-
-
-
-
-	public static List<Style> getStylesFromTrackId(int trackId){
-		StyleDAO dao = new StyleDAO(Conn.get());
-		return dao.getStylesForTrackId(trackId);
-	}
-
-	public static Style getStyleForTrackIdAndType(int trackId,String type){
-		StyleDAO dao = new StyleDAO(Conn.get());
-		return dao.getStyleForTrackIdAndType(trackId, type);
-	}
 
 	/**
 	 * protect char " with a backslash
@@ -448,39 +404,4 @@ public class TrackControl extends Control{
 	private static String protect(String name) {
 		return name.replaceAll("\"", "\\\\\"");
 	}
-
-	/**
-	 * build randomly style for the differents tracks types
-	 * @param trackId
-	 * @return
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 */
-	public static List<String> buildRandomTypeForTrack(int trackId) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-		List<String> types = getTrackTypesFromLocalFile(trackId);
-		if(null==types){
-			Application.error("no types for this tracks !!!!!!!");
-			return null;
-		}
-		StyleDAO dao = new StyleDAO(Conn.get());
-		for(String t : types){
-			dao.setStyleForTrackAndType(trackId,t,Style.randomStyle());
-		}
-		return types;
-	}
-	/**
-	 * set the style given for the track given, and if the type exist in another track of the same project
-	 * @param trackId
-	 * @param type
-	 * @param style
-	 * @return
-	 */
-	public static boolean setStyleForTrackAndType(int trackId,String type,Style style){
-		StyleDAO dao = new StyleDAO(Conn.get());
-		return dao.setStyleForTrackAndType(trackId, type, style);
-	}
-
-
 }

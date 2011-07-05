@@ -32,7 +32,7 @@ import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
-import ch.epfl.bbcf.gdv.html.database.DataTrackConfigureProvider;
+import ch.epfl.bbcf.gdv.html.database.DataStyleProvider;
 import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
 
 public class ConfigureTrackPage extends BasePage{
@@ -119,7 +119,7 @@ public class ConfigureTrackPage extends BasePage{
 		
 		
 		/* style chooser */
-		final DataTrackConfigureProvider dtcp = new DataTrackConfigureProvider(track.getId());
+		final DataStyleProvider dtcp = new DataStyleProvider(track.getId());
 
 		DataView<StyleWrapper> data = new DataView<StyleWrapper>("style_data",dtcp) {
 			@Override

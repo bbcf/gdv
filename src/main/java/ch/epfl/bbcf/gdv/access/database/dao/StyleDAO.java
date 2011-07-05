@@ -5,11 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 import ch.epfl.bbcf.gdv.access.database.pojo.Style;
+import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 
 public class StyleDAO extends DAO<Style>{
 
@@ -207,6 +211,65 @@ public class StyleDAO extends DAO<Style>{
 							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 					statement.setString(1, color.toString());
 					statement.setString(2, height.toString());
+					ResultSet resultSet = this.executeQuery(statement);
+					if(resultSet.next()){
+						Style s =  getStyle(resultSet);
+						this.endQuery(true);
+						return s;
+					}
+				} catch (SQLException e) {
+					logger.error(e);
+					this.endQuery(false);
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * get all types and associated styles belonging to an user
+		 * @param userId
+		 * @return
+		 */
+		public Map<Type, Style> getTypesAndStyleFromUser(int userId) {
+			if(this.databaseConnected()){
+				this.startQuery();
+				Map<Type, Style> map = new HashMap<Type, Style>();
+				try {
+					String query = "select type_id,style_id from user_style " +
+					"where user_id = ? ;";
+					PreparedStatement statement = this.prepareStatement(query,
+							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+					statement.setInt(1, userId);
+					ResultSet resultSet = this.executeQuery(statement);
+
+					while(resultSet.next()){
+						int type_id = resultSet.getInt(1);
+						int style_id = resultSet.getInt(2);
+						Style s =  getStyleById(style_id);
+						TypeDAO dao = new TypeDAO(Conn.get());
+						Type t = dao.getTypeById(type_id);
+						map.put(t, s);
+					}
+					this.endQuery(true);
+					return map;
+				} catch (SQLException e) {
+					logger.error(e);
+					this.endQuery(false);
+				}
+			}
+			return null;
+		}
+
+
+		private Style getStyleById(int style_id) {
+			if(this.databaseConnected()){
+				this.startQuery();
+				try {
+					String query = "select * from style " +
+					"where id = ? ;";
+					PreparedStatement statement = this.prepareStatement(query,
+							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+					statement.setInt(1, style_id);
 					ResultSet resultSet = this.executeQuery(statement);
 					if(resultSet.next()){
 						Style s =  getStyle(resultSet);

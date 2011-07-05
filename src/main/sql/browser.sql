@@ -165,14 +165,23 @@ CREATE TABLE styles(
 PRIMARY KEY ("id")
 );
 
-CREATE TABLE trackToStyle(
-"track_id" INTEGER NOT NULL,
-"type" VARCHAR(255) NOT NULL,
+
+CREATE TABLE user_style(
+"user_id" INTEGER NOT NULL,
+"type_id" INTEGER NOT NULL,
 "style_id" INTEGER NOT NULL,
-PRIMARY KEY ("track_id","type")
+PRIMARY KEY ("user_id","type_id")
 );
 
--- ALTER TABLE track_style ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
+CREATE TABLE types(
+"id" SERIAL NOT NULL,
+"name" TEXT NOT NULL,
+PRIMARY KEY("id")
+);
+
+
+
+ALTER TABLE trackToStyle ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
 
 ALTER TABLE trackToStyle ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
 
