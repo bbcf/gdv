@@ -39,13 +39,16 @@ public class StyleControl {
 	
 	
 	public static Type getType(String type){
-		TypeDAO dao = new TypeDAO(Conn.get());
-		return dao.getType(type);
+		TypeDAO dao = new TypeDAO();
+		Type t = dao.getType(type);
+		dao.release();
+		return t;
 	}
 	
 	public static Type createType(String type){
-		TypeDAO dao = new TypeDAO(Conn.get());
-		return dao.createType(type);
+		TypeDAO dao = new TypeDAO();
+		Type t = dao.createType(type);
+		return t;
 	}
 
 
@@ -59,7 +62,7 @@ public class StyleControl {
 	public static List<StyleWrapper> getStyleFromUserIdAndTypes(
 			int userId, List<Type> types) {
 		List<StyleWrapper> wrappers = new ArrayList<StyleWrapper>();
-		StyleDAO sdao = new StyleDAO(Conn.get());
+		StyleDAO sdao = new StyleDAO();
 		for(Type type : types){
 			Style userStyle = sdao.getUserStyleFromTypeId(userId,type.getId());
 			if(null==userStyle){
@@ -67,19 +70,23 @@ public class StyleControl {
 			}
 			wrappers.add(new StyleWrapper(type, userStyle));
 		}
+		sdao.release();
 		return wrappers;
 	}
 
 	private static Style createStyleForUserAndType(int userId, Type type) {
 		Style style = buildStyleForType(type);
-		StyleDAO sdao = new StyleDAO(Conn.get());
+		StyleDAO sdao = new StyleDAO();
 		sdao.createStyleForUserAndType(userId, type.getId(),style.getId());
+		sdao.release();
 		return style;
 	}
 
 	public static boolean setStyleForUserAndType(int userId, Type type,Style style){
-		StyleDAO sdao = new StyleDAO(Conn.get());
-		return sdao.setStyleForUserAndType(userId, type.getId(),style.getId());
+		StyleDAO sdao = new StyleDAO();
+		boolean b = sdao.setStyleForUserAndType(userId, type.getId(),style.getId());
+		sdao.release();
+		return b;
 	}
 	/**
 	 * create a style for this type. It can be random, or 

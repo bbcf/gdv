@@ -26,8 +26,8 @@ public class StyleDAO extends DAO<Style>{
 		Magenta,NavajoWhite,Orchid,
 		SaddleBrown,SteelBlue,YellowGreen} ;
 
-		public StyleDAO(Connection connection) {
-			super(connection);
+		public StyleDAO() {
+			super();
 		}
 
 
@@ -224,16 +224,17 @@ public class StyleDAO extends DAO<Style>{
 							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 					statement.setInt(1, userId);
 					ResultSet resultSet = this.executeQuery(statement);
-
+					StyleDAO sdao = new StyleDAO();
+					TypeDAO dao = new TypeDAO();
 					while(resultSet.next()){
 						int type_id = resultSet.getInt(1);
 						int style_id = resultSet.getInt(2);
-						StyleDAO sdao = new StyleDAO(Conn.get());
 						Style s =  sdao.getStyleById(style_id);
-						TypeDAO dao = new TypeDAO(Conn.get());
 						Type t = dao.getTypeById(type_id);
 						map.put(t, s);
 					}
+					sdao.release();
+					dao.release();
 					this.endQuery(true);
 					return map;
 				} catch (SQLException e) {

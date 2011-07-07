@@ -13,8 +13,8 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 
 public class JobDAO extends DAO<Job>{
 
-	public JobDAO(Connection connection) {
-		super(connection);
+	public JobDAO() {
+		super();
 	}
 
 

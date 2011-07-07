@@ -38,7 +38,9 @@ public class Style implements Serializable{
 		Random generator = new Random();
 		STYLE_COLOR styleColor = STYLE_COLOR.values()[generator.nextInt(STYLE_COLOR.values().length)];
 		STYLE_HEIGHT styleHeight = STYLE_HEIGHT.values()[generator.nextInt(STYLE_HEIGHT.values().length)];
-		StyleDAO dao = new StyleDAO(Conn.get());
-		return dao.getStyleByStyle(styleColor, styleHeight);
+		StyleDAO dao = new StyleDAO();
+		Style style =  dao.getStyleByStyle(styleColor, styleHeight);
+		dao.release();
+		return style;
 	}
 }

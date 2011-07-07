@@ -11,10 +11,9 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 
 public class StatusDAO  extends DAO<Status>{
 
-	public StatusDAO(Connection connection) {
-		super(connection);
+	public StatusDAO() {
+		super();
 	}
-
 
 
 	private Status getStatus(ResultSet r){

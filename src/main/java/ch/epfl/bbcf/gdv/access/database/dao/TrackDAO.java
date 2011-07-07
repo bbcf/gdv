@@ -25,8 +25,8 @@ public class TrackDAO extends DAO<Track>{
 		"id","job_id","name","paramaters","status","type"
 	};
 
-	public TrackDAO(Connection connection) {
-		super(connection);
+	public TrackDAO() {
+		super();
 	}
 
 

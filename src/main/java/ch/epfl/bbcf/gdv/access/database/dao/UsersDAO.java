@@ -22,8 +22,8 @@ import ch.epfl.bbcf.gdv.utility.RandomKey;
  */
 public class UsersDAO extends DAO<Users>{
 
-	public UsersDAO(Connection connection) {
-		super(connection);
+	public UsersDAO() {
+		super();
 	}
 
 	/**

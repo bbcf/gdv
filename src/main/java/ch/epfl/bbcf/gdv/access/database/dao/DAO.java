@@ -25,8 +25,8 @@ public abstract class DAO<T> {
 	 * Constructeur
 	 * @param conn
 	 */
-	public DAO(Connection connection){
-		this.connection = connection;
+	public DAO(){
+		this.connection = Conn.get();
 	}
 
 	protected void executer(PreparedStatement statement) throws SQLException {
@@ -62,12 +62,10 @@ public abstract class DAO<T> {
 			}
 		} catch (SQLException e) {
 			Application.error(e);
-		} finally {
-			Conn.returnToPool(connection);
-		}
+		} 
 	}
 
-	protected void end(){
+	public void release(){
 		Conn.returnToPool(connection);
 	}
 	protected void finalize(){

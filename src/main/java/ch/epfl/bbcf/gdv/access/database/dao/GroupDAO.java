@@ -12,8 +12,8 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Group;
 
 public class GroupDAO extends DAO<Group>{
 
-	public GroupDAO(Connection connection) {
-		super(connection);
+	public GroupDAO() {
+		super();
 	}
 
 

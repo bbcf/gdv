@@ -59,14 +59,14 @@ public class UserSession extends AuthenticatedWebSession{
 		Session.set(this);
 		if (user == 0){
 			if(type.equalsIgnoreCase("tequila") || type.equalsIgnoreCase("alternate")){
-				UsersDAO dao = new UsersDAO(Conn.get());
+				UsersDAO dao = new UsersDAO();
 				if(dao.emailExist(email)){
 					Users person = dao.getUserByEmail(email);
 					user = person.getId();
 					this.signIn(email, type);
 					Application.info("sign in",user);
 				}
-				
+				dao.release();
 			}
 		}
 		return user != 0;
@@ -76,8 +76,10 @@ public class UserSession extends AuthenticatedWebSession{
 
 
 	public Users getUser(){
-		UsersDAO dao = new UsersDAO(Conn.get());
-		return dao.getUserById(user);
+		UsersDAO dao = new UsersDAO();
+		Users u = dao.getUserById(user);
+		dao.release();
+		return u;
 
 	}
 	public int getUserId(){
@@ -128,8 +130,10 @@ public class UserSession extends AuthenticatedWebSession{
 
 
 	public boolean isAdmin() {
-		UsersDAO dao = new UsersDAO(Conn.get());
-		return dao.isAdmin(user);
+		UsersDAO dao = new UsersDAO();
+		boolean is = dao.isAdmin(user);
+		dao.release();
+		return is;
 	}
 
 

@@ -47,23 +47,26 @@ public class TrackControl extends Control{
 	 * @param track id
 	 */
 	public static void removeTrackFromUser(Track track,int userId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.removeConnection(userId,track.getId());
+		tdao.release();
 		String filename = tdao.getFileFromTrackId(track.getId());
-		InputDAO udao = new InputDAO(Conn.get());
+		InputDAO udao = new InputDAO();
 		udao.removeConnection(userId,filename);
-		ProjectDAO vdao = new ProjectDAO(Conn.get());
+		udao.release();
+		ProjectDAO vdao = new ProjectDAO();
 		vdao.removeConnection(userId,track.getId());
-
+		vdao.release();
 	}
+
 	/**
 	 * remove a track from the database
 	 * @param trackId
 	 */
 	public static void deleteTrack(int trackId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.deleteTrack(trackId);
-
+		tdao.release();
 	}
 
 	/**
@@ -78,12 +81,14 @@ public class TrackControl extends Control{
 	 */
 	public static int createAdminTrack(int jobId,int userid, String assemblyId, String name,
 			String filetype, boolean always, String status) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		int trackId = tdao.createNewTrack(jobId,assemblyId,name,filetype,always,status);
 		if(trackId!=-1){
 			tdao.linkToAdmin(trackId,assemblyId);
+			tdao.release();
 			return trackId;
 		}
+		tdao.release();
 		return -1;
 	}
 
@@ -94,8 +99,10 @@ public class TrackControl extends Control{
 	 * @return the Track
 	 */
 	public static Track getTrackIdWithJobId(int jobId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getTrackIdWithJobId(jobId);
+		TrackDAO tdao = new TrackDAO();
+		Track t = tdao.getTrackIdWithJobId(jobId);
+		tdao.release();
+		return t;
 	}
 
 	/**
@@ -105,8 +112,9 @@ public class TrackControl extends Control{
 	 * @param status
 	 */
 	public static void updateTrack(int trackId, String status) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.updateTrack(trackId,status);
+		tdao.release();
 	}
 	/**
 	 * Update the percentage finished of a track
@@ -114,7 +122,7 @@ public class TrackControl extends Control{
 	 * @param status
 	 */
 	public static void updatePercentage(int trackId, int status) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		Track t = tdao.getTrackById(trackId);
 		try {
 			String strStatus = t.getStatus();
@@ -126,9 +134,10 @@ public class TrackControl extends Control{
 			} else {
 				tdao.updateTrack(trackId, status+" %");
 			}
-
 		} catch(NumberFormatException e){
 			tdao.updateTrack(trackId, status+" %");
+		} finally {
+			tdao.release();
 		}
 
 
@@ -142,8 +151,9 @@ public class TrackControl extends Control{
 	 * @param inputId
 	 */
 	public static void linkToInput(int trackId, int inputId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.linkToInput(trackId,inputId);
+		tdao.release();
 	}
 
 
@@ -154,8 +164,10 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static List<Track> getTracksFromUser(int userId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getTracksFromUserId(userId);
+		TrackDAO tdao = new TrackDAO();
+		List<Track> ts = tdao.getTracksFromUserId(userId);
+		tdao.release();
+		return ts;
 	}
 
 
@@ -169,8 +181,10 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static String getFileFromTrackId(int id) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getFileFromTrackId(id);
+		TrackDAO tdao = new TrackDAO();
+		String s = tdao.getFileFromTrackId(id);
+		tdao.release();
+		return s;
 	}
 
 
@@ -182,8 +196,9 @@ public class TrackControl extends Control{
 	 * @param params
 	 */
 	public static void setParams(int id, String params) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.setParams(id,params);
+		tdao.release();
 	}
 
 
@@ -195,8 +210,10 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static Track getTrackById(int trackId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getTrackById(trackId);
+		TrackDAO tdao = new TrackDAO();
+		Track t = tdao.getTrackById(trackId);
+		tdao.release();
+		return t;
 	}
 
 
@@ -208,8 +225,10 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static Date getDate(int trackid,int userId) {
-		InputDAO udao = new InputDAO(Conn.get());
-		return udao.getDateFromTrackId(trackid,userId);
+		InputDAO udao = new InputDAO();
+		Date d =  udao.getDateFromTrackId(trackid,userId);
+		udao.release();
+		return d;
 	}
 
 
@@ -221,8 +240,10 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static Set<Track> getAdminTracksFromSpeciesId(int sequenceId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getAdminTracksFromSequenceId(sequenceId);
+		TrackDAO tdao = new TrackDAO();
+		Set<Track> ts = tdao.getAdminTracksFromSequenceId(sequenceId);
+		tdao.release();
+		return ts;
 	}
 
 
@@ -234,8 +255,10 @@ public class TrackControl extends Control{
 	 * @param projectId
 	 */
 	public static boolean linkToProject(int trackId, int projectId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.linkToProject(trackId, projectId);
+		TrackDAO tdao = new TrackDAO();
+		boolean b = tdao.linkToProject(trackId, projectId);
+		tdao.release();
+		return b;
 
 	}
 
@@ -256,8 +279,9 @@ public class TrackControl extends Control{
 	 */
 	public static void updateTrackFields(int trackId,
 			String name, SQLiteExtension filetype, String status) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.updateTrackFields(trackId,name,filetype,status);
+		tdao.release();
 	}
 
 
@@ -265,8 +289,10 @@ public class TrackControl extends Control{
 
 
 	public static List<Track> getTracksFromProjectId(int projectId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getTracksFromProjectId(projectId);
+		TrackDAO tdao = new TrackDAO();
+		List<Track> ts = tdao.getTracksFromProjectId(projectId);
+		tdao.release();
+		return ts;
 	}
 
 
@@ -278,8 +304,10 @@ public class TrackControl extends Control{
 	 * @return the track ID
 	 */
 	public static int createTmpTrack(int job_id,String status) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.createTmpTrack(status,job_id);
+		TrackDAO tdao = new TrackDAO();
+		int i = tdao.createTmpTrack(status,job_id);
+		tdao.release();
+		return i;
 	}
 
 
@@ -292,8 +320,10 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static boolean createAdminTrack(int sequenceId, int trackId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.createAdminTrack(sequenceId,trackId);
+		TrackDAO tdao = new TrackDAO();
+		boolean b = tdao.createAdminTrack(sequenceId,trackId);
+		tdao.release();
+		return b;
 
 	}
 
@@ -302,9 +332,11 @@ public class TrackControl extends Control{
 
 
 	public static boolean renameTrack(int id, String input) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.resetParams(id);
-		return tdao.renameTrack(id,input);
+		boolean b = tdao.renameTrack(id,input);
+		tdao.release();
+		return b;
 	}
 
 
@@ -312,8 +344,10 @@ public class TrackControl extends Control{
 
 
 	public static Set<Track> getAllAdminTracks() {
-		TrackDAO dao = new TrackDAO(Conn.get());
-		return dao.getAllAdminTracks();
+		TrackDAO dao = new TrackDAO();
+		Set<Track> tracks = dao.getAllAdminTracks();
+		dao.release();
+		return tracks;
 	}
 
 
@@ -325,10 +359,12 @@ public class TrackControl extends Control{
 	 * @param trackInstance
 	 */
 	public static void removeAdminTrack(Track track) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		tdao.deleteTrack(track.getId());
-		InputDAO idao = new InputDAO(Conn.get());
+		tdao.release();
+		InputDAO idao = new InputDAO();
 		idao.remove(track.getInput());
+		idao.release();
 		FileManagement.deleteDirectory(new File(Configuration.getFilesDir()+"/"+track.getInput()));
 		FileManagement.deleteDirectory(new File(Configuration.getTracks_dir()+"/"+track.getInput()));
 	}
@@ -341,15 +377,19 @@ public class TrackControl extends Control{
 	 * @return
 	 */
 	public static Set<Track> getCompletedTracksFromProjectId(int projectId) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getCompletedTracksFromProjectId(projectId);
+		TrackDAO tdao = new TrackDAO();
+		Set<Track> ts = tdao.getCompletedTracksFromProjectId(projectId);
+		tdao.release();
+		return ts;
 	}
 
 
 	public static Set<Track> getCompletedTracksFromProjectIdAndTrackNames(int projectId,
 			String[] tracksNames) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
-		return tdao.getCompletedTracksFromProjectIdAndTrackNames(projectId,Arrays.asList(tracksNames));
+		TrackDAO tdao = new TrackDAO();
+		Set<Track> ts = tdao.getCompletedTracksFromProjectIdAndTrackNames(projectId,Arrays.asList(tracksNames));
+		tdao.release();
+		return ts;
 	}
 
 
@@ -361,8 +401,9 @@ public class TrackControl extends Control{
 	 * @param nr_assembly_id
 	 */
 	public static Track getAdminTrackByNrAssemblyID(int nr_assembly_id) {
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		TrackDAO tdao = new TrackDAO();
 		Set<Track> tracks=  tdao.getAdminTracksFromSequenceId(nr_assembly_id);
+		tdao.release();
 		Track track = tracks.iterator().next();
 		return track;
 	}
@@ -412,11 +453,13 @@ public class TrackControl extends Control{
 
 
 
-	
+
 
 	public static boolean setTrackTypes(int trackId,List<Type> types){
-		TypeDAO tdao = new TypeDAO(Conn.get());
-		return tdao.setTrackTypes(trackId,types);
+		TypeDAO tdao = new TypeDAO();
+		boolean b = tdao.setTrackTypes(trackId,types);
+		tdao.release();
+		return b;
 	}
 
 	/**
@@ -440,7 +483,7 @@ public class TrackControl extends Control{
 				} else {
 					Application.warn("the track "+track.getId()+" : "+track.getInput()+" has no type ");
 				}
-				
+
 			} catch (InstantiationException e) {
 				Application.error(e);
 			} catch (IllegalAccessException e) {
@@ -453,18 +496,21 @@ public class TrackControl extends Control{
 		}
 
 	}
-	
+
 	public static List<Type> getTrackTypes(int trackId){
-		TypeDAO tdao = new TypeDAO(Conn.get());
-		return tdao.getTrackTypes(trackId);
+		TypeDAO tdao = new TypeDAO();
+		List<Type> ts = tdao.getTrackTypes(trackId);
+		tdao.release();
+		return ts;
 	}
-	
+
 	public static Set<Type> getTracksTypes(Set<Track> tracks) {
-		TypeDAO tdao = new TypeDAO(Conn.get());
+		TypeDAO tdao = new TypeDAO();
 		Set<Type> types = new HashSet<Type>();
 		for(Track t : tracks){
 			types.addAll(tdao.getTrackTypes(t.getId()));
 		}
+		tdao.release();
 		return types;
 	}
 

@@ -18,10 +18,9 @@ public class SpeciesDAO extends DAO<Species>{
 	private final static String tableName = "species";
 	private final static String[] fields = {"id","name"};
 
-	public SpeciesDAO(Connection connection) {
-		super(connection);
+	public SpeciesDAO() {
+		super();
 	}
-
 
 
 

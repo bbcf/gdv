@@ -10,8 +10,10 @@ public class SpeciesControl extends Control{
 
 
 	public static String getSpeciesNameBySpeciesId(int speciesId) {
-		SpeciesDAO spDAO = new SpeciesDAO(Conn.get());
-		return spDAO.getSpeciesNameById(speciesId);
+		SpeciesDAO spDAO = new SpeciesDAO();
+		String s = spDAO.getSpeciesNameById(speciesId);
+		spDAO.release();
+		return s;
 	}
 
 	/**
@@ -24,8 +26,10 @@ public class SpeciesControl extends Control{
 	 * @return
 	 */
 	public static int getNrAssemblyBySpeciesIdForBuildingChrList(int speciesId) {
-		SpeciesDAO spDAO = new SpeciesDAO(Conn.get());
-		return spDAO.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
+		SpeciesDAO spDAO = new SpeciesDAO();
+		int i = spDAO.getNrAssemblyBySpeciesIdForBuildingChrList(speciesId);
+		spDAO.release();
+		return i;
 	}
 
 }

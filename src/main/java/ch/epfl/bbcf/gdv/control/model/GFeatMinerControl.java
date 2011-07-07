@@ -29,17 +29,19 @@ public class GFeatMinerControl extends Control{
 	 * @return
 	 */
 	public static int createNewJob(int projectId) {
-		GFeatMinerJobDAO dao = new GFeatMinerJobDAO(Conn.get());
+		GFeatMinerJobDAO dao = new GFeatMinerJobDAO();
 		int jobId = dao.createNewJob(projectId,Status.RUNNING,"{}");
 		File file = new File(Configuration.getgFeatMinerDirectory()+"/"+jobId);
 		file.mkdir();
+		dao.release();
 		return jobId;
 	}
 
 	
 	public static void updateJob(int jobId,int status,String result) {
-		GFeatMinerJobDAO dao = new GFeatMinerJobDAO(Conn.get());
+		GFeatMinerJobDAO dao = new GFeatMinerJobDAO();
 		dao.updateJob(jobId,status,result);
+		dao.release();
 	}
 
 	/**
@@ -48,7 +50,9 @@ public class GFeatMinerControl extends Control{
 	 * @return the status (ch.epfl.bbcf.gdv.access.database.pojo.Status)
 	 */
 	public static int checkJob(int jobId) {
-		GFeatMinerJobDAO dao = new GFeatMinerJobDAO(Conn.get());
-		return dao.getStatus(jobId);
+		GFeatMinerJobDAO dao = new GFeatMinerJobDAO();
+		int status = dao.getStatus(jobId);
+		dao.release();
+		return status;
 	}
 }

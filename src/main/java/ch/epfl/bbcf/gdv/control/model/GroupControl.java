@@ -18,9 +18,9 @@ public class GroupControl extends Control{
 	 * @return
 	 */
 	public static List<Group> getGroupOwnedByUser(int userId) {
-		Connection conn = Conn.get();
-		GroupDAO gdao = new GroupDAO(conn);
+		GroupDAO gdao = new GroupDAO();
 		List<Group> r = gdao.getGroupOwnedByUser(userId);
+		gdao.release();
 		return r;
 	}
 
@@ -30,8 +30,10 @@ public class GroupControl extends Control{
 	 * @return
 	 */
 	public static List<Group> getGroupBelongingToUser(String userMail) {
-		GroupDAO gdao = new GroupDAO(Conn.get());
-		return gdao.getGroupBelongingToUser(userMail);
+		GroupDAO gdao = new GroupDAO();
+		List<Group> gs = gdao.getGroupBelongingToUser(userMail);
+		gdao.release();
+		return gs;
 	}
 
 	/**
@@ -40,8 +42,10 @@ public class GroupControl extends Control{
 	 * @return
 	 */
 	public static List<Users> getUserListFromGroupId(int groupId) {
-		UsersDAO udao = new UsersDAO(Conn.get());
-		return udao.getUserListFromGroupId(groupId);
+		UsersDAO udao = new UsersDAO();
+		List<Users> us = udao.getUserListFromGroupId(groupId);
+		udao.release();
+		return us;
 	}
 	/**
 	 * retrieve the list of mails belonging to a group
@@ -49,8 +53,10 @@ public class GroupControl extends Control{
 	 * @return
 	 */
 	public static List<String> getUserMailFromGroupId(int groupId) {
-		UsersDAO udao = new UsersDAO(Conn.get());
-		return udao.getUserMailFromGroupId(groupId);
+		UsersDAO udao = new UsersDAO();
+		List<String> us = udao.getUserMailFromGroupId(groupId);
+		udao.release();
+		return us;
 	}
 	/**
 	 * get the owner mail for a group
@@ -58,11 +64,13 @@ public class GroupControl extends Control{
 	 * @return
 	 */
 	public static String getUserMailOwnerFromGroupId(int groupId) {
-		UsersDAO udao = new UsersDAO(Conn.get());
+		UsersDAO udao = new UsersDAO();
 		Users u = udao .getUserOwnerFromGroupId(groupId);
 		if(null!=u){
+			udao.release();
 			return u.getMail();
 		}
+		udao.release();
 		return null;
 	}
 
@@ -73,8 +81,10 @@ public class GroupControl extends Control{
 	 * @param gn - the group name
 	 */
 	public static int createNewGroup(String gn,int userId) {
-		GroupDAO gdao = new GroupDAO(Conn.get());
-		return gdao.createNewGroup(userId,gn);
+		GroupDAO gdao = new GroupDAO();
+		int i = gdao.createNewGroup(userId,gn);
+		gdao.release();
+		return i;
 
 	}
 	/**
@@ -83,8 +93,9 @@ public class GroupControl extends Control{
 	 * @param userMail - the user mail
 	 */
 	public static void addUserToGroup(int groupId, String userMail) {
-		GroupDAO gdao = new GroupDAO(Conn.get());
+		GroupDAO gdao = new GroupDAO();
 		gdao.addUserToGroup(groupId,userMail);
+		gdao.release();
 	}
 
 	/**
@@ -93,8 +104,9 @@ public class GroupControl extends Control{
 	 * @param currentUser
 	 */
 	public static void removeUserFromGroup(int id, String mail) {
-		GroupDAO gdao = new GroupDAO(Conn.get());
+		GroupDAO gdao = new GroupDAO();
 		gdao.removeUserFromGroup(id,mail);
+		gdao.release();
 	}
 
 	/**
@@ -102,19 +114,22 @@ public class GroupControl extends Control{
 	 * @param id
 	 */
 	public static void removeGroup(int id) {
-		GroupDAO gdao = new GroupDAO(Conn.get());
+		GroupDAO gdao = new GroupDAO();
 		gdao.removeGroup(id);
+		gdao.release();
 	}
 	/**
 	 * check if the user have group or is in group
 	 * @return
 	 */
 	public static  boolean checkIfGroupsForUser(Users user) {
-		GroupDAO gdao = new GroupDAO(Conn.get());
+		GroupDAO gdao = new GroupDAO();
 		if( (getGroupBelongingToUser(user.getMail()).isEmpty()) &&
 				(getGroupOwnedByUser(user.getId()).isEmpty()) ){
+			gdao.release();
 			return false;
 		}
+		gdao.release();
 		return true;
 	}
 
@@ -125,8 +140,10 @@ public class GroupControl extends Control{
 	 * @return
 	 */
 	public static boolean shareProject(int projectId, int groupId) {
-		GroupDAO gdao = new GroupDAO(Conn.get());
-		return gdao.shareProject(projectId,groupId);
+		GroupDAO gdao = new GroupDAO();
+		boolean is = gdao.shareProject(projectId,groupId);
+		gdao.release();
+		return is;
 	}
 
 

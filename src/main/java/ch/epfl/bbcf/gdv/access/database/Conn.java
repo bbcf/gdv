@@ -13,7 +13,8 @@ import ch.epfl.bbcf.gdv.config.Configuration;
 public class Conn {
 
 	public static final String DRIVER = "org.postgresql.Driver";
-	final int MAX_POOL_SIZE = 30;
+	static final int MAX_POOL_SIZE = 50;
+	static final int MAX_LOOP = 1000;
 	private String user;
 	private String passwd;
 	private String base;
@@ -120,9 +121,33 @@ public class Conn {
 			}
 			return connection;
 		} else {//loop until connection available
-			return getFromPool();
+			return getFromPool(1);
 		}
 	}
+
+	private Connection getFromPool(int i) {
+		if(i<MAX_LOOP){
+			if(connectionPool.size()> 0){
+				Connection connection = (Connection) connectionPool.firstElement();
+				connectionPool.removeElementAt(0);
+				try {
+					if(null==connection || connection.isClosed()){
+						connection = createNewConnection(base, user, passwd);
+					}
+				} catch (SQLException e) {
+					Application.error(e);
+				}
+				return connection;
+			} else {//loop until connection available
+				return getFromPool(i+1);
+			}
+		} else {
+			Application.fatal("no more connection in the pool ");
+			return null;
+		}
+	}
+
+
 
 	public static synchronized void returnToPool(Connection connection){
 		connectionPool.addElement(connection);

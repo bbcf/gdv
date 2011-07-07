@@ -19,8 +19,8 @@ public class ProjectDAO extends DAO<Project>{
 	private final static String tableName ="projects";
 	private final static String[] fields = {"id","cur_seq_id","name","isPublic"};
 
-	public ProjectDAO(Connection connection) {
-		super(connection);
+	public ProjectDAO() {
+		super();
 	}
 
 

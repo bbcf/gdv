@@ -12,8 +12,8 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 
 public class TypeDAO extends DAO<Type>{
 
-	public TypeDAO(Connection connection) {
-		super(connection);
+	public TypeDAO() {
+		super();
 	}
 
 	private Type getType(ResultSet r){

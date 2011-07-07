@@ -37,13 +37,16 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static int tracksNumberUnderProject(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		return pdao.tracksNumberUnderProject(projectId);
+		ProjectDAO pdao = new ProjectDAO();
+		int i = pdao.tracksNumberUnderProject(projectId);
+		pdao.release();
+		return i;
 	}
 
 	public static void updateProject(int id, int sequenceId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		pdao.updateProject(id, sequenceId);
+		pdao.release();
 	}
 
 	/**
@@ -54,18 +57,20 @@ public class ProjectControl extends Control implements Serializable{
 	 */
 	public static boolean createNewProjectFromProjectPage(SelectOption species, SelectOption version,
 			String projectName,int userId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		int seq_id = version.getKey();
 		int projectId = pdao.createNewProject(seq_id,projectName,false);
 		if(projectId!=-1){
 			boolean created = pdao.linkToUser(projectId,userId);
 			if(created){
 				Application.info("create new project :"+projectName,userId);
+				pdao.release();
 				return created;
 			}
 
 		}
 		Application.error("project creation failed ", userId);
+		pdao.release();
 		return false;
 	}
 	/**
@@ -76,17 +81,19 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static int createNewProject(int seq_id,String projectName,int userId){
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		int projectId = pdao.createNewProject(seq_id,projectName,false);
 		if(projectId!=-1){
 			boolean created = pdao.linkToUser(projectId,userId);
 			if(created){
 				Application.info("create new project :"+projectName,userId);
+				pdao.release();
 				return projectId;
 			}
 
 		}
 		Application.error("project creation failed ", userId);
+		pdao.release();
 		return -1;
 	}
 	/**
@@ -102,7 +109,7 @@ public class ProjectControl extends Control implements Serializable{
 	public static JSONObject createNewProject(Users user,int seq_id,String projectName,int userId,boolean isPublic) throws JSONException{
 		Application.info("SEQ ID : "+seq_id);
 		JSONObject json = new JSONObject();
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		int projectId = pdao.createNewProject(seq_id,projectName,isPublic);
 		if(projectId!=-1){
 			boolean created = pdao.linkToUser(projectId,userId);
@@ -113,11 +120,13 @@ public class ProjectControl extends Control implements Serializable{
 					String url = getPublicUrlFromProjectId(user,projectId);
 					json.put("public_url",url);
 				}
+				pdao.release();
 				return json;
 			}
 
 		}
 		Application.error("project creation failed ", userId);
+		pdao.release();
 		return json;
 	}
 
@@ -127,13 +136,15 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static Project getProject(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		Project p = pdao.getProject(projectId);
 		if(null==p){
+			pdao.release();
 			return null;
 		}
-		SpeciesDAO spDAO = new SpeciesDAO(Conn.get());
+		SpeciesDAO spDAO = new SpeciesDAO();
 		p.setSpecies(spDAO.getSpeciesFromProjectId(projectId));
+		spDAO.release();
 		return p;
 	}
 
@@ -160,8 +171,10 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static boolean userAuthorized(int projectId,Users user) {
-		ProjectDAO dao = new ProjectDAO(Conn.get());
-		return dao.userAuthorized(user,projectId);
+		ProjectDAO dao = new ProjectDAO();
+		boolean i = dao.userAuthorized(user,projectId);
+		dao.release();
+		return i;
 	}
 
 	/**
@@ -171,8 +184,10 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static Species getSpeciesFromProjectId(int projectId) {
-		SpeciesDAO spDAO = new SpeciesDAO(Conn.get());
-		return spDAO.getSpeciesFromProjectId(projectId);
+		SpeciesDAO spDAO = new SpeciesDAO();
+		Species i = spDAO.getSpeciesFromProjectId(projectId);
+		spDAO.release();
+		return i;
 	}
 
 	/**
@@ -182,12 +197,13 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static List<SelectOption> getSequencesFromSpeciesIdSO(int speciesId) {
-		SequenceDAO sDAO = new SequenceDAO(Conn.get());
+		SequenceDAO sDAO = new SequenceDAO();
 		List<Sequence> seqs = sDAO.getSequencesFromSpeciesId(speciesId);
 		List<SelectOption> sos = new ArrayList<SelectOption>();
 		for(Sequence seq : seqs){
 			sos.add(new SelectOption(seq.getId(), seq.getName()));
 		}
+		sDAO.release();
 		return sos;
 	}
 
@@ -200,40 +216,39 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static boolean importProject(int projectId,int userId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		TrackDAO tdao = new TrackDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
+		TrackDAO tdao = new TrackDAO();
 		Project oldProject = pdao.getProject(projectId);
 		List<Track> tracks = tdao.getTracksFromProjectId(oldProject.getId());
-		List<Project> projects = pdao.getProjectsFromUser(userId);
-		//		if(projects!=null){
-		//			for (Project p : projects){
-		//				if(p.getName().equalsIgnoreCase(oldProject.getName())){
-		//					//return false;
-		//				}
-		//			}
-		//		}
 		int newProjectId = pdao.createNewProject(oldProject.getSequenceId(), oldProject.getName(),false);
 		if(null!=tracks){
 			for(Track t : tracks){
 				tdao.linkToProject(t.getId(),newProjectId);
 			}
 		}
-		return pdao.linkToUser(newProjectId,userId);
+		boolean b = pdao.linkToUser(newProjectId,userId);
+		pdao.release();
+		tdao.release();
+		return b;
 	}
 
 	public static void deleteProject(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		pdao.deleteProject(projectId);
+		pdao.release();
 	}
 
 	public static void renameProject(int id, String input) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		pdao.renameProject(id,input);
+		pdao.release();
 	}
 
 	public static List<Group> getGroupNameFromProjectId(int id,String mail) {
-		GroupDAO dao = new GroupDAO(Conn.get());
-		return dao.getGroupNameFromProjectIdandUserMail(id,mail);
+		GroupDAO dao = new GroupDAO();
+		List<Group> i = dao.getGroupNameFromProjectIdandUserMail(id,mail);
+		dao.release();
+		return i;
 	}
 
 	/**
@@ -242,66 +257,80 @@ public class ProjectControl extends Control implements Serializable{
 	 * @return
 	 */
 	public static List<Project> getAllProjectFromUser(Users user) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		return pdao.getAllProjectsFromUser(user);
+		ProjectDAO pdao = new ProjectDAO();
+		List<Project> i = pdao.getAllProjectsFromUser(user);
+		pdao.release();
+		return i;
 	}
 	/**
 	 * get the projects belonging to an user
 	 * @return
 	 */
 	public static List<Project> getProjectsFromUser(int userId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		return pdao.getProjectsFromUser(userId);
+		ProjectDAO pdao = new ProjectDAO();
+		List<Project> i = pdao.getProjectsFromUser(userId);
+		pdao.release();
+		return i;
 	}
 
 
 
 	public static String getPublicUrlFromProjectId(Users user,int id) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		String key = pdao.getPublicKeyFromProjectId(id);
 		String userKey = user.getKey();
 		String url = Configuration.getBrowserUrl()+"?id="+id+"&ukey="+userKey+"&pkey="+key;
+		pdao.release();
 		return url;
 	}
 
 
 
 	public static String setProjectPublic(int id, boolean b) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
+		ProjectDAO pdao = new ProjectDAO();
 		pdao.setProjectPublic(id,b);
 		String key = pdao.getPublicKeyFromProjectId(id);
 		if(null==key){
 			key = pdao.generatePublicKey(id);
 		}
+		pdao.release();
 		return key;
 	}
 
 
 
 	public static boolean isProjectPublic(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		return pdao.isProjectPublic(projectId);
+		ProjectDAO pdao = new ProjectDAO();
+		boolean i = pdao.isProjectPublic(projectId);
+		pdao.release();
+		return i;
 	}
 
 
 
 	public static String getPublicKeyFromProjectId(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		return pdao.getPublicKeyFromProjectId(projectId);
+		ProjectDAO pdao = new ProjectDAO();
+		String i = pdao.getPublicKeyFromProjectId(projectId);
+		pdao.release();
+		return i;
 	}
 
 
 
 	public static String getUserKeyFromProjectId(int projectId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		return pdao.getUserKeyFromProjectId(projectId);
+		ProjectDAO pdao = new ProjectDAO();
+		String i = pdao.getUserKeyFromProjectId(projectId);
+		pdao.release();
+		return i;
 	}
 
 
 
 	public static boolean hasProject(int projectId,int userId) {
-		ProjectDAO pdao = new ProjectDAO(Conn.get());
-		return pdao.userHasProject(userId,projectId);
+		ProjectDAO pdao = new ProjectDAO();
+		boolean i = pdao.userHasProject(userId,projectId);
+		pdao.release();
+		return i;
 	}
 
 

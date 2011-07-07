@@ -43,8 +43,10 @@ public class JobControl extends Control{
 	 * @return the job id
 	 */
 	public static int createJob(int projectId,Job.JOB_TYPE type,Job.JOB_OUTPUT output){
-		JobDAO jdao = new JobDAO(Conn.get());
-		return jdao.createJob(projectId, type, output);
+		JobDAO jdao = new JobDAO();
+		int jobId= jdao.createJob(projectId, type, output);
+		jdao.release();
+		return jobId;
 	}
 
 	/**
@@ -53,8 +55,10 @@ public class JobControl extends Control{
 	 * @return the status of the job
 	 */
 	public static int getJobStatus(int jobId){
-		JobDAO jdao = new JobDAO(Conn.get());
-		return jdao.getJobStatus(jobId);
+		JobDAO jdao = new JobDAO();
+		int i=  jdao.getJobStatus(jobId);
+		jdao.release(); 
+		return i;
 	}
 
 	/**
@@ -63,8 +67,10 @@ public class JobControl extends Control{
 	 * @return the job
 	 */
 	public static Job getJob(int jobId){
-		JobDAO jdao = new JobDAO(Conn.get());
-		return jdao.getJob(jobId);
+		JobDAO jdao = new JobDAO();
+		Job j = jdao.getJob(jobId);
+		jdao.release();
+		return j;
 	}
 
 	/**
@@ -83,8 +89,10 @@ public class JobControl extends Control{
 		break;
 		case success : stat = Status.SUCCES;
 		}
-		JobDAO jdao = new JobDAO(Conn.get());
-		return jdao.updateJob(jobId, stat,data);
+		JobDAO jdao = new JobDAO();
+		boolean b = jdao.updateJob(jobId, stat,data);
+		jdao.release();
+		return b;
 	}
 
 
@@ -228,8 +236,10 @@ public class JobControl extends Control{
 	 * @return
 	 */
 	public static List<Job> getGFeatMinerJobsAndNotTerminatedFromProjectId(int projectId) {
-		JobDAO dao = new JobDAO(Conn.get());
-		return dao.getGFeatMinerJobsAndNotTerminatedFromProjectId(projectId);
+		JobDAO dao = new JobDAO();
+		List<Job> jobs =  dao.getGFeatMinerJobsAndNotTerminatedFromProjectId(projectId);
+		dao.release();
+		return jobs;
 	}
 
 
@@ -275,8 +285,9 @@ public class JobControl extends Control{
 	 * @param id the job id
 	 */
 	public static void removeJob(int id) {
-		JobDAO dao = new JobDAO(Conn.get());
+		JobDAO dao = new JobDAO();
 		dao.removeJob(id);
+		dao.release();
 
 	}
 

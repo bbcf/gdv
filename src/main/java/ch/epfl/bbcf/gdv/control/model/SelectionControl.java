@@ -42,7 +42,6 @@ public class SelectionControl extends Control{
 
 			/* get chromosomes */
 			Assembly assembly;
-			System.out.println("take chromosomes");
 			try {
 				assembly = GenrepWrapper.getAssemblyFromNrAssemblyId(nr_assembly_id);
 				List<Chromosome> chromosomes = assembly.getChromosomes();

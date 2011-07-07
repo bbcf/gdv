@@ -36,16 +36,20 @@ public class SequenceControl extends Control{
 	 * @return
 	 */
 	public static boolean isCreatedOnJBrowsoR(int assemblyId, String value) {
-		SequenceDAO gDAO = new SequenceDAO(Conn.get());
+		SequenceDAO gDAO = new SequenceDAO();
 		int jbid = gDAO.getJBGenomeIdFromGenrepId(assemblyId);
 		if(jbid!=-1){
+			gDAO.release();
 			return JbrowsoRAccess.checkGenomeCreation(jbid);
 		}
+		gDAO.release();
 		return false;
 	}
 	public static Sequence getSequence(int id){
-		SequenceDAO dao = new SequenceDAO(Conn.get());
-		return dao.getSequenceFromId(id);
+		SequenceDAO dao = new SequenceDAO();
+		Sequence seq = dao.getSequenceFromId(id);
+		dao.release();
+		return seq; 
 	}
 
 	/**
@@ -54,8 +58,10 @@ public class SequenceControl extends Control{
 	 * @return
 	 */
 	public static int getJbrowsorIdFromSequenceId(String sequenceId) {
-		SequenceDAO sdao = new SequenceDAO(Conn.get());
-		return sdao.getJBGenomeIdFromGenrepId(Integer.parseInt(sequenceId));
+		SequenceDAO sdao = new SequenceDAO();
+		int i = sdao.getJBGenomeIdFromGenrepId(Integer.parseInt(sequenceId));
+		sdao.release();
+		return i;
 	}
 
 	/**
@@ -64,25 +70,24 @@ public class SequenceControl extends Control{
 	 * @return
 	 */
 	public static Sequence getSequenceFromId(int sequenceId) {
-		SequenceDAO gDAO = new SequenceDAO(Conn.get());
-		return gDAO.getSequenceFromId(sequenceId);
+		SequenceDAO gDAO = new SequenceDAO();
+		Sequence seq = gDAO.getSequenceFromId(sequenceId);
+		gDAO.release();
+		return seq;
 	}
 
-	
-	
-	
+
+
+
 	public static boolean createGenome2(int nr_assemblyId, int speciesId,FeedbackPanel feedback){
 		Application.debug("create genome with assembly id = "+nr_assemblyId);
 		NR_Assembly nr_assembly = GenrepWrapper.getNRAssemblyById(nr_assemblyId);
-		
+
 		if(null==nr_assembly){
 			feedback.error("An error occurs : something went wrong with Genrep (nr_assembly)");
 			return false;
 		}
-		Application.debug("assembly :"+nr_assembly.toString());
-		//		}
 		Organism organism = GenrepWrapper.getOrganismsById(speciesId);
-		//JSONObject species = SpeciesAccess.getOrganismById(speciesId);
 		if(null==organism){
 			feedback.error("An error occurs : something went wrong with Genrep (species)");
 			return false;
@@ -107,28 +112,30 @@ public class SequenceControl extends Control{
 		}
 
 		//TODO fetch and process fasta
-	//	try {
-//			boolean ok = InputControl.processFastaInput(nr_assemblyId,url);
-//			Application.debug(ok);
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (ExtensionNotRecognizedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		//	try {
+		//			boolean ok = InputControl.processFastaInput(nr_assemblyId,url);
+		//			Application.debug(ok);
+		//		} catch (IOException e1) {
+		//			// TODO Auto-generated catch block
+		//			e1.printStackTrace();
+		//		} catch (ExtensionNotRecognizedException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 
 		//get the species in GDV or create it
-		SpeciesDAO spdao = new SpeciesDAO(Conn.get());
+		SpeciesDAO spdao = new SpeciesDAO();
 		int spId = -1;
 		if(spdao.exist(speciesName)){
 			spId = spdao.getSpeciesIdByName(speciesName);
 		} else {
 			spId = spdao.createSpecies(speciesName);
 		}
+		spdao.release();
 		//create the sequence on GDV
-		SequenceDAO sdao = new SequenceDAO(Conn.get());
+		SequenceDAO sdao = new SequenceDAO();
 		int seqId = sdao.createSequence(nr_assembly.getId(),-1,"generep",version,spId);
+		sdao.release();
 		//create an admin track
 		if(seqId==-1){
 			feedback.error("Something went wront with GDV : sequence cannot be created : "+seqId);
@@ -152,14 +159,14 @@ public class SequenceControl extends Control{
 			feedback.error("GTF URL doesn't exist for this assembly in Genrep. Add it manually");
 			return true;
 		}
-		
+
 		return JobControl.newAdminTrack(seqId, u,null,null,"Genes");
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * method to create a new sequence in GDV database :
 	 * create the species if not exist
@@ -226,16 +233,18 @@ public class SequenceControl extends Control{
 			return false;
 		}
 		//get the species in GDV or create it
-		SpeciesDAO spdao = new SpeciesDAO(Conn.get());
+		SpeciesDAO spdao = new SpeciesDAO();
 		int spId = -1;
 		if(spdao.exist(speciesName)){
 			spId = spdao.getSpeciesIdByName(speciesName);
 		} else {
 			spId = spdao.createSpecies(speciesName);
 		}
+		spdao.release();
 		//create the sequence on GDV
-		SequenceDAO sdao = new SequenceDAO(Conn.get());
+		SequenceDAO sdao = new SequenceDAO();
 		int seqId = sdao.createSequence(nr_assembly.getId(),jbId,"generep",version,spId);
+		sdao.release();
 		//create an admin track
 		if(seqId==-1){
 			feedback.error("Something went wront with GDV : sequence cannot be created : "+seqId);
@@ -259,104 +268,108 @@ public class SequenceControl extends Control{
 			feedback.error("GTF URL doesn't exist for this assembly in Genrep. Add it manually");
 			return true;
 		}
-		
+
 		return JobControl.newAdminTrack(seqId, u,null,null,"Genes");
 	}
 
 
-/**
- * needed for jbrowsoR
- * @param chromosomeObject
- * @return
- */
-private static JSONObject buildChrEquivalence(Chromosome chromosome) {
-	JSONObject chr = new JSONObject(); 
-	try {
-		//JSONObject chromosome = chromosomeObject.getJSONObject(ChromosomeAccess.CHROMOSOM_KEY);
-		//			name = chromosome.get(ChromosomeAccess.CHR_NAME);
-		//			id = chromosome.get(ChromosomeAccess.CHR_ID);
-		//			locus = chromosome.get(ChromosomeAccess.CHR_LOCUS);
-		//			version = chromosome.get(ChromosomeAccess.CHR_VERSION);
-		chr.put(chromosome.getId()+"_"+chromosome.getRefseq_locus()+"."+chromosome.getRefseq_version(), chromosome.getName());
-	} catch (JSONException e) {
-		Application.error(e);
-	}
-	return chr;
-}
-//
-//
-//	public String[] getSpeciesNameAndAssemblyNameFromAssemblyId(int sequenceId) {
-//		Application.debug("getSpeciesNameAndAssemblyNameFromAssemblyId", session.getUserId());
-//		String[] tmp = new String[2];
-//		JSONObject assembly = AssembliesAccess.getNRAssemblyById(sequenceId);
-//		try {
-//			String assemblyName = assembly.getString(AssembliesAccess.NAME_KEY);
-//			tmp[1] = assemblyName;
-//			String genome_id = assembly.getString(AssembliesAccess.GENOME_ID_KEY);
-//			JSONObject genome = GenomesAccess.getGenomesById(genome_id);
-//			int organism_id = genome.getInt(GenomesAccess.ORGANISM_ID_KEY);
-//			JSONObject species = SpeciesAccess.getOrganismById(organism_id);
-//			String speciesName = species.getString(SpeciesAccess.NAME_KEY);
-//			tmp[0]=speciesName;
-//
-//		} catch (JSONException e) {
-//			e.printStackTrace();
-//		}
-//		return tmp;
-//	}
-//	//
-//	
-/**
- * get a list of SelectOption representing all species in gdv
- */
-public static List<SelectOption> getSpeciesSO(){
-	SpeciesDAO spdao = new SpeciesDAO(Conn.get());
-	List<Species> species = spdao.getAllSpecies();
-	List<SelectOption> tab = new ArrayList<SelectOption>();
-	for(Species sp : species){
-		tab.add(new SelectOption(sp.getId(),sp.getName()));
-	}
-	return tab;
-}
-
-/**
- * get a list of SelectOption representing the differents 
- * assemblies available for this species
- * @param speciesId
- * @return
- */
-public static List<SelectOption> getSequencesFromSpeciesIdSO(int speciesId) {
-	SequenceDAO sdao = new SequenceDAO(Conn.get());
-	List<Sequence> seqs = sdao.getSequencesFromSpeciesId(speciesId);
-	List<SelectOption> tab = new ArrayList<SelectOption>();
-	for(Sequence seq : seqs){
-		tab.add(new SelectOption(seq.getId(),seq.getName()));
-	}
-	return tab;
-}
-
-/**
- * get the assemblies list not created on GDV and JBrowsoR
- * @return
- */
-public static List<SelectOption> getNRAssembliesNotCreated(int speciesId) {
-	List<SelectOption> allAssemblies = Arrays.asList(GenrepWrapper.getNRAssembliesByOrganismIdSO(speciesId));
-	List<SelectOption> nonAddedAssemblies = new ArrayList<SelectOption>();
-	SequenceControl sc = new SequenceControl();
-	for (SelectOption so : allAssemblies){
-		if(!sc.isCreatedOnJBrowsoR(so.getKey(),so.getValue())){
-			nonAddedAssemblies.add(so);
+	/**
+	 * needed for jbrowsoR
+	 * @param chromosomeObject
+	 * @return
+	 */
+	private static JSONObject buildChrEquivalence(Chromosome chromosome) {
+		JSONObject chr = new JSONObject(); 
+		try {
+			//JSONObject chromosome = chromosomeObject.getJSONObject(ChromosomeAccess.CHROMOSOM_KEY);
+			//			name = chromosome.get(ChromosomeAccess.CHR_NAME);
+			//			id = chromosome.get(ChromosomeAccess.CHR_ID);
+			//			locus = chromosome.get(ChromosomeAccess.CHR_LOCUS);
+			//			version = chromosome.get(ChromosomeAccess.CHR_VERSION);
+			chr.put(chromosome.getId()+"_"+chromosome.getRefseq_locus()+"."+chromosome.getRefseq_version(), chromosome.getName());
+		} catch (JSONException e) {
+			Application.error(e);
 		}
+		return chr;
 	}
-	return nonAddedAssemblies;
-}
-/**
- * get all sequences use in GDV
- * @return
- */
-public static List<Sequence> getAllSequences() {
-	SequenceDAO dao = new SequenceDAO(Conn.get());
-	return dao.getAllSequences();
-}
+	//
+	//
+	//	public String[] getSpeciesNameAndAssemblyNameFromAssemblyId(int sequenceId) {
+	//		Application.debug("getSpeciesNameAndAssemblyNameFromAssemblyId", session.getUserId());
+	//		String[] tmp = new String[2];
+	//		JSONObject assembly = AssembliesAccess.getNRAssemblyById(sequenceId);
+	//		try {
+	//			String assemblyName = assembly.getString(AssembliesAccess.NAME_KEY);
+	//			tmp[1] = assemblyName;
+	//			String genome_id = assembly.getString(AssembliesAccess.GENOME_ID_KEY);
+	//			JSONObject genome = GenomesAccess.getGenomesById(genome_id);
+	//			int organism_id = genome.getInt(GenomesAccess.ORGANISM_ID_KEY);
+	//			JSONObject species = SpeciesAccess.getOrganismById(organism_id);
+	//			String speciesName = species.getString(SpeciesAccess.NAME_KEY);
+	//			tmp[0]=speciesName;
+	//
+	//		} catch (JSONException e) {
+	//			e.printStackTrace();
+	//		}
+	//		return tmp;
+	//	}
+	//	//
+	//	
+	/**
+	 * get a list of SelectOption representing all species in gdv
+	 */
+	public static List<SelectOption> getSpeciesSO(){
+		SpeciesDAO spdao = new SpeciesDAO();
+		List<Species> species = spdao.getAllSpecies();
+		List<SelectOption> tab = new ArrayList<SelectOption>();
+		for(Species sp : species){
+			tab.add(new SelectOption(sp.getId(),sp.getName()));
+		}
+		spdao.release();
+		return tab;
+	}
+
+	/**
+	 * get a list of SelectOption representing the differents 
+	 * assemblies available for this species
+	 * @param speciesId
+	 * @return
+	 */
+	public static List<SelectOption> getSequencesFromSpeciesIdSO(int speciesId) {
+		SequenceDAO sdao = new SequenceDAO();
+		List<Sequence> seqs = sdao.getSequencesFromSpeciesId(speciesId);
+		List<SelectOption> tab = new ArrayList<SelectOption>();
+		for(Sequence seq : seqs){
+			tab.add(new SelectOption(seq.getId(),seq.getName()));
+		}
+		sdao.release();
+		return tab;
+	}
+
+	/**
+	 * get the assemblies list not created on GDV and JBrowsoR
+	 * @return
+	 */
+	public static List<SelectOption> getNRAssembliesNotCreated(int speciesId) {
+		List<SelectOption> allAssemblies = Arrays.asList(GenrepWrapper.getNRAssembliesByOrganismIdSO(speciesId));
+		List<SelectOption> nonAddedAssemblies = new ArrayList<SelectOption>();
+		SequenceControl sc = new SequenceControl();
+		for (SelectOption so : allAssemblies){
+			if(!sc.isCreatedOnJBrowsoR(so.getKey(),so.getValue())){
+				nonAddedAssemblies.add(so);
+			}
+		}
+		return nonAddedAssemblies;
+	}
+	/**
+	 * get all sequences use in GDV
+	 * @return
+	 */
+	public static List<Sequence> getAllSequences() {
+		SequenceDAO dao = new SequenceDAO();
+		List<Sequence> seqs =  dao.getAllSequences();
+		dao.release();
+		return seqs;
+	}
 
 }

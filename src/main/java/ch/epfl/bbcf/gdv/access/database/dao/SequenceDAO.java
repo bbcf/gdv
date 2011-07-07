@@ -16,8 +16,8 @@ public class SequenceDAO extends DAO<Sequence>{
 	private final static String tableName = "sequences";
 	private final static String[] fields = {"id","jbrowse_id","type","name","species_id"};
 
-	public SequenceDAO(Connection connection) {
-		super(connection);
+	public SequenceDAO() {
+		super();
 	}
 
 	private ArrayList<Sequence> getSequences(final ResultSet resultSet){

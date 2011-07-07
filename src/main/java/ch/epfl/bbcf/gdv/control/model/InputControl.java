@@ -166,14 +166,14 @@ public class InputControl extends Control{
 
 
 	private static int createNewAdminInput(String dbName) {
-		InputDAO uidao = new InputDAO(Conn.get());
+		InputDAO uidao = new InputDAO();
 		int inputId = -1;
 		if(uidao.exist(dbName)){
 			inputId = uidao.getUserInputByFileName(dbName).getId();
 		} else {
 			inputId = uidao.createNewInput(dbName);
 		}
-
+		uidao.release();
 		return inputId;
 	}
 	/**
@@ -181,7 +181,7 @@ public class InputControl extends Control{
 	 * @param md5
 	 */
 	private static int createNewUserInput(String dbName,int userId) {
-		InputDAO uidao = new InputDAO(Conn.get());
+		InputDAO uidao = new InputDAO();
 		int inputId = -1;
 		if(uidao.exist(dbName)){
 			inputId = uidao.getUserInputByFileName(dbName).getId();
@@ -189,6 +189,7 @@ public class InputControl extends Control{
 			inputId = uidao.createNewInput(dbName);
 		}
 		uidao.linkToUser(userId, inputId);
+		uidao.release();
 		return inputId;
 	}
 
@@ -198,8 +199,9 @@ public class InputControl extends Control{
 	 * @param input - the name of the input (generally the md5)
 	 */
 	public static void removeInput(String input) {
-		InputDAO idao = new InputDAO(Conn.get());
+		InputDAO idao = new InputDAO();
 		idao.remove(input);
+		idao.release();
 	}
 
 

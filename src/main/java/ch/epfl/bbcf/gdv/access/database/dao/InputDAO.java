@@ -14,8 +14,8 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Input;
 public class InputDAO extends DAO<Input>{
 
 
-	public InputDAO(Connection connection) {
-		super(connection);
+	public InputDAO() {
+		super();
 	}
 
 	/**

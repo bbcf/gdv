@@ -10,8 +10,8 @@ import ch.epfl.bbcf.gdv.access.database.pojo.GFeatMinerJob;
 
 public class GFeatMinerJobDAO extends DAO<GFeatMinerJob>{
 
-	public GFeatMinerJobDAO(Connection connection) {
-		super(connection);
+	public GFeatMinerJobDAO() {
+		super();
 	}
 
 	
