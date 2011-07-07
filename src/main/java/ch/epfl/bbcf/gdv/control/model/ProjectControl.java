@@ -107,7 +107,6 @@ public class ProjectControl extends Control implements Serializable{
 	 * @throws JSONException 
 	 */
 	public static JSONObject createNewProject(Users user,int seq_id,String projectName,int userId,boolean isPublic) throws JSONException{
-		Application.info("SEQ ID : "+seq_id);
 		JSONObject json = new JSONObject();
 		ProjectDAO pdao = new ProjectDAO();
 		int projectId = pdao.createNewProject(seq_id,projectName,isPublic);

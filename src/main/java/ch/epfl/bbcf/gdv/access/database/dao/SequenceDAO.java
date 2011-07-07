@@ -86,7 +86,6 @@ public class SequenceDAO extends DAO<Sequence>{
 		return genome.getJbrowsoRId();
 	}
 	public Sequence getSequenceFromId(int sequenceId) {
-		Sequence genome = new Sequence();
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
@@ -97,7 +96,7 @@ public class SequenceDAO extends DAO<Sequence>{
 				statement.setInt(1, sequenceId);
 				ResultSet resultSet = this.executeQuery(statement);
 				if(resultSet.next()){
-					genome = getSequence(resultSet);
+					Sequence genome = getSequence(resultSet);
 				}
 				this.endQuery(true);
 			} catch (SQLException e) {
@@ -105,7 +104,7 @@ public class SequenceDAO extends DAO<Sequence>{
 				this.endQuery(false);
 			}
 		}
-		return genome;
+		return null;
 	}
 	/**
 	 *  create a new sequence on GDV database

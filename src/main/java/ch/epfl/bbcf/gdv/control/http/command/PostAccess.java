@@ -63,8 +63,15 @@ public class PostAccess extends Command{
 		case assemblies:
 			List<Sequence> seqs = SequenceControl.getAllSequences();
 			out.write("[");
+			boolean first = true;
 			for(Sequence seq : seqs){
-				out.write("{id:"+seq.getId()+",name:\""+seq.getName()+"\"}");
+				if(!first){
+					out.write(",");
+				} else {
+					first = false;
+				}
+				String species = SpeciesControl.getSpeciesNameBySpeciesId(seq.getSpeciesId());
+				out.write("{id:"+seq.getId()+",species:\""+species+"\",assembly:\""+seq.getName()+"\"}");
 			}
 			out.write("]");
 			break;
