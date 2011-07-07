@@ -61,12 +61,12 @@ cd $TMP_DIR/$VERSION/gdv/bin
 jar xf gdv.war
 rm gdv.war
 rm META-INF/gdv.yaml
-cd ../../../..
+
 
 echo "#############################################################################################################"
 echo "######################                          COPING SCRIPTS                    ###########################"
 echo "#############################################################################################################"
-
+cd $GDV_HOME
 #copy scripts to bin directory
 cp build_scripts/startDaemons.sh $SCRIPT_DIR
 cp build_scripts/stopDaemons.sh $SCRIPT_DIR
@@ -82,18 +82,20 @@ echo "done ..."
 echo "#############################################################################################################"
 echo "######################                       IMPORTING GFM SERVER               #############################"
 echo "#############################################################################################################"
-cp -r bbcflib $GMINER_DIR/.
-cp -r gMiner $GMINER_DIR/.
-cp -r bein $GMINER_DIR/.
+cd $GDV_HOME/post_to_gminer
+
+cp -r bbcflib ../$GMINER_DIR/
+cp -r gMiner ../$GMINER_DIR/
+cp -r bein ../$GMINER_DIR/
 echo "done ..."
 
-
+cd $GDV_HOME
 echo $VERSION > $TMP_DIR/$VERSION/gdv/VERSION
 
 echo "#############################################################################################################"
 echo "######################                       BUILD DAEMON  1                      ###########################"
 echo "#############################################################################################################"
-
+cd $GDV_HOME
 #archive daemons
 cd conversion/compute_sqlite_scores
 ant jar

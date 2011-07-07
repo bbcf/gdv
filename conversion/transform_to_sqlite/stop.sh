@@ -9,3 +9,4 @@ GDV_HOME=$1
 APP_PATH=$GDV_HOME/transform_to_sqlite
 
 cat $APP_PATH/ActiveDaemonPID.pid | xargs kill
+rm $APP_PATH/ActiveDaemonPID.pid

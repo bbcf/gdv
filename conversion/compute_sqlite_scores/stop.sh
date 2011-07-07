@@ -8,3 +8,4 @@ fi
 GDV_HOME=$1
 APP_PATH=$GDV_HOME/compute_sqlite_scores
 cat $APP_PATH/ActiveDaemonPID.pid | xargs kill
+rm $APP_PATH/ActiveDaemonPID.pid

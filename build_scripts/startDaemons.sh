@@ -24,6 +24,8 @@ sh start.sh $HOME_PROJECT 'GDV_HOME'
 echo 'START gFeatMiner server ...'
 cd $HOME_PROJECT/post_to_gminer
 nohup python start.py &> gfm.log &
+pid=$!
+echo ${pid} > ActiveDaemonPID.pid
 
 cd $CUR
 exit 0

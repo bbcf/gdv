@@ -17,6 +17,16 @@ sh stop.sh $HOME_PROJECT
 cd $HOME_PROJECT/transform_to_sqlite/
 sh stop.sh $HOME_PROJECT
 
+cd $HOME_PROJECT/post_to_gminer/
+cat ActiveDaemonPID.pid | xargs kill
+rm ActiveDaemonPID.pid
+
 
 cd $CUR
+
+
+
+
+
+
 exit 0
