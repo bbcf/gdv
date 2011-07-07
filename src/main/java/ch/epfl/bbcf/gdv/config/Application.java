@@ -124,7 +124,12 @@ public class Application extends AuthenticatedWebApplication
 	public static void fatal(Object message){
 		theLogger.warn(new Date()+" : "+message);
 	}
-	
+	public static void error(Exception e){
+		theLogger.error(e.getCause()+" // "+e.getMessage()+" // "+e.getLocalizedMessage());
+		for(StackTraceElement el : e.getStackTrace()){
+			theLogger.error(el.getFileName()+"."+el.getClassName()+"."+el.getMethodName()+":line "+el.getLineNumber());
+		}
+	}
 	
 	public static void debug(Object message,int userId){
 		if(null==loggers.get(userId)){

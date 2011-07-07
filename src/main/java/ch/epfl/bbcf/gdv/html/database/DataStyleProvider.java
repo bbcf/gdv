@@ -1,6 +1,5 @@
 package ch.epfl.bbcf.gdv.html.database;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +11,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Type;
-import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.model.StyleControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
@@ -22,31 +20,16 @@ public class DataStyleProvider extends SortableDataProvider<StyleWrapper>{
 
 	private List<StyleWrapper> styles;
 	private int trackId;
+	private int userId;
 
-	public DataStyleProvider(int userId){
+	public DataStyleProvider(int userId,int trackId){
+		this.userId = userId;
 		this.trackId = trackId;
-		try {
-			styles = new ArrayList<StyleWrapper>();
-			Map<Type,Style> types = StyleControl.getTypesAndStyleFromUser(userId);
-			if(null==types){
-				types = StyleControl.buildRandomTypeForTrack(trackId);
-			}
-
-			for(String t: types){
-				StyleWrapper sw = new StyleWrapper(t,TrackControl.getStyleForTrackIdAndType(trackId, t));
-				styles.add(sw);
-			}
-
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
+		styles = new ArrayList<StyleWrapper>();
+		/* get the types of the track */
+		List<Type> types = TrackControl.getTrackTypes(trackId);
+		/* get the user styles of these type */
+		styles = StyleControl.getStyleFromUserIdAndTypes(userId,types);
 	}
 	@Override
 	public Iterator<StyleWrapper> iterator(int arg0, int arg1) {
@@ -72,18 +55,8 @@ public class DataStyleProvider extends SortableDataProvider<StyleWrapper>{
 	@Override
 	public void detach() {
 		super.detach();
-		List<String> types;
-		try {
-			types = TrackControl.getTrackTypesFromDatabase(trackId);
-			for(String t: types){
-				StyleWrapper sw = new StyleWrapper(t,TrackControl.getStyleForTrackIdAndType(trackId, t));
-				styles.add(sw);
-			}
-		} catch (SQLException e) {
-			Application.error(e);
-		}
-
-
+		List<Type> types = TrackControl.getTrackTypes(trackId);
+		styles = StyleControl.getStyleFromUserIdAndTypes(userId,types);
 	}
 
 }

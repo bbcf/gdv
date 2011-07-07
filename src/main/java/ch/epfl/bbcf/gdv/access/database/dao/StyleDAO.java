@@ -67,69 +67,52 @@ public class StyleDAO extends DAO<Style>{
 		}
 
 
-		public Style getStyleForTrackIdAndType(int trackId,String type){
-			if(this.databaseConnected()){
-				this.startQuery();
-				try {
-					String query = "select t1.* from styles as t1 " +
-					"inner join trackToStyle as t2 on t1.id = t2.style_id " +
-					"where t2.track_id= ? and t2.type = ? limit 1;";
-					PreparedStatement statement = this.prepareStatement(query,
-							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					statement.setInt(1,trackId);
-					statement.setString(2,type);
-					ResultSet resultSet = this.executeQuery(statement);
-					Style style = getStyle(resultSet);
-					this.endQuery(true);
-					return style;
-				} catch (SQLException e) {
-					logger.error(e);
-					this.endQuery(false);
-				}
-			}
-			return null;
-		}
-
-		public List<Style> getStylesForTrackId(int trackId){
-			if(this.databaseConnected()){
-				this.startQuery();
-				try {
-					String query = "select t1.* from styles as t1 " +
-					"inner join trackToStyle as t2 on t1.id = t2.style_id " +
-					"where t2.track_id= ? ;";
-					PreparedStatement statement = this.prepareStatement(query,
-							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					statement.setInt(1,trackId);
-					ResultSet resultSet = this.executeQuery(statement);
-					List<Style> styles = getStyles(resultSet);
-					this.endQuery(true);
-					return styles;
-				} catch (SQLException e) {
-					logger.error(e);
-					this.endQuery(false);
-				}
-			}
-			return null;
-		}
-
-		public boolean setStyleForTrackAndType(int trackId,String type,Style style){
-			if(this.databaseConnected()){
-				this.startQuery();
-				try {
-					String query = "insert into trackToStyle values (?,?,?)";
-					PreparedStatement statement = this.prepareStatement(query,
-							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					statement.setInt(1,trackId);
-					statement.setString(2,type);
-					statement.setInt(3, style.getId());
-					this.executer(statement);
-				} catch (SQLException e) {
-					logger.error(e);
-					this.endQuery(false);
-				}
-			}
-			return false;
-		}
+//		public Style getStyleForTrackIdAndType(int trackId,String type){
+//			if(this.databaseConnected()){
+//				this.startQuery();
+//				try {
+//					String query = "select t1.* from styles as t1 " +
+//					"inner join trackToStyle as t2 on t1.id = t2.style_id " +
+//					"where t2.track_id= ? and t2.type = ? limit 1;";
+//					PreparedStatement statement = this.prepareStatement(query,
+//							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//					statement.setInt(1,trackId);
+//					statement.setString(2,type);
+//					ResultSet resultSet = this.executeQuery(statement);
+//					Style style = getStyle(resultSet);
+//					this.endQuery(true);
+//					return style;
+//				} catch (SQLException e) {
+//					logger.error(e);
+//					this.endQuery(false);
+//				}
+//			}
+//			return null;
+//		}
+//
+//		public List<Style> getStylesForTrackId(int trackId){
+//			if(this.databaseConnected()){
+//				this.startQuery();
+//				try {
+//					String query = "select t1.* from styles as t1 " +
+//					"inner join trackToStyle as t2 on t1.id = t2.style_id " +
+//					"where t2.track_id= ? ;";
+//					PreparedStatement statement = this.prepareStatement(query,
+//							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//					statement.setInt(1,trackId);
+//					ResultSet resultSet = this.executeQuery(statement);
+//					List<Style> styles = getStyles(resultSet);
+//					this.endQuery(true);
+//					return styles;
+//				} catch (SQLException e) {
+//					logger.error(e);
+//					this.endQuery(false);
+//				}
+//			}
+//			return null;
+//		}
+//
+		
 
 
 
@@ -177,29 +160,29 @@ public class StyleDAO extends DAO<Style>{
 			return null;
 		}
 
-		public List<String> getTrackTypes(int trackId){
-			if(this.databaseConnected()){
-				this.startQuery();
-				try {
-					String query = "select type from trackToStyle " +
-					"where track_id = ? ;";
-					PreparedStatement statement = this.prepareStatement(query,
-							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					statement.setInt(1,trackId);
-					ResultSet resultSet = this.executeQuery(statement);
-					List<String> types = new ArrayList<String>();
-					while(resultSet.next()){
-						types.add(resultSet.getString(1));
-					}
-					this.endQuery(true);
-					return types;
-				} catch (SQLException e) {
-					logger.error(e);
-					this.endQuery(false);
-				}
-			}
-			return null;
-		}
+//		public List<String> getTrackTypes(int trackId){
+//			if(this.databaseConnected()){
+//				this.startQuery();
+//				try {
+//					String query = "select type from trackToStyle " +
+//					"where track_id = ? ;";
+//					PreparedStatement statement = this.prepareStatement(query,
+//							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//					statement.setInt(1,trackId);
+//					ResultSet resultSet = this.executeQuery(statement);
+//					List<String> types = new ArrayList<String>();
+//					while(resultSet.next()){
+//						types.add(resultSet.getString(1));
+//					}
+//					this.endQuery(true);
+//					return types;
+//				} catch (SQLException e) {
+//					logger.error(e);
+//					this.endQuery(false);
+//				}
+//			}
+//			return null;
+//		}
 
 		public Style getStyleByStyle(STYLE_COLOR color,STYLE_HEIGHT height){
 			if(this.databaseConnected()){
@@ -230,12 +213,12 @@ public class StyleDAO extends DAO<Style>{
 		 * @param userId
 		 * @return
 		 */
-		public Map<Type, Style> getTypesAndStyleFromUser(int userId) {
+		public Map<Type, Style> getTypesAndStyleFromUserId(int userId) {
 			if(this.databaseConnected()){
 				this.startQuery();
 				Map<Type, Style> map = new HashMap<Type, Style>();
 				try {
-					String query = "select type_id,style_id from user_style " +
+					String query = "select type_id,style_id from track_style " +
 					"where user_id = ? ;";
 					PreparedStatement statement = this.prepareStatement(query,
 							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -245,7 +228,8 @@ public class StyleDAO extends DAO<Style>{
 					while(resultSet.next()){
 						int type_id = resultSet.getInt(1);
 						int style_id = resultSet.getInt(2);
-						Style s =  getStyleById(style_id);
+						StyleDAO sdao = new StyleDAO(Conn.get());
+						Style s =  sdao.getStyleById(style_id);
 						TypeDAO dao = new TypeDAO(Conn.get());
 						Type t = dao.getTypeById(type_id);
 						map.put(t, s);
@@ -260,6 +244,38 @@ public class StyleDAO extends DAO<Style>{
 			return null;
 		}
 
+		/**
+		 * get the user style for this type if one
+		 * @param userId the user
+		 * @param typeId the type
+		 * @return a Style object
+		 */
+		public Style getUserStyleFromTypeId(int userId, int typeId) {
+			if(this.databaseConnected()){
+				this.startQuery();
+				try {
+					String query = "select * from styles as t1 " +
+							"inner join user_style as t2 on t1.id = t2.style_id " +
+							"where t2.user_id = ? and t2.type_id = ? limit 1;";
+					PreparedStatement statement = this.prepareStatement(query,
+							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+					statement.setInt(1, userId);
+					statement.setInt(2, typeId);
+					ResultSet resultSet = this.executeQuery(statement);
+					if(resultSet.next()){
+						Style s =  getStyle(resultSet);
+						this.endQuery(true);
+						return s;
+					}
+				} catch (SQLException e) {
+					logger.error(e);
+					this.endQuery(false);
+				}
+			}
+			return null;
+		}
+		
+		
 
 		private Style getStyleById(int style_id) {
 			if(this.databaseConnected()){
@@ -282,5 +298,49 @@ public class StyleDAO extends DAO<Style>{
 				}
 			}
 			return null;
+		}
+
+
+		public boolean createStyleForUserAndType(int userId, int typeId,int styleId) {
+			if(this.databaseConnected()){
+				this.startQuery();
+				try {
+					String query = "insert into user_style values (?,?,?)";
+					PreparedStatement statement = this.prepareStatement(query,
+							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+					statement.setInt(1,userId);
+					statement.setInt(2,typeId);
+					statement.setInt(3, styleId);
+					this.executer(statement);
+					return true;
+				} catch (SQLException e) {
+					logger.error(e);
+					this.endQuery(false);
+				}
+			}
+			return false;
+		}
+
+
+		public boolean setStyleForUserAndType(int userId, int typeId, int styleId) {
+			if(this.databaseConnected()){
+				this.startQuery();
+				try {
+					String query = "update user_style " +
+							"set style_id = ? " +
+							"where user_id = ? and type_id = ? ";
+					PreparedStatement statement = this.prepareStatement(query,
+							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+					statement.setInt(1,styleId);
+					statement.setInt(2,userId);
+					statement.setInt(3, typeId);
+					this.executer(statement);
+					return true;
+				} catch (SQLException e) {
+					logger.error(e);
+					this.endQuery(false);
+				}
+			}
+			return false;
 		}
 }

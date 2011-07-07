@@ -12,6 +12,7 @@ import java.util.Set;
 import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
@@ -763,6 +764,8 @@ public class TrackDAO extends DAO<Track>{
 		}
 		return jbTracks;
 	}
+
+
 
 
 

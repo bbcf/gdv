@@ -3,9 +3,11 @@ package ch.epfl.bbcf.gdv.html;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -29,13 +31,16 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Job;
 import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
+import ch.epfl.bbcf.gdv.control.model.StyleControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
+import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
 import ch.epfl.bbcf.gdv.model.pojos.json.BrowserParameters;
 
 
@@ -194,42 +199,15 @@ public class BrowserPage extends WebPage{
 
 
 		/* building style javascript */
-
+		final int userId = ((UserSession)getSession()).getUserId();
 		String featureStyle ="function getFeatureStyle(type,div){div.style.backgroundColor='#3333D7';div.className='basic';";
-		for(Track track : tracks){
-			List<String> types;
-			try {
-				types = TrackControl.getTrackTypesFromDatabase(track.getId());
-				if(null==types){
-					types = TrackControl.buildRandomTypeForTrack(track.getId());
-				}
-				featureStyle+=buildFeartureStyleString(track.getId(),types);
-			} catch (SQLException e) {
-				Application.error(e);
-			} catch (InstantiationException e) {
-				Application.error(e);
-			} catch (IllegalAccessException e) {
-				Application.error(e);
-			} catch (ClassNotFoundException e) {
-				Application.error(e);
-			}
-		}
-		
-
-
-
-
-
-
-
-
-
-
-
+		featureStyle+=buildFeatureStyleString(userId,tracks);
 
 
 
 		final String s = jsControl;
+		final String fs = featureStyle;
+		
 		add(new AbstractBehavior() {
 			@Override
 			public void renderHead(IHeaderResponse response) {
@@ -237,55 +215,20 @@ public class BrowserPage extends WebPage{
 				response.renderJavascript("refSeqs = "+refseq,"refseq_"+project.getId());
 				response.renderJavascript(trackInfo,"js_view_"+project.getId());
 				response.renderJavascript(s,"js_control_"+project.getId());
+				response.renderJavascript(fs,"style_control_"+project.getId());
 			}
 		}); 
 	}
-	/**
 
-	function getFeatureStyle(type,div){
-	    div.style.backgroundColor="#3333D7";
-	    div.className="basic";
-	    switch(type){
-	    case"CDS": case"thick":
-	        div.style.height="20px";
-	        div.style.marginTop ="-8px";
-	        break;
-	    case "exon":
-	        div.style.height="8px";
-	        div.style.marginTop ="-3px";
-	        break ;
-	    case "start_codon":case "stop_codon":
-	        div.style.height="20px";
-	        div.style.marginTop ="-8px";
-	        div.style.backgroundColor="red";
-	        div.style.zIndex="10";
-	        break ;
-	    case "ncRNA":case "tRNA":
-	        div.style.height="20px";
-	        div.style.marginTop ="-8px";
-	        div.style.backgroundColor="green";
-	        div.style.zIndex="10";
-	        break ;
-	    case "repeat_region":
-	        div.style.height="20px";
-	        div.style.marginTop ="-8px";
-	        div.style.backgroundColor="yellow";
-	        div.style.zIndex="10";
-	        break ;
-	    case "UTR":case "thin":
-	        div.style.height="8px";
-	        div.style.marginTop="-3px";
-	        div.style.backgroundColor="black";
-	        break;
-
- */
-
-	private String buildFeartureStyleString(int trackId,List<String> types) {
+	private String buildFeatureStyleString(int userId,Set<Track> tracks) {
+		Set<Type> types = TrackControl.getTracksTypes(tracks);
+		List<StyleWrapper> wrappers = StyleControl.getStyleFromUserIdAndTypes(userId,new ArrayList<Type>(types));
 		String res = "";
-		for(String type : types){
-			Style s = TrackControl.getStyleForTrackIdAndType(trackId, type);
-			res+="case '"+type+"' : ";
-			switch(s.getStyle_height()){
+		for(StyleWrapper sw : wrappers){
+			Type type = sw.getType();
+			Style style = sw.getStyleObject();
+			res+="case '"+type.getName()+"' : ";
+			switch(style.getStyle_height()){
 			case small:
 				res+="div.style.height='10px';div.style.marginTop='-4px';div.style.zIndex='30'";
 				break;
@@ -296,9 +239,10 @@ public class BrowserPage extends WebPage{
 				res+="div.style.height='30px';div.style.marginTop='-13px';div.style.zIndex='10'";
 				break;
 			}
-			
+			res+="break;";
+
 		}
-		return null;
+		return res;
 	}
 	/**
 	 * build the refseq needed for the view

@@ -67,6 +67,9 @@ public abstract class DAO<T> {
 		}
 	}
 
+	protected void end(){
+		Conn.returnToPool(connection);
+	}
 	protected void finalize(){
 		try {
 			this.connection.close();
@@ -81,5 +84,6 @@ public abstract class DAO<T> {
 	protected void executeUpdate(PreparedStatement statement) throws SQLException {
 		logger.debug(statement.toString());
 		statement.execute();
+		statement.close();
 	}
 }

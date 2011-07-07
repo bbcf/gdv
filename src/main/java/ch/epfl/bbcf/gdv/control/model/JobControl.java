@@ -126,6 +126,7 @@ public class JobControl extends Control{
 		Track track = TrackControl.getTrackIdWithJobId(jobId);
 		updateJob(jobId, Command.STATUS.success,null);
 		TrackControl.updateTrack(track.getId(),"completed");
+		TrackControl.addTypes(track);
 	}
 
 

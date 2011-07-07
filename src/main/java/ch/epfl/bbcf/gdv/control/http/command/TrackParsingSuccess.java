@@ -19,6 +19,8 @@ import ch.epfl.bbcf.gdv.mail.Sender;
 
 public class TrackParsingSuccess extends Command{
 
+	private final static String END = "end";
+
 	public TrackParsingSuccess(RequestParameters params, PrintWriter out) {
 		super(params, out);
 	}
@@ -27,7 +29,6 @@ public class TrackParsingSuccess extends Command{
 
 	@Override
 	public void doRequest() {
-		Application.debug("TPS :job number  "+params.getJobId());
 		checkParams(params.getJobId());
 		if(null==params.getDbType()){
 			throw new AbortWithHttpStatusException(400,true);
@@ -36,14 +37,14 @@ public class TrackParsingSuccess extends Command{
 
 		case qualitative :
 			JobControl.updateTrackJobSuccess(params.getJobId());
+			
 			break;
 
 
 		case quantitative :
-			if(params.getData()!=null && params.getData().equalsIgnoreCase("end")){
+			if(END.equalsIgnoreCase(params.getData())){
 				JobControl.updateTrackJobSuccess(params.getJobId());
 			} else {
-				Application.debug("got to computing");
 				Track track = TrackControl.getTrackIdWithJobId(params.getJobId());
 				SQLiteAccess access = new SQLiteAccess(Configuration.getCompute_scores_daemon());
 				access.writeNewJobCalculScores(params.getJobId(),track.getInput(),Configuration.getFilesDir(),track.getInput(),Configuration.getTracks_dir(),0,"nomail",

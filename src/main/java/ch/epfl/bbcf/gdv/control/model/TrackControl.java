@@ -2,8 +2,10 @@ package ch.epfl.bbcf.gdv.control.model;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -16,8 +18,10 @@ import ch.epfl.bbcf.gdv.access.database.dao.ProjectDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.TrackDAO;
 import ch.epfl.bbcf.gdv.access.database.dao.InputDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.TypeDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.utility.file.FileManagement;
@@ -404,4 +408,68 @@ public class TrackControl extends Control{
 	private static String protect(String name) {
 		return name.replaceAll("\"", "\\\\\"");
 	}
+
+
+
+
+	
+
+	public static boolean setTrackTypes(int trackId,List<Type> types){
+		TypeDAO tdao = new TypeDAO(Conn.get());
+		return tdao.setTrackTypes(trackId,types);
+	}
+
+	/**
+	 * add the style types to the track if it's have any
+	 * @param track
+	 */
+	public static void addTypes(Track track) {
+		if(track.getType().equals(SQLiteExtension.QUALITATIVE_EXTENDED)){
+			try {
+				SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(
+						Configuration.getFilesDir()+File.pathSeparator+track.getInput());
+				List<String> types_ = access.getTypes();
+				access.close();
+				List<Type> types = new ArrayList<Type>();
+				if(null!=types_){
+					for(String t : types_){
+						Type type = StyleControl.createType(t);
+						types.add(type);
+					}
+					setTrackTypes(track.getId(),types);
+				} else {
+					Application.warn("the track "+track.getId()+" : "+track.getInput()+" has no type ");
+				}
+				
+			} catch (InstantiationException e) {
+				Application.error(e);
+			} catch (IllegalAccessException e) {
+				Application.error(e);
+			} catch (ClassNotFoundException e) {
+				Application.error(e);
+			} catch (SQLException e) {
+				Application.error(e);
+			}
+		}
+
+	}
+	
+	public static List<Type> getTrackTypes(int trackId){
+		TypeDAO tdao = new TypeDAO(Conn.get());
+		return tdao.getTrackTypes(trackId);
+	}
+	
+	public static Set<Type> getTracksTypes(Set<Track> tracks) {
+		TypeDAO tdao = new TypeDAO(Conn.get());
+		Set<Type> types = new HashSet<Type>();
+		for(Track t : tracks){
+			types.addAll(tdao.getTrackTypes(t.getId()));
+		}
+		return types;
+	}
+
+
+
+
+
 }

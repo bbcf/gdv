@@ -79,7 +79,7 @@ public class UserControl extends Control{
 		return dao.getUserFromTrackId(trackId);
 	}
 
-	public static boolean checkUserAuthorizedToConfigureTrack(Integer trackId) {
+	public static boolean checkUserAuthorizedToConfigureTrack(int userId,Integer trackId) {
 		// TODO Auto-generated method stub
 		return true;
 	}

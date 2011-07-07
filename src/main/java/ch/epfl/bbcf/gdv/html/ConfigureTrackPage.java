@@ -1,6 +1,7 @@
 package ch.epfl.bbcf.gdv.html;
 
 import java.util.Arrays;
+import java.util.Map;
 
 
 import org.apache.wicket.PageParameters;
@@ -28,8 +29,11 @@ import org.json.JSONObject;
 import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_HEIGHT;
 import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
+import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
+import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.model.StyleControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
 import ch.epfl.bbcf.gdv.html.database.DataStyleProvider;
@@ -38,7 +42,6 @@ import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
 public class ConfigureTrackPage extends BasePage{
 
 	protected final ValueMap properties = new ValueMap();
-
 	public ConfigureTrackPage(PageParameters p) {
 		super(p);
 
@@ -66,14 +69,18 @@ public class ConfigureTrackPage extends BasePage{
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
+		/* get user id  */
+		final int userId = ((UserSession)getSession()).getUserId();
+		
 		/* check if user is authorized */
-		if(!UserControl.checkUserAuthorizedToConfigureTrack(trackId)){
+		if(!UserControl.checkUserAuthorizedToConfigureTrack(userId,trackId)){
 			String err="you are not authorized to configure this track";
 			PageParameters params = new PageParameters();
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
 
+	
 		/* get the track */
 		final Track track = TrackControl.getTrackById(trackId);
 
@@ -105,7 +112,11 @@ public class ConfigureTrackPage extends BasePage{
 		};
 		form.add(editableTrackName);
 
-		/* color input (link with a dojo color picker on the HTML page) */
+		
+		
+		
+		
+		/* color input (link with a dojo color picker on the HTML page, not visible) */
 		TextField<String> colorInput1 = new TextField<String>("color_input1",new PropertyModel<String>(properties,"color_input"));
 		colorInput1.setOutputMarkupPlaceholderTag(true);
 		colorInput1.setMarkupId("color_input");
@@ -119,23 +130,24 @@ public class ConfigureTrackPage extends BasePage{
 		
 		
 		/* style chooser */
-		final DataStyleProvider dtcp = new DataStyleProvider(track.getId());
-
+		final DataStyleProvider dtcp = new DataStyleProvider(userId,track.getId());
 		DataView<StyleWrapper> data = new DataView<StyleWrapper>("style_data",dtcp) {
 			@Override
 			protected void populateItem(Item<StyleWrapper> item) {
 				final StyleWrapper sw = item.getModelObject();
 				/* type name */
-				Label name = new Label("name",sw.getName());
+				Label name = new Label("name",sw.getType().getName());
 				item.add(name);
 				/* height */
-				final RadioChoice rc = new RadioChoice("height",Arrays.asList(STYLE_HEIGHT.values()));
+				final RadioChoice<STYLE_HEIGHT> rc = new RadioChoice<STYLE_HEIGHT>("height", Arrays.asList(STYLE_HEIGHT.values()));
+				
+				
 				rc.setModelObject(sw.getStyle_height());
 				 rc.add(new AjaxFormComponentUpdatingBehavior("onchange") { 
 				        protected void onUpdate(AjaxRequestTarget target) {
 				        	Style s = sw.getStyleObject();
 				        	sw.setStyle_height(rc.getModelValue());
-				        	TrackControl.setStyleForTrackAndType(track.getId(),sw.getName(), s);
+				        	StyleControl.setStyleForUserAndType(userId, sw.getType(), sw.getStyleObject());
 				        }
 				 });
 				item.add(rc);
