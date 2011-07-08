@@ -40,12 +40,12 @@ public class StyleDAO extends DAO<Style>{
 					logger.error(e);
 				}
 				try {
-					sty.setStyle_color(r.getString("style_color"));
+					sty.setStyle_color(r.getString("color"));
 				} catch (SQLException e) {
 					logger.error(e);
 				}
 				try {
-					sty.setStyle_height(r.getString("style_height"));
+					sty.setStyle_height(r.getString("height"));
 				} catch (SQLException e) {
 					logger.error(e);
 				}
@@ -192,8 +192,8 @@ public class StyleDAO extends DAO<Style>{
 					"where color = ?::style_color and height= ?::style_height limit 1;";
 					PreparedStatement statement = this.prepareStatement(query,
 							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					statement.setString(1, color.toString());
-					statement.setString(2, height.toString());
+					statement.setString(1, color.name());
+					statement.setString(2, height.name());
 					ResultSet resultSet = this.executeQuery(statement);
 					if(resultSet.next()){
 						Style s =  getStyle(resultSet);
