@@ -254,6 +254,7 @@ public class BrowserPage extends WebPage{
 		JSONArray array = null;
 		try {
 			Assembly ass = GenrepWrapper.getAssemblyFromNrAssemblyId(seq_id);
+			Application.debug(ass);
 			List<Chromosome> chromosomes = ass.getChromosomes();
 			array = new JSONArray();
 			for(Chromosome chromosome : chromosomes){

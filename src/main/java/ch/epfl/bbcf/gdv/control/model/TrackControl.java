@@ -508,7 +508,10 @@ public class TrackControl extends Control{
 		TypeDAO tdao = new TypeDAO();
 		Set<Type> types = new HashSet<Type>();
 		for(Track t : tracks){
-			types.addAll(tdao.getTrackTypes(t.getId()));
+			List<Type> tmp = tdao.getTrackTypes(t.getId());
+			if(null!=tmp){
+				types.addAll(tmp);
+			}
 		}
 		tdao.release();
 		return types;
