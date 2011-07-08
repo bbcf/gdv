@@ -230,13 +230,13 @@ public class BrowserPage extends WebPage{
 			res+="case '"+type.getName()+"' : ";
 			switch(style.getStyle_height()){
 			case small:
-				res+="div.style.height='10px';div.style.marginTop='-4px';div.style.zIndex='30'";
+				res+="div.style.height='10px';div.style.marginTop='-4px';div.style.zIndex='30';";
 				break;
 			case medium:
-				res+="div.style.height='20px';div.style.marginTop='-8px';div.style.zIndex='20'";
+				res+="div.style.height='20px';div.style.marginTop='-8px';div.style.zIndex='20';";
 				break;
 			case big :
-				res+="div.style.height='30px';div.style.marginTop='-13px';div.style.zIndex='10'";
+				res+="div.style.height='30px';div.style.marginTop='-13px';div.style.zIndex='10';";
 				break;
 			}
 			res+="break;";
