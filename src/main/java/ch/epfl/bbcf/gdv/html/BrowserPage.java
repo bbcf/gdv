@@ -200,9 +200,9 @@ public class BrowserPage extends WebPage{
 
 		/* building style javascript */
 		final int userId = ((UserSession)getSession()).getUserId();
-		String featureStyle ="function getFeatureStyle(type,div){div.style.backgroundColor='#3333D7';div.className='basic';";
+		String featureStyle ="function getFeatureStyle(type,div){div.style.backgroundColor='#3333D7';div.className='basic'; switch(type){";
 		featureStyle+=buildFeatureStyleString(userId,tracks);
-		featureStyle+="};";
+		featureStyle+="}};";
 
 
 		final String s = jsControl;
