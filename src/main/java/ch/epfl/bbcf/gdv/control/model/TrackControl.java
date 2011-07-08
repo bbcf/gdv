@@ -470,7 +470,7 @@ public class TrackControl extends Control{
 		if(track.getType().equals(SQLiteExtension.QUALITATIVE_EXTENDED)){
 			try {
 				SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(
-						Configuration.getFilesDir()+File.pathSeparator+track.getInput());
+						Configuration.getFilesDir()+File.separator+track.getInput());
 				List<String> types_ = access.getTypes();
 				access.close();
 				List<Type> types = new ArrayList<Type>();

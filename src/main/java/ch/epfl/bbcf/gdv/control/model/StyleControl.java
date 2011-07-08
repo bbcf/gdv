@@ -97,5 +97,9 @@ public class StyleControl {
 	private static Style buildStyleForType(Type type) {
 		return Style.randomStyle();
 	}
+	public static void main(String[] a){
+		System.out.println("jkg");
+		System.out.println(File.separator);
+	}
 	
 }
