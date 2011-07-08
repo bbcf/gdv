@@ -51,14 +51,16 @@ public class TypeDAO extends DAO<Type>{
 			this.startQuery();
 			try {
 				String query = "select * from types " +
-				"where name = ? ;";
+				"where name = ? limit 1;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 				statement.setString(1, type);
 				ResultSet resultSet = this.executeQuery(statement);
-				Type t = getType(resultSet);
-				this.endQuery(true);
-				return t;
+				if(resultSet.next()){
+					Type t = getType(resultSet);
+					this.endQuery(true);
+					return t;
+				}
 			} catch (SQLException e) {
 				logger.error(e);
 				this.endQuery(false);
@@ -163,6 +165,6 @@ public class TypeDAO extends DAO<Type>{
 		return false;
 	}
 
-	
+
 
 }

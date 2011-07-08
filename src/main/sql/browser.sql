@@ -180,7 +180,8 @@ PRIMARY KEY("id")
 );
  CREATE TABLE trackToType(
 "track_id" SERIAL NOT NULL,
-"type_id" SERIAL NOT NULL
+"type_id" SERIAL NOT NULL,
+PRIMARY KEY("track_id","type_id")
 );
 
 
