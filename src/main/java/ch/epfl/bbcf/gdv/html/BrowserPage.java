@@ -239,6 +239,9 @@ public class BrowserPage extends WebPage{
 				res+="div.style.height='30px';div.style.marginTop='-13px';div.style.zIndex='10';";
 				break;
 			}
+			
+			res+="div.style.backgroundColor='"+style.getStyle_color()+"';";
+			
 			res+="break;";
 
 		}
