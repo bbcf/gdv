@@ -131,7 +131,8 @@ public class PostAccess extends Command{
 		/* check if this seq id exist in GDV */
 		Sequence seq = SequenceControl.getSequence(seqId);
 		if(null==seq){
-			error("sequence : "+seqId+" is not created on GDV. You can ask at webmaster.bbcf@epfl.ch to add it");
+			error("sequence : "+seqId+" is not created on GDV. You can have all ids with the command 'assemblies'." +
+					"If you want a species that is not under GDV, ask at webmaster.bbcf@epfl.ch to add it");
 			throw new AbortWithHttpStatusException(400,true);
 		}
 		

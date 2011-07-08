@@ -89,7 +89,7 @@ public class SequenceDAO extends DAO<Sequence>{
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
-				String query = "select * from "+tableName+" as t1 " +
+				String query = "select t1.* from "+tableName+" as t1 " +
 				"where t1.id = ?;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -97,8 +97,11 @@ public class SequenceDAO extends DAO<Sequence>{
 				ResultSet resultSet = this.executeQuery(statement);
 				if(resultSet.next()){
 					Sequence genome = getSequence(resultSet);
+					this.endQuery(true);
+					return genome;
 				}
-				this.endQuery(true);
+				
+				
 			} catch (SQLException e) {
 				logger.error(e);
 				this.endQuery(false);
