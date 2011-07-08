@@ -71,7 +71,7 @@ public class ConfigureTrackPage extends BasePage{
 		}
 		/* get user id  */
 		final int userId = ((UserSession)getSession()).getUserId();
-		
+
 		/* check if user is authorized */
 		if(!UserControl.checkUserAuthorizedToConfigureTrack(userId,trackId)){
 			String err="you are not authorized to configure this track";
@@ -80,7 +80,7 @@ public class ConfigureTrackPage extends BasePage{
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
 
-	
+
 		/* get the track */
 		final Track track = TrackControl.getTrackById(trackId);
 
@@ -112,10 +112,10 @@ public class ConfigureTrackPage extends BasePage{
 		};
 		form.add(editableTrackName);
 
-		
-		
-		
-		
+
+
+
+
 		/* color input (link with a dojo color picker on the HTML page, not visible) */
 		TextField<String> colorInput1 = new TextField<String>("color_input1",new PropertyModel<String>(properties,"color_input"));
 		colorInput1.setOutputMarkupPlaceholderTag(true);
@@ -125,10 +125,10 @@ public class ConfigureTrackPage extends BasePage{
 		form.add(colorInput1);
 
 
-		
-	
-		
-		
+
+
+
+
 		/* style chooser */
 		final DataStyleProvider dtcp = new DataStyleProvider(userId,track.getId());
 		DataView<StyleWrapper> data = new DataView<StyleWrapper>("style_data",dtcp) {
@@ -140,30 +140,28 @@ public class ConfigureTrackPage extends BasePage{
 				item.add(name);
 				/* height */
 				final RadioChoice<STYLE_HEIGHT> rc = new RadioChoice<STYLE_HEIGHT>(
-						"height",new Model<STYLE_HEIGHT>(), Arrays.asList(STYLE_HEIGHT.values()));
-				
-				
+						"height",new Model<STYLE_HEIGHT>(), Arrays.asList(STYLE_HEIGHT.values())){
+							protected void onSelectionChanged(STYLE_HEIGHT newSelection){
+								Style s = sw.getStyleObject();
+								sw.setStyle_height(newSelection);
+								StyleControl.setStyleForUserAndType(userId, sw.getType(), sw.getStyleObject());
+							}
+						};
+
 				rc.setModelObject(sw.getStyle_height());
-				 rc.add(new AjaxFormComponentUpdatingBehavior("onchange") { 
-				        protected void onUpdate(AjaxRequestTarget target) {
-				        	Style s = sw.getStyleObject();
-				        	sw.setStyle_height(rc.getModelValue());
-				        	StyleControl.setStyleForUserAndType(userId, sw.getType(), sw.getStyleObject());
-				        }
-				 });
 				item.add(rc);
 				/* color */
 				Label color = new Label("color",sw.getStyle_color().toString());
 				item.add(color);
-				
+
 			}
 		};
-		
+
 		data.setOutputMarkupPlaceholderTag(true);
 		form.add(data);
-		
-		
-		
+
+
+
 
 		//datatype switch
 		switch(track.getType()){
@@ -196,7 +194,7 @@ public class ConfigureTrackPage extends BasePage{
 			}
 		};
 		form.add(sub);
-		
+
 
 
 

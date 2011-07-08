@@ -43,4 +43,7 @@ public class Style implements Serializable{
 		dao.release();
 		return style;
 	}
+	public void setStyle_height(STYLE_HEIGHT style_height2) {
+		this.style_height=style_height2;
+	}
 }

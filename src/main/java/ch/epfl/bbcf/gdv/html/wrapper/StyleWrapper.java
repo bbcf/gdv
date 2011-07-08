@@ -34,4 +34,7 @@ public class StyleWrapper {
 	public Style getStyleObject() {
 		return style;
 	}
+	public void setStyle_height(STYLE_HEIGHT style_height) {
+		this.style.setStyle_height(style_height);
+	}
 }
