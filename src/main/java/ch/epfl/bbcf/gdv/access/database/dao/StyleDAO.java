@@ -188,7 +188,7 @@ public class StyleDAO extends DAO<Style>{
 			if(this.databaseConnected()){
 				this.startQuery();
 				try {
-					String query = "select * from style " +
+					String query = "select * from styles " +
 					"where color = ?::style_color and height= ?::style_height limit 1;";
 					PreparedStatement statement = this.prepareStatement(query,
 							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -282,7 +282,7 @@ public class StyleDAO extends DAO<Style>{
 			if(this.databaseConnected()){
 				this.startQuery();
 				try {
-					String query = "select * from style " +
+					String query = "select * from styles " +
 					"where id = ? ;";
 					PreparedStatement statement = this.prepareStatement(query,
 							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);

@@ -178,6 +178,7 @@ CREATE TABLE types(
 "name" TEXT NOT NULL UNIQUE,
 PRIMARY KEY("id")
 );
+
  CREATE TABLE trackToType(
 "track_id" SERIAL NOT NULL,
 "type_id" SERIAL NOT NULL,
@@ -185,11 +186,15 @@ PRIMARY KEY("track_id","type_id")
 );
 
 
--- ALTER TABLE trackToStyle ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+ALTER TABLE trackToType ADD FOREIGN KEY ("type_id") REFERENCES "types" ("id") on delete cascade;
 
--- ALTER TABLE trackToStyle ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
+ALTER TABLE trackToType ADD FOREIGN KEY ("track_id") REFERENCES "tracks" ("id") on delete cascade;
 
--- ALTER TABLE trackToStyle ADD FOREIGN KEY ("style_id") REFERENCES "styles" ("id") on delete cascade;
+ALTER TABLE user_style ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") on delete cascade;
+
+ALTER TABLE user_style ADD FOREIGN KEY ("type_id") REFERENCES "types" ("id") on delete cascade;
+
+ALTER TABLE user_style ADD FOREIGN KEY ("style_id") REFERENCES "styles" ("id") on delete cascade;
 
 ALTER TABLE tracks ADD FOREIGN KEY ("job_id") REFERENCES "jobs" ("id") on delete cascade;
 
