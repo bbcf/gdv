@@ -139,7 +139,8 @@ public class ConfigureTrackPage extends BasePage{
 				Label name = new Label("name",sw.getType().getName());
 				item.add(name);
 				/* height */
-				final RadioChoice<STYLE_HEIGHT> rc = new RadioChoice<STYLE_HEIGHT>("height", Arrays.asList(STYLE_HEIGHT.values()));
+				final RadioChoice<STYLE_HEIGHT> rc = new RadioChoice<STYLE_HEIGHT>(
+						"height",new Model<STYLE_HEIGHT>(), Arrays.asList(STYLE_HEIGHT.values()));
 				
 				
 				rc.setModelObject(sw.getStyle_height());
