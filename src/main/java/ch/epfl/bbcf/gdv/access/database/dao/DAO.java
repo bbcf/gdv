@@ -32,7 +32,6 @@ public abstract class DAO<T> {
 	protected void executer(PreparedStatement statement) throws SQLException {
 		logger.debug(statement.toString());
 		statement.execute();
-		statement.close();
 	}
 	protected ResultSet executeQuery(PreparedStatement statement) throws SQLException{
 		logger.debug(statement.toString());
@@ -82,6 +81,5 @@ public abstract class DAO<T> {
 	protected void executeUpdate(PreparedStatement statement) throws SQLException {
 		logger.debug(statement.toString());
 		statement.execute();
-		statement.close();
 	}
 }
