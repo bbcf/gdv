@@ -127,7 +127,7 @@ public class Application extends AuthenticatedWebApplication
 	public static void error(Exception e){
 		theLogger.error(e.getCause()+" // "+e.getMessage()+" // "+e.getLocalizedMessage());
 		for(StackTraceElement el : e.getStackTrace()){
-			theLogger.error(el.getFileName()+"."+el.getClassName()+"."+el.getMethodName()+":line "+el.getLineNumber());
+			theLogger.error(el.getFileName()+" -> "+el.getClassName()+"."+el.getMethodName()+": at line "+el.getLineNumber());
 		}
 	}
 	

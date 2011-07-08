@@ -32,7 +32,7 @@ public class StyleControl {
 		if(null==file){
 			return null;
 		}
-		SQLiteAccess  access = SQLiteAccess.getConnectionWithDatabase(Configuration.getFilesDir()+File.separator+file);
+		SQLiteAccess  access = SQLiteAccess.getConnectionWithDatabase(Configuration.getFilesDir()+File.pathSeparator+file);
 		return access.getTypes();
 	}
 
