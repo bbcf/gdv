@@ -45,9 +45,18 @@ public class StyleControl {
 		return t;
 	}
 	
+	/**
+	 * create the type if not exist,
+	 * else return the existing one
+	 * @param type
+	 * @return
+	 */
 	public static Type createType(String type){
 		TypeDAO dao = new TypeDAO();
-		Type t = dao.createType(type);
+		Type t = dao.getType(type);
+		if(null==t){
+			t = dao.createType(type);			
+		}
 		return t;
 	}
 
