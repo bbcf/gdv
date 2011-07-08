@@ -435,6 +435,7 @@ public class TrackControl extends Control{
 		params+="\"url\" : \"../"+directory+"/{refseq}.json\",\n" +
 		"\"label\" : \""+protect(track.getName())+"\",\n"+
 		"\"type\" : \""+imageType+"\",\n"+
+		"\"gdv_id\" : \""+track.getId()+"\",\n"+
 		"\"key\" : \""+protect(track.getName())+"\"\n}";
 		setParams(track.getId(),params);
 		return params;
