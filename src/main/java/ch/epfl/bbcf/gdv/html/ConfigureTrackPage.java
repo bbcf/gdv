@@ -1,23 +1,31 @@
 package ch.epfl.bbcf.gdv.html;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.Model;
@@ -42,6 +50,10 @@ import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
 public class ConfigureTrackPage extends BasePage{
 
 	protected final ValueMap properties = new ValueMap();
+	
+	private ListView<String> color_list;
+	private String cur_color;
+	
 	public ConfigureTrackPage(PageParameters p) {
 		super(p);
 
@@ -50,6 +62,12 @@ public class ConfigureTrackPage extends BasePage{
 		add(JavascriptPackageResource.getHeaderContribution(Configuration.getJavascriptUrl()+"/jslib/dojo/jbrowse_dojo.js"));
 		add(CSSPackageResource.getHeaderContribution(Configuration.getJavascriptUrl()+"/jslib/dojox/widget/ColorPicker/ColorPicker.css"));
 
+		
+		
+		
+		
+		
+		
 		final String jsControl = "initGDV_configure();";
 
 		add(new AbstractBehavior() {
@@ -127,9 +145,19 @@ public class ConfigureTrackPage extends BasePage{
 
 
 
+		/* color picker */
+		WebMarkupContainer colorPicker = new WebMarkupContainer("color_picker");
+		colorPicker.setOutputMarkupPlaceholderTag(true);
+		colorPicker.setMarkupId("color_picker");
+		colorPicker.setVisible(false);
+		add(colorPicker);
 
 
-		/* style chooser */
+
+		/* data style chooser
+		 * for qualitative extended tracks
+		 * (for track types) 
+		 */
 		final DataStyleProvider dtcp = new DataStyleProvider(userId,track.getId());
 		DataView<StyleWrapper> data = new DataView<StyleWrapper>("style_data",dtcp) {
 			@Override
@@ -141,26 +169,56 @@ public class ConfigureTrackPage extends BasePage{
 				/* height */
 				final RadioChoice<STYLE_HEIGHT> rc = new RadioChoice<STYLE_HEIGHT>(
 						"height",new Model<STYLE_HEIGHT>(), Arrays.asList(STYLE_HEIGHT.values())){
-							protected void onSelectionChanged(STYLE_HEIGHT newSelection){
-								Style s = sw.getStyleObject();
-								sw.setStyle_height(newSelection);
-								StyleControl.setStyleForUserAndType(userId, sw.getType(), sw.getStyleObject());
-							}
-						};
+					protected void onSelectionChanged(STYLE_HEIGHT newSelection){
+						Style s = sw.getStyleObject();
+						sw.setStyle_height(newSelection);
+						StyleControl.setStyleForUserAndType(userId, sw.getType(), sw.getStyleObject());
+					}
+				};
 
 				rc.setModelObject(sw.getStyle_height());
 				item.add(rc);
 				/* color */
 				Label color = new Label("color",sw.getStyle_color().toString());
+				color.add(new SimpleAttributeModifier("color",sw.getStyle_color().toString()));
 				item.add(color);
-
+				color.add(new AjaxEventBehavior("onClick"){
+					@Override
+					protected void onEvent(AjaxRequestTarget arg0) {
+						Application.debug("set color of "+sw.getStyleObject().getId());
+						color_list.setVisible(true);
+					}
+					
+				});
 			}
 		};
-
 		data.setOutputMarkupPlaceholderTag(true);
 		form.add(data);
 
-
+		/* color listview */
+		List<String> colors = StyleControl.getTypesColors();
+		color_list = new ListView<String>("color_list", colors) {
+			@Override
+			protected void populateItem(ListItem<String> item) {
+				final String c = item.getModelObject();
+				Label color = new Label("color",new Model<String>(c));
+				color.add(new SimpleAttributeModifier("color",c));
+				color.add(new AjaxEventBehavior("onClick"){
+					@Override
+					protected void onEvent(AjaxRequestTarget arg0) {
+						cur_color=c;
+						color_list.setVisible(false);
+						Application.debug("set color to "+c);
+					}
+				});
+				item.add(color);
+				
+			}
+		   
+		};
+		color_list.setOutputMarkupPlaceholderTag(true);
+		color_list.setVisible(false);
+		add(color_list);
 
 
 		//datatype switch

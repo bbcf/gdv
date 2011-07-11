@@ -107,5 +107,10 @@ public class StyleControl {
 		return Style.randomStyle();
 	}
 	
-	
+	public static List<String> getTypesColors(){
+		StyleDAO sdao = new StyleDAO();
+		List<String> colors = sdao.getStylesColors();
+		sdao.release();
+		return colors;
+	}
 }
