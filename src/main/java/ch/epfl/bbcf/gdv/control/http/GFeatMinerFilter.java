@@ -22,7 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ch.epfl.bbcf.bbcfutils.access.InternetConnection;
 import ch.epfl.bbcf.gdv.access.gfeatminer.GFeatMinerAccess;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;

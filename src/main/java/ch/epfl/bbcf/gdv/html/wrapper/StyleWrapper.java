@@ -1,11 +1,13 @@
 package ch.epfl.bbcf.gdv.html.wrapper;
 
+import java.io.Serializable;
+
 import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_COLOR;
 import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_HEIGHT;
 import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 
-public class StyleWrapper {
+public class StyleWrapper implements Serializable{
 
 	private Style style;
 	private Type type;

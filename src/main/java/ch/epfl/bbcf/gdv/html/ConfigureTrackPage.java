@@ -2,16 +2,12 @@ package ch.epfl.bbcf.gdv.html;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
@@ -35,9 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_HEIGHT;
-import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
-import ch.epfl.bbcf.gdv.access.database.pojo.Type;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.config.UserSession;
@@ -45,14 +39,17 @@ import ch.epfl.bbcf.gdv.control.model.StyleControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
 import ch.epfl.bbcf.gdv.control.model.UserControl;
 import ch.epfl.bbcf.gdv.html.database.DataStyleProvider;
+import ch.epfl.bbcf.gdv.html.utility.SelectOption;
 import ch.epfl.bbcf.gdv.html.wrapper.StyleWrapper;
 
 public class ConfigureTrackPage extends BasePage{
 
 	protected final ValueMap properties = new ValueMap();
 	
-	private ListView<String> color_list;
-	private String cur_color;
+	WebMarkupContainer colorList;
+	ListView<String> color_list;
+	private StyleWrapper curSW;
+	private DataStyleProvider dtcp;	
 	
 	public ConfigureTrackPage(PageParameters p) {
 		super(p);
@@ -154,11 +151,54 @@ public class ConfigureTrackPage extends BasePage{
 
 
 
+	
+
+		/* color listview */
+		colorList = new WebMarkupContainer("cont");
+		colorList.setOutputMarkupPlaceholderTag(true);
+		
+		List<String> colors = StyleControl.getTypesColors();
+		color_list = new ListView<String>("color_list", colors) {
+			@Override
+			protected void populateItem(ListItem<String> item) {
+				final String c = item.getModelObject();
+				Label color = new Label("color",new Model<String>(c));
+				color.add(new SimpleAttributeModifier("style","color:"+c));
+				color.add(new AjaxEventBehavior("onClick"){
+					@Override
+					protected void onEvent(AjaxRequestTarget target) {
+						StyleWrapper sw = curSW;
+						sw.setStyle_color(c);
+						StyleControl.setStyleForUserAndType(userId, sw.getType(), sw.getStyleObject());
+						colorList.setVisible(false);
+						Application.debug("set color to "+c);
+						dtcp.detach();
+					}
+				});
+				item.add(color);
+				
+			}
+		   
+		};
+		
+		color_list.setOutputMarkupPlaceholderTag(true);
+		colorList.add(color_list);
+		colorList.setVisible(false);
+		add(colorList);
+
+		
+		
+		
+		
+		
+		
+		
+		
 		/* data style chooser
 		 * for qualitative extended tracks
 		 * (for track types) 
 		 */
-		final DataStyleProvider dtcp = new DataStyleProvider(userId,track.getId());
+		dtcp = new DataStyleProvider(userId,track.getId());
 		DataView<StyleWrapper> data = new DataView<StyleWrapper>("style_data",dtcp) {
 			@Override
 			protected void populateItem(Item<StyleWrapper> item) {
@@ -169,23 +209,30 @@ public class ConfigureTrackPage extends BasePage{
 				/* height */
 				final RadioChoice<STYLE_HEIGHT> rc = new RadioChoice<STYLE_HEIGHT>(
 						"height",new Model<STYLE_HEIGHT>(), Arrays.asList(STYLE_HEIGHT.values())){
-					protected void onSelectionChanged(STYLE_HEIGHT newSelection){
-						Style s = sw.getStyleObject();
+					
+					protected boolean wantOnSelectionChangedNotifications() {
+						return true;
+					}
+					public void onSelectionChanged() {
+						super.onSelectionChanged();
+						Application.debug("OSC "+this.getDefaultModelObject());
+						String newSelection = this.getDefaultModelObjectAsString();
 						sw.setStyle_height(newSelection);
 						StyleControl.setStyleForUserAndType(userId, sw.getType(), sw.getStyleObject());
 					}
 				};
-
 				rc.setModelObject(sw.getStyle_height());
 				item.add(rc);
 				/* color */
 				Label color = new Label("color",sw.getStyle_color().toString());
-				color.add(new SimpleAttributeModifier("color",sw.getStyle_color().toString()));
+				color.add(new SimpleAttributeModifier("style","color:"+sw.getStyle_color().name()));
 				item.add(color);
 				color.add(new AjaxEventBehavior("onClick"){
 					@Override
-					protected void onEvent(AjaxRequestTarget arg0) {
+					protected void onEvent(AjaxRequestTarget target) {
 						Application.debug("set color of "+sw.getStyleObject().getId());
+						curSW = sw;
+						colorList.setVisible(true);
 						color_list.setVisible(true);
 					}
 					
@@ -194,32 +241,7 @@ public class ConfigureTrackPage extends BasePage{
 		};
 		data.setOutputMarkupPlaceholderTag(true);
 		form.add(data);
-
-		/* color listview */
-		List<String> colors = StyleControl.getTypesColors();
-		color_list = new ListView<String>("color_list", colors) {
-			@Override
-			protected void populateItem(ListItem<String> item) {
-				final String c = item.getModelObject();
-				Label color = new Label("color",new Model<String>(c));
-				color.add(new SimpleAttributeModifier("color",c));
-				color.add(new AjaxEventBehavior("onClick"){
-					@Override
-					protected void onEvent(AjaxRequestTarget arg0) {
-						cur_color=c;
-						color_list.setVisible(false);
-						Application.debug("set color to "+c);
-					}
-				});
-				item.add(color);
-				
-			}
-		   
-		};
-		color_list.setOutputMarkupPlaceholderTag(true);
-		color_list.setVisible(false);
-		add(color_list);
-
+		
 
 		//datatype switch
 		switch(track.getType()){
@@ -259,4 +281,6 @@ public class ConfigureTrackPage extends BasePage{
 		add(form);
 	}
 
+	
+	
 }
