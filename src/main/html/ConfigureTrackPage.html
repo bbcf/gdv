@@ -4,23 +4,34 @@
 </head>
 <body>
   <wicket:extend>
-    <form wicket:id="form">
-      
+        
       <ul>
-	<div class="sh1" wicket:id="editable_name"/>
+	<div class="sh1" wicket:id="edit_name"/>
 	<p>(click to rename - also possible in the project view)</p>
-	<input id="color_input" class="sh1" wicket:id="color_input1"/>
+	
       </ul>
       
-      <div wicket:id="style_data">
+      <div class="data_item" wicket:id="style_data">
 	<div wicket:id="name"/>
-	<div wicket:id="height"/>
-	<div wicket:id="color"/>
+	<select wicket:id="height"/>
+	<select wicket:id="color"/>
       </div>
-      <input  type="submit" wicket:id="sub" value="Submit"/>
-    </form>
-    
-  <div dojoType="dojox.widget.ColorPicker" wicket:id="color_picker" id="color_picker"/>    
+        
+      
+
+
+      <!-- <div wicket:id="color_cont"> -->
+      <!-- 	<div wicket:id="colors_data"> -->
+      <!-- 	  <div wicket:id="color_name"/> -->
+      <!-- 	</div> -->
+      <!-- </div> -->
+      
+
+    <input id="color_input" class="sh1" wicket:id="color_input1"/>
+
+
+
+    <div dojoType="dojox.widget.ColorPicker" wicket:id="color_picker" id="color_picker"/>    
   </wicket:extend>
   
 </body>

@@ -42,8 +42,8 @@ fi
 echo "## service accessible at "$SERV
 
 echo "## modify javascript files"
-sed -i 's|var _GDV_PROXY="http://svitsrv25.epfl.ch";|var _GDV_PROXY="'$SERV'";|g' $HOME_PROJECT/$TMP_DIR/gdv/public/jbrowse/javascript/js/gdv.js
-sed -i 's|var _GDV_URL=_GDV_PROXY+"/gdv_dev";|var _GDV_URL=_GDV_PROXY+"'$GDV_VERSION'";|g' $HOME_PROJECT/$TMP_DIR/gdv/public/jbrowse/javascript/js/gdv.js
+sed -i 's|var _GDV_PROXY="http://paprika.epfl.ch";|var _GDV_PROXY="'$SERV'";|g' $HOME_PROJECT/$TMP_DIR/gdv/public/jbrowse/javascript/js/gdv.js
+sed -i 's|var _GDV_URL=_GDV_PROXY+"/gdv";|var _GDV_URL=_GDV_PROXY+"/'$GDV_VERSION'";|g' $HOME_PROJECT/$TMP_DIR/gdv/public/jbrowse/javascript/js/gdv.js
 
 echo "## import them ..."
 rm -rf $HOME_PROJECT/public

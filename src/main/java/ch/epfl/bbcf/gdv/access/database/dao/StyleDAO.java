@@ -66,7 +66,7 @@ public class StyleDAO extends DAO<Style>{
 			return styles;
 		}
 
-		public List<String> getStylesColors(){
+		public List<STYLE_COLOR> getStylesColors(){
 			if(this.databaseConnected()){
 				this.startQuery();
 				try {
@@ -74,9 +74,9 @@ public class StyleDAO extends DAO<Style>{
 					PreparedStatement statement = this.prepareStatement(query,
 							ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 					ResultSet resultSet = this.executeQuery(statement);
-					List<String> colors = new ArrayList<String>();
+					List<STYLE_COLOR> colors = new ArrayList<STYLE_COLOR>();
 					while(resultSet.next()){
-						colors.add(resultSet.getString(1));
+						colors.add(STYLE_COLOR.valueOf(resultSet.getString(1)));
 					}
 					this.endQuery(true);
 					return colors;
@@ -264,6 +264,7 @@ public class StyleDAO extends DAO<Style>{
 					statement.setInt(2,userId);
 					statement.setInt(3, typeId);
 					this.executer(statement);
+					this.endQuery(true);
 					return true;
 				} catch (SQLException e) {
 					logger.error(e);

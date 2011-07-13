@@ -16,6 +16,7 @@ import ch.epfl.bbcf.bbcfutils.access.genrep.GenrepWrapper;
 import ch.epfl.bbcf.bbcfutils.access.genrep.MethodNotFoundException;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Assembly;
 import ch.epfl.bbcf.bbcfutils.access.genrep.json_pojo.Chromosome;
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteConstruct;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.config.Application;
@@ -36,7 +37,7 @@ public class SelectionControl extends Control{
 
 			/* get constructor */
 			SQLiteConstruct constructor = SQLiteConstruct.getConnectionWithDatabase(databasePath);
-			constructor.createNewDatabase("qualitative");
+			constructor.createNewDatabase(SQLiteExtension.QUALITATIVE);
 
 
 

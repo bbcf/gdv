@@ -258,7 +258,7 @@ INSERT into statuses values(2,'RUNNING');
 INSERT into projects values(-1,70,'admin',false);
 
 -- DEFAULT STYLES
-INSERT into sytles values(default,'small','blue');
+INSERT into styles values(default,'small','blue');
 INSERT into styles values(default,'small','blue');
 INSERT into styles values(default,'small','green');
 INSERT into styles values(default,'small','red');

@@ -20,9 +20,10 @@ import ch.epfl.bbcf.bbcfutils.exception.ConvertToJSONException;
 import ch.epfl.bbcf.bbcfutils.exception.ExtensionNotRecognisedException;
 import ch.epfl.bbcf.bbcfutils.exception.ParsingException;
 import ch.epfl.bbcf.bbcfutils.parsing.Extension;
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.conversion.conf.Configuration;
-import ch.epfl.bbcf.utility.file.FileManagement;
+import ch.epfl.bbcf.conversion.utility.file.FileManagement;
 
 
 
@@ -79,39 +80,39 @@ public class Launcher extends Thread{
 
 		//////////   EXTENSION   //////////
 		Extension ext = null;
-		String type = "";
+		SQLiteExtension type = null;
 		if(job.getExtension().equalsIgnoreCase("wig")){
 			doSQLite = true;
 			doJSON = true;
 			ext = Extension.WIG;
-			type="quantitative";
+			type=SQLiteExtension.QUANTITATIVE;
 		} else if(job.getExtension().equalsIgnoreCase("bedgraph")){
 			ext = Extension.BEDGRAPH;
 			doJSON = true;
 			doSQLite = true;
-			type="quantitative";
+			type=SQLiteExtension.QUANTITATIVE;
 		}else if(job.getExtension().equalsIgnoreCase("bed")){
 			ext = Extension.BED;
 			doSQLite = true;
 			doJSON = true;
-			type="qualitative";
+			type=SQLiteExtension.QUALITATIVE;
 			doJSON=true;
 		}else if(job.getExtension().equalsIgnoreCase("gff")){
 			ext = Extension.GFF;
 			doSQLite = true;
 			doJSON = true;
-			type="qualitative";
+			type=SQLiteExtension.QUALITATIVE_EXTENDED;
 			doJSON=true;
 		}else if(job.getExtension().equalsIgnoreCase("gtf")){
 			ext = Extension.GFF;
 			doSQLite = true;
 			doJSON=true;
-			type="qualitative";
+			type=SQLiteExtension.QUALITATIVE_EXTENDED;
 		}else if(job.getExtension().equalsIgnoreCase("db")||job.getExtension().equalsIgnoreCase("sql")){
 			doJSON=true;
 			try {
 				SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(job.getFile());
-				type = access.testIfQualitative();
+				type = access.getDatabaseDatatype();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -126,7 +127,7 @@ public class Launcher extends Thread{
 		}else if(job.getExtension().equalsIgnoreCase("bam")||
 				job.getExtension().equalsIgnoreCase("sam")){
 			ext = Extension.BAM;
-			type="qualitative";
+			type=SQLiteExtension.QUALITATIVE;
 			try {
 				String body ="id=track_error&job_id="+job.getTrackId()+"&data=extension "+ext+"not supported";
 				InternetConnection.sendPOSTConnection(job.getFeedbackUrl(), body,InternetConnection.MIME_TYPE_FORM_APPLICATION);

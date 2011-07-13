@@ -4,7 +4,7 @@
       <groupId>ch.epfl.bbcf</groupId>
       <artifactId>gdv</artifactId>
       <packaging>war</packaging>
-      <version>1.2.2</version>
+      <version>1.2.3</version>
       <name>gdv</name>
       <description>Genome Data Viewer :
     GDV stands for Genome Data Viewer.
@@ -234,7 +234,7 @@
     <dependency>
           <groupId>ch.epfl.bbcf</groupId>
           <artifactId>bbcfutils</artifactId>
-          <version>1.0.4-SNAPSHOT</version>
+          <version>1.0.5-SNAPSHOT</version>
           <scope>compile</scope>
         </dependency>
 

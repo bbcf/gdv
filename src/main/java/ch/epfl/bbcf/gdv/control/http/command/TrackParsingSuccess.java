@@ -34,14 +34,12 @@ public class TrackParsingSuccess extends Command{
 			throw new AbortWithHttpStatusException(400,true);
 		}
 		switch(params.getDbType()){
-
-		case qualitative :
+		case QUALITATIVE_EXTENDED:
+		case QUALITATIVE:
 			JobControl.updateTrackJobSuccess(params.getJobId());
-			
 			break;
 
-
-		case quantitative :
+		case QUANTITATIVE :
 			if(END.equalsIgnoreCase(params.getData())){
 				JobControl.updateTrackJobSuccess(params.getJobId());
 			} else {

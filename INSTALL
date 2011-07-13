@@ -100,7 +100,7 @@ Change here the port number.
 
 3) Archive  gdv.war :
        $ cd $GDV_HOME/bin
-       $ jar cvf gdv.war .
+       $ jar cvf gdv.war META-INF/ WEB-INF/
 
 4) GDV application must know where Tomcat is installed :
        $ export CATALINA_HOME=<path where tomcat is installed> (previously called $CATALINA_HOME itself)

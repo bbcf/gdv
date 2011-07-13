@@ -9,6 +9,8 @@ import java.util.Map;
 import ch.epfl.bbcf.bbcfutils.sqlite.SQLiteAccess;
 import ch.epfl.bbcf.gdv.access.database.Conn;
 import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO;
+import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_COLOR;
+import ch.epfl.bbcf.gdv.access.database.dao.StyleDAO.STYLE_HEIGHT;
 import ch.epfl.bbcf.gdv.access.database.dao.TypeDAO;
 import ch.epfl.bbcf.gdv.access.database.pojo.Style;
 import ch.epfl.bbcf.gdv.access.database.pojo.Type;
@@ -57,6 +59,7 @@ public class StyleControl {
 		if(null==t){
 			t = dao.createType(type);			
 		}
+		dao.release();
 		return t;
 	}
 
@@ -107,10 +110,16 @@ public class StyleControl {
 		return Style.randomStyle();
 	}
 	
-	public static List<String> getTypesColors(){
+	public static List<STYLE_COLOR> getTypesColors(){
 		StyleDAO sdao = new StyleDAO();
-		List<String> colors = sdao.getStylesColors();
+		List<STYLE_COLOR> colors = sdao.getStylesColors();
 		sdao.release();
 		return colors;
+	}
+	public static Style getStyleByStyle(STYLE_COLOR color,STYLE_HEIGHT height){
+		StyleDAO dao = new StyleDAO();
+		Style s = dao.getStyleByStyle(color, height);
+		dao.release();
+		return s;
 	}
 }

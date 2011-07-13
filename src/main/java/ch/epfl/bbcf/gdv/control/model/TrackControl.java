@@ -468,7 +468,9 @@ public class TrackControl extends Control{
 	 * @param track
 	 */
 	public static void addTypes(Track track) {
+		Application.debug("adding types");
 		if(track.getType().equals(SQLiteExtension.QUALITATIVE_EXTENDED)){
+			Application.debug("extended");
 			try {
 				SQLiteAccess access = SQLiteAccess.getConnectionWithDatabase(
 						Configuration.getFilesDir()+File.separator+track.getInput());
@@ -495,6 +497,7 @@ public class TrackControl extends Control{
 				Application.error(e);
 			}
 		}
+		Application.debug("done");
 
 	}
 
@@ -516,6 +519,19 @@ public class TrackControl extends Control{
 		}
 		tdao.release();
 		return types;
+	}
+
+	public static List<Type> getTracksTypes(List<Track> tracks) {
+		TypeDAO tdao = new TypeDAO();
+		Set<Type> types = new HashSet<Type>();
+		for(Track t : tracks){
+			List<Type> tmp = tdao.getTrackTypes(t.getId());
+			if(null!=tmp){
+				types.addAll(tmp);
+			}
+		}
+		tdao.release();
+		return new ArrayList<Type>(types);
 	}
 
 

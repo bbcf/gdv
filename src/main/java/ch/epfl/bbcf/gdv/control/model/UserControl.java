@@ -102,5 +102,10 @@ public class UserControl extends Control{
 		// TODO Auto-generated method stub
 		return true;
 	}
+	public static boolean checkUserAuthorizedToConfigureProject(int userId,
+			Integer projectId) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 }

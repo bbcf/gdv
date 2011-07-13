@@ -2,6 +2,7 @@ package ch.epfl.bbcf.gdv.control.http;
 
 import java.util.Map;
 
+import ch.epfl.bbcf.bbcfutils.parsing.SQLiteExtension;
 import ch.epfl.bbcf.gdv.control.http.command.Command;
 import ch.epfl.bbcf.gdv.control.http.command.Command.ID;
 import ch.epfl.bbcf.gdv.control.http.command.PostAccess;
@@ -12,7 +13,7 @@ public class RequestParameters {
 	
 	private Command.ACTION action;
 	//private Command.TYPE type;
-	private Command.DB_TYPE dbType;
+	private SQLiteExtension dbType;
 	private Command.ID id;
 	private Command.STATUS status;
 	
@@ -46,7 +47,7 @@ public class RequestParameters {
 				this.status = Command.STATUS.valueOf(map.get("status")[0]);
 			} catch (NullPointerException e){};
 			try{
-				this.dbType = Command.DB_TYPE.valueOf(map.get("db_type")[0]);
+				this.dbType = SQLiteExtension.valueOf(map.get("db_type")[0]);
 			} catch (NullPointerException e){};
 			try{
 				this.action = Command.ACTION.valueOf(map.get("action")[0]);
@@ -380,12 +381,12 @@ public class RequestParameters {
 	}
 
 
-	public void setDbType(Command.DB_TYPE dbType) {
+	public void setDbType(SQLiteExtension dbType) {
 		this.dbType = dbType;
 	}
 
 
-	public Command.DB_TYPE getDbType() {
+	public SQLiteExtension getDbType() {
 		return dbType;
 	}
 

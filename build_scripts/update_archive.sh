@@ -122,7 +122,7 @@ echo "##########################################################################
 
 #archive tree
 cd $GDV_HOME/$TMP_DIR/$VERSION
-tar -czf gdv.tgz gdv
+tar -czf gdv.tgz gdv --exclude='.git'
 rm -r $GDV_HOME/$TMP_DIR/$VERSION/gdv
 echo "done ... "
 
