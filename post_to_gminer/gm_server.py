@@ -37,11 +37,14 @@ This is the detailled description of 'data' parameter:
  -  ...  path : path to the file
  -  ...  type : type of the file
 
-Example:
-    {'id':'job','action':'gfeatresponse','job_id':'1','data':'''{"files":[{"path":"/tmp/asd.sql","type":"sql"},{"path":"/tmp/qq.png","type":"png"}]}'''}
+Example with a track:
+    {'id':'job','action':'gfeatresponse','job_id':'1','datatype':'new_track','data':'''{"files":[{"path":"/tmp/genes.sql","type":"sql"},{"path":"/tmp/regions.sql","type":"sql"}]}'''}
+
+Example with a picture:
+    {'id':'job','action':'gfeatresponse','job_id':'2','datatype':'new_image','data':'''{"files":[{"path":"/tmp/stat.png","type":"png"},{"path":"/tmp/distribution.png","type":"png"}]}'''}
 
 If an error is found, the answer could be:
-    {'id':'job','action':'gfeatresponse','job_id':'1','data':'''{"type":"error","msg":"Text about error","html":"<html>Displayable version for user</html>"'''}
+    {'id':'job','action':'gfeatresponse','job_id':'3','datatype':'unknown','data':'''{"type":"error","msg":"Text about error","html":"<html>Displayable version for user</html>"'''}
 """
 
 # General modules #
@@ -134,8 +137,8 @@ def post_process(**kwargs):
 #-------------------------------------------------------------------------#
 if __name__ == '__main__': gmServer(port=7522).serve()
 
-#-----------------------------------------#
-# This code was written by Lucas Sinclair #
-# lucas.sinclair@epfl.ch                  #
-#-----------------------------------------#
-
+#-----------------------------------#
+# This code was written by the BBCF #
+# http://bbcf.epfl.ch/              #
+# webmaster.bbcf@epfl.ch            #
+#-----------------------------------#
