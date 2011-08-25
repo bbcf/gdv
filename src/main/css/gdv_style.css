@@ -130,11 +130,9 @@ div.clearer {clear: left; line-height: 0; height: 0;}
 #gm_form_title{font-size:140%;font-weight:bold;padding:1em;};
 .gfm_radio{color:red;}
 .gm_cb{float:left;padding:1em;font-size:120%;}
-<<<<<<< HEAD
 .gm_ta{padding:1em;float:left;font-size:120%;}
 .error{color:red;font-size:130%;}
 p .homepage{color:red;}
-=======
 .gm_drop_container{padding:0em;float:left;width:20em;height:6em;border:medium inset;border-color:slateGrey;overflow:scroll;}
 .gm_drop_trash{padding:0em;float:left;width:2em;height:2em;border:medium inset;border-color:red;background-color:red;}
 .gm_container{padding:1em;float:left;font-size:120%;}
@@ -205,4 +203,3 @@ p .homepage{color:red;}
 
 
 
->>>>>>> 42bf8324ac3f3b54c303286c94a076812753f79c

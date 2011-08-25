@@ -2,12 +2,9 @@ package ch.epfl.bbcf.gdv.html;
 
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -87,7 +84,7 @@ public class BrowserPage extends WebPage{
 			params.put("err", err);
 			throw new RestartResponseAtInterceptPageException(new ErrorPage(params));
 		}
-
+		
 		boolean canView = false;//if the user can see the page
 		boolean isAdmin =false;//if the user provide uKey & pKey but he don't
 		//need them because he own the page
@@ -100,6 +97,7 @@ public class BrowserPage extends WebPage{
 				String pKey = ProjectControl.getPublicKeyFromProjectId(projectId);
 				if(publicKey.equalsIgnoreCase(pKey)){
 					String uKey = ProjectControl.getUserKeyFromProjectId(projectId);
+					Application.debug("ukey   "+uKey);
 					if(userKey.equalsIgnoreCase(uKey)){
 						canView = true;
 					} else {err="wrong uKey";};
@@ -256,7 +254,6 @@ public class BrowserPage extends WebPage{
 		String refSeq="";
 		JSONArray array = null;
 		try {
-			Application.debug(seq_id);
 			Assembly ass = GenrepWrapper.getAssemblyFromNrAssemblyId(seq_id);
 			List<Chromosome> chromosomes = ass.getChromosomes();
 			array = new JSONArray();

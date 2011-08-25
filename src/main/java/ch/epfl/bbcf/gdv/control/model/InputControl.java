@@ -441,6 +441,9 @@ public class InputControl extends Control{
 			if(SQLiteAccess.dbAlreadyCreated(databaseName)){
 				TrackControl.updateTrackFields(track.getId(),trackName,filetype,TrackControl.STATUS_FINISHED);
 				JobControl.updateJob(jobId, Command.STATUS.success,"");
+				int inputId = createNewUserInput(databaseName,userId);
+				TrackControl.linkToInput(track.getId(), inputId);
+				TrackControl.linkToProject(track.getId(), projectId);
 				return;
 			}
 			//create a new input

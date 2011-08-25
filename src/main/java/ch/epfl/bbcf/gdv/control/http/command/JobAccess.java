@@ -12,14 +12,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
+import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job.JOB_OUTPUT;
+import ch.epfl.bbcf.gdv.access.database.pojo.Job.JOB_TYPE;
 import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
+import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
 import ch.epfl.bbcf.gdv.control.model.ProjectControl;
 import ch.epfl.bbcf.gdv.control.model.TrackControl;
+import ch.epfl.bbcf.gdv.control.model.UserControl;
 
 public class JobAccess extends Command{
 
@@ -76,8 +80,29 @@ public class JobAccess extends Command{
 				} 
 			} catch (JSONException e1) {
 				/* handle reponse */
-				Application.debug("update job success");
-				JobControl.updateJob(params.getJobId(),Command.STATUS.success, params.getData());
+				if("new_track".equalsIgnoreCase(params.getDatatype())){
+					try {
+						/* create a new track */
+						
+						Users user = UserControl.getUserByProjectId(params.getProjectId());
+						JSONObject data;
+						data = new JSONObject(params.getData());
+						JSONArray files = data.getJSONArray("files");
+						JSONObject f = files.getJSONObject(0);
+						String path = f.getString("path");
+						int jobId = JobControl.createJob(params.getJobId(),JOB_TYPE.new_track,JOB_OUTPUT.reload);
+						InputControl.processUserInput(
+								jobId,user.getId(),params.getProjectId(),null,null,path,"gFeatMiner output");
+					} catch (JSONException e) {
+						Application.error("ERROR : "+e1.getLocalizedMessage());
+					}
+					
+					
+					
+				} else {
+					Application.debug("update job success");
+					JobControl.updateJob(params.getJobId(),Command.STATUS.success, params.getData());
+				}
 			} finally {
 				out.close();
 			}

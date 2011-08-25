@@ -1,5 +1,6 @@
 package ch.epfl.authentication;
 
+
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.tequila.client.model.ClientConfig;
 import ch.epfl.tequila.client.model.TequilaPrincipal;

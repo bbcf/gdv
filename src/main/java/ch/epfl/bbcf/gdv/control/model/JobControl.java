@@ -304,8 +304,9 @@ public class JobControl extends Control{
 		body+="&output_location="+URLEncoder.encode(Configuration.getgFeatMinerDirectory()+"/"+jobId,"UTF-8");
 		body+="&data="+URLEncoder.encode(data.toString(),"UTF-8");
 		body+="&output_name=gfeatminer_output";
-		InternetConnection.sendPOSTConnection(
+		String result = InternetConnection.sendPOSTConnection(
 				getGFMUrl(), body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
+		Application.debug(result);
 
 	}
 

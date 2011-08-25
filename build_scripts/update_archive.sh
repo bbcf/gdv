@@ -59,8 +59,8 @@ chmod 777 target/gdv.war
 cp target/gdv.war $TMP_DIR/$VERSION/gdv/bin/.
 cd $TMP_DIR/$VERSION/gdv/bin
 jar xf gdv.war
-rm gdv.war
-rm META-INF/gdv.yaml
+rm -f gdv.war
+rm -f META-INF/gdv.yaml
 
 
 echo "#############################################################################################################"
@@ -123,7 +123,7 @@ echo "##########################################################################
 #archive tree
 cd $GDV_HOME/$TMP_DIR/$VERSION
 tar -czf gdv.tgz gdv --exclude='.git'
-rm -r $GDV_HOME/$TMP_DIR/$VERSION/gdv
+rm -rf $GDV_HOME/$TMP_DIR/$VERSION/gdv
 echo "done ... "
 
 

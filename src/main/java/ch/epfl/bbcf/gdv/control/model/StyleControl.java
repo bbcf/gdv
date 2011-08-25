@@ -107,7 +107,27 @@ public class StyleControl {
 	 * @return
 	 */
 	private static Style buildStyleForType(Type type) {
-		return Style.randomStyle();
+		Style style;
+		if("exon".equalsIgnoreCase(type.getName())){
+			style = new Style();
+			style.setStyle_color(STYLE_COLOR.blue);
+			style.setStyle_height(STYLE_HEIGHT.medium);
+		} else if("CDS".equalsIgnoreCase(type.getName())){
+			style = new Style();
+			style.setStyle_color(STYLE_COLOR.yellow);
+			style.setStyle_height(STYLE_HEIGHT.small);
+		} else if("start_codon".equalsIgnoreCase(type.getName())){
+			style = new Style();
+			style.setStyle_color(STYLE_COLOR.red);
+			style.setStyle_height(STYLE_HEIGHT.small);
+		} else if("stop_codon".equalsIgnoreCase(type.getName())){
+			style = new Style();
+			style.setStyle_color(STYLE_COLOR.red);
+			style.setStyle_height(STYLE_HEIGHT.small);
+		} else {
+			style = Style.randomStyle();
+		}
+		return style;
 	}
 	
 	public static List<STYLE_COLOR> getTypesColors(){

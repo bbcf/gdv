@@ -74,6 +74,12 @@ public final class Configuration{
 		//js[20]="http://ajax.googleapis.com/ajax/libs/dojo/1.5/dojo/dojo.xd.js";
 		js[23]=instance.jbrowse_javascript_url+"/jslib/dojo/dojo.js";
 		js[24]=instance.jbrowse_javascript_url+"/jslib/dojo/jbrowse_dojo.js";
+		
+//		js[25]="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js";
+//		js[26]=instance.jbrowse_javascript_url+"/hc/js/highcharts.src.js";
+//		js[27]="https://ajax.googleapis.com/ajax/libs/mootools/1.3.0/mootools-yui-compressed.js";
+//		js[28]=instance.jbrowse_javascript_url+"/hc/js/adapters/mootools-adapter.js";
+//		js[29]=instance.jbrowse_javascript_url+"/hc/js/test.js";
 		return js;
 	}
 	private static String[] buildJbrowseCSSFiles() {

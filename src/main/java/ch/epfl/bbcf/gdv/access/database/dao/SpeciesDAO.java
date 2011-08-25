@@ -208,8 +208,9 @@ public class SpeciesDAO extends DAO<Species>{
 				ResultSet resultSet = this.executeQuery(statement);
 				if(resultSet.first()){
 					species = getSpecies(resultSet);
+					this.endQuery(true);
+					return species;
 				}
-				this.endQuery(true);
 			} catch (SQLException e) {
 				logger.error("getSpeciesFromProjectId : "+e);
 				this.endQuery(false);

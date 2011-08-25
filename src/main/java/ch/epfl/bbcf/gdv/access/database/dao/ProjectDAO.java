@@ -17,7 +17,7 @@ import ch.epfl.bbcf.gdv.utility.RandomKey;
 public class ProjectDAO extends DAO<Project>{
 
 	private final static String tableName ="projects";
-	private final static String[] fields = {"id","cur_seq_id","name","isPublic"};
+	private final static String[] fields = {"id","cur_seq_id","name","\"isPublic\""};
 
 	public ProjectDAO() {
 		super();
@@ -199,6 +199,11 @@ public class ProjectDAO extends DAO<Project>{
 		try {
 			project.setPublic(resultSet.getBoolean(fields[3]));
 		} catch (SQLException e) {
+			try {
+			project.setPublic(resultSet.getBoolean("isPublic"));
+			} catch (SQLException e1) {
+				logger.error(e1);
+			}
 			logger.error(e);
 		}
 		return project;
@@ -554,7 +559,7 @@ public class ProjectDAO extends DAO<Project>{
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
-				String query = "update projects set isPublic = ? " +
+				String query = "update projects set \"isPublic\" = ? " +
 				"where id = ? ;";
 				PreparedStatement statement = this.prepareStatement(query,
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -582,7 +587,8 @@ public class ProjectDAO extends DAO<Project>{
 				RandomKey r = new RandomKey();
 				String key = r.getRandom();
 				statement.setString(2,key);
-				this.executeUpdate(statement);
+				this.executer(statement);
+				this.endQuery(true);
 				return key;
 			} catch (SQLException e) {
 				logger.error("genratePublicKey "+e);
@@ -597,7 +603,7 @@ public class ProjectDAO extends DAO<Project>{
 		if(this.databaseConnected()){
 			this.startQuery();
 			try {
-				String query = "select t1.isPublic from projects as t1 " +
+				String query = "select t1.\"isPublic\" from projects as t1 " +
 				"where t1.id = ? limit 1; ";
 				PreparedStatement statement;
 				statement = this.prepareStatement(query,
@@ -605,7 +611,9 @@ public class ProjectDAO extends DAO<Project>{
 				statement.setInt(1,projectId);
 				ResultSet r = statement.executeQuery();
 				if(r.first()){
-					return r.getBoolean(1);
+					boolean b = r.getBoolean(1);
+					this.endQuery(true);
+					return b;
 				}
 			} catch (SQLException e) {
 				logger.error(e);
@@ -628,12 +636,14 @@ public class ProjectDAO extends DAO<Project>{
 				statement.setInt(1,projectId);
 				ResultSet r = statement.executeQuery();
 				if(r.first()){
+					this.endQuery(true);
 					return r.getString(1);
 				}
 			} catch (SQLException e) {
 				logger.error(e);
 			}
 		}
+		this.endQuery(false);
 		return null;
 	}
 

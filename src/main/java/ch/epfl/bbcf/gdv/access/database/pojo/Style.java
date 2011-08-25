@@ -31,6 +31,9 @@ public class Style implements Serializable{
 	public void setStyle_color(String style_color) {
 		this.style_color =  STYLE_COLOR.valueOf(STYLE_COLOR.class,style_color);
 	}
+	public void setStyle_color(STYLE_COLOR style_color) {
+		this.style_color =  style_color;
+	}
 	public STYLE_COLOR getStyle_color() {
 		return style_color;
 	}

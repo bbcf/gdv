@@ -144,6 +144,7 @@ public class ProjectControl extends Control implements Serializable{
 		SpeciesDAO spDAO = new SpeciesDAO();
 		p.setSpecies(spDAO.getSpeciesFromProjectId(projectId));
 		spDAO.release();
+		pdao.release();
 		return p;
 	}
 
@@ -286,6 +287,7 @@ public class ProjectControl extends Control implements Serializable{
 
 
 	public static String setProjectPublic(int id, boolean b) {
+		Application.debug("set project public");
 		ProjectDAO pdao = new ProjectDAO();
 		pdao.setProjectPublic(id,b);
 		String key = pdao.getPublicKeyFromProjectId(id);
@@ -302,6 +304,7 @@ public class ProjectControl extends Control implements Serializable{
 		ProjectDAO pdao = new ProjectDAO();
 		boolean i = pdao.isProjectPublic(projectId);
 		pdao.release();
+		Application.debug("project public : "+i);
 		return i;
 	}
 

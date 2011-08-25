@@ -61,7 +61,7 @@ cp -r $GDV_HOME/src/main/css $INSTALL_PATH/$PUBLIC_DIR
 
 cd $INSTALL_PATH
 #remove temporary directory
-rm -r $TMP_DIR
+rm -rf $TMP_DIR
 
 cd $CCUR
 
