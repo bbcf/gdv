@@ -37,15 +37,18 @@ This is the detailled description of 'data' parameter:
  -  ...  path : path to the file
  -  ...  type : type of the file
 
-Example:
-    {'id':'job','action':'gfeatresponse','job_id':'1','data':'''{"files":[{"path":"/tmp/asd.sql","type":"sql"},{"path":"/tmp/qq.png","type":"png"}]}'''}
+Example with a track:
+    {'id':'job','action':'gfeatresponse','job_id':'1','datatype':'new_track','data':'''{"files":[{"path":"/tmp/genes.sql","type":"sql"},{"path":"/tmp/regions.sql","type":"sql"}]}'''}
+
+Example with a picture:
+    {'id':'job','action':'gfeatresponse','job_id':'2','datatype':'new_image','data':'''{"files":[{"path":"/tmp/stat.png","type":"png"},{"path":"/tmp/distribution.png","type":"png"}]}'''}
 
 If an error is found, the answer could be:
-    {'id':'job','action':'gfeatresponse','job_id':'1','data':'''{"type":"error","msg":"Text about error","html":"<html>Displayable version for user</html>"'''}
+    {'id':'job','action':'gfeatresponse','job_id':'3','datatype':'unknown','data':'''{"type":"error","msg":"Text about error","html":"<html>Displayable version for user</html>"'''}
 """
 
 # General modules #
-import cherrypy, httplib2, urllib, json, sys, cgitb, traceback, warnings, time
+import cherrypy, httplib2, urllib, json, sys, cgitb, traceback, warnings, time, os
 
 # Other modules #
 import gMiner
@@ -112,6 +115,8 @@ def post_process(**kwargs):
         files = gMiner.run(**request)
         # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
+        # Determine the datatype #
+        datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1], 'unknown')
         # Report success #
         print '\033[1;33m[' + time.asctime() + ']\033[0m \033[42m' + files[0] + '\033[0m'
     except Exception as err:
@@ -123,7 +128,8 @@ def post_process(**kwargs):
     finally:
         result     = locals().get('result', '')
         connection = httplib2.Http()
-        body       = urllib.urlencode({'id':'job', 'action':'gfeatresponse', 'job_id':job.get('job_id', -1), 'data':json.dumps(result)})
+        body       = urllib.urlencode({'id':'job', 'action':'gfeatresponse', 'job_id':job.get('job_id', -1),
+                                       'data':json.dumps(result), 'datatype': datatype})
         headers    = {'content-type': 'application/x-www-form-urlencoded'}
         address    = job['callback_url']
         response, content = connection.request(address, "POST", body=body, headers=headers)
@@ -131,7 +137,8 @@ def post_process(**kwargs):
 #-------------------------------------------------------------------------#
 if __name__ == '__main__': gmServer(port=7522).serve()
 
-#-----------------------------------------#
-# This code was written by Lucas Sinclair #
-# lucas.sinclair@epfl.ch                  #
-#-----------------------------------------#
+#-----------------------------------#
+# This code was written by the BBCF #
+# http://bbcf.epfl.ch/              #
+# webmaster.bbcf@epfl.ch            #
+#-----------------------------------#
