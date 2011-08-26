@@ -115,7 +115,7 @@ def post_process(**kwargs):
         files = gMiner.run(**request)
         # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
-        # Determine the datatype #
+        # Determine the datatype DOES NOT WORK#
         datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1], 'unknown')
         # Report success #
         print '\033[1;33m[' + time.asctime() + ']\033[0m \033[42m' + files[0] + '\033[0m'
