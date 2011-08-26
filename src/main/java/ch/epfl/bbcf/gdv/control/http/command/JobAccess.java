@@ -160,13 +160,13 @@ public class JobAccess extends Command{
 	 */
 	private JSONObject checkData(String data) throws JSONException{
 		JSONObject json = new JSONObject(data);
-		JSONArray filters = json.getJSONArray("filter");
-		JSONArray ntracks = json.getJSONArray("ntracks");
-		if(filters!=null){
+		if(json.has("filter")){
+			JSONArray filters = json.getJSONArray("filter");
 			filters = addCompletePath(filters);
 			json.put("filter", filters);
 		}
-		if(ntracks!=null){
+		if(json.has("ntracks")){
+			JSONArray ntracks = json.getJSONArray("ntracks");
 			ntracks = addCompletePath(ntracks);
 			json.put("ntracks", ntracks);
 		}
