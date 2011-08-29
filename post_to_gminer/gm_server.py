@@ -115,8 +115,8 @@ def post_process(**kwargs):
         files = gMiner.run(**request)
         # Format the output #
         result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
-        # Determine the datatype DOES NOT WORK#
-        datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1], 'unknown')
+        # Determine the datatype #
+        datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1])
         # Report success #
         print '\033[1;33m[' + time.asctime() + ']\033[0m \033[42m' + files[0] + '\033[0m'
     except Exception as err:
@@ -128,6 +128,7 @@ def post_process(**kwargs):
     finally:
         result     = locals().get('result', '')
         connection = httplib2.Http()
+        datatype   = 'datatype' in locals() and datatype or 'unknown'
         body       = urllib.urlencode({'id':'job', 'action':'gfeatresponse', 'job_id':job.get('job_id', -1),
                                        'data':json.dumps(result), 'datatype': datatype})
         headers    = {'content-type': 'application/x-www-form-urlencoded'}
