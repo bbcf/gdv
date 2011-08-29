@@ -4,11 +4,19 @@ import httplib2, urllib
 
 def send_request(job_id=1, characteristic="number_of_features"):
     # Set up request #
-    args = {
-            'data'            : '''{"operation_type":"desc_stat","characteristic":"''' + characteristic + '''","compare_parents":[],"per_chromosome":["per_chromosome"],"ntracks":[{"name":"S. cer refseq genes","path":"/scratch/genomic/tracks/all_yeast_genes.sql"},{"name":"RP genes","path":"/scratch/genomic/tracks/ribosome_proteins.sql"}]}''',
-            'output_location' : '/tmp/gMiner',
+    args = {'output_location' : '/tmp/gMiner',
             'callback_url'    : 'http://localhost:9999/',
             'job_id'          : str(job_id),
+            'data'            : '''{"operation_type":  "desc_stat",
+                                    "characteristic":  "''' + characteristic + '''",
+                                    "compare_parents": [],
+                                    "per_chromosome":  ["per_chromosome"],
+                                    "filter":          [{"name":"Ribi genes",
+                                                         "path":"/scratch/genomic/tracks/ribosome_genesis.sql"}],
+                                    "ntracks":         [{"name":"S. cer refseq genes",
+                                                         "path":"/scratch/genomic/tracks/all_yeast_genes.sql"},
+                                                        {"name":"RP genes",
+                                                         "path":"/scratch/genomic/tracks/ribosome_proteins.sql"}]}'''
     }
     # Make the request #
     connection = httplib2.Http()
@@ -31,7 +39,8 @@ if __name__ == '__main__':
     procs = [Process(target=send_request, args=(i,chara_dict[i%4])) for i in range(12)]
     for p in procs: p.start()
 
-#-----------------------------------------#
-# This code was written by Lucas Sinclair #
-# lucas.sinclair@epfl.ch                  #
-#-----------------------------------------#
+#-----------------------------------#
+# This code was written by the BBCF #
+# http://bbcf.epfl.ch/              #
+# webmaster.bbcf@epfl.ch            #
+#-----------------------------------#
