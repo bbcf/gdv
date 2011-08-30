@@ -124,7 +124,7 @@ def post_process(**kwargs):
         print stamp % ('\033[42m' + files[0])
     except Exception as err:
         print stamp % ('\033[41m' + str(err))
-        print '\033[0;36m' + str(job) + '\033[0m\n'
+        print '\n\033[0;36m' + str(job) + '\033[0m'
         print >>sys.stdout, '\033[0;31m'
         traceback.print_exc()
         print >>sys.stdout,'\033[0m'
