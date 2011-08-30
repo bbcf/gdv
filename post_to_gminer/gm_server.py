@@ -102,10 +102,10 @@ def post_process(**kwargs):
         # Format the request #
         if request.has_key('compare_parents' ): request['compare_parents' ] = bool(request['compare_parents'  ])
         if request.has_key('per_chromosome'  ): request['per_chromosome'  ] = bool(request['per_chromosome'   ])
-        if request.has_key('filter'):
+        if request.get('filter'):
             request['selected_regions'] = request['filter'][0]['path']
             request.pop('filter')
-        if request.has_key('ntracks'):
+        if request.get('ntracks'):
             request.update(dict([('track' + str(i+1), v['path'])                         for i,v in enumerate(request['ntracks'])]))
             request.update(dict([('track' + str(i+1) + '_name', v.get('name', 'Unamed')) for i,v in enumerate(request['ntracks'])]))
             request.pop('ntracks')
