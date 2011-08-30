@@ -95,10 +95,14 @@ def post_process(**kwargs):
         # Get a job from the list #
         global jobs
         job = jobs.pop(0)
-        id = job.get('job_id', -1)
+        # Prepare the body dictonary #
+        body_dict = {'id': 'job', 'action': 'gfeatresponse'}
+        # Add the job id #
+        job_id = job.get('job_id', -1)
+        body_dict.update(job_id=job_id)
         # Prepare the standard output #
-        stamp = '\033[1;33m[id ' + str(id) + ']\033[0m \033[4;33m' +  time.asctime() + '\033[0m %s\033[0m'
-        # Load the form #
+        stamp = '\033[1;33m[id ' + str(job_id) + ']\033[0m \033[4;33m' +  time.asctime() + '\033[0m %s\033[0m'
+        # Load the form data #
         request = json.loads(job['data'])
         # Get the output location #
         request['output_location'] = job.pop('output_location')
@@ -116,33 +120,36 @@ def post_process(**kwargs):
         request = dict([(k.encode('ascii'),v) for k,v in request.items()])
         # Run the request #
         files = gMiner.run(**request)
-        # Format the output #
-        result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
         # Determine the datatype #
-        datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1])
+        datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1], 'unknown')
+        body_dict.update(datatype=datatype)
+        # Format the output #
+        return_data = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
+        body_dict.update(data=json.dumps(return_data))
         # Report success #
         print stamp % ('\033[42m' + files[0])
+        # Print the response #
+        print '\n\033[1;36mResponse: \033[0;36m' + str(body_dict) + '\033[0m\n'
     except Exception as err:
+        # Report failure #
         print stamp % ('\033[41m' + str(err))
-        print '\n\033[0;36m' + str(job) + '\033[0m'
+        # Print the request #
+        print '\n\033[1;35mRequest: \033[0;35m' + str(request) + '\033[0m'
+        # Print the traceback #
         print >>sys.stdout, '\033[0;31m'
         traceback.print_exc()
         print >>sys.stdout,'\033[0m'
+        # Generate some html that can be displayed to the user #
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
+            return_data = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
+            body_dict.update(data=json.dumps(return_data))
     finally:
-        result     = locals().get('result', '')
-        connection = httplib2.Http()
-        datatype   = 'datatype' in locals() and datatype or 'unknown'
-        body       = urllib.urlencode({'id':       'job',
-                                       'action':   'gfeatresponse',
-                                       'job_id':   id,
-                                       'data':     json.dumps(result),
-                                       'datatype': datatype})
-        headers    = {'content-type': 'application/x-www-form-urlencoded'}
-        address    = job['callback_url']
-        response, content = connection.request(address, "POST", body=body, headers=headers)
+        url     = job['callback_url']
+        method  = 'POST'
+        body    = urllib.urlencode(body_dict)
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        httplib2.Http().request(url, method, body, headers)
 
 #------------------------------------------------------------------------------#
 if __name__ == '__main__': gmServer().serve()
