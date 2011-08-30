@@ -1,4 +1,4 @@
-This docuement describes how to use gFeatMiner as a web service. This can be usefull if GDV wants to send requests to an instance of gFeatMiner and recieve answers.
+This document describes how to use gFeatMiner as a web service. This can be useful if GDV wants to send requests to an instance of gFeatMiner and receive answers.
 
 In our scenario, GDV will be running on machine A and will ask for services provided by gMiner running on machine B.
 
@@ -7,13 +7,13 @@ Step 1
 
 On machine B, install gMiner:
 
-    you@B$ sudo pip install gMiner
+    you@B$ sudo easy_install install gMiner
 
 On machine B, run the gm_server.py script provided with this file:
 
     you@B$ python gm_server.py
 
-You need to leave this terminal open or detatch the process, otherwise the server dies.
+You need to leave this terminal open or detach the process, otherwise the server dies.
 
 Step 2
 ======
@@ -29,7 +29,7 @@ Step 3
 
 Send a request to gMiner on machine B from machine A. The following script should be run on machine A:
 
-    you@A$ python client_send.py
+    you@A$ python client_send_image.py
 
 Step 4
 ======
@@ -39,11 +39,12 @@ If no errors have been produced you should be able to read the answer of gMiner 
 Notes
 =====
 
-You may have to adapt the address and ports. As is, the scripts are configured to send and recieve on localhost on ports 7520 and 9999.
+You may have to adapt the address and ports. As is, the scripts are configured to send and receive on localhost on ports 7520 and 9999.
 
-Essentially, the urlencoded parameters of the first POST body get directly passed as keyword arguments to the run function of gMiner. The return value is sent back to the application requesting the operation by another POST request, this time to the url specified in the ``callback_url`` parameter.
+Essentially, the urlencoded parameters of the first POST body get more or less directly passed as keyword arguments to the run function of gMiner. The return value is sent back to the application requesting the operation by another POST request, this time to the url specified in the ``callback_url`` parameter.
 
-#-----------------------------------------#
-# This code was written by Lucas Sinclair #
-# lucas.sinclair@epfl.ch                  #
-#-----------------------------------------#
+#-----------------------------------#
+# This code was written by the BBCF #
+# http://bbcf.epfl.ch/              #
+# webmaster.bbcf@epfl.ch            #
+#-----------------------------------#

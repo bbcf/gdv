@@ -95,6 +95,9 @@ def post_process(**kwargs):
         # Get a job from the list #
         global jobs
         job = jobs.pop(0)
+        id = job.get('job_id', -1)
+        # Prepare the standard output #
+        stamp = '\033[1;33m[' + id + ']\033[0m ' +  time.asctime() + ' %s\033[0m'
         # Load the form #
         request = json.loads(job['data'])
         # Get the output location #
@@ -118,10 +121,10 @@ def post_process(**kwargs):
         # Determine the datatype #
         datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1])
         # Report success #
-        print '\033[1;33m[' + time.asctime() + ']\033[0m \033[42m' + files[0] + '\033[0m'
+        print stamp % '\033[42m' + files[0]
     except Exception as err:
         traceback.print_exc()
-        print '\033[1;33m[' + time.asctime() + ']\033[0m \033[41m' + str(err) + '\033[0m'
+        print stamp % '\033[41m' + str(err)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
@@ -129,8 +132,11 @@ def post_process(**kwargs):
         result     = locals().get('result', '')
         connection = httplib2.Http()
         datatype   = 'datatype' in locals() and datatype or 'unknown'
-        body       = urllib.urlencode({'id':'job', 'action':'gfeatresponse', 'job_id':job.get('job_id', -1),
-                                       'data':json.dumps(result), 'datatype': datatype})
+        body       = urllib.urlencode({'id':       'job',
+                                       'action':   'gfeatresponse',
+                                       'job_id':   id,
+                                       'data':     json.dumps(result),
+                                       'datatype': datatype})
         headers    = {'content-type': 'application/x-www-form-urlencoded'}
         address    = job['callback_url']
         response, content = connection.request(address, "POST", body=body, headers=headers)
