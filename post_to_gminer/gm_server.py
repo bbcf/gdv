@@ -60,7 +60,7 @@ from gMiner.constants import gm_project_name, gm_project_version
 global jobs
 jobs = []
 
-###########################################################################
+################################################################################
 class gmServer(object):
     def __init__(self, port=7522):
         self.port = port
@@ -84,7 +84,7 @@ class CherryRoot(object):
     def GET(self, **kwargs):  return pre_process(**kwargs)
     def POST(self, **kwargs): return pre_process(**kwargs)
 
-###########################################################################
+################################################################################
 def pre_process(**kwargs):
     global jobs
     jobs.append(kwargs)
@@ -97,7 +97,7 @@ def post_process(**kwargs):
         job = jobs.pop(0)
         id = job.get('job_id', -1)
         # Prepare the standard output #
-        stamp = '\033[1;33m[' + id + ']\033[0m ' +  time.asctime() + ' %s\033[0m'
+        stamp = '\033[1;33m[ id ' + str(id) + ']\033[0m ' +  time.asctime() + ' %s\033[0m'
         # Load the form #
         request = json.loads(job['data'])
         # Get the output location #
@@ -121,10 +121,10 @@ def post_process(**kwargs):
         # Determine the datatype #
         datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1])
         # Report success #
-        print stamp % '\033[42m' + files[0]
+        print stamp % ('\033[42m' + files[0])
     except Exception as err:
         traceback.print_exc()
-        print stamp % '\033[41m' + str(err)
+        print stamp % ('\033[41m' + str(err))
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
@@ -141,8 +141,8 @@ def post_process(**kwargs):
         address    = job['callback_url']
         response, content = connection.request(address, "POST", body=body, headers=headers)
 
-#-------------------------------------------------------------------------#
-if __name__ == '__main__': gmServer(port=7522).serve()
+#------------------------------------------------------------------------------#
+if __name__ == '__main__': gmServer().serve()
 
 #-----------------------------------#
 # This code was written by the BBCF #
