@@ -97,7 +97,7 @@ def post_process(**kwargs):
         job = jobs.pop(0)
         id = job.get('job_id', -1)
         # Prepare the standard output #
-        stamp = '\033[1;33m[ id ' + str(id) + ']\033[0m ' +  time.asctime() + ' %s\033[0m'
+        stamp = '\033[1;33m[id ' + str(id) + ']\033[0m ' +  time.asctime() + ' %s\033[0m'
         # Load the form #
         request = json.loads(job['data'])
         # Get the output location #
