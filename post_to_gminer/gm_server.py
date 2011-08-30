@@ -48,7 +48,7 @@ If an error is found, the answer could be:
 """
 
 # General modules #
-import cherrypy, httplib2, urllib, json, sys, cgitb, traceback, warnings, time, os
+import sys, os, cherrypy, httplib2, urllib, json, cgitb, traceback, warnings, time
 
 # Other modules #
 import gMiner
@@ -97,7 +97,7 @@ def post_process(**kwargs):
         job = jobs.pop(0)
         id = job.get('job_id', -1)
         # Prepare the standard output #
-        stamp = '\033[1;33m[id ' + str(id) + ']\033[0m ' +  time.asctime() + ' %s\033[0m'
+        stamp = '\033[1;33m[id ' + str(id) + ']\033[0m \033[4;33m' +  time.asctime() + '\033[0m %s\033[0m'
         # Load the form #
         request = json.loads(job['data'])
         # Get the output location #
@@ -123,8 +123,11 @@ def post_process(**kwargs):
         # Report success #
         print stamp % ('\033[42m' + files[0])
     except Exception as err:
-        traceback.print_exc()
         print stamp % ('\033[41m' + str(err))
+        print '\033[0;36m' + str(job) + '\033[0m\n'
+        print >>sys.stdout, '\033[0;31m'
+        traceback.print_exc()
+        print >>sys.stdout,'\033[0m'
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
