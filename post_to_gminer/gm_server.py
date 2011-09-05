@@ -48,7 +48,7 @@ If an error is found, the answer could be:
 """
 
 # General modules #
-import cherrypy, httplib2, urllib, json, sys, cgitb, traceback, warnings, time, os
+import sys, os, cherrypy, httplib2, urllib, json, cgitb, traceback, warnings, time
 
 # Other modules #
 import gMiner
@@ -60,7 +60,7 @@ from gMiner.constants import gm_project_name, gm_project_version
 global jobs
 jobs = []
 
-###########################################################################
+################################################################################
 class gmServer(object):
     def __init__(self, port=7522):
         self.port = port
@@ -84,7 +84,7 @@ class CherryRoot(object):
     def GET(self, **kwargs):  return pre_process(**kwargs)
     def POST(self, **kwargs): return pre_process(**kwargs)
 
-###########################################################################
+################################################################################
 def pre_process(**kwargs):
     global jobs
     jobs.append(kwargs)
@@ -95,17 +95,24 @@ def post_process(**kwargs):
         # Get a job from the list #
         global jobs
         job = jobs.pop(0)
-        # Load the form #
+        # Prepare the body dictonary #
+        body_dict = {'id': 'job', 'action': 'gfeatresponse'}
+        # Add the job id #
+        job_id = job.get('job_id', -1)
+        body_dict.update(job_id=job_id)
+        # Prepare the standard output #
+        stamp = '\033[1;33m[id ' + str(job_id) + ']\033[0m \033[4;33m' +  time.asctime() + '\033[0m %s\033[0m'
+        # Load the form data #
         request = json.loads(job['data'])
         # Get the output location #
         request['output_location'] = job.pop('output_location')
         # Format the request #
         if request.has_key('compare_parents' ): request['compare_parents' ] = bool(request['compare_parents'  ])
         if request.has_key('per_chromosome'  ): request['per_chromosome'  ] = bool(request['per_chromosome'   ])
-        if request.has_key('filter'):
+        if request.get('filter'):
             request['selected_regions'] = request['filter'][0]['path']
             request.pop('filter')
-        if request.has_key('ntracks'):
+        if request.get('ntracks'):
             request.update(dict([('track' + str(i+1), v['path'])                         for i,v in enumerate(request['ntracks'])]))
             request.update(dict([('track' + str(i+1) + '_name', v.get('name', 'Unamed')) for i,v in enumerate(request['ntracks'])]))
             request.pop('ntracks')
@@ -113,29 +120,39 @@ def post_process(**kwargs):
         request = dict([(k.encode('ascii'),v) for k,v in request.items()])
         # Run the request #
         files = gMiner.run(**request)
-        # Format the output #
-        result = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
-        # Determine the datatype DOES NOT WORK#
+        # Determine the datatype #
         datatype = {'.png':'new_image', '.sql':'new_track'}.get(os.path.splitext(files[0])[-1], 'unknown')
+        body_dict.update(datatype=datatype)
+        # Format the output #
+        return_data = {'files': [dict([('path',p),('type',p.split('.')[-1])]) for p in files]}
+        body_dict.update(data=json.dumps(return_data))
         # Report success #
-        print '\033[1;33m[' + time.asctime() + ']\033[0m \033[42m' + files[0] + '\033[0m'
+        print stamp % ('\033[42m' + files[0])
+        # Print the response #
+        print '\n\033[1;36mResponse: \033[0;36m' + str(body_dict) + '\033[0m\n'
     except Exception as err:
+        # Report failure #
+        print stamp % ('\033[41m' + str(err))
+        # Print the request #
+        print '\n\033[1;35mRequest: \033[0;35m' + str(request) + '\033[0m'
+        # Print the traceback #
+        print >>sys.stdout, '\033[0;31m'
         traceback.print_exc()
-        print '\033[1;33m[' + time.asctime() + ']\033[0m \033[41m' + str(err) + '\033[0m'
+        print >>sys.stdout,'\033[0m'
+        # Generate some html that can be displayed to the user #
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            result = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
+            return_data = {'type':'error', 'html':cgitb.html(sys.exc_info()), 'msg': str(err)}
+            body_dict.update(data=json.dumps(return_data))
     finally:
-        result     = locals().get('result', '')
-        connection = httplib2.Http()
-        body       = urllib.urlencode({'id':'job', 'action':'gfeatresponse', 'job_id':job.get('job_id', -1),
-                                       'data':json.dumps(result), 'datatype': datatype})
-        headers    = {'content-type': 'application/x-www-form-urlencoded'}
-        address    = job['callback_url']
-        response, content = connection.request(address, "POST", body=body, headers=headers)
+        url     = job['callback_url']
+        method  = 'POST'
+        body    = urllib.urlencode(body_dict)
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        httplib2.Http().request(url, method, body, headers)
 
-#-------------------------------------------------------------------------#
-if __name__ == '__main__': gmServer(port=7522).serve()
+#------------------------------------------------------------------------------#
+if __name__ == '__main__': gmServer().serve()
 
 #-----------------------------------#
 # This code was written by the BBCF #
