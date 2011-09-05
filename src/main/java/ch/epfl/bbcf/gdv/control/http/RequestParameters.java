@@ -47,7 +47,7 @@ public class RequestParameters {
 				this.status = Command.STATUS.valueOf(map.get("status")[0]);
 			} catch (NullPointerException e){};
 			try{
-				this.dbType = SQLiteExtension.valueOf(map.get("db_type")[0]);
+				this.dbType = SQLiteExtension.valueOf(map.get("db_type")[0].toUpperCase());
 			} catch (NullPointerException e){};
 			try{
 				this.action = Command.ACTION.valueOf(map.get("action")[0]);
