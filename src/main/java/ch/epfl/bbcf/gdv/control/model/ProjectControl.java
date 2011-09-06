@@ -73,6 +73,19 @@ public class ProjectControl extends Control implements Serializable{
 		pdao.release();
 		return false;
 	}
+	
+	/**
+	 * Get the project from a job id
+	 * @param jobId
+	 * @return a Project
+	 */
+	public static Project getProjectByJobId(int jobId){
+		ProjectDAO pdao = new ProjectDAO();
+		Project p = pdao.getProjectFromJobId(jobId);
+		pdao.release();
+		return p;
+	}
+	
 	/**
 	 * create a new project for an user
 	 * @param seq_id the seq id from genrep

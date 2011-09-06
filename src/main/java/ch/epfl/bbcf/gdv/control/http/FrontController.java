@@ -27,7 +27,6 @@ public class FrontController {
 	}
 
 	public void doRequest() {
-		Application.debug("fc.doRequest() "+params.getId()+"   --   "+params.getJobId());
 		if(params.getId()!=null){
 			Command command = null;
 			switch(params.getId()){

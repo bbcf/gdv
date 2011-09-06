@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ch.epfl.bbcf.gdv.access.database.pojo.Job;
+import ch.epfl.bbcf.gdv.access.database.pojo.Project;
 import ch.epfl.bbcf.gdv.access.database.pojo.Users;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job.JOB_OUTPUT;
 import ch.epfl.bbcf.gdv.access.database.pojo.Job.JOB_TYPE;
@@ -36,7 +37,6 @@ public class JobAccess extends Command{
 
 	@Override
 	public void doRequest() {
-		log.debug("job access : doRequest");
 		if(null==params.getAction()){
 			throw new AbortWithHttpStatusException(400,true);
 		}
@@ -68,7 +68,8 @@ public class JobAccess extends Command{
 
 		case gfeatresponse:
 			checkParams(params.getData());
-			checkParams(params.getProjectId(),params.getJobId());
+			checkParams(params.getJobId());
+			Project project = ProjectControl.getProjectByJobId(params.getJobId());
 			try {
 				JSONObject data = new JSONObject(params.getData());
 				Application.debug("data : "+data.toString());
@@ -84,7 +85,7 @@ public class JobAccess extends Command{
 					try {
 						/* create a new track */
 						
-						Users user = UserControl.getUserByProjectId(params.getProjectId());
+						Users user = UserControl.getUserByProjectId(project.getId());
 						JSONObject data;
 						data = new JSONObject(params.getData());
 						JSONArray files = data.getJSONArray("files");
@@ -92,7 +93,7 @@ public class JobAccess extends Command{
 						String path = f.getString("path");
 						int jobId = JobControl.createJob(params.getJobId(),JOB_TYPE.new_track,JOB_OUTPUT.reload);
 						InputControl.processUserInput(
-								jobId,user.getId(),params.getProjectId(),null,null,path,"gFeatMiner output");
+								jobId,user.getId(),project.getId(),null,null,path,"gFeatMiner output");
 					} catch (JSONException e) {
 						Application.error("ERROR : "+e1.getLocalizedMessage());
 					}

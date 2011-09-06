@@ -365,6 +365,8 @@ public class ProjectDAO extends DAO<Project>{
 				statement.setInt(2, Integer.parseInt(sequenceId));
 				ResultSet r = statement.executeQuery();
 				if(r.first()){
+					
+					this.endQuery(true);
 					return true;
 				}
 			} catch (SQLException e) {
@@ -392,11 +394,14 @@ public class ProjectDAO extends DAO<Project>{
 				statement.setInt(2, Integer.parseInt(sequenceId));
 				ResultSet r = statement.executeQuery();
 				if(r.first()){
-					return getProject(r);
+					Project p = getProject(r);
+					this.endQuery(true);
+					return p;
 				}
 			} catch (SQLException e) {
 				logger.error(e);
 			}
+			this.endQuery(false);
 		}
 		return null;
 	}
@@ -421,9 +426,10 @@ public class ProjectDAO extends DAO<Project>{
 						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY); 	                               
 				ResultSet resultSet = this.executeQuery(statement);
 				if(resultSet.first()){
-					return resultSet.getInt(1);
+					int i = resultSet.getInt(1);
+					this.endQuery(true);
+					return i;
 				}
-				this.endQuery(true);
 			} catch (SQLException e) {
 				logger.error(e);
 				this.endQuery(false);
@@ -670,6 +676,32 @@ public class ProjectDAO extends DAO<Project>{
 		}
 		this.endQuery(true);
 		return false;
+	}
+
+
+	public Project getProjectFromJobId(int jobId) {
+		if(this.databaseConnected()){
+			this.startQuery();
+			try {
+				String query = "select t1.* from projects as t1 " +
+						"inner join jobs as t2 on t1.id = t2.project_id " +
+						"where t2.id = ? limit 1;";
+				PreparedStatement statement = this.prepareStatement(query,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setInt(1, jobId);
+				ResultSet resultSet = this.executeQuery(statement);
+				if(resultSet.first()){
+					Project p = getProject(resultSet);
+					this.endQuery(true);
+					return p;
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+				this.endQuery(false);
+			}
+		}
+		this.endQuery(false);
+		return null;
 	}
 }
 

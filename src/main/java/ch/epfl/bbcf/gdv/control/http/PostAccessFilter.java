@@ -44,7 +44,6 @@ public class PostAccessFilter implements Filter{
 			}
 		}
 		log.debug(post);
-		Application.debug(post);
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
