@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +27,9 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 import ch.epfl.bbcf.gdv.access.database.pojo.Track;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
+import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.config.UserSession;
+import ch.epfl.bbcf.gdv.control.http.FrontController;
 import ch.epfl.bbcf.gdv.control.http.command.Command;
 import ch.epfl.bbcf.gdv.exception.TrackCreationFailedException;
 import ch.epfl.bbcf.gdv.mail.Sender;
@@ -34,6 +37,7 @@ import ch.epfl.bbcf.gdv.utility.file.FileManagement;
 
 public class JobControl extends Control{
 
+	private static Logger log = Logs.initLogger("post.log", JobControl.class);
 	public JobControl() {
 	}
 
@@ -304,9 +308,10 @@ public class JobControl extends Control{
 		body+="&output_location="+URLEncoder.encode(Configuration.getgFeatMinerDirectory()+"/"+jobId,"UTF-8");
 		body+="&data="+URLEncoder.encode(data.toString(),"UTF-8");
 		body+="&output_name=gfeatminer_output";
+		log.debug("SENDING TO GFM : "+body);
 		String result = InternetConnection.sendPOSTConnection(
 				getGFMUrl(), body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
-		Application.debug(result);
+		log.debug("RESPONSE : "+result);
 
 	}
 
