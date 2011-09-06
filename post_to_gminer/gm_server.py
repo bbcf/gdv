@@ -62,7 +62,7 @@ jobs = []
 
 ################################################################################
 class gmServer(object):
-    def __init__(self, port=7522):
+    def __init__(self, port):
         self.port = port
 
     def serve(self):
@@ -152,7 +152,7 @@ def post_process(**kwargs):
         httplib2.Http().request(url, method, body, headers)
 
 #------------------------------------------------------------------------------#
-if __name__ == '__main__': gmServer().serve()
+if __name__ == '__main__': gmServer(port=7522).serve()
 
 #-----------------------------------#
 # This code was written by the BBCF #
