@@ -32,7 +32,7 @@ public class FileTypeGuesser {
 
 	/**
 	 * Guess if the file is qualitative or quantitative,
-	 * because process of the file will be differents.
+	 * because process of the file will be different.
 	 * @throws ExtensionNotRecognizedException
 	 * @throws IOException 
 	 */
@@ -48,10 +48,7 @@ public class FileTypeGuesser {
 			String chr = null;
 			try {
 				access = SQLiteAccess.getConnectionWithDatabase(file.getAbsolutePath());
-				Map<String, Integer> chromosomes= access.getChromosomesAndLength();
-				chr = chromosomes.keySet().iterator().next();
-				r = access.prepareFeatures(chr);
-				access.getNextQualitativeFeature(r,chr);
+				return access.getDatabaseDatatype();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -59,24 +56,39 @@ public class FileTypeGuesser {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
+				e.printStackTrace();
 				return SQLiteExtension.QUANTITATIVE;
 			}
-			try {
-				access.getNextExtendedQualitativeFeature(r, chr);
-			} catch (SQLException e) {
-				return SQLiteExtension.QUALITATIVE;
-			}  finally {
-				try {
-					r.close();
-					access.close();
-				} catch (SQLException e) {
-					Application.error(e);
-				}
-			}
-			return SQLiteExtension.QUALITATIVE_EXTENDED;
-		default :
-			return SQLiteExtension.QUANTITATIVE;
 		}
+			//				Map<String, Integer> chromosomes= access.getChromosomesAndLength();
+			//				chr = chromosomes.keySet().iterator().next();
+			//				r = access.prepareFeatures(chr);
+			//				access.getNextQualitativeFeature(r,chr);
+			//			} catch (InstantiationException e) {
+			//				e.printStackTrace();
+			//			} catch (IllegalAccessException e) {
+			//				e.printStackTrace();
+			//			} catch (ClassNotFoundException e) {
+			//				e.printStackTrace();
+			//			} catch (SQLException e) {
+			//				return SQLiteExtension.QUANTITATIVE;
+			//			}
+			//			try {
+			//				access.getNextExtendedQualitativeFeature(r, chr);
+			//			} catch (SQLException e) {
+			//				return SQLiteExtension.QUALITATIVE;
+			//			}  finally {
+			//				try {
+			//					r.close();
+			//					access.close();
+			//				} catch (SQLException e) {
+			//					Application.error(e);
+			//				}
+			//			}
+			//			return SQLiteExtension.QUALITATIVE_EXTENDED;
+			//		default :
+			//			return SQLiteExtension.QUANTITATIVE;
+		return SQLiteExtension.QUANTITATIVE;
 	}
 
 

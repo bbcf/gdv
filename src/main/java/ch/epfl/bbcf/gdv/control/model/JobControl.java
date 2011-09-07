@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -308,7 +309,7 @@ public class JobControl extends Control{
 		body+="&output_location="+URLEncoder.encode(Configuration.getgFeatMinerDirectory()+"/"+jobId,"UTF-8");
 		body+="&data="+URLEncoder.encode(data.toString(),"UTF-8");
 		body+="&output_name=gfeatminer_output";
-		log.debug("SENDING TO GFM : "+body);
+		log.debug("SENDING TO GFM : "+URLDecoder.decode(body,"UTF-8"));
 		String result = InternetConnection.sendPOSTConnection(
 				getGFMUrl(), body, InternetConnection.MIME_TYPE_FORM_APPLICATION);
 		log.debug("RESPONSE : "+result);
@@ -318,6 +319,8 @@ public class JobControl extends Control{
 	private static String getGFMUrl() {
 		return Configuration.getGdvTomcatServ()+"/gfeatminer";
 	}
+
+	
 
 
 }

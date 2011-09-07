@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import ch.epfl.bbcf.gdv.access.database.pojo.Job.JOB_TYPE;
 import ch.epfl.bbcf.gdv.access.database.pojo.Status;
 import ch.epfl.bbcf.gdv.config.Application;
 import ch.epfl.bbcf.gdv.config.Configuration;
+import ch.epfl.bbcf.gdv.config.Logs;
 import ch.epfl.bbcf.gdv.control.http.RequestParameters;
 import ch.epfl.bbcf.gdv.control.model.InputControl;
 import ch.epfl.bbcf.gdv.control.model.JobControl;
@@ -30,7 +32,8 @@ public class JobAccess extends Command{
 
 
 
-
+	private static Logger log = Logs.initLogger("post.log", JobAccess.class);
+	
 	public JobAccess(RequestParameters params, PrintWriter out) {
 		super(params, out);
 	}
@@ -46,6 +49,7 @@ public class JobAccess extends Command{
 		case gfeatminer:
 			checkParams(params.getData());
 			checkParams(params.getProjectId());
+			
 			try {
 				JSONObject data = checkData(params.getData());
 				int jobId = JobControl.newGfeatMinerJob(params.getProjectId(), JOB_OUTPUT.image);
@@ -69,19 +73,22 @@ public class JobAccess extends Command{
 		case gfeatresponse:
 			checkParams(params.getData());
 			checkParams(params.getJobId());
+			
 			Project project = ProjectControl.getProjectByJobId(params.getJobId());
+			
+			log.debug("gfeat response : "+params.getData()+" on project "+project.getId());
 			try {
 				JSONObject data = new JSONObject(params.getData());
-				Application.debug("data : "+data.toString());
 				String type = data.getString("type");
-				Application.debug("type : "+type);
 				/* handle error */
 				if(type.equalsIgnoreCase("error")){
+					log.error(data.getString("msg"));
 					JobControl.updateJob(params.getJobId(),Command.STATUS.error, data.getString("msg"));
 				} 
 			} catch (JSONException e1) {
 				/* handle reponse */
 				if("new_track".equalsIgnoreCase(params.getDatatype())){
+					log.debug("new track");
 					try {
 						/* create a new track */
 						
@@ -89,19 +96,26 @@ public class JobAccess extends Command{
 						JSONObject data;
 						data = new JSONObject(params.getData());
 						JSONArray files = data.getJSONArray("files");
-						JSONObject f = files.getJSONObject(0);
-						String path = f.getString("path");
-						int jobId = JobControl.createJob(params.getJobId(),JOB_TYPE.new_track,JOB_OUTPUT.reload);
-						InputControl.processUserInput(
-								jobId,user.getId(),project.getId(),null,null,path,"gFeatMiner output");
+						for(int i = 0; i<files.length();i++){
+							JSONObject f = files.getJSONObject(i);
+							log.debug(f);
+							String path = f.getString("path");
+							log.debug(path);
+							int jobId = JobControl.createJob(project.getId(),JOB_TYPE.new_track,JOB_OUTPUT.reload);
+							log.debug(jobId);
+							InputControl.processUserInput(
+									jobId,user.getId(),project.getId(),null,null,path,"gFeatMiner output "+jobId);
+						}
+						log.debug("removing job "+params.getJobId());
+						JobControl.removeJob(params.getJobId());
 					} catch (JSONException e) {
-						Application.error("ERROR : "+e1.getLocalizedMessage());
+						log.error("ERROR : "+e1.getLocalizedMessage());
 					}
 					
 					
 					
 				} else {
-					Application.debug("update job success");
+					log.debug("update job success");
 					JobControl.updateJob(params.getJobId(),Command.STATUS.success, params.getData());
 				}
 			} finally {

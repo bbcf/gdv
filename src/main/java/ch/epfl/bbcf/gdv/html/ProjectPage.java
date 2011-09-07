@@ -1,5 +1,6 @@
 package ch.epfl.bbcf.gdv.html;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.DownloadLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -409,6 +411,13 @@ public class ProjectPage extends BasePage{
 						};
 						conflink.add(new SimpleAttributeModifier("title","configure track"));
 						item.add(conflink);
+						
+						//### download
+						String input = TrackControl.getFileFromTrackId(track.getId());
+						File trackFile = new File(Configuration.getFilesDir()+"/"+input);
+						final DownloadLink downlink = new DownloadLink("download",trackFile);
+						downlink.add(new SimpleAttributeModifier("title","download the track in sqlite format"));
+						item.add(downlink);
 
 					}
 					/* get the status of the track & update it */
